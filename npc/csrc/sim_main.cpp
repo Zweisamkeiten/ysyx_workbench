@@ -1,8 +1,3 @@
-#include <assert.h>
-#include <stdio.h>
-#include <stdlib.h>
-// Include common routines
-#include <verilated.h>
 // Include model header, generated from Verilating "top.v"
 #include "Vtop.h"
 #include <nvboard.h>
@@ -36,16 +31,8 @@ int main(int argc, char *argv[], char **env) {
   // 仿真
   while (!contextp->gotFinish()) {
     contextp->timeInc(1); // 1 timeprecision period passes...
-    int a = rand() & 1;
-    int b = rand() & 1;
-    top->a = a;
-    top->b = b;
-
     // Evaluate model
     top->eval();
-
-    printf("a = %d, b = %d, f = %d\n", a, b, top->f);
-    assert(top->f == (a ^ b));
     nvboard_update();
   }
 
