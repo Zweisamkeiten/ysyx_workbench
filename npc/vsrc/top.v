@@ -6,7 +6,7 @@ module top (
 
   assign f = a ^ b;
   initial begin
-    $dumpfile("../build/logs/vlt_dump.vcd");
+    $dumpfile("logs/vlt_dump.vcd");
     $dumpvars();
   end
 endmodule
