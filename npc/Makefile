@@ -31,7 +31,7 @@ LDFLAGS += -lSDL2 -lSDL2_image
 all:
 	@echo "Write this Makefile by your self."
 
-$(BIN): $(VSRCS) $(CSRCS)
+$(BIN): $(VSRCS) $(CSRCS) $(NVBOARD_ARCHIVE)
 	$(call git_commit, "build RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo "-- VERILATE & BUILD --------"
 	$(VERILATOR) $(VERILATOR_CFLAGS) $^ \
