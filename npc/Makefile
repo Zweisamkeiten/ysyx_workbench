@@ -9,7 +9,7 @@ else
 export VERILATOR_ROOT
 VERILATOR = $(VERILATOR_ROOT)/bin/verilator
 endif
-VERILATOR_CFLAGS += --build -cc --exe -j --trace
+VERILATOR_CFLAGS += --trace --build -cc --exe -j
 
 default: $(BIN)
 
