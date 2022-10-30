@@ -5,6 +5,7 @@
 #include <verilated.h>
 // Include model header, generated from Verilating "top.v"
 #include "Vtop.h"
+#include <nvboard.h>
 
 int main(int argc, char *argv[], char **env) {
   // Prevent unused variable warnings
@@ -26,6 +27,11 @@ int main(int argc, char *argv[], char **env) {
   // 构造模型
   Vtop *top = new Vtop{contextp};
 
+  nvboard_bind_pin(&top->a, false, false, 1, SW0);
+  nvboard_bind_pin(&top->b, false, false, 1, SW1);
+  nvboard_bind_pin(&top->f, false, true, 1, LD0);
+  nvboard_init();
+
   // Simulate until $finish
   // 仿真
   while (!contextp->gotFinish()) {
@@ -40,6 +46,7 @@ int main(int argc, char *argv[], char **env) {
 
     printf("a = %d, b = %d, f = %d\n", a, b, top->f);
     assert(top->f == (a ^ b));
+    nvboard_update();
   }
 
   // Final model cleanup
