@@ -3,7 +3,6 @@ all:
 
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
-	cd ./vsrc
-	make
+	cd ./vsrc && $(MAKE)
 
 include ../Makefile
