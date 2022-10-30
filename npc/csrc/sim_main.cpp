@@ -13,7 +13,7 @@ int main(int argc, char *argv[], char **env) {
 
   // Create logs/ directory in case we have traces to put under it
   // 创建波形图放置目录
-  Verilated::mkdir("logs");
+  Verilated::mkdir("../build/logs");
 
   // Construct a VerilatedContext to hold simulation time, etc.
   // 构造 上下文

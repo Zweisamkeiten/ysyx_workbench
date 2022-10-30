@@ -1,8 +1,30 @@
+TOPNAME = top
+BUILD_DIR = ./build
+OBJ_DIR = $(BUILD_DIR)/obj_dir
+BIN = $(BUILD_DIR)/$(TOPNAME)
+
+ifeq ($(VERILATOR_ROOT),)
+VERILATOR = verilator
+else
+export VERILATOR_ROOT
+VERILATOR = $(VERILATOR_ROOT)/bin/verilator
+endif
+VERILATOR_CFLAGS += --build -cc --exe -j8 --trace
+
+default: $(BIN)
+
+$(shell mkdir -p $(BUILD_DIR))
+
+# project source
+VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
+CSRCS = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cc" -or -name "*.cpp")
+
 all:
 	@echo "Write this Makefile by your self."
 
-sim:
+sim: $(VSRCS) $(CSRCS)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
-	cd ./vsrc && $(MAKE)
+	@echo "-- VERILATE & BUILD --------"
+	$(VERILATOR) $(VERILATOR_CFLAGS) $^ --Mdir $(OBJ_DIR) -o $(abspath $(BIN))
 
 include ../Makefile
