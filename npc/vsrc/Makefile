@@ -33,9 +33,9 @@ VERILATOR = $(VERILATOR_ROOT)/bin/verilator
 endif
 
 default:
-	@echo "-- Verilator hello-world simple example"
+	@echo "-- Verilator top"
 	@echo "-- VERILATE & BUILD --------"
-	$(VERILATOR) --trace -cc --exe --build -j example.v sim_main.cpp
+	$(VERILATOR) --trace -cc --exe --build -j top.v sim_main.cpp
 	@echo "-- RUN ---------------------"
 	obj_dir/Vtop
 	@echo "-- DONE --------------------"
