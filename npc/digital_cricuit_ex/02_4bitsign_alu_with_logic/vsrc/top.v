@@ -34,6 +34,14 @@ module alu (a, b, opt, out, of, cf, zf, sf);
       3'b101: begin // 异或
                 {cf, out} = {1'b0, a ^ b};
               end
+      3'b110: begin // 比较大小
+                if (a < b) out = 4'b0001;
+                else out = 4'b0000;
+              end
+      3'b111: begin // 判断相等
+                if (a == b) out = 4'b0001;
+                else out = 4'b0000;
+              end
       default: {cf, out} = 5'b00000;
     endcase
     overflow = (a[3] == t_no_Cin[3]) && (out[3] != a[3]);
