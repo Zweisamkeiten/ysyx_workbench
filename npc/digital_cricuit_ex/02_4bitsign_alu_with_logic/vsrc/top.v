@@ -10,8 +10,8 @@ module alu (a, b, opt, out, of, cf, zf, sf);
 
   assign iszero = |out;
   MuxKey #(2, 1, 1) i0 (zf, iszero, {
-    1'b0, 0,
-    1'b1, 1
+    1'b0, 1'b0,
+    1'b1, 1'b1
     });
 
   wire [3:0] t_no_Cin;
