@@ -20,7 +20,7 @@ int main(int argc, char **argv, char **env) {
   top = new VMux4Way2;
   contextp->traceEverOn(true);
   top->trace(tfp, 0);
-  tfp->open("build/logs/dump.vcd");
+  tfp->open("dump.vcd");
 
   nvboard_bind_pin(&top->y, false, false, 2, SW1, SW0);
   nvboard_bind_pin(&top->x0, false, false, 2, SW3, SW2);
