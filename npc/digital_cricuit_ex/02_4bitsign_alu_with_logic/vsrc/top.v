@@ -14,7 +14,7 @@ module alu (a, b, opt, out, of, cf, zf, sf);
 
   reg [3:0] t_no_Cin = {4{1'b1}}^b;
 
-  always @ (a or b or opt, cf) begin
+  always @ (*) begin
     case (opt)
       3'b000: begin // 加法
                 {cf, out} = a + b;
