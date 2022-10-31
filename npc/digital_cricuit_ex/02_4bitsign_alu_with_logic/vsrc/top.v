@@ -42,13 +42,13 @@ module alu (a, b, opt, out, of, cf, zf, sf);
               end
       3'b110: begin // 比较大小
                 {cf, out} = a + (({4{1}}^b) + 1);
-                if (sf ^ overflow) out = 3'b0001;
-                else out = 3'b0000;
+                if (sf ^ overflow) out = 4'b0001;
+                else out = 4'b0000;
               end
       3'b111: begin // 判断相等
                 {cf, out} = a + (({4{1}}^b) + 1);
-                if (zf == 0) out = 3'b0001;
-                else out = 3'b0000;
+                if (zf == 0) out = 4'b0001;
+                else out = 4'b0000;
               end
     endcase
   end
