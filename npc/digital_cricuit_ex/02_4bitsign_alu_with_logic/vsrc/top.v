@@ -16,7 +16,7 @@ module alu (a, b, opt, out, of, cf, zf, sf);
 
   wire [3:0] t_no_Cin;
   assign t_no_Cin = {4{1'b1}}^b;
-  assign overflow = (a[3] == t_no_Cin[3]) && (out[3] != a[3]);
+  assign overflow = (a[3] == t_no_Cin[3]) && (1'b0 != a[3]);
 
   assign sf = 1'b0;
 
