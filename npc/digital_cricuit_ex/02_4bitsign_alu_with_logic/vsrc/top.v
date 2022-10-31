@@ -12,7 +12,7 @@ module alu (a, b, opt, out, of, cf, zf, sf);
   assign zf = |tmp ? 1'b0 : 1'b1;
   assign of = tmp[4];
 
-  always @ (a or b or opt) begin
+  always @ (a or b or opt or cf) begin
     case (opt)
       3'b000: begin // 加法
                 {cf, out} = a + b;
