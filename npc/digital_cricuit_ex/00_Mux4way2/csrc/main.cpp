@@ -3,18 +3,10 @@
 #include <verilated.h>
 #include <verilated_vcd_c.h>
 
-VerilatedContext *contextp = NULL;
-VerilatedVcdC *tfp = NULL;
-
 static VMux4Way2 *top;
 
 int main(int argc, char **argv, char **env) {
-  contextp = new VerilatedContext;
-  tfp = new VerilatedVcdC;
   top = new VMux4Way2;
-  contextp->traceEverOn(true);
-  top->trace(tfp, 0);
-  tfp->open("dump.vcd");
 
   nvboard_bind_pin(&top->y, false, false, 2, SW1, SW0);
   nvboard_bind_pin(&top->x0, false, false, 2, SW3, SW2);
@@ -30,5 +22,4 @@ int main(int argc, char **argv, char **env) {
 
   top->final();
   delete top;
-  tfp->close();
 }
