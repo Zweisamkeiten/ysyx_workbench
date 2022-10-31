@@ -8,12 +8,6 @@ VerilatedVcdC *tfp = NULL;
 
 static VMux4Way2 *top;
 
-void step_and_dump_wave() {
-  top->eval();
-  contextp->timeInc(1);
-  tfp->dump(contextp->time());
-}
-
 int main(int argc, char **argv, char **env) {
   contextp = new VerilatedContext;
   tfp = new VerilatedVcdC;
@@ -31,7 +25,6 @@ int main(int argc, char **argv, char **env) {
   nvboard_init();
 
   while (1) {
-    step_and_dump_wave();
     nvboard_update();
   }
 
