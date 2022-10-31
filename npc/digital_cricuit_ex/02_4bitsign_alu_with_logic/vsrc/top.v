@@ -50,6 +50,7 @@ module alu (a, b, opt, out, of, cf, zf, sf);
                 if (zf == 0) out = 4'b0001;
                 else out = 4'b0000;
               end
+      default: {cf, out} = 5'b00000;
     endcase
   end
 endmodule
