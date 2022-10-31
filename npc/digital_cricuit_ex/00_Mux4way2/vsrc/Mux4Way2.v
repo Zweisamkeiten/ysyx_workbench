@@ -4,7 +4,7 @@ module Mux4Way2 (x0, x1, x2, x3, y, f);
   input [1:0] x2;
   input [1:0] x3;
   input [1:0] y;
-  output y;
+  output f;
 
   MuxKey #(4, 2, 2) i0 (
     .out (f),
