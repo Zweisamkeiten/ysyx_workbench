@@ -19,9 +19,13 @@ class VMux4Way2___024root final : public VerilatedModule {
     VL_IN8(x3,1,0);
     VL_IN8(y,1,0);
     VL_OUT8(f,1,0);
+    CData/*1:0*/ Mux4Way2__DOT__i0__DOT__i0__DOT__lut_out;
+    CData/*0:0*/ Mux4Way2__DOT__i0__DOT__i0__DOT__hit;
+    SData/*15:0*/ Mux4Way2__DOT____Vcellinp__i0__lut;
     VlUnpacked<CData/*3:0*/, 4> Mux4Way2__DOT__i0__DOT__i0__DOT__pair_list;
     VlUnpacked<CData/*1:0*/, 4> Mux4Way2__DOT__i0__DOT__i0__DOT__key_list;
     VlUnpacked<CData/*1:0*/, 4> Mux4Way2__DOT__i0__DOT__i0__DOT__data_list;
+    VlUnpacked<CData/*0:0*/, 2> __Vm_traceActivity;
 
     // INTERNAL VARIABLES
     VMux4Way2__Syms* const vlSymsp;

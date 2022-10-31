@@ -10,85 +10,85 @@ VL_INLINE_OPT void VMux4Way2___024root___combo__TOP__0(VMux4Way2___024root* vlSe
     if (false && vlSelf) {}  // Prevent unused
     VMux4Way2__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     VL_DEBUG_IF(VL_DBG_MSGF("+    VMux4Way2___024root___combo__TOP__0\n"); );
-    // Init
-    SData/*15:0*/ Mux4Way2__DOT____Vcellinp__i0__lut;
-    CData/*1:0*/ Mux4Way2__DOT__i0__DOT__i0__DOT__lut_out;
     // Body
-    Mux4Way2__DOT____Vcellinp__i0__lut = (0x48cU | 
-                                          (((IData)(vlSelf->x0) 
-                                            << 0xcU) 
-                                           | (((IData)(vlSelf->x1) 
-                                               << 8U) 
-                                              | (((IData)(vlSelf->x2) 
-                                                  << 4U) 
-                                                 | (IData)(vlSelf->x3)))));
+    vlSelf->Mux4Way2__DOT____Vcellinp__i0__lut = (0x48cU 
+                                                  | (((IData)(vlSelf->x0) 
+                                                      << 0xcU) 
+                                                     | (((IData)(vlSelf->x1) 
+                                                         << 8U) 
+                                                        | (((IData)(vlSelf->x2) 
+                                                            << 4U) 
+                                                           | (IData)(vlSelf->x3)))));
     vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__pair_list[0U] 
-        = (0xfU & (IData)(Mux4Way2__DOT____Vcellinp__i0__lut));
+        = (0xfU & (IData)(vlSelf->Mux4Way2__DOT____Vcellinp__i0__lut));
     vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__pair_list[1U] 
-        = (0xfU & ((IData)(Mux4Way2__DOT____Vcellinp__i0__lut) 
+        = (0xfU & ((IData)(vlSelf->Mux4Way2__DOT____Vcellinp__i0__lut) 
                    >> 4U));
     vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__pair_list[2U] 
-        = (0xfU & ((IData)(Mux4Way2__DOT____Vcellinp__i0__lut) 
+        = (0xfU & ((IData)(vlSelf->Mux4Way2__DOT____Vcellinp__i0__lut) 
                    >> 8U));
     vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__pair_list[3U] 
-        = (0xfU & ((IData)(Mux4Way2__DOT____Vcellinp__i0__lut) 
+        = (0xfU & ((IData)(vlSelf->Mux4Way2__DOT____Vcellinp__i0__lut) 
                    >> 0xcU));
     vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__data_list[0U] 
         = (3U & vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__pair_list
            [0U]);
-    vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__key_list[0U] 
-        = (3U & (vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__pair_list
-                 [0U] >> 2U));
     vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__data_list[1U] 
         = (3U & vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__pair_list
            [1U]);
-    vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__key_list[1U] 
-        = (3U & (vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__pair_list
-                 [1U] >> 2U));
     vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__data_list[2U] 
         = (3U & vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__pair_list
            [2U]);
-    vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__key_list[2U] 
-        = (3U & (vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__pair_list
-                 [2U] >> 2U));
     vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__data_list[3U] 
         = (3U & vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__pair_list
            [3U]);
+    vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__key_list[0U] 
+        = (3U & (vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__pair_list
+                 [0U] >> 2U));
+    vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__key_list[1U] 
+        = (3U & (vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__pair_list
+                 [1U] >> 2U));
+    vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__key_list[2U] 
+        = (3U & (vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__pair_list
+                 [2U] >> 2U));
     vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__key_list[3U] 
         = (3U & (vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__pair_list
                  [3U] >> 2U));
-    Mux4Way2__DOT__i0__DOT__i0__DOT__lut_out = ((- (IData)(
-                                                           ((IData)(vlSelf->y) 
-                                                            == 
-                                                            vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__key_list
-                                                            [0U]))) 
-                                                & vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__data_list
-                                                [0U]);
-    Mux4Way2__DOT__i0__DOT__i0__DOT__lut_out = ((IData)(Mux4Way2__DOT__i0__DOT__i0__DOT__lut_out) 
-                                                | ((- (IData)(
-                                                              ((IData)(vlSelf->y) 
-                                                               == 
-                                                               vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__key_list
-                                                               [1U]))) 
-                                                   & vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__data_list
-                                                   [1U]));
-    Mux4Way2__DOT__i0__DOT__i0__DOT__lut_out = ((IData)(Mux4Way2__DOT__i0__DOT__i0__DOT__lut_out) 
-                                                | ((- (IData)(
-                                                              ((IData)(vlSelf->y) 
-                                                               == 
-                                                               vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__key_list
-                                                               [2U]))) 
-                                                   & vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__data_list
-                                                   [2U]));
-    Mux4Way2__DOT__i0__DOT__i0__DOT__lut_out = ((IData)(Mux4Way2__DOT__i0__DOT__i0__DOT__lut_out) 
-                                                | ((- (IData)(
-                                                              ((IData)(vlSelf->y) 
-                                                               == 
-                                                               vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__key_list
-                                                               [3U]))) 
-                                                   & vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__data_list
-                                                   [3U]));
-    vlSelf->f = Mux4Way2__DOT__i0__DOT__i0__DOT__lut_out;
+    vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__hit = 
+        ((IData)(vlSelf->y) == vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__key_list
+         [0U]);
+    vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__hit = 
+        ((IData)(vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__hit) 
+         | ((IData)(vlSelf->y) == vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__key_list
+            [1U]));
+    vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__hit = 
+        ((IData)(vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__hit) 
+         | ((IData)(vlSelf->y) == vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__key_list
+            [2U]));
+    vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__hit = 
+        ((IData)(vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__hit) 
+         | ((IData)(vlSelf->y) == vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__key_list
+            [3U]));
+    vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__lut_out 
+        = ((- (IData)(((IData)(vlSelf->y) == vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__key_list
+                       [0U]))) & vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__data_list
+           [0U]);
+    vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__lut_out 
+        = ((IData)(vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__lut_out) 
+           | ((- (IData)(((IData)(vlSelf->y) == vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__key_list
+                          [1U]))) & vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__data_list
+              [1U]));
+    vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__lut_out 
+        = ((IData)(vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__lut_out) 
+           | ((- (IData)(((IData)(vlSelf->y) == vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__key_list
+                          [2U]))) & vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__data_list
+              [2U]));
+    vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__lut_out 
+        = ((IData)(vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__lut_out) 
+           | ((- (IData)(((IData)(vlSelf->y) == vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__key_list
+                          [3U]))) & vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__data_list
+              [3U]));
+    vlSelf->f = vlSelf->Mux4Way2__DOT__i0__DOT__i0__DOT__lut_out;
 }
 
 void VMux4Way2___024root___eval(VMux4Way2___024root* vlSelf) {
@@ -97,6 +97,7 @@ void VMux4Way2___024root___eval(VMux4Way2___024root* vlSelf) {
     VL_DEBUG_IF(VL_DBG_MSGF("+    VMux4Way2___024root___eval\n"); );
     // Body
     VMux4Way2___024root___combo__TOP__0(vlSelf);
+    vlSelf->__Vm_traceActivity[1U] = 1U;
 }
 
 #ifdef VL_DEBUG
