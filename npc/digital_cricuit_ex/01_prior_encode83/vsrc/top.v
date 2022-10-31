@@ -5,7 +5,10 @@ module prior_encode83(x, en, y, ins, dig);
   output reg ins;
   output reg [6:0] dig;
   
-  decodeDig seg0 (.x (y), .out (dig));
+  wire [6:0] dig_temp;
+  decodeDig seg0 (.x (y), .out (dig_temp));
+  assign dig = dig_temp;
+
   integer i;
   always @(x or en) begin
 
