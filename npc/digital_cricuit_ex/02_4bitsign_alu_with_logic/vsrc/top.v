@@ -18,7 +18,7 @@ module alu (a, b, opt, out, of, cf, zf, sf);
   assign t_no_Cin = {4{1'b1}}^b;
   assign overflow = (a[3] == t_no_Cin[3]) && (out[3] != a[3]);
 
-  assign sf = out[3];
+  assign sf = 1'b0;
 
   always @ (a or b or opt) begin
     case (opt)
