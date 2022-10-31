@@ -7,7 +7,7 @@ module prior_encode83(x, en, y, ins);
   integer i;
   always @(x or en) begin
 
-    if (x) ins = 1;
+    if (x != 8'b00000000) ins = 1;
     else ins = 0;
 
     if (en) begin
