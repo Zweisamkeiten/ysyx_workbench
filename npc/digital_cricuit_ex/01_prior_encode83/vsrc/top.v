@@ -2,7 +2,7 @@ module prior_encode83(x, en, y, ins);
   input [7:0] x;
   input en;
   output reg [2:0] y;
-  output ins;
+  output reg ins;
   
   integer i;
   always @(x or en) begin
