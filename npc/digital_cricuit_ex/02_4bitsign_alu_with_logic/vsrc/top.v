@@ -19,7 +19,7 @@ module alu (a, b, opt, out, of, cf, zf, sf);
                 {cf, out} = a + b;
               end
       3'b001: begin // 减法
-                {cf, out} = a - b;
+                {cf, out} = a + {4{1'b0}}^b + 1;
               end
       3'b010: begin // 取反
                 {cf, out} = {1'b0, ~a};
