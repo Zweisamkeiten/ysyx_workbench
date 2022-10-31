@@ -35,7 +35,7 @@ module decodeDig(x, out);
 
   always @(x) begin
     case (x)
-      3'b000 : out = 7'b0000001; // 0
+      3'b000 : out = 7'b1000000; // 0
       3'b001 : out = 7'b1111001; // 1
       3'b010 : out = 7'b1100100; // 2
       3'b011 : out = 7'b0110000; // 3
