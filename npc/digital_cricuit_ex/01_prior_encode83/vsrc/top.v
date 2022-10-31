@@ -5,6 +5,7 @@ module prior_encode83(x, en, y, ins, dig);
   output reg ins;
   output reg [6:0] dig;
   
+  decodeDig seg0 (.x (y), .out (dig));
   integer i;
   always @(x or en) begin
 
@@ -17,10 +18,6 @@ module prior_encode83(x, en, y, ins, dig);
       begin
         if (x[i] == 1) begin
           y = i[2:0];
-          decodeDig seg0 (
-            .x (y),
-            .out (dig)
-          );
         end
       end
     end
