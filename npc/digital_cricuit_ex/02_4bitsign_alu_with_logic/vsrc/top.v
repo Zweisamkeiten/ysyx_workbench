@@ -14,7 +14,7 @@ module alu (a, b, opt, out, of, cf, zf, sf);
 
   reg [3:0] t_no_Cin = {4{1'b1}}^b;
 
-  always @ (a or b or opt)
+  always@ (*) begin
     case (opt)
       3'b000: begin // 加法
                 {cf, out} = a + b;
@@ -46,4 +46,5 @@ module alu (a, b, opt, out, of, cf, zf, sf);
     endcase
     overflow = (a[3] == t_no_Cin[3]) && (out[3] != a[3]);
     sf = out[3];
+  end
 endmodule
