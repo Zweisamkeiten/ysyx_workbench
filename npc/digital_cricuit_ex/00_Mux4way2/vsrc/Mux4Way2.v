@@ -9,7 +9,7 @@ module Mux4Way2 (x0, x1, x2, x3, y, f);
   MuxKey #(4, 2, 2) i0 (
     .out (f),
     .key (y),
-    .lux ({
+    .lut ({
           2'b00, x0,
           2'b01, x1,
           2'b10, x2,
