@@ -5,9 +5,12 @@
 
 static Vtop *top;
 
+void nvboard_bin_all_pins(Vtop *top);
+
 int main(int argc, char **argv, char **env) {
   top = new Vtop;
 
+  nvboard_bin_all_pins(top);
   nvboard_init();
 
   while (1) {
