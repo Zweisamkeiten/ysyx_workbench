@@ -31,7 +31,7 @@ endmodule
 
 module decodeDig(x, out);
   input [2:0] x;
-  output [6:0] out;
+  output reg [6:0] out;
 
   always @(x) begin
     case (x)
@@ -43,6 +43,7 @@ module decodeDig(x, out);
       3'b101 : out = 7'b0010010; // 5
       3'b110 : out = 7'b0000010; // 6
       3'b111 : out = 7'b1111000; // 7
+      default: out = 7'b0000001; // 0
     endcase
   end
 endmodule
