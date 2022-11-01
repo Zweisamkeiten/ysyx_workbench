@@ -10,7 +10,7 @@ module alu (a, b, opt, out, of, cf, zf, sf);
   assign out = tmp;
   assign sf = tmp[3];
   assign zf = |tmp ? 1'b0 : 1'b1;
-  assign of = (a[3] == b[3]) && (tmp[3] == a[3]);
+  assign of = (a[3] == b[3]) && (tmp[3] != a[3]);
 
   always @ (a or b or opt) begin
     cf = 0;
