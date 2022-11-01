@@ -1,6 +1,7 @@
-module shift_register_8bit (init, clk, out, seg0, seg1);
+module shift_register_8bit (init, clk, rst, out, seg0, seg1);
   input [7:0] init;
   input clk;
+  input rst;
   output [7:0] out;
   output [6:0] seg0, seg1;
 
@@ -11,6 +12,7 @@ module shift_register_8bit (init, clk, out, seg0, seg1);
 
   reg [7:0] count;
   always @(posedge clk) begin
+    if (rst) begin count <= 0; out <= 0; temp <= 0; end
     if (count == 0) temp <= init;
     else temp <= {out[4]^out[3]^out[2]^out[0], out[7:1]};
     count <= (count >= 255 ? 8'b0 : count + 1);
