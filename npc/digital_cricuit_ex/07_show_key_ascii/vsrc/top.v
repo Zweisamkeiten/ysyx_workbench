@@ -59,7 +59,7 @@ seg mu_seg(
     .o_seg7(seg7)
 );
 
-MuxKey #(37, 8, 8) scancode_to_ascii (.out (ascii), .key (scancode), .lux ({
+MuxKey #(37, 8, 8) scancode_to_ascii (.out (ascii), .key (scancode), .lut ({
   sa, ca,
   sb, cb,
   sc, cc,
