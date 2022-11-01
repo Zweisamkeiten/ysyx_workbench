@@ -17,7 +17,7 @@ int main(int argc, char **argv, char **env) {
 
   while (1) {
     top->eval();
-    printf("%d\n", top->clk);
+    printf("%d\n", top->init);
     nvboard_update();
   }
 
