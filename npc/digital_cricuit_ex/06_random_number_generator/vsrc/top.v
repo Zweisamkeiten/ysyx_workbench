@@ -4,8 +4,8 @@ module shift_register_8bit (init, clk, out, seg0, seg1);
   output reg [7:0] out;
   output [6:0] seg0, seg1;
 
-  decodeDig seg0 (.x (out[3:0]), .out (seg0));
-  decodeDig seg1 (.x (out[7:4]), .out (seg1));
+  decodeDig s0 (.x (out[3:0]), .out (seg0));
+  decodeDig s1 (.x (out[7:4]), .out (seg1));
 
   reg [7:0] count;
   always @(posedge clk) begin
