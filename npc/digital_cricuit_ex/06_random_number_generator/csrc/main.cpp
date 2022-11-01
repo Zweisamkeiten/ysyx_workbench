@@ -1,5 +1,6 @@
 #include "Vtop.h"
 #include <nvboard.h>
+#include <stdio.h>
 #include <verilated.h>
 #include <verilated_vcd_c.h>
 
@@ -16,6 +17,7 @@ int main(int argc, char **argv, char **env) {
 
   while (1) {
     top->eval();
+    printf("%d\n", top->clk);
     nvboard_update();
   }
 
