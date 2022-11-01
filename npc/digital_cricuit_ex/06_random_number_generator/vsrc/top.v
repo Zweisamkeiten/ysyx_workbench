@@ -1,16 +1,18 @@
 module shift_register_8bit (init, clk, out, seg0, seg1);
   input [7:0] init;
   input clk;
-  output reg [7:0] out;
+  output [7:0] out;
   output [6:0] seg0, seg1;
 
-  decodeDig s0 (.x (out[3:0]), .out (seg0));
-  decodeDig s1 (.x (out[7:4]), .out (seg1));
+  reg [7:0] temp;
+  assign out = temp;
+  decodeDig s0 (.x (temp[3:0]), .out (seg0));
+  decodeDig s1 (.x (temp[7:4]), .out (seg1));
 
   reg [7:0] count;
   always @(posedge clk) begin
-    if (count == 0) out <= init;
-    else out <= {out[4]^out[3]^out[2]^out[0], out[7:1]};
+    if (count == 0) temp <= init;
+    else temp <= {out[4]^out[3]^out[2]^out[0], out[7:1]};
     count <= (count >= 255 ? 8'b0 : count + 1);
   end
 endmodule
