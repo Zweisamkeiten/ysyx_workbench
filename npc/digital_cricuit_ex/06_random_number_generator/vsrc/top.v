@@ -2,7 +2,7 @@ module shift_register_8bit (init, clk, rst, out, seg0, seg1);
   input [7:0] init;
   input clk;
   input rst;
-  output [7:0] out;
+  output reg [7:0] out;
   output [6:0] seg0, seg1;
 
   reg [7:0] temp;
