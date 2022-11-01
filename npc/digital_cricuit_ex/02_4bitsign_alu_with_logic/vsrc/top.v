@@ -41,7 +41,7 @@ module alu (a, b, opt, out, of, cf, zf, sf);
                 {cf, tmp} = {1'b0, a & b};
               end
       3'b100: begin // 或
-                {cf, tmp} = {1'b0, a & b};
+                {cf, tmp} = {1'b0, a | b};
               end
       3'b101: begin // 异或
                 {cf, tmp} = {1'b0, a ^ b};
