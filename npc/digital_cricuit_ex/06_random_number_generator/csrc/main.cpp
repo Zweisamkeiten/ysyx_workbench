@@ -13,12 +13,11 @@ int main(int argc, char **argv, char **env) {
 
   nvboard_bind_all_pins(top);
   nvboard_init();
-  top->init = 0b00000001;
 
   while (1) {
+    if (top->init == 0)
+      top->init = 0b00000001;
     top->eval();
-    printf("%#04x\n", top->init);
-    printf("%#04x\n", top->out);
     nvboard_update();
   }
 
