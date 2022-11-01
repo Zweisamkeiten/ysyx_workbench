@@ -6,7 +6,7 @@ module alu (a, b, opt, out, of, cf, zf, sf);
   output of, zf, sf; // 溢出, 零标志, 符号标志
   output reg cf; // 进位标志
 
-  reg [4:0] tmp;
+  reg [3:0] tmp;
   assign out = tmp;
   assign sf = tmp[3];
   assign zf = |tmp ? 1'b0 : 1'b1;
