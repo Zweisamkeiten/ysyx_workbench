@@ -23,16 +23,16 @@ parameter [7:0] cspace = 32,
   c0 = 48, c1 = 49, c2 = 50, c3 = 51, c4 = 52,
   c5 = 53, c6 = 54, c7 = 55, c8 = 56, c9 = 57;
 
-parameter [7:0] sspase = 2'h29,
-  sa = 2'h1c, sb = 2'h32, sc = 2'h21, sd = 2'h23,
-  se = 2'h24, sf = 2'h2b, sg = 2'h34, sh = 2'h33,
-  si = 2'h43, sj = 2'h3b, sk = 2'h42, sl = 2'h43,
-  sm = 2'h3a, sn = 2'h31, so = 2'h44, sp = 2'h4d,
-  sq = 2'h15, sr = 2'h2d, ss = 2'h1b, st = 2'h2c,
-  su = 2'h3c, sv = 2'h21, sw = 2'h1d, sx = 2'h22,
-  sy = 2'h35, sz = 2'h1a,
-  s0 = 2'h0e, s1 = 2'h16, s2 = 2'h1e, s3 = 2'h26, s4 = 2'h25,
-  s5 = 2'h2e, s6 = 2'h36, s7 = 2'h3d, s8 = 2'h3e, s9 = 2'h46;
+parameter [7:0] sspase = 8'h29,
+  sa = 8'h1c, sb = 8'h32, sc = 8'h21, sd = 8'h23,
+  se = 8'h24, sf = 8'h2b, sg = 8'h34, sh = 8'h33,
+  si = 8'h43, sj = 8'h3b, sk = 8'h42, sl = 8'h43,
+  sm = 8'h3a, sn = 8'h31, so = 8'h44, sp = 8'h4d,
+  sq = 8'h15, sr = 8'h2d, ss = 8'h1b, st = 8'h2c,
+  su = 8'h3c, sv = 8'h21, sw = 8'h1d, sx = 8'h22,
+  sy = 8'h35, sz = 8'h1a,
+  s0 = 8'h0e, s1 = 8'h16, s2 = 8'h1e, s3 = 8'h26, s4 = 8'h25,
+  s5 = 8'h2e, s6 = 8'h36, s7 = 8'h3d, s8 = 8'h3e, s9 = 8'h46;
 
 wire [7:0] scancode, ascii, times;
 
