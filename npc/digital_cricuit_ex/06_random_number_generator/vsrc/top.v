@@ -9,7 +9,9 @@ module shift_register_8bit (init, clk, out, seg0, seg1);
 
   reg [7:0] count;
   always @(posedge clk) begin
-    if (count == 0) out <= 
+    if (count == 0) out <= init;
+    else out <= {out[4]^out[3]^out[2]^out[0], out[7:1]};
+    count <= (count >= 255 ? 8'b0 : count + 1);
   end
 endmodule
 
