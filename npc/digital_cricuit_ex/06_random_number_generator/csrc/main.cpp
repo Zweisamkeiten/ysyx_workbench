@@ -14,8 +14,10 @@ int main(int argc, char **argv, char **env) {
   nvboard_init();
   top->init = 0b00000001;
 
-  top->eval();
-  nvboard_update();
+  while (1) {
+    top->eval();
+    nvboard_update();
+  }
 
   top->final();
   delete top;
