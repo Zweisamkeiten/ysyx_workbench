@@ -12,6 +12,7 @@ int main(int argc, char **argv, char **env) {
 
   nvboard_bind_all_pins(top);
   nvboard_init();
+  top->init = 0b00000001;
 
   while (1) {
     top->eval();
