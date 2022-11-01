@@ -27,7 +27,7 @@ module ps2_keyboard(clk,resetn,ps2_clk,ps2_data, out, times);
                     (^buffer[9:1])) begin      // odd  parity
                     $display("receive %x", buffer[8:1]);
                     out <= buffer[8:1];
-                    times <= times + 1;
+                    if (buffer[8:1] == 8'hf0) times <= times + 1;
                 end
                 count <= 0;     // for next
               end else begin
