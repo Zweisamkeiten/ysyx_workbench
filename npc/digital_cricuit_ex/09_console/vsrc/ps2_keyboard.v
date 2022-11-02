@@ -4,7 +4,7 @@ module ps2_keyboard(clk,resetn,ps2_clk,ps2_data, out, chars);
     output reg [9:0] chars;
 
     initial begin
-      chars = 1;
+      chars = 0;
     end
     reg [9:0] buffer;        // ps2_data bits
     reg [3:0] count;  // count ps2_data bits
@@ -30,7 +30,7 @@ module ps2_keyboard(clk,resetn,ps2_clk,ps2_data, out, chars);
                     $display("chars %d", chars);
                     out <= buffer[8:1];
                     if (buffer[8:1] == 8'h5a) chars <= chars + 70 - chars % 70;
-                    if (buffer[8:1] == 8'hf0) chars <= chars - 1;
+                    if (buffer[8:1] == 8'hf0) chars <= chars;
                     else chars <= chars + 1;
                 end
                 count <= 0;     // for next
