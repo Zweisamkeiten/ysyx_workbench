@@ -61,7 +61,7 @@ MuxKeyWithDefault #(37, 8, 8) scancode_to_ascii (.out (cur_ascii), .key (scancod
   su, cu, sv, cv, sw, cw, sx, cx, sy, cy,
   sz, cz, s0, c0, s1, c1, s2, c2, s3, c3,
   s4, c4, s5, c5, s6, c6, s7, c7, s8, c8,
-  s9, c9, sspase, cspace
+  s9, c9, sspase, cspace, senter, center
   }));
 
 assign VGA_CLK = clk;
