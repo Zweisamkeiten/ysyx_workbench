@@ -47,10 +47,11 @@ always @(cur_ascii) begin
   if (|cur_ascii) begin
     if (cur_ascii == 8'hf0) chars = chars - 1;
     else begin
-      if (cur_ascii == 8'd13) chars = chars + 30 - cur_x;
+      if (cur_ascii == 8'd13) chars = chars + 30;
       else chars = chars + 1;
     end
   end
+  else chars = chars;
 end
 
 ps2_keyboard mcur_y_keyboard(
