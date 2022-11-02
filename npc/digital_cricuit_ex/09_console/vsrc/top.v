@@ -35,7 +35,6 @@ parameter [7:0] sspase = 8'h29, senter = 8'h5a,
   s5 = 8'h2e, s6 = 8'h36, s7 = 8'h3d, s8 = 8'h3e, s9 = 8'h46;
 
 wire [7:0] scancode, cur_ascii;
-reg [9:0] chars; // 字符数量
 reg [9:0] cur_x; // 0 <= x <= 69
 reg [9:0] cur_y; // 0 <= y <= 30
 reg [7:0] vga_mem [2099:0]; // 30 * 70 = 2100
@@ -43,15 +42,27 @@ reg [7:0] vga_mem [2099:0]; // 30 * 70 = 2100
 assign vga_mem[{cur_x[6:0], cur_y[4:0]}] = cur_ascii;
 always @(cur_ascii) begin
   if (|cur_ascii) begin
-    if (cur_ascii == 8'hf0) chars = chars - 1;
+    if (cur_ascii == 8'hf0) begin
+      cur_x <= cur_x - 1;
+    end
     else begin
-      if (cur_ascii == 8'd13) chars = chars + 30;
-      else chars = chars + 1;
+      if (cur_ascii == 8'd13) begin
+        cur_x <= 0;
+        cur_y <= cur_y + 1;
+      end
+      else begin
+        cur_x <= cur_x + 1;
+      end
     end
   end
-  else chars = chars;
-  cur_x = chars % 70;
-  cur_y = chars / 16;
+  else begin
+    cur_x <= cur_x;
+    cur_y <= cur_y;
+  end
+  if (cur_x == 30) begin
+    cur_x <= 0;
+    cur_y <= cur_y + 1;
+  end
 end
 
 ps2_keyboard mcur_y_keyboard(
