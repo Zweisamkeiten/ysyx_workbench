@@ -93,6 +93,7 @@ vga_ctrl my_vga_ctrl(
 wire [7:0] x; // 0 <= x <= 69
 wire [5:0] y; // 0 <= y <= 30
 wire [3:0] char_line; // 0 <= char_line <= 15
+wire [3:0] char_row, char_column;
 
 assign x = v_addr < 630 ? v_addr / 9 : 0;
 assign y = h_addr / 16;
