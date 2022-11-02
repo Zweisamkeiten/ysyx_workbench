@@ -104,7 +104,7 @@ initial begin
 end
 
 wire [8:0] char_line9bits;
-assign char_line9bits = fontmat_mem[16 * ascii + char_row[3:0]][8:0];
+assign char_line9bits = fontmat_mem[16 * ascii + char_row[7:0]][8:0];
 assign vga_data = char_line9bits[char_column[3:0]] ? {24{1'b0}} : {24{1'b1}};
 
 endmodule
