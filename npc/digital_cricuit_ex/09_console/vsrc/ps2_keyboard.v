@@ -33,7 +33,6 @@ module ps2_keyboard(clk,resetn,ps2_clk,ps2_data, out, chars);
                       if (buffer[8:1] == 8'hf0) chars <= chars - 1;
                       else chars <= chars + 1;
                     end
-                    $display(chars);
                 end
                 count <= 0;     // for next
               end else begin
