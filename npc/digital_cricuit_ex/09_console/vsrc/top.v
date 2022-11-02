@@ -12,7 +12,7 @@ module top (
     output [7:0] VGA_B
 );
 
-parameter [7:0] cspace = 32, center = 13,
+parameter [7:0] cspace = 32, center = 0,
   ca = 97, cb = 98, cc = 99, cd = 100,
   ce = 101, cf = 102, cg = 103, ch = 104,
   ci = 105, cj = 106, ck = 107, cl = 108,
