@@ -84,8 +84,8 @@ vga_ctrl my_vga_ctrl(
     .vga_b(VGA_B)
 );
 
-wire [7:0] x; // 0 <= x <= 69
-wire [5:0] y; // 0 <= y <= 30
+wire [9:0] x; // 0 <= x <= 69
+wire [9:0] y; // 0 <= y <= 30
 wire [3:0] char_line; // 0 <= char_line <= 15
 wire [3:0] char_row, char_column;
 
@@ -95,7 +95,7 @@ assign char_row = h_addr % 16;
 assign char_column = v_addr < 630 ? v_addr % 9 : 0;
 
 wire [7:0] ascii;
-assign ascii = vga_mem[{x, y}];
+assign ascii = vga_mem[{x[6:0], y[4:0]}];
 
 reg [11:0] fontmat_mem [4095:0]; // 12 * 4096 = 49152
 
