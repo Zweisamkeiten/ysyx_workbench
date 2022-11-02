@@ -30,7 +30,7 @@ module ps2_keyboard(clk,resetn,ps2_clk,ps2_data, out, chars);
                     out <= buffer[8:1];
                     if (buffer[8:1] == 8'h5a) chars <= chars + 70 - chars % 70;
                     else begin
-                      if (buffer[8:1] == 8'hf0) chars <= chars - 2;
+                      if (buffer[8:1] == 8'hf0) chars <= chars - 1;
                       else chars <= chars + 1;
                     end
                 end
