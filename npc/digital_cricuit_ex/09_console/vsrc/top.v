@@ -40,12 +40,6 @@ wire [7:0] cur_x; // 0 <= x <= 69
 wire [5:0] cur_y; // 0 <= y <= 30
 reg [7:0] vga_mem [2099:0]; // 30 * 70 = 2100
 
-
-initial begin
-  cur_x = 0;
-  cur_y = 0;
-end
-
 assign cur_x = chars % 70;
 assign cur_y = chars / 16;
 assign chars = |cur_ascii ? (cur_ascii == 8'b11110000 ? chars - 1 : chars + 1) : chars;
