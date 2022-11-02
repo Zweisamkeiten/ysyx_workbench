@@ -47,13 +47,13 @@ assign cur_y = chars / 16;
 assign vga_mem[{cur_x[6:0], cur_y[4:0]}] = cur_ascii;
 always @(cur_ascii) begin
   if (|cur_ascii) begin
-    if (cur_ascii == 8'hf0) temp = temp - 1;
+    if (cur_ascii == 8'hf0) temp = chars - 1;
     else begin
-      if (cur_ascii == 8'd13) temp = temp + 30 - cur_x;
-      else temp = temp + 1;
+      if (cur_ascii == 8'd13) temp = chars + 30 - cur_x;
+      else temp = chars + 1;
     end
   end
-  else temp = temp;
+  else temp = chars;
 end
 
 ps2_keyboard mcur_y_keyboard(
