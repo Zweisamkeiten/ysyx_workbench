@@ -43,7 +43,7 @@ reg [7:0] vga_mem [2099:0]; // 30 * 70 = 2100
 assign cur_x = chars % 70;
 assign cur_y = chars / 16;
 assign chars = |cur_ascii ? (cur_ascii == 8'b11110000 ? chars - 1 : chars + 1) : chars;
-assign vga_mem[{cur_x, cur_y}] = cur_ascii;
+assign vga_mem[{cur_x[6:0], cur_y[4:0]}] = cur_ascii;
 
 ps2_keyboard mcur_y_keyboard(
     .clk(clk),
