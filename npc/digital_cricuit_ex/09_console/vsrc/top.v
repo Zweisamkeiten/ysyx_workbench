@@ -50,8 +50,8 @@ always @(cur_ascii) begin
     end
   end
   else chars = chars;
-  cur_x <= chars % 70;
-  cur_y <= chars / 16;
+  cur_x = chars % 70;
+  cur_y = chars / 16;
 end
 
 ps2_keyboard mcur_y_keyboard(
