@@ -29,9 +29,9 @@ module ps2_keyboard(clk,resetn,ps2_clk,ps2_data, out, chars);
                     // $display("receive %x", buffer[8:1]);
                     $display("chars %d", chars);
                     out <= buffer[8:1];
-                    if (buffer[8:1] == 8'h5a) chars <= chars + 70 - chars % 70 - 1;
-                    if (buffer[8:1] == 8'hf0) chars <= chars - 1 - 1;
-                    chars <= chars + 1;
+                    if (buffer[8:1] == 8'h5a) chars <= chars + 70 - chars % 70;
+                    if (buffer[8:1] == 8'hf0) chars <= chars - 1;
+                    else chars <= chars + 1;
                 end
                 count <= 0;     // for next
               end else begin
