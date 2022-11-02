@@ -89,10 +89,10 @@ wire [9:0] y; // 0 <= y <= 30
 wire [3:0] char_line; // 0 <= char_line <= 15
 wire [9:0] char_row, char_column;
 
-assign x = v_addr < 630 ? v_addr / 9 : 0;
-assign y = h_addr / 16;
-assign char_row = h_addr % 16;
-assign char_column = v_addr < 630 ? v_addr % 9 : 0;
+assign x = h_addr < 630 ? h_addr / 9 : 0;
+assign y = v_addr / 16;
+assign char_row = v_addr % 16;
+assign char_column = h_addr < 630 ? h_addr % 9 : 0;
 
 wire [7:0] ascii;
 assign ascii = vga_mem[{x[6:0], y[4:0]}];
@@ -105,6 +105,6 @@ end
 
 wire [8:0] char_line9bits;
 assign char_line9bits = fontmat_mem[16 * ascii + char_row[7:0]][8:0];
-assign vga_data = char_line9bits[char_column[3:0]] ? {24{1'b0}} : {24{1'b1}};
+assign vga_data = char_line9bits[char_column[3:0]] ? {24{1'b1}} : {24{1'b0}};
 
 endmodule
