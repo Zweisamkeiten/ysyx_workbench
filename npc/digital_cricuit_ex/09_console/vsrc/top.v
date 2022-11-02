@@ -53,7 +53,7 @@ ps2_keyboard mcur_y_keyboard(
     .chars (chars)
 );
 
-MuxKeyWithDefault #(37, 8, 8) scancode_to_ascii (.out (cur_ascii), .key (scancode), .default_out ({8{1'b1}}), .lut ({
+MuxKeyWithDefault #(38, 8, 8) scancode_to_ascii (.out (cur_ascii), .key (scancode), .default_out ({8{1'b1}}), .lut ({
   sa, ca, sb, cb, sc, cc, sd, cd, se, ce,
   sf, cf, sg, cg, sh, ch, si, ci, sj, cj,
   sk, ck, sl, cl, sm, cm, sn, cn, so, co,
