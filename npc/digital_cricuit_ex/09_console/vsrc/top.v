@@ -36,8 +36,8 @@ parameter [7:0] sspase = 8'h29, senter = 8'h5a,
 
 wire [7:0] scancode, cur_ascii;
 wire [9:0] chars; // 字符数量
-wire [7:0] cur_x; // 0 <= x <= 69
-wire [5:0] cur_y; // 0 <= y <= 30
+wire [9:0] cur_x; // 0 <= x <= 69
+wire [9:0] cur_y; // 0 <= y <= 30
 reg [7:0] vga_mem [2099:0]; // 30 * 70 = 2100
 
 assign cur_x = chars % 70;
