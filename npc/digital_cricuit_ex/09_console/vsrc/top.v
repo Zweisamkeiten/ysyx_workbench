@@ -42,7 +42,7 @@ reg [7:0] vga_mem [2099:0]; // 30 * 70 = 2100
 
 assign cur_x = chars % 70;
 assign cur_y = chars / 70;
-assign vga_mem[{cur_x[6:0], cur_y[4:0]}] = cur_ascii != 8'hf0 ? cur_ascii : 8'h00;
+assign vga_mem[{cur_x[6:0], cur_y[4:0]}] = cur_ascii != 8'hff ? cur_ascii : 8'h00;
 
 ps2_keyboard mcur_y_keyboard(
     .clk(clk),
@@ -53,7 +53,7 @@ ps2_keyboard mcur_y_keyboard(
     .chars (chars)
 );
 
-MuxKey #(37, 8, 8) scancode_to_ascii (.out (cur_ascii), .key (scancode), .lut ({
+MuxKeyWithDefault #(37, 8, 8) scancode_to_ascii (.out (cur_ascii), .key (scancode), .default_out ({8{1'b1}}), .lut ({
   sa, ca, sb, cb, sc, cc, sd, cd, se, ce,
   sf, cf, sg, cg, sh, ch, si, ci, sj, cj,
   sk, ck, sl, cl, sm, cm, sn, cn, so, co,
