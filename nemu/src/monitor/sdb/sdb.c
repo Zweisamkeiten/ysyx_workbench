@@ -52,6 +52,25 @@ static int cmd_q(char *args) {
   return -1;
 }
 
+static int cmd_si(char *args) {
+  char *steps_str = strtok(args, " ");
+
+  if (steps_str != NULL) {
+    char **invalid = NULL;
+    uint64_t steps = strtoll(steps_str, invalid, 10);
+    if (*steps_str != '\0' && **invalid == '\0') {
+      cpu_exec(steps);
+      return 0;
+    }
+  } else {
+    cpu_exec(1);
+    return 0;
+  }
+
+  Log(ANSI_FMT("ERROR: si [steps]", ANSI_FG_RED));
+  return -1;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -64,6 +83,7 @@ static struct {
   { "q", "Exit NEMU", cmd_q },
 
   /* TODO: Add more commands */
+  { "si", "single step", cmd_si },
 
 };
 
