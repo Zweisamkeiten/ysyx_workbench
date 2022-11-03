@@ -56,10 +56,12 @@ static int cmd_si(char *args) {
   char *steps_str = strtok(args, " ");
 
   if (steps_str != NULL) {
-    char **invalid = NULL;
+    char **invalid = malloc(sizeof(char *));
+    *invalid = NULL;
     uint64_t steps = strtoll(steps_str, invalid, 10);
-    if (*steps_str != '\0' && ( *invalid != NULL || **invalid == '\0' )) {
+    if (*steps_str != '\0' && ( *invalid == NULL || **invalid == '\0' )) {
       cpu_exec(steps);
+      free(invalid);
       return 0;
     }
   } else {
