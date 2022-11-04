@@ -102,7 +102,7 @@ static int cmd_x(char *args) {
 
     if (*n_str != '\0' && **invalid == '\0') {
       free(invalid);
-      char *esp_str = strtok(args, " ");
+      char *esp_str = strtok(NULL, " ");
 
       if (esp_str != NULL) {
         char **invalid = malloc(sizeof(char *));
