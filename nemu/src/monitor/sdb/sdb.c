@@ -111,7 +111,7 @@ static int cmd_x(char *args) {
 
         if (*esp_str != '\0' && **invalid == '\0') {
           free(invalid);
-          for (int i = 0; i < n; addr += i, ++i) {
+          for (int i = 0; i < n; addr += 8, ++i) {
             word_t data = paddr_read(addr, 8);
             printf("%#lx:\t%lx\t%lu\n", addr, data, data);
           }
