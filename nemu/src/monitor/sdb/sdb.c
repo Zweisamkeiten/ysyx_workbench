@@ -79,7 +79,8 @@ static int cmd_info(char *args) {
     if (strcmp(sub_cmd, "r") == 0) {
       // print the reg state
       isa_reg_display();
-      printf("%s\t%#lx\t\t%lu\n", "pc", cpu.pc, cpu.pc);
+      printf("%s\t\t%#lx\t%lu\n", "pc", cpu.pc, cpu.pc);
+      return 0;
     }
     else if (strcmp(sub_cmd, "w") == 0) {
       // print the watchpoint state
