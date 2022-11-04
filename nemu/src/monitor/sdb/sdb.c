@@ -83,6 +83,7 @@ static int cmd_info(char *args) {
       // print the watchpoint state
     }
   }
+  Log(ANSI_FMT("ERROR: info [r/w]", ANSI_FG_RED));
   return -1;
 }
 
