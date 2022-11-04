@@ -17,6 +17,7 @@
 #include <cpu/cpu.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+#include "memory/paddr.h"
 #include "sdb.h"
 
 static int is_batch_mode = false;
@@ -91,36 +92,40 @@ static int cmd_info(char *args) {
   return -1;
 }
 
-// static int cmd_x(char *args) {
-//   char *sub_cmd = strtok(args, " ");
+static int cmd_x(char *args) {
+  char *sub_cmd = strtok(args, " ");
 
-//   if (sub_cmd != NULL) {
-//     char *n_str = strtok(args, " ");
+  if (sub_cmd != NULL) {
+    char *n_str = strtok(args, " ");
 
-//     if (n_str != NULL) {
-//       char **invalid = malloc(sizeof(char *));
-//       *invalid = NULL;
-//       uint64_t n = strtoll(n_str, invalid, 10);
+    if (n_str != NULL) {
+      char **invalid = malloc(sizeof(char *));
+      *invalid = NULL;
+      uint64_t n = strtoll(n_str, invalid, 10);
 
-//       if (*n_str != '\0' && **invalid == '\0') {
-//         char *esp_str = strtok(args, " ");
+      if (*n_str != '\0' && **invalid == '\0') {
+        char *esp_str = strtok(args, " ");
 
-//         if (esp_str != NULL) {
-//           char **invalid = malloc(sizeof(char *));
-//           *invalid = NULL;
-//           uint64_t addr = strtoll(esp_str, invalid, 16);
+        if (esp_str != NULL) {
+          char **invalid = malloc(sizeof(char *));
+          *invalid = NULL;
+          uint64_t addr = strtoll(esp_str, invalid, 16);
 
-//           if (*esp_str != '\0' && **invalid == '\0') {
-//           }
-//         }
-//         free(invalid);
-//         return 0;
-//       }
-//     }
+          if (*esp_str != '\0' && **invalid == '\0') {
+            for (int i = 0; i < n; ++i) {
+              paddr_read(addr + i, 8);
+            }
+          }
+          free(invalid);
+        }
+        free(invalid);
+        return 0;
+      }
+    }
 
-//   }
-//   return -1;
-// }
+  }
+  return -1;
+}
 
 static int cmd_help(char *args);
 
@@ -136,7 +141,7 @@ static struct {
   /* TODO: Add more commands */
   { "si", "single step", cmd_si },
   { "info", "print the program state", cmd_info },
-  // { "x", "scan memory", cmd_x },
+  { "x", "scan memory", cmd_x },
 
 };
 
