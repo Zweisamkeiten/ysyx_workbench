@@ -72,7 +72,7 @@ static int cmd_si(char *args) {
   }
 
   Log(ANSI_FMT("ERROR: si [steps]", ANSI_FG_RED));
-  return -1;
+  return 0;
 }
 
 static int cmd_info(char *args) {
@@ -88,8 +88,8 @@ static int cmd_info(char *args) {
       // print the watchpoint state
     }
   }
-  Log(ANSI_FMT("ERROR: info [r/w]", ANSI_FG_RED));
-  return -1;
+  Log(ANSI_FMT("ERROR: info <r/w>", ANSI_FG_RED));
+  return 0;
 }
 
 static int cmd_x(char *args) {
@@ -121,7 +121,8 @@ static int cmd_x(char *args) {
     }
   }
 
-  return -1;
+  Log(ANSI_FMT("ERROR: x <N> <EXPR>", ANSI_FG_RED));
+  return 0;
 }
 
 static int cmd_help(char *args);
