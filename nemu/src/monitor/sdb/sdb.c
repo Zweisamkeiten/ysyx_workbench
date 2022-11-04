@@ -73,6 +73,19 @@ static int cmd_si(char *args) {
   return -1;
 }
 
+static int cmd_info(char *args) {
+  char *sub_cmd = strtok(args, " ");
+  if (sub_cmd != NULL) {
+    if (strcmp(sub_cmd, "r") == 0) {
+      // print the reg state
+    }
+    else if (strcmp(sub_cmd, "w") == 0) {
+      // print the watchpoint state
+    }
+  }
+  return -1;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -86,6 +99,7 @@ static struct {
 
   /* TODO: Add more commands */
   { "si", "single step", cmd_si },
+  { "info", "print the program state", cmd_info },
 
 };
 
