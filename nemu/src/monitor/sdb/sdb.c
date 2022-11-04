@@ -49,6 +49,7 @@ static int cmd_c(char *args) {
 
 
 static int cmd_q(char *args) {
+  nemu_state.state = NEMU_QUIT;
   return -1;
 }
 
@@ -73,6 +74,54 @@ static int cmd_si(char *args) {
   return -1;
 }
 
+static int cmd_info(char *args) {
+  char *sub_cmd = strtok(args, " ");
+  if (sub_cmd != NULL) {
+    if (strcmp(sub_cmd, "r") == 0) {
+      // print the reg state
+      isa_reg_display();
+      printf("%s\t\t%#lx\t%lu\n", "pc", cpu.pc, cpu.pc);
+      return 0;
+    }
+    else if (strcmp(sub_cmd, "w") == 0) {
+      // print the watchpoint state
+    }
+  }
+  Log(ANSI_FMT("ERROR: info [r/w]", ANSI_FG_RED));
+  return -1;
+}
+
+// static int cmd_x(char *args) {
+//   char *sub_cmd = strtok(args, " ");
+
+//   if (sub_cmd != NULL) {
+//     char *n_str = strtok(args, " ");
+
+//     if (n_str != NULL) {
+//       char **invalid = malloc(sizeof(char *));
+//       *invalid = NULL;
+//       uint64_t n = strtoll(n_str, invalid, 10);
+
+//       if (*n_str != '\0' && **invalid == '\0') {
+//         char *esp_str = strtok(args, " ");
+
+//         if (esp_str != NULL) {
+//           char **invalid = malloc(sizeof(char *));
+//           *invalid = NULL;
+//           uint64_t addr = strtoll(esp_str, invalid, 16);
+
+//           if (*esp_str != '\0' && **invalid == '\0') {
+//           }
+//         }
+//         free(invalid);
+//         return 0;
+//       }
+//     }
+
+//   }
+//   return -1;
+// }
+
 static int cmd_help(char *args);
 
 static struct {
@@ -86,6 +135,8 @@ static struct {
 
   /* TODO: Add more commands */
   { "si", "single step", cmd_si },
+  { "info", "print the program state", cmd_info },
+  // { "x", "scan memory", cmd_x },
 
 };
 
