@@ -17,7 +17,7 @@
 #include <cpu/cpu.h>
 #include <readline/readline.h>
 #include <readline/history.h>
-#include "memory/paddr.h"
+#include "memory/vaddr.h"
 #include "sdb.h"
 
 static int is_batch_mode = false;
@@ -113,7 +113,7 @@ static int cmd_x(char *args) {
 
           if (*esp_str != '\0' && **invalid == '\0') {
             for (int i = 0; i < n; ++i) {
-              paddr_read(addr + i, 8);
+              vaddr_read(addr + i, 8);
             }
           }
           free(invalid);
