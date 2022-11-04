@@ -17,6 +17,7 @@
 #include <cpu/cpu.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+#include "memory/paddr.h"
 #include "sdb.h"
 
 static int is_batch_mode = false;
@@ -91,6 +92,38 @@ static int cmd_info(char *args) {
   return -1;
 }
 
+static int cmd_x(char *args) {
+  char *n_str = strtok(args, " ");
+
+  if (n_str != NULL) {
+    char **invalid = malloc(sizeof(char *));
+    *invalid = NULL;
+    uint64_t n = strtoll(n_str, invalid, 10);
+
+    if (*n_str != '\0' && **invalid == '\0') {
+      free(invalid);
+      char *esp_str = strtok(NULL, " ");
+
+      if (esp_str != NULL) {
+        char **invalid = malloc(sizeof(char *));
+        *invalid = NULL;
+        uint64_t addr = strtoll(esp_str, invalid, 16);
+
+        if (*esp_str != '\0' && **invalid == '\0') {
+          free(invalid);
+          for (int i = 0; i < n; addr += 4, ++i) {
+            uint32_t data = paddr_read(addr, 4);
+            printf("%#lx:\t0x%08x\n", addr, data);
+          }
+          return 0;
+        }
+      }
+    }
+  }
+
+  return -1;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -105,6 +138,7 @@ static struct {
   /* TODO: Add more commands */
   { "si", "single step", cmd_si },
   { "info", "print the program state", cmd_info },
+  { "x", "scan memory", cmd_x },
 
 };
 
