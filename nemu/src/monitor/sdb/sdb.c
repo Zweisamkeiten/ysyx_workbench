@@ -93,37 +93,33 @@ static int cmd_info(char *args) {
 }
 
 static int cmd_x(char *args) {
-  char *sub_cmd = strtok(args, " ");
+  char *n_str = strtok(args, " ");
 
-  if (sub_cmd != NULL) {
-    char *n_str = strtok(NULL, " ");
+  if (n_str != NULL) {
+    char **invalid = malloc(sizeof(char *));
+    *invalid = NULL;
+    uint64_t n = strtoll(n_str, invalid, 10);
 
-    if (n_str != NULL) {
-      char **invalid = malloc(sizeof(char *));
-      *invalid = NULL;
-      uint64_t n = strtoll(n_str, invalid, 10);
+    if (*n_str != '\0' && **invalid == '\0') {
+      free(invalid);
+      char *esp_str = strtok(args, " ");
 
-      if (*n_str != '\0' && **invalid == '\0') {
-        char *esp_str = strtok(args, " ");
+      if (esp_str != NULL) {
+        char **invalid = malloc(sizeof(char *));
+        *invalid = NULL;
+        uint64_t addr = strtoll(esp_str, invalid, 16);
 
-        if (esp_str != NULL) {
-          char **invalid = malloc(sizeof(char *));
-          *invalid = NULL;
-          uint64_t addr = strtoll(esp_str, invalid, 16);
-
-          if (*esp_str != '\0' && **invalid == '\0') {
-            for (int i = 0; i < n; ++i) {
-              paddr_read(addr + i, 8);
-            }
-          }
+        if (*esp_str != '\0' && **invalid == '\0') {
           free(invalid);
+          for (int i = 0; i < n; ++i) {
+            paddr_read(addr + i, 8);
+          }
+          return 0;
         }
-        free(invalid);
-        return 0;
       }
     }
-
   }
+
   return -1;
 }
 
