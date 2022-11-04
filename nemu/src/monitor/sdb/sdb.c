@@ -17,7 +17,7 @@
 #include <cpu/cpu.h>
 #include <readline/readline.h>
 #include <readline/history.h>
-#include "memory/vaddr.h"
+#include "memory/paddr.h"
 #include "sdb.h"
 
 static int is_batch_mode = false;
@@ -96,7 +96,7 @@ static int cmd_x(char *args) {
   char *sub_cmd = strtok(args, " ");
 
   if (sub_cmd != NULL) {
-    char *n_str = strtok(args, " ");
+    char *n_str = strtok(NULL, " ");
 
     if (n_str != NULL) {
       char **invalid = malloc(sizeof(char *));
@@ -113,7 +113,7 @@ static int cmd_x(char *args) {
 
           if (*esp_str != '\0' && **invalid == '\0') {
             for (int i = 0; i < n; ++i) {
-              vaddr_read(addr + i, 8);
+              paddr_read(addr + i, 8);
             }
           }
           free(invalid);
