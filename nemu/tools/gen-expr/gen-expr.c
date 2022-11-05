@@ -1,3 +1,4 @@
+// clang-format off
 /***************************************************************************************
 * Copyright (c) 2014-2022 Zihao Yu, Nanjing University
 *
@@ -47,7 +48,7 @@ static char code_buf[65536 + 128] = {}; // a little larger than `buf`
 static char *code_format =
 "#include <stdio.h>\n"
 "int main() { "
-"  unsigned long result = %s; "
+"  unsigned long long result = %s; "
 "  printf(\"%%llu\", result); "
 "  return 0; "
 "}";
@@ -100,16 +101,32 @@ void gen_rand_op() {
   }
 }
 
+// clang-format on
 static void gen_rand_expr() {
   if (is_overflow) {
     return;
   }
   switch (choose(3)) {
-    case 0: gen_random_space(); gen_num(); gen_random_space();break;
-    case 1: gen('('); gen_rand_expr(); gen(')'); break;
-    default: gen_rand_expr(); gen_random_space(); gen_rand_op(); gen_random_space(); gen_rand_expr(); break;
+  case 0:
+    gen_random_space();
+    gen_num();
+    gen_random_space();
+    break;
+  case 1:
+    gen('(');
+    gen_rand_expr();
+    gen(')');
+    break;
+  default:
+    gen_rand_expr();
+    gen_random_space();
+    gen_rand_op();
+    gen_random_space();
+    gen_rand_expr();
+    break;
   }
 }
+// clang-format off
 
 int main(int argc, char *argv[]) {
   int seed = time(0);
@@ -136,7 +153,7 @@ int main(int argc, char *argv[]) {
     fputs(code_buf, fp);
     fclose(fp);
 
-    int ret = system("gcc /tmp/.code.c -o /tmp/.expr");
+    int ret = system("gcc /tmp/.code.c -o /tmp/.expr -Wall -Werror");
     if (ret != 0) continue;
 
     fp = popen("/tmp/.expr", "r");
