@@ -77,7 +77,7 @@ void init_regex() {
 
 typedef struct token {
   int type;
-  char str[64];
+  char str[32];
 } Token;
 
 static Token tokens[32] __attribute__((used)) = {};
@@ -112,7 +112,7 @@ static bool make_token(char *e) {
             break;
           default:
             tokens[nr_token].type = rules[i].token_type;
-            if (substr_len >= 64) {
+            if (substr_len >= 32) {
               Assert(0, "token string too long.\n");
               return false;
             }
