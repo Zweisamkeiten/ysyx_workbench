@@ -60,7 +60,7 @@ static int cmd_si(char *args) {
   if (steps_str != NULL) {
     char **invalid = malloc(sizeof(char *));
     *invalid = NULL;
-    uint64_t steps = strtoll(steps_str, invalid, 10);
+    uint64_t steps = strtoull(steps_str, invalid, 10);
     if (*steps_str != '\0' && **invalid == '\0') {
       cpu_exec(steps);
       free(invalid);
@@ -98,7 +98,7 @@ static int cmd_x(char *args) {
   if (n_str != NULL) {
     char **invalid = malloc(sizeof(char *));
     *invalid = NULL;
-    uint64_t n = strtoll(n_str, invalid, 10);
+    uint64_t n = strtoull(n_str, invalid, 10);
 
     if (*n_str != '\0' && **invalid == '\0') {
       free(invalid);
@@ -131,7 +131,7 @@ static int cmd_p(char *args) {
   bool success = true;
   word_t result = expr(e, &success);
   if (success == true) {
-    printf("$expr = %ld\n", result);
+    printf("$expr = %lu\n", result);
   } else {
     printf(ANSI_FMT("A syntax error in expression.\n", ANSI_FG_RED));
   }
