@@ -21,7 +21,6 @@
 #include <regex.h>
 
 enum {
-  TK_NOTYPE = 256,
   TK_DECIMALINT,
   TK_EQ,
   TK_PLUS,
@@ -30,6 +29,7 @@ enum {
   TK_DIVIDE,
   TK_BRACKET_L,
   TK_BRACKET_R,
+  TK_NOTYPE = 256,
 };
 
 static struct rule {
@@ -41,8 +41,8 @@ static struct rule {
    * Pay attention to the precedence level of different rules.
    */
 
-  {" +", TK_NOTYPE},    // spaces
-  {"[[:digit:]]+", TK_DECIMALINT}, // decimal integer
+  {"\\s", TK_NOTYPE},    // spaces
+  {"[[:digit:]]+u?", TK_DECIMALINT}, // decimal integer
   {"\\+", TK_PLUS},     // plus
   {"-", TK_MINUS},      // minus
   {"\\*", TK_MULTIPLY}, // minus
