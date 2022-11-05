@@ -1,3 +1,4 @@
+// clang-format off
 /***************************************************************************************
 * Copyright (c) 2014-2022 Zihao Yu, Nanjing University
 *
@@ -84,6 +85,14 @@ typedef struct token {
 static Token tokens[32] __attribute__((used)) = {};
 static int nr_token __attribute__((used))  = 0;
 
+// check the token type is not binary operator
+bool is_binary_operator(int type) {
+  if (TK_PLUS <= type && type < TK_DIVIDE) {
+    return true;
+  }
+  return false;
+}
+
 static bool make_token(char *e) {
   int position = 0;
   int i;
@@ -111,6 +120,11 @@ static bool make_token(char *e) {
         switch (rules[i].token_type) {
           case TK_NOTYPE:
             break;
+          case TK_MINUS:
+            if (nr_token == 0 || is_binary_operator(tokens[nr_token - 1].type) ||
+              tokens[nr_token - 1].type == TK_NEGATIVE) {
+              rules[i].token_type = TK_NEGATIVE;
+            }
           default:
             tokens[nr_token].type = rules[i].token_type;
             if (substr_len >= 32) {
@@ -141,6 +155,7 @@ int priority(int type) {
     case TK_MINUS: return TK_PLUS;
     case TK_MULTIPLY:
     case TK_DIVIDE: return TK_MULTIPLY;
+    case TK_NEGATIVE: return TK_NEGATIVE;
     default: return TK_NOTYPE;
   }
 }
@@ -235,8 +250,11 @@ word_t eval(int p, int q, bool *is_valid) {
       return 0;
     }
     int op = find_main_operator(p, q);
-    word_t val1 = eval(p, op - 1, is_valid);
-    word_t val2 = eval(op + 1, q, is_valid);
+    word_t val1 = 0, val2 = 0;
+    if (is_binary_operator(tokens[op].type)) {
+      val1 = eval(p, op - 1, is_valid);
+      val2 = eval(op + 1, q, is_valid);
+    }
 
     switch (tokens[op].type) {
       case TK_PLUS: return val1 + val2;
@@ -251,6 +269,8 @@ word_t eval(int p, int q, bool *is_valid) {
           // val1/0.0f = inf, inf => uint64_t == 0
           return val1 / 0.0f;
         }
+      case TK_NEGATIVE:
+        return 0u - eval(op + 1, q, is_valid);
       default: assert(0);
     }
   }
