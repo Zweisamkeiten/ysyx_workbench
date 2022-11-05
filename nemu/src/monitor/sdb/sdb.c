@@ -131,7 +131,7 @@ static int cmd_p(char *args) {
   bool success = true;
   word_t result = expr(e, &success);
   if (success == true) {
-    printf("$expr = %ld\n", result);
+    printf("$expr = %lu\n", result);
   } else {
     printf(ANSI_FMT("A syntax error in expression.\n", ANSI_FG_RED));
   }
