@@ -42,7 +42,7 @@ static struct rule {
    * Pay attention to the precedence level of different rules.
    */
 
-  {" +", TK_NOTYPE},    // spaces
+  {"\\s", TK_NOTYPE},    // spaces
   {"0x[[:xdigit:]]+u?", TK_DECIMALINT}, // decimal integer
   {"[\\-]?[[:digit:]]+u?", TK_DECIMALINT}, // decimal integer
   {"\\+", TK_PLUS},     // plus
