@@ -134,20 +134,20 @@ static bool make_token(char *e) {
 
 int find_main_operator(int p, int q) {
   int op_position = p;
-  bool in_parentheses = false;
+  int parentheses_stack = 0;
   for (int i = p; i <= q; i++) {
     int current_type = tokens[i].type;
     switch (current_type) {
     case TK_DECIMALINT:
       break;
     case TK_BRACKET_L:
-      in_parentheses = true;
+      parentheses_stack++;
       break;
     case TK_BRACKET_R:
-      in_parentheses = false;
+      parentheses_stack--;
       break;
     default:
-      if (in_parentheses == false ) {
+      if (parentheses_stack == 0 ) {
         if (op_position == p || current_type <= tokens[op_position].type) {
           op_position = i;
         }
