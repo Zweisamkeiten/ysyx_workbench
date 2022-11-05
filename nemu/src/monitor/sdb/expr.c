@@ -132,6 +132,16 @@ static bool make_token(char *e) {
   return true;
 }
 
+int priority(int type) {
+  switch (type) {
+    case TK_PLUS:
+    case TK_MINUS: return TK_PLUS;
+    case TK_MULTIPLY:
+    case TK_DIVIDE: return TK_MULTIPLY;
+    default: return TK_NOTYPE;
+  }
+}
+
 int find_main_operator(int p, int q) {
   int op_position = p;
   int parentheses_stack = 0;
@@ -148,7 +158,7 @@ int find_main_operator(int p, int q) {
       break;
     default:
       if (parentheses_stack == 0 ) {
-        if (op_position == p || current_type <= tokens[op_position].type) {
+        if (op_position == p || priority(current_type) <= priority(tokens[op_position].type)) {
           op_position = i;
         }
       }
