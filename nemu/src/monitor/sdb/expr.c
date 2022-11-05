@@ -87,7 +87,7 @@ static int nr_token __attribute__((used))  = 0;
 
 // check the token type is not binary operator
 bool is_binary_operator(int type) {
-  if (TK_PLUS <= type && type < TK_DIVIDE) {
+  if (TK_PLUS <= type && type <= TK_DIVIDE) {
     return true;
   }
   return false;
