@@ -44,7 +44,7 @@ static struct rule {
 
   {"\\s", TK_NOTYPE},    // spaces
   {"0x[[:xdigit:]]+u?", TK_DECIMALINT}, // decimal integer
-  {"[\\-]?[[:digit:]]+u?", TK_DECIMALINT}, // decimal integer
+  {"[[:digit:]]+u?", TK_DECIMALINT}, // decimal integer
   {"\\+", TK_PLUS},     // plus
   {"-", TK_MINUS},      // minus
   {"\\*", TK_MULTIPLY}, // minus
