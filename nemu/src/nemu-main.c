@@ -36,7 +36,10 @@ int main(int argc, char *argv[]) {
   while(fscanf(fp, "%lu", &result) == 1) {
     fgets(buf, sizeof(buf), fp);
     bool success = true;
-    printf("%lu\t|\t%lu\n", result, expr(buf, &success));
+    uint64_t ans = expr(buf, &success);
+    if (result != ans) {
+      printf("%lu\t|\t%lu\n", result, expr(buf, &success));
+    }
   }
 
   /* Start engine. */
