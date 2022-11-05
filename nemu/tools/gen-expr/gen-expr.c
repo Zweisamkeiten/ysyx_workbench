@@ -31,8 +31,16 @@ static char *code_format =
 "  return 0; "
 "}";
 
+uint64_t choose(uint64_t n) {
+  return rand() % n;
+}
+
 static void gen_rand_expr() {
-  buf[0] = '\0';
+  switch (choose(3)) {
+    case 0: gen_num(); break;
+    case 1: gen('('); gen_rand_expr(); gen(')'); break;
+    default: gen_rand_expr(); gen_rand_op(); gen_rand_expr(); break;
+  }
 }
 
 int main(int argc, char *argv[]) {
@@ -59,11 +67,11 @@ int main(int argc, char *argv[]) {
     fp = popen("/tmp/.expr", "r");
     assert(fp != NULL);
 
-    int result;
-    fscanf(fp, "%d", &result);
+    unsigned long long int result;
+    fscanf(fp, "%lld", &result);
     pclose(fp);
 
-    printf("%u %s\n", result, buf);
+    printf("%llu %s\n", result, buf);
   }
   return 0;
 }
