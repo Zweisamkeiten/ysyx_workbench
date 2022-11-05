@@ -126,9 +126,11 @@ static bool make_token(char *e) {
               tokens[nr_token - 1].type == TK_NEGATIVE ||
               tokens[nr_token - 1].type == TK_BRACKET_L) {
               tokens[nr_token].type = TK_NEGATIVE;
+              break;
             }
           default:
             tokens[nr_token].type = rules[i].token_type;
+            break;
         }
 
         if (substr_len >= 32) {
