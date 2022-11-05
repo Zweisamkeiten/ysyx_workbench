@@ -132,13 +132,15 @@ static bool make_token(char *e) {
             break;
         }
 
-        if (substr_len >= 32) {
-          Assert(0, "token string too long.\n");
-          return false;
+        if (rules[i].token_type != TK_NOTYPE) {
+          if (substr_len >= 32) {
+            Assert(0, "token string too long.\n");
+            return false;
+          }
+          strncpy(tokens[nr_token].str, substr_start, substr_len);
+          tokens[nr_token].str[substr_len] = '\0';
+          nr_token += 1;
         }
-        strncpy(tokens[nr_token].str, substr_start, substr_len);
-        tokens[nr_token].str[substr_len] = '\0';
-        nr_token += 1;
 
         break;
       }
