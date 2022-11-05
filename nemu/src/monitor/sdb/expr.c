@@ -146,8 +146,10 @@ int find_main_operator(int p, int q) {
       in_parentheses = false;
       break;
     default:
-      if (in_parentheses == false && current_type <= tokens[op_position].type ) {
-        op_position = i;
+      if (in_parentheses == false ) {
+        if (op_position == p || current_type <= tokens[op_position].type) {
+          op_position = i;
+        }
       }
     }
   }
