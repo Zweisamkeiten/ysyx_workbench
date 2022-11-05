@@ -71,7 +71,7 @@ static int cmd_si(char *args) {
     return 0;
   }
 
-  Log(ANSI_FMT("ERROR: si [steps]", ANSI_FG_RED));
+  printf(ANSI_FMT("ERROR: si [steps]", ANSI_FG_RED));
   return 0;
 }
 
@@ -88,7 +88,7 @@ static int cmd_info(char *args) {
       // print the watchpoint state
     }
   }
-  Log(ANSI_FMT("ERROR: info <r/w>", ANSI_FG_RED));
+  printf(ANSI_FMT("ERROR: info <r/w>", ANSI_FG_RED));
   return 0;
 }
 
@@ -121,7 +121,20 @@ static int cmd_x(char *args) {
     }
   }
 
-  Log(ANSI_FMT("ERROR: x <N> <EXPR>", ANSI_FG_RED));
+  printf(ANSI_FMT("ERROR: x <N> <EXPR>", ANSI_FG_RED));
+  return 0;
+}
+
+static int cmd_p(char *args) {
+  char *e= args;
+  // assume the expr is valid
+  bool success = true;
+  word_t result = expr(e, &success);
+  if (success == true) {
+    printf("$expr = %ld\n", result);
+  } else {
+    printf(ANSI_FMT("A syntax error in expression.\n", ANSI_FG_RED));
+  }
   return 0;
 }
 
@@ -140,6 +153,7 @@ static struct {
   { "si", "single step", cmd_si },
   { "info", "print the program state", cmd_info },
   { "x", "scan memory", cmd_x },
+  { "p", "eval the expression", cmd_p },
 
 };
 

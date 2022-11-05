@@ -112,6 +112,7 @@ static bool make_token(char *e) {
           default:
             tokens[nr_token].type = rules[i].token_type;
             if (substr_len >= 32) {
+              Assert(0, "token string too long.\n");
               return false;
             }
             strncpy(tokens[nr_token].str, substr_start, substr_len);
@@ -131,6 +132,107 @@ static bool make_token(char *e) {
   return true;
 }
 
+int find_main_operator(int p, int q) {
+  int op_position = p;
+  bool in_parentheses = false;
+  for (int i = p; i <= q; i++) {
+    int current_type = tokens[i].type;
+    switch (current_type) {
+    case TK_DECIMALINT:
+      break;
+    case TK_BRACKET_L:
+      in_parentheses = true;
+      break;
+    case TK_BRACKET_R:
+      in_parentheses = false;
+      break;
+    default:
+      if (in_parentheses == false) {
+        op_position = i;
+      }
+    }
+  }
+
+  return op_position;
+}
+
+/*
+ * check if the expression is surrounded
+ * by a matching pair of parentheses
+ */
+bool check_parentheses(int p, int q, bool *is_valid) {
+  // false, the whole expression is not surrounded by a matched
+  if (tokens[p].type != TK_BRACKET_L || tokens[q].type != TK_BRACKET_R) {
+    return false;
+  }
+
+  bool flag = true;
+  int parentheses_stack = 1;
+  for (int i = p+1; i <= q; i++) {
+    if (tokens[i].type == TK_BRACKET_L) {
+      parentheses_stack++;
+    }
+    else if (tokens[i].type == TK_BRACKET_R) {
+      parentheses_stack--;
+    }
+
+    if (parentheses_stack == 0 && i != q) {
+      flag = false;
+    }
+
+    if (parentheses_stack < 0) {
+      *is_valid = false;
+    }
+  }
+  return flag;
+}
+
+/*
+ * eval the sub expression.
+ */
+word_t eval(int p, int q, bool *is_valid) {
+  if (*is_valid == false) {
+    return 0;
+  }
+
+  if (p > q) {
+    /* Bad expression */
+    Assert(0, "Bad expression.\n");
+  }
+  else if (p == q) {
+    /*
+     * Single token.
+     * For now this token should be a number.
+     * Return the value of the number
+     */
+    return strtol(tokens[p].str, NULL, 0);
+  }
+  else if (check_parentheses(p, q, is_valid) == true) {
+    /*
+     * The expression is surrounded by a matched pair of parentheses.
+     * If that is the case, just throw away the parentheses.
+     */
+    return eval(p+1, q-1, is_valid);
+  }
+  else {
+    // check_parentheses found illegal
+    if (*is_valid == false) {
+      return 0;
+    }
+    int op = find_main_operator(p, q);
+    word_t val1 = eval(p, op - 1, is_valid);
+    word_t val2 = eval(op + 1, q, is_valid);
+
+    switch (tokens[op].type) {
+      case TK_PLUS: return val1 + val2;
+      case TK_MINUS: return val1 - val2;
+      case TK_MULTIPLY: return val1 * val2;
+      case TK_DIVIDE: return val1 / val2;
+      default: assert(0);
+    }
+  }
+}
+
 
 word_t expr(char *e, bool *success) {
   if (!make_token(e)) {
@@ -139,7 +241,6 @@ word_t expr(char *e, bool *success) {
   }
 
   /* TODO: Insert codes to evaluate the expression. */
-  TODO();
-
-  return 0;
+  word_t result = eval(0, nr_token, success);
+  return result;
 }
