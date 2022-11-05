@@ -26,13 +26,21 @@ static char code_buf[65536 + 128] = {}; // a little larger than `buf`
 static char *code_format =
 "#include <stdio.h>\n"
 "int main() { "
-"  unsigned result = %s; "
+"  unsigned result = 1u*%s; "
 "  printf(\"%%u\", result); "
 "  return 0; "
 "}";
 
 uint64_t choose(uint64_t n) {
-  return rand() % n;
+  uint64_t r = 0;
+  for (int i = 0; i < 64; i++) {
+    r = r * 2 + rand() % 2;
+  }
+  return r % n;
+}
+
+uint64_t gen_num() {
+  return choose(-1);
 }
 
 static void gen_rand_expr() {

@@ -43,8 +43,8 @@ static struct rule {
    */
 
   {" +", TK_NOTYPE},    // spaces
-  {"0x[[:xdigit:]]+", TK_DECIMALINT}, // decimal integer
-  {"[\\-]?[[:digit:]]+", TK_DECIMALINT}, // decimal integer
+  {"0x[[:xdigit:]]+u?", TK_DECIMALINT}, // decimal integer
+  {"[\\-]?[[:digit:]]+u?", TK_DECIMALINT}, // decimal integer
   {"\\+", TK_PLUS},     // plus
   {"-", TK_MINUS},      // minus
   {"\\*", TK_MULTIPLY}, // minus
@@ -77,7 +77,7 @@ void init_regex() {
 
 typedef struct token {
   int type;
-  char str[32];
+  char str[64];
 } Token;
 
 static Token tokens[32] __attribute__((used)) = {};
@@ -112,7 +112,7 @@ static bool make_token(char *e) {
             break;
           default:
             tokens[nr_token].type = rules[i].token_type;
-            if (substr_len >= 32) {
+            if (substr_len >= 64) {
               Assert(0, "token string too long.\n");
               return false;
             }
