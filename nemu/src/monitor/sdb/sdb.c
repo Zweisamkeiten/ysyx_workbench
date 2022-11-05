@@ -125,6 +125,19 @@ static int cmd_x(char *args) {
   return 0;
 }
 
+static int cmd_p(char *args) {
+  char *e= args;
+  // assume the expr is valid
+  bool success = true;
+  word_t result = expr(e, &success);
+  if (success == true) {
+    printf("$expr = %ld\n", result);
+  } else {
+    printf(ANSI_FMT("A syntax error in expression.\n", ANSI_FG_RED));
+  }
+  return 0;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -140,6 +153,7 @@ static struct {
   { "si", "single step", cmd_si },
   { "info", "print the program state", cmd_info },
   { "x", "scan memory", cmd_x },
+  { "p", "eval the expression", cmd_p },
 
 };
 
