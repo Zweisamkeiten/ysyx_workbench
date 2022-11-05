@@ -37,9 +37,12 @@ int main(int argc, char *argv[]) {
     fgets(buf, sizeof(buf), fp);
     bool success = true;
     uint64_t ans = expr(buf, &success);
+    printf("Diff:\n");
     if (result != ans) {
       printf("%lu\t|\t%lu\n", result, ans);
     }
+    printf("Compare Done!\n");
+    return 0;
   }
 
   /* Start engine. */
