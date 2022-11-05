@@ -46,8 +46,7 @@ static struct rule {
   {"\\+", TK_PLUS},     // plus
   {"-", TK_MINUS},      // minus
   {"\\*", TK_MULTIPLY}, // minus
-  {"\\/", TK_MULTIPLY}, // divide
-  {"\\/", TK_MULTIPLY}, // divide
+  {"\\/", TK_DIVIDE},   // divide
   {"\\(", TK_BRACKET_L},// bracket_L
   {"\\)", TK_BRACKET_R},// bracket_R
   {"==", TK_EQ},        // equal
