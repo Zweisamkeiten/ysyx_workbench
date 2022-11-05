@@ -239,7 +239,15 @@ word_t eval(int p, int q, bool *is_valid) {
       case TK_PLUS: return val1 + val2;
       case TK_MINUS: return val1 - val2;
       case TK_MULTIPLY: return val1 * val2;
-      case TK_DIVIDE: return val1 / val2;
+      case TK_DIVIDE: 
+        if (val2 != 0) {
+          return val1 / val2;
+        }
+        else {
+          // make divide zero have a defined bahavior
+          // val1/0.0f = inf, inf => uint64_t == 0
+          return val1 / 0.0f;
+        }
       default: assert(0);
     }
   }
