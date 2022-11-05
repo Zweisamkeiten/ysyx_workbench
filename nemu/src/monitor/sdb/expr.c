@@ -21,8 +21,8 @@
 #include <regex.h>
 
 enum {
-  TK_NOTYPE = 256,
   TK_DECIMALINT,
+  TK_HEXDECIMALINT,
   TK_EQ,
   TK_PLUS,
   TK_MINUS,
@@ -30,6 +30,7 @@ enum {
   TK_DIVIDE,
   TK_BRACKET_L,
   TK_BRACKET_R,
+  TK_NOTYPE = 256,
 };
 
 static struct rule {
@@ -42,7 +43,8 @@ static struct rule {
    */
 
   {" +", TK_NOTYPE},    // spaces
-  {"[[:digit:]]+", TK_DECIMALINT}, // decimal integer
+  {"[\\-]?[[:digit:]]+", TK_DECIMALINT}, // decimal integer
+  {"[\\-]?[[:xdigit:]]+", TK_DECIMALINT}, // decimal integer
   {"\\+", TK_PLUS},     // plus
   {"-", TK_MINUS},      // minus
   {"\\*", TK_MULTIPLY}, // minus
@@ -206,7 +208,7 @@ word_t eval(int p, int q, bool *is_valid) {
      * For now this token should be a number.
      * Return the value of the number
      */
-    return strtol(tokens[p].str, NULL, 0);
+    return strtoll(tokens[p].str, NULL, 0);
   }
   else if (check_parentheses(p, q, is_valid) == true) {
     /*
