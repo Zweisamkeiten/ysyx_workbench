@@ -28,19 +28,19 @@ int main(int argc, char *argv[]) {
 #else
   init_monitor(argc, argv);
 #endif
-  // char buf[65536] = {};
-  // FILE *fp = fopen("./tools/gen-expr/input", "r");
-  // assert(fp != NULL);
+  char buf[65536] = {};
+  FILE *fp = fopen("./tools/gen-expr/input", "r");
+  assert(fp != NULL);
 
-  // uint64_t result;
-  // while(fscanf(fp, "%lu", &result) == 1) {
-  //   fgets(buf, sizeof(buf), fp);
-  //   bool success = true;
-  //   printf("%lu\t|\t%lu\n", result, expr(buf, &success));
-  // }
+  uint64_t result;
+  while(fscanf(fp, "%lu", &result) == 1) {
+    fgets(buf, sizeof(buf), fp);
+    bool success = true;
+    printf("%lu\t|\t%lu\n", result, expr(buf, &success));
+  }
 
   /* Start engine. */
-  engine_start();
+  // engine_start();
 
   return is_exit_status_bad();
 }

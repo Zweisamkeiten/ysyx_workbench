@@ -160,7 +160,7 @@ int main(int argc, char *argv[]) {
     assert(fp != NULL);
 
     unsigned long long int result;
-    fscanf(fp, "%lld", &result);
+    fscanf(fp, "%llu", &result);
     pclose(fp);
 
     printf("%llu %s\n", result, buf);
