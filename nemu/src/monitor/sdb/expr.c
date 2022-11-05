@@ -207,7 +207,7 @@ word_t eval(int p, int q, bool *is_valid) {
      * For now this token should be a number.
      * Return the value of the number
      */
-    return strtol(tokens[p].str, NULL, 0);
+    return strtoull(tokens[p].str, NULL, 0);
   }
   else if (check_parentheses(p, q, is_valid) == true) {
     /*
