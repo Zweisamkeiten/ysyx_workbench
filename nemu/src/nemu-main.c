@@ -37,9 +37,7 @@ int main(int argc, char *argv[]) {
     fgets(buf, sizeof(buf), fp);
     bool success = true;
     uint64_t ans = expr(buf, &success);
-    if (result != ans) {
-      printf("%lu\t|\t%lu\n", result, expr(buf, &success));
-    }
+    printf("%lu\t|\t%lu\n", result, ans);
   }
 
   /* Start engine. */
