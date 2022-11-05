@@ -121,8 +121,10 @@ static bool make_token(char *e) {
           case TK_NOTYPE:
             break;
           case TK_MINUS:
-            if (nr_token == 0 || is_binary_operator(tokens[nr_token - 1].type) ||
-              tokens[nr_token - 1].type == TK_NEGATIVE) {
+            if (nr_token == 0 ||
+              is_binary_operator(tokens[nr_token - 1].type) ||
+              tokens[nr_token - 1].type == TK_NEGATIVE ||
+              tokens[nr_token - 1].type == TK_BRACKET_L) {
               tokens[nr_token].type = TK_NEGATIVE;
             }
           default:
