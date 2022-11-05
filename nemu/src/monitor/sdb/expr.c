@@ -123,10 +123,12 @@ static bool make_token(char *e) {
           case TK_MINUS:
             if (nr_token == 0 || is_binary_operator(tokens[nr_token - 1].type) ||
               tokens[nr_token - 1].type == TK_NEGATIVE) {
-              rules[i].token_type = TK_NEGATIVE;
+              tokens[nr_token].type = TK_NEGATIVE;
             }
           default:
-            tokens[nr_token].type = rules[i].token_type;
+            if(tokens[nr_token].type == 0) {
+              tokens[nr_token].type = rules[i].token_type;
+            }
             if (substr_len >= 32) {
               Assert(0, "token string too long.\n");
               return false;
