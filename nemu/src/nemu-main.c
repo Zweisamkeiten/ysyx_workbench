@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
   init_monitor(argc, argv);
 #endif
   char buf[65536] = {};
-  FILE *fp = fopen("../tools/gen-expr/input", "r");
+  FILE *fp = fopen("./tools/gen-expr/input", "r");
   assert(fp != NULL);
 
   uint64_t result;
