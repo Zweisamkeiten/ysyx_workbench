@@ -128,7 +128,7 @@ static bool make_token(char *e) {
               tokens[nr_token].type = TK_NEGATIVE;
             }
           default:
-            if(tokens[nr_token].type == 0) {
+            if(tokens[nr_token].type != TK_NEGATIVE) {
               tokens[nr_token].type = rules[i].token_type;
             }
             if (substr_len >= 32) {
