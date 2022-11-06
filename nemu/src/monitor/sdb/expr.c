@@ -21,6 +21,7 @@
 #include <regex.h>
 
 enum {
+  TK_HEXDECIMALINT,
   TK_DECIMALINT,
   TK_EQ,
   TK_PLUS,
@@ -43,6 +44,7 @@ static struct rule {
    */
 
   {"\\s", TK_NOTYPE},    // spaces
+  {"0x[[:xdigit:]]+u?", TK_HEXDECIMALINT}, // Hex decimal integer
   {"[[:digit:]]+u?", TK_DECIMALINT}, // decimal integer
   {"\\+", TK_PLUS},     // plus
   {"-", TK_MINUS},      // minus
@@ -171,6 +173,8 @@ int find_main_operator(int p, int q) {
     int current_type = tokens[i].type;
     switch (current_type) {
     case TK_DECIMALINT:
+      break;
+    case TK_HEXDECIMALINT:
       break;
     case TK_BRACKET_L:
       parentheses_stack++;
