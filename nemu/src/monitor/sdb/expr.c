@@ -23,6 +23,7 @@
 enum {
   TK_HEXDECIMALINT,
   TK_DECIMALINT,
+  TK_REG,
   TK_AND,
   TK_EQ,
   TK_NOTEQ,
@@ -48,6 +49,7 @@ static struct rule {
   {"\\s", TK_NOTYPE},    // spaces
   {"0x[[:xdigit:]]+u?", TK_HEXDECIMALINT}, // Hex decimal integer
   {"[[:digit:]]+u?", TK_DECIMALINT}, // decimal integer
+  { "\\$((\\$0)|(ra)|(s((1[0-1])|[0-9]|p))|(a[0-7])|gp|(t([0-6]|p))|pc)", TK_REG}, // reg_name
   {"\\+", TK_PLUS},     // plus
   {"-", TK_MINUS},      // minus
   {"\\*", TK_MULTIPLY}, // minus
@@ -184,6 +186,8 @@ int find_main_operator(int p, int q) {
       break;
     case TK_HEXDECIMALINT:
       break;
+    case TK_REG:
+      break;
     case TK_BRACKET_L:
       parentheses_stack++;
       break;
@@ -253,9 +257,16 @@ word_t eval(int p, int q, bool *is_valid) {
   else if (p == q) {
     /*
      * Single token.
-     * For now this token should be a number.
+     * For now this token should be a number or a reg.
      * Return the value of the number
      */
+    if (tokens[p].type == TK_REG) {
+      word_t val = isa_reg_str2val(tokens[p].str + 1, is_valid);
+      if (is_valid == false) {
+        printf(ANSI_FMT("Get reg %s value failed.\n", ANSI_FG_RED), tokens[p].str);
+      }
+      return val;
+    }
     return strtoull(tokens[p].str, NULL, 0);
   }
   else if (check_parentheses(p, q, is_valid) == true) {
