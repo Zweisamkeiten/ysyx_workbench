@@ -111,8 +111,9 @@ void diff_watchpoint_value() {
     word_t new_value = expr(i->expr, &success);
     if (new_value != i->value) {
       printf(ANSI_FMT("Watchpoint %d: %s\n", ANSI_FG_BLUE)
-             ANSI_FMT("value:\t0x%016lx -> 0x%016lx\n", ANSI_FG_GREEN)
-             ANSI_FMT("\t%020lu -> %020lu\n", ANSI_FG_GREEN), i->NO, i->expr, i->value, new_value, i->value, new_value);
+             ANSI_FMT("value:\t", ANSI_BG_MAGENTA)
+             ANSI_FMT("0x%016lx\t->\t0x%016lx\n", ANSI_FG_GREEN)
+             ANSI_FMT("\t%020lu\t->\t%020lu\n", ANSI_FG_GREEN), i->NO, i->expr, i->value, new_value, i->value, new_value);
       i->value = new_value;
         nemu_state.state = NEMU_STOP;
     }
