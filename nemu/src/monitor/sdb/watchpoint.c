@@ -62,4 +62,5 @@ void free_wp(WP *wp) {
 void set_watchpoint(char *e) {
   WP* new = new_wp();
   new->expr = e;
+  printf(ANSI_FMT("Hardware watchpoint %d: %s\n", ANSI_FG_GREEN), new->NO, new->expr);
 }
