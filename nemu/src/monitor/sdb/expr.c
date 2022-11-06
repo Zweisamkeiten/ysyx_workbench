@@ -24,6 +24,7 @@ enum {
   TK_HEXDECIMALINT,
   TK_DECIMALINT,
   TK_EQ,
+  TK_NOTEQ,
   TK_PLUS,
   TK_MINUS,
   TK_MULTIPLY,
@@ -53,6 +54,7 @@ static struct rule {
   {"\\(", TK_BRACKET_L},// bracket_L
   {"\\)", TK_BRACKET_R},// bracket_R
   {"==", TK_EQ},        // equal
+  {"!=", TK_NOTEQ},     // not equal
 };
 
 #define NR_REGEX ARRLEN(rules)
@@ -86,7 +88,7 @@ static int nr_token __attribute__((used))  = 0;
 
 // check the token type is not binary operator
 bool is_binary_operator(int type) {
-  if (TK_PLUS <= type && type <= TK_DIVIDE) {
+  if (TK_EQ <= type && type <= TK_DIVIDE) {
     return true;
   }
   return false;
@@ -155,6 +157,7 @@ static bool make_token(char *e) {
   return true;
 }
 
+// 主要用于结合性 判断优先级来选择主运算符
 int priority(int type) {
   switch (type) {
     case TK_PLUS:
@@ -162,6 +165,8 @@ int priority(int type) {
     case TK_MULTIPLY:
     case TK_DIVIDE: return TK_MULTIPLY;
     case TK_NEGATIVE: return TK_NEGATIVE;
+    case TK_EQ:
+    case TK_NOTEQ: return TK_EQ;
     default: return TK_NOTYPE;
   }
 }
@@ -284,6 +289,10 @@ word_t eval(int p, int q, bool *is_valid) {
         }
       case TK_NEGATIVE:
         return 0u - eval(op + 1, q, is_valid);
+      case TK_EQ:
+        return val1 == val2;
+      case TK_NOTEQ:
+        return val1 != val2;
       default: assert(0);
     }
   }
