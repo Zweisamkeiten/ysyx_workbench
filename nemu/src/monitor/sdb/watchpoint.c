@@ -56,7 +56,12 @@ WP* new_wp() {
 
 void free_wp(WP *wp) {
   free(wp->expr);
-  head = head->next;
+  for (WP *i = head; i != NULL; i = i->next) {
+    if (i->next == wp) {
+      i->next = wp->next;
+      break;
+    }
+  }
   wp->next = free_;
   free_ = wp;
 }
