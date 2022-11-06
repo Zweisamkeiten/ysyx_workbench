@@ -64,6 +64,7 @@ void free_wp(WP *wp) {
 int set_watchpoint(char *e, word_t value) {
   WP* new = new_wp();
   char *expr = calloc(1, sizeof(char) * (strlen(e) + 1));
+  strcpy(e, expr);
   new->expr = expr;
   new->value = value;
   return new->NO;
