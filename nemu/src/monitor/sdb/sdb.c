@@ -131,7 +131,7 @@ static int cmd_p(char *args) {
   bool success = true;
   word_t result = expr(e, &success);
   if (success == true) {
-    printf(ANSI_FMT("$expr = ", ANSI_FG_CYAN) ANSI_FMT("%lu\n", ANSI_FG_GREEN), result);
+    printf(ANSI_FMT("$expr = ", ANSI_FG_CYAN) ANSI_FMT("0x%016lx\t", ANSI_FG_GREEN) ANSI_FMT("%020lu\n", ANSI_FG_GREEN), result, result);
   } else {
     printf(ANSI_FMT("A syntax error in expression.\n", ANSI_FG_RED));
   }
