@@ -13,6 +13,7 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+#include "memory/paddr.h"
 #include <isa.h>
 
 /* We use the POSIX regex functions to process regular expressions.
@@ -313,6 +314,8 @@ word_t eval(int p, int q, bool *is_valid) {
         }
       case TK_NEGATIVE:
         return 0u - eval(op + 1, q, is_valid);
+      case TK_DEREFERENCE:
+        return paddr_read(eval(op+1, q, is_valid), 8);
       case TK_EQ:
         return val1 == val2;
       case TK_NOTEQ:
