@@ -71,7 +71,7 @@ static int cmd_si(char *args) {
     return 0;
   }
 
-  printf(ANSI_FMT("ERROR: si [steps]", ANSI_FG_RED));
+  printf(ANSI_FMT("ERROR: si [steps]\n", ANSI_FG_RED));
   return 0;
 }
 
@@ -88,7 +88,7 @@ static int cmd_info(char *args) {
       // print the watchpoint state
     }
   }
-  printf(ANSI_FMT("ERROR: info <r/w>", ANSI_FG_RED));
+  printf(ANSI_FMT("ERROR: info <r/w>\n", ANSI_FG_RED));
   return 0;
 }
 
@@ -121,20 +121,26 @@ static int cmd_x(char *args) {
     }
   }
 
-  printf(ANSI_FMT("ERROR: x <N> <EXPR>", ANSI_FG_RED));
+  printf(ANSI_FMT("ERROR: x <N> <EXPR>\n", ANSI_FG_RED));
   return 0;
 }
 
 static int cmd_p(char *args) {
   char *e= args;
-  // assume the expr is valid
-  bool success = true;
-  word_t result = expr(e, &success);
-  if (success == true) {
-    printf(ANSI_FMT("$expr = ", ANSI_FG_CYAN) ANSI_FMT("0x%016lx\t", ANSI_FG_GREEN) ANSI_FMT("%020lu\n", ANSI_FG_GREEN), result, result);
-  } else {
-    printf(ANSI_FMT("A syntax error in expression.\n", ANSI_FG_RED));
+
+  if (e != NULL) {
+    // assume the expr is valid
+    bool success = true;
+    word_t result = expr(e, &success);
+    if (success == true) {
+      printf(ANSI_FMT("$expr = ", ANSI_FG_CYAN) ANSI_FMT("0x%016lx\t", ANSI_FG_GREEN) ANSI_FMT("%020lu\n", ANSI_FG_GREEN), result, result);
+    } else {
+      printf(ANSI_FMT("A syntax error in expression.\n", ANSI_FG_RED));
+    }
+    return 0;
   }
+
+  printf(ANSI_FMT("ERROR: p <EXPR>\n", ANSI_FG_RED));
   return 0;
 }
 
