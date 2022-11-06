@@ -115,7 +115,7 @@ void diff_watchpoint_value() {
              ANSI_FMT("0x%016lx\t->\t0x%016lx\n", ANSI_FG_GREEN)
              ANSI_FMT("\t%020lu\t->\t%020lu\n", ANSI_FG_GREEN), i->NO, i->expr, i->value, new_value, i->value, new_value);
       i->value = new_value;
-        nemu_state.state = NEMU_STOP;
+      nemu_state.state = NEMU_STOP;
     }
   }
 }
