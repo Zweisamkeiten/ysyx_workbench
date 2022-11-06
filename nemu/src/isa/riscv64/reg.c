@@ -25,7 +25,7 @@ const char *regs[] = {
 
 void isa_reg_display() {
   for (int i = 0; i < 4; ++i) {
-    printf("%s\t\t%#20lx\t%20lu\n", reg_name(i, 64), gpr(i), gpr(i));
+    printf("%s\t\t%#020lx\t%020lu\n", reg_name(i, 64), gpr(i), gpr(i));
   }
 }
 
