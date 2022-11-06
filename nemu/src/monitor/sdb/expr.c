@@ -208,7 +208,7 @@ int find_main_operator(int p, int q) {
               switch (current_type) {
               case TK_NEGATIVE:
               case TK_DEREFERENCE: break;
-              default: op_position = i;
+              default: if(is_binary_operator(current_type)) op_position = i;
               }
           }
           else {
