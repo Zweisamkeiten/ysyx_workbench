@@ -49,7 +49,7 @@ static struct rule {
   {"\\s", TK_NOTYPE},    // spaces
   {"0x[[:xdigit:]]+u?", TK_HEXDECIMALINT}, // Hex decimal integer
   {"[[:digit:]]+u?", TK_DECIMALINT}, // decimal integer
-  { "\\$((\\$0)|(ra)|(s([0-9]|1[0-1])|p)|(a[0-7])|gp|(t([0-6]|p))|pc)", TK_REG}, // reg_name
+  { "\\$((\\$0)|(ra)|(s([0-9]|1[0-1]|p))|(a[0-7])|gp|(t([0-6]|p))|pc)", TK_REG}, // reg_name
   {"\\+", TK_PLUS},     // plus
   {"-", TK_MINUS},      // minus
   {"\\*", TK_MULTIPLY}, // minus
