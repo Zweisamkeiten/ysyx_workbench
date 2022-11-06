@@ -21,8 +21,9 @@
 #include <regex.h>
 
 enum {
-  TK_DECIMALINT,
   TK_HEXDECIMALINT,
+  TK_DECIMALINT,
+  TK_REG,
   TK_EQ,
   TK_PLUS,
   TK_MINUS,
@@ -44,7 +45,7 @@ static struct rule {
    */
 
   {"\\s", TK_NOTYPE},    // spaces
-  {"0x[[:xdigit:]]+u?", TK_DECIMALINT}, // decimal integer
+  {"0x[[:xdigit:]]+u?", TK_HEXDECIMALINT}, // Hex decimal integer
   {"[[:digit:]]+u?", TK_DECIMALINT}, // decimal integer
   {"\\+", TK_PLUS},     // plus
   {"-", TK_MINUS},      // minus
