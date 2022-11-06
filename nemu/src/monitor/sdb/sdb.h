@@ -19,5 +19,6 @@
 #include <common.h>
 
 word_t expr(char *e, bool *success);
+void set_watchpoint(char *e);
 
 #endif

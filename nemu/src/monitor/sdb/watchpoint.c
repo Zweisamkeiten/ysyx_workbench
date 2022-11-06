@@ -22,6 +22,7 @@ typedef struct watchpoint {
   struct watchpoint *next;
 
   /* TODO: Add more members if necessary */
+  const char * expr;
 
 } WP;
 
@@ -56,4 +57,9 @@ void free_wp(WP *wp) {
   head = head->next;
   wp->next = free_;
   free_ = wp;
+}
+
+void set_watchpoint(char *e) {
+  WP* new = new_wp();
+  new->expr = e;
 }

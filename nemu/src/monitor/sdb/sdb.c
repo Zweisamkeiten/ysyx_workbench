@@ -138,6 +138,12 @@ static int cmd_p(char *args) {
   return 0;
 }
 
+static int cmd_w(char *args) {
+  char *e= args;
+  set_watchpoint(e);
+  return 0;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -154,6 +160,7 @@ static struct {
   { "info", "print the program state", cmd_info },
   { "x", "scan memory", cmd_x },
   { "p", "eval the expression", cmd_p },
+  { "w", "set a new watchpoint", cmd_w },
 
 };
 
