@@ -94,7 +94,7 @@ bool delete_watchpoint(int n) {
 
 void watchpoints_display() {
   printf("\n");
-  printf(ANSI_FMT("Num\tType\tWhat\tValue\n", ANSI_BG_MAGENTA));
+  printf(ANSI_FMT("Num\tType\t\tWhat\tValue\n", ANSI_BG_MAGENTA));
   for (WP *i = head; i != NULL; i = i->next) {
     printf(ANSI_FMT("%d", ANSI_FG_BLUE)
            ANSI_FMT("\twatchpoint\t", ANSI_FG_GREEN)
