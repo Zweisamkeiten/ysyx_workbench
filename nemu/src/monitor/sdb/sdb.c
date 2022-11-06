@@ -86,6 +86,8 @@ static int cmd_info(char *args) {
     }
     else if (strcmp(sub_cmd, "w") == 0) {
       // print the watchpoint state
+      watchpoints_display();
+      return 0;
     }
   }
   printf(ANSI_FMT("ERROR: info <r/w>\n", ANSI_FG_RED));
@@ -152,7 +154,7 @@ static int cmd_w(char *args) {
     word_t result = expr(e, &success);
     if (success == true) {
       int No = set_watchpoint(e, result);
-      printf(ANSI_FMT("Hardware watchpoint %d: %s\n", ANSI_FG_GREEN), No, e);
+      printf(ANSI_FMT("Watchpoint %d: %s\n", ANSI_FG_GREEN), No, e);
     }
     else {
       printf(ANSI_FMT("Invalid expression.\n", ANSI_FG_RED));

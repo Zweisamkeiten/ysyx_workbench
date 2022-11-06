@@ -21,5 +21,6 @@
 word_t expr(char *e, bool *success);
 int set_watchpoint(char *e, word_t value);
 bool delete_watchpoint(int n);
+void watchpoints_display();
 
 #endif

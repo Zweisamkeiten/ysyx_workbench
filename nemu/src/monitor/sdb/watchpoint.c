@@ -91,3 +91,16 @@ bool delete_watchpoint(int n) {
 
   return false;
 }
+
+void watchpoints_display() {
+  printf("\n");
+  printf(ANSI_FMT("Num\tType\t\tWhat\tValue\n", ANSI_BG_MAGENTA));
+  for (WP *i = head; i != NULL; i = i->next) {
+    printf(ANSI_FMT("%d", ANSI_FG_BLUE)
+           ANSI_FMT("\twatchpoint\t\t", ANSI_FG_GREEN)
+           ANSI_FMT("%s\t", ANSI_FG_MAGENTA)
+           ANSI_FMT("0x%016lx\t", ANSI_FG_MAGENTA)
+           ANSI_FMT("%020lu\n", ANSI_FG_MAGENTA), i->NO, i->expr, i->value, i->value);
+  }
+  printf("\n");
+}
