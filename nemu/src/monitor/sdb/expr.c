@@ -291,6 +291,10 @@ word_t eval(int p, int q, bool *is_valid) {
         }
       case TK_NEGATIVE:
         return 0u - eval(op + 1, q, is_valid);
+      case TK_EQ:
+        return val1 == val2;
+      case TK_NOTEQ:
+        return val1 != val2;
       default: assert(0);
     }
   }
