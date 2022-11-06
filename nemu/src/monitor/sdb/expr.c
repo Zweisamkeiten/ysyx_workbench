@@ -24,7 +24,9 @@ enum {
   TK_HEXDECIMALINT,
   TK_DECIMALINT,
   TK_REG,
+  TK_AND,
   TK_EQ,
+  TK_NOTEQ,
   TK_PLUS,
   TK_MINUS,
   TK_MULTIPLY,
@@ -47,6 +49,7 @@ static struct rule {
   {"\\s", TK_NOTYPE},    // spaces
   {"0x[[:xdigit:]]+u?", TK_HEXDECIMALINT}, // Hex decimal integer
   {"[[:digit:]]+u?", TK_DECIMALINT}, // decimal integer
+  { "\\$((\\$0)|(ra)|(s([0-9]|1[0-1])|p)|(a[0-7])|gp|(t([0-6]|p)))"}, // reg_name
   {"\\+", TK_PLUS},     // plus
   {"-", TK_MINUS},      // minus
   {"\\*", TK_MULTIPLY}, // minus
@@ -54,6 +57,8 @@ static struct rule {
   {"\\(", TK_BRACKET_L},// bracket_L
   {"\\)", TK_BRACKET_R},// bracket_R
   {"==", TK_EQ},        // equal
+  {"!=", TK_NOTEQ},     // not equal
+  {"&&", TK_AND},       // and
 };
 
 #define NR_REGEX ARRLEN(rules)
@@ -156,6 +161,7 @@ static bool make_token(char *e) {
   return true;
 }
 
+// 主要用于结合性 判断优先级来选择主运算符
 int priority(int type) {
   switch (type) {
     case TK_PLUS:
@@ -163,6 +169,8 @@ int priority(int type) {
     case TK_MULTIPLY:
     case TK_DIVIDE: return TK_MULTIPLY;
     case TK_NEGATIVE: return TK_NEGATIVE;
+    case TK_EQ:
+    case TK_NOTEQ: return TK_EQ;
     default: return TK_NOTYPE;
   }
 }
