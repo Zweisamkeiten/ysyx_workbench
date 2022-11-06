@@ -34,7 +34,7 @@ static char* rl_gets() {
     line_read = NULL;
   }
 
-  line_read = readline("(nemu) ");
+  line_read = readline(ANSI_FMT("(nemu) ", ANSI_FG_YELLOW));
 
   if (line_read && *line_read) {
     add_history(line_read);
@@ -81,7 +81,7 @@ static int cmd_info(char *args) {
     if (strcmp(sub_cmd, "r") == 0) {
       // print the reg state
       isa_reg_display();
-      printf("%s\t\t%#lx\t%lu\n", "pc", cpu.pc, cpu.pc);
+      printf(ANSI_FMT("%s:", ANSI_FG_BLUE) ANSI_FMT("\t0x%016lx\t", ANSI_FG_GREEN) ANSI_FMT("%020lu\n", ANSI_FG_MAGENTA), "pc", cpu.pc, cpu.pc);
       return 0;
     }
     else if (strcmp(sub_cmd, "w") == 0) {
@@ -131,7 +131,7 @@ static int cmd_p(char *args) {
   bool success = true;
   word_t result = expr(e, &success);
   if (success == true) {
-    printf("$expr = %lu\n", result);
+    printf(ANSI_FMT("$expr = ", ANSI_FG_CYAN) ANSI_FMT("0x%016lx\t", ANSI_FG_GREEN) ANSI_FMT("%020lu\n", ANSI_FG_GREEN), result, result);
   } else {
     printf(ANSI_FMT("A syntax error in expression.\n", ANSI_FG_RED));
   }

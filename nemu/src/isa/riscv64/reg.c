@@ -24,8 +24,9 @@ const char *regs[] = {
 };
 
 void isa_reg_display() {
-  for (int i = 0; i < 32; ++i) {
-    printf("%s\t\t0x%lx\t%lu\n", reg_name(i, 64), gpr(i), gpr(i));
+  for (int i = 0; i < 16; ++i) {
+    printf(ANSI_FMT("%s:", ANSI_FG_BLUE) ANSI_FMT("\t0x%016lx\t", ANSI_FG_GREEN) ANSI_FMT("%020lu\t", ANSI_FG_MAGENTA), reg_name(2 * i + 0, 64), gpr(2 * i + 0), gpr(2 * i + 0));
+    printf(ANSI_FMT("%s:", ANSI_FG_BLUE) ANSI_FMT("\t0x%016lx\t", ANSI_FG_GREEN) ANSI_FMT("%020lu\n", ANSI_FG_MAGENTA), reg_name(2 * i + 1, 64), gpr(2 * i + 1), gpr(2 * i + 1));
   }
 }
 
