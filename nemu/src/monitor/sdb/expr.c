@@ -13,6 +13,7 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+#include "memory/paddr.h"
 #include <isa.h>
 
 /* We use the POSIX regex functions to process regular expressions.
@@ -34,6 +35,7 @@ enum {
   TK_BRACKET_L,
   TK_BRACKET_R,
   TK_NEGATIVE,
+  TK_DEREFERENCE,
   TK_NOTYPE = 256,
 };
 
@@ -133,6 +135,14 @@ static bool make_token(char *e) {
               tokens[nr_token].type = TK_NEGATIVE;
               break;
             }
+          case TK_MULTIPLY:
+            if (nr_token == 0 ||
+              is_binary_operator(tokens[nr_token - 1].type) ||
+              tokens[nr_token - 1].type == TK_MULTIPLY ||
+              tokens[nr_token - 1].type == TK_BRACKET_L) {
+              tokens[nr_token].type = TK_DEREFERENCE;
+              break;
+            }
           default:
             tokens[nr_token].type = rules[i].token_type;
             break;
@@ -168,7 +178,8 @@ int priority(int type) {
     case TK_MINUS: return TK_PLUS;
     case TK_MULTIPLY:
     case TK_DIVIDE: return TK_MULTIPLY;
-    case TK_NEGATIVE: return TK_NEGATIVE;
+    case TK_NEGATIVE:
+    case TK_DEREFERENCE: return TK_NEGATIVE;
     case TK_EQ:
     case TK_NOTEQ: return TK_EQ;
     case TK_AND: return TK_AND;
@@ -197,8 +208,12 @@ int find_main_operator(int p, int q) {
     default:
       if (parentheses_stack == 0 ) {
         if (op_position == p || priority(current_type) <= priority(tokens[op_position].type)) {
-          if (current_type == TK_NEGATIVE && tokens[op_position].type == TK_NEGATIVE) {
-              break;
+          if (priority(current_type) == priority(tokens[op_position].type)) {
+              switch (current_type) {
+              case TK_NEGATIVE:
+              case TK_DEREFERENCE: break;
+              default: op_position = i;
+              }
           }
           else {
             op_position = i;
@@ -303,6 +318,8 @@ word_t eval(int p, int q, bool *is_valid) {
         }
       case TK_NEGATIVE:
         return 0u - eval(op + 1, q, is_valid);
+      case TK_DEREFERENCE:
+        return paddr_read(eval(op+1, q, is_valid), 8);
       case TK_EQ:
         return val1 == val2;
       case TK_NOTEQ:
