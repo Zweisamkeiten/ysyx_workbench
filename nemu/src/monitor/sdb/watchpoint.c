@@ -72,8 +72,8 @@ bool delete_watchpoint(int n) {
     return false;
   }
   else {
-    for (WP *i = head; i != NULL; i = i->next, n--) {
-      if (n == 0) {
+    for (WP *i = head; i != NULL; i = i->next) {
+      if (i->NO == n) {
         printf(ANSI_FMT("%s\n", ANSI_FG_RED), i->expr);
         free_wp(i);
         return true;
