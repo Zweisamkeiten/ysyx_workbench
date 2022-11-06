@@ -23,6 +23,7 @@
 enum {
   TK_HEXDECIMALINT,
   TK_DECIMALINT,
+  TK_AND,
   TK_EQ,
   TK_NOTEQ,
   TK_PLUS,
@@ -55,6 +56,7 @@ static struct rule {
   {"\\)", TK_BRACKET_R},// bracket_R
   {"==", TK_EQ},        // equal
   {"!=", TK_NOTEQ},     // not equal
+  {"&&", TK_AND},       // and
 };
 
 #define NR_REGEX ARRLEN(rules)
@@ -88,7 +90,7 @@ static int nr_token __attribute__((used))  = 0;
 
 // check the token type is not binary operator
 bool is_binary_operator(int type) {
-  if (TK_EQ <= type && type <= TK_DIVIDE) {
+  if (TK_AND <= type && type <= TK_DIVIDE) {
     return true;
   }
   return false;
@@ -167,6 +169,7 @@ int priority(int type) {
     case TK_NEGATIVE: return TK_NEGATIVE;
     case TK_EQ:
     case TK_NOTEQ: return TK_EQ;
+    case TK_AND: return TK_AND;
     default: return TK_NOTYPE;
   }
 }
@@ -293,6 +296,8 @@ word_t eval(int p, int q, bool *is_valid) {
         return val1 == val2;
       case TK_NOTEQ:
         return val1 != val2;
+      case TK_AND:
+        return val1 && val2;
       default: assert(0);
     }
   }
