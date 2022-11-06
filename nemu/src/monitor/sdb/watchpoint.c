@@ -23,7 +23,7 @@ typedef struct watchpoint {
 
   /* TODO: Add more members if necessary */
   const char * expr;
-  uint64_t value;
+  word_t value;
 
 } WP;
 
@@ -60,16 +60,25 @@ void free_wp(WP *wp) {
   free_ = wp;
 }
 
-void set_watchpoint(char *e) {
-  bool success = true;
-  uint64_t value = expr(e, &success);
-  if (success) {
-    WP* new = new_wp();
-    new->expr = e;
-    new->value = value;
-    printf(ANSI_FMT("Hardware watchpoint %d: %s\n", ANSI_FG_GREEN), new->NO, new->expr);
+int set_watchpoint(char *e, word_t value) {
+  WP* new = new_wp();
+  new->expr = e;
+  new->value = value;
+  return new->NO;
+}
+
+bool delete_watchpoint(int n) {
+  if (n < 0 || n >= NR_WP) {
+    return false;
   }
   else {
-    printf(ANSI_FMT("Invalid expression.\n", ANSI_FG_RED));
+    for (WP *i = head; i != NULL; i = i->next, n--) {
+      if (n == 0) {
+        free_wp(i);
+        return true;
+      }
+    }
   }
+
+  return false;
 }

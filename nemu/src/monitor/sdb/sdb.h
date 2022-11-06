@@ -19,6 +19,7 @@
 #include <common.h>
 
 word_t expr(char *e, bool *success);
-void set_watchpoint(char *e);
+int set_watchpoint(char *e, word_t value);
+bool delete_watchpoint(int n);
 
 #endif

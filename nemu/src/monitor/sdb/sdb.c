@@ -148,10 +148,39 @@ static int cmd_w(char *args) {
   char *e= args;
 
   if (e != NULL) {
-    set_watchpoint(e);
+    bool success = true;
+    word_t result = expr(e, &success);
+    if (success == true) {
+      int No = set_watchpoint(e, result);
+      printf(ANSI_FMT("Hardware watchpoint %d: %s\n", ANSI_FG_GREEN), No, e);
+    }
+    else {
+      printf(ANSI_FMT("Invalid expression.\n", ANSI_FG_RED));
+    }
     return 0;
   }
   printf(ANSI_FMT("ERROR: w <EXPR>\n", ANSI_FG_RED));
+  return 0;
+}
+
+static int cmd_d(char *args) {
+  char *n_str = strtok(args, " ");
+
+  if (n_str != NULL) {
+    char **invalid = malloc(sizeof(char *));
+    *invalid = NULL;
+    int n = strtol(n_str, invalid, 10);
+    if (*n_str != '\0' && **invalid == '\0') {
+      free(invalid);
+      if(delete_watchpoint(n) == true) {
+        printf(ANSI_FMT("Watchpoint number %d deleted\n", ANSI_FG_GREEN), n);
+      }
+      else {
+        printf(ANSI_FMT("No watchpoint number %d\n", ANSI_FG_RED), n);
+      }
+      return 0;
+    }
+  }
   return 0;
 }
 
@@ -172,6 +201,7 @@ static struct {
   { "x", "scan memory", cmd_x },
   { "p", "eval the expression", cmd_p },
   { "w", "set a new watchpoint", cmd_w },
+  { "d", "delete a watchpoint", cmd_d },
 
 };
 
