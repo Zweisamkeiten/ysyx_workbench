@@ -46,5 +46,7 @@ $(clean-tools):
 	-@$(MAKE) -s -C $@ clean
 clean-tools: $(clean-tools)
 clean-all: clean distclean clean-tools
+count:
+	@find $(NEMU_HOME) -name '*.[ch]' | xargs cat | grep -ve '^$$' | wc -l
 
-.PHONY: run gdb run-env clean-tools clean-all $(clean-tools)
+.PHONY: run gdb run-env clean-tools clean-all $(clean-tools) count
