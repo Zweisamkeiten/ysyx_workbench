@@ -34,6 +34,7 @@ enum {
   TK_BRACKET_L,
   TK_BRACKET_R,
   TK_NEGATIVE,
+  TK_DEREFERENCE,
   TK_NOTYPE = 256,
 };
 
@@ -133,6 +134,14 @@ static bool make_token(char *e) {
               tokens[nr_token].type = TK_NEGATIVE;
               break;
             }
+          case TK_MULTIPLY:
+            if (nr_token == 0 ||
+              is_binary_operator(tokens[nr_token - 1].type) ||
+              tokens[nr_token - 1].type == TK_MULTIPLY ||
+              tokens[nr_token - 1].type == TK_BRACKET_L) {
+              tokens[nr_token].type = TK_DEREFERENCE;
+              break;
+            }
           default:
             tokens[nr_token].type = rules[i].token_type;
             break;
@@ -168,7 +177,8 @@ int priority(int type) {
     case TK_MINUS: return TK_PLUS;
     case TK_MULTIPLY:
     case TK_DIVIDE: return TK_MULTIPLY;
-    case TK_NEGATIVE: return TK_NEGATIVE;
+    case TK_NEGATIVE:
+    case TK_DEREFERENCE: return TK_NEGATIVE;
     case TK_EQ:
     case TK_NOTEQ: return TK_EQ;
     case TK_AND: return TK_AND;
@@ -193,8 +203,12 @@ int find_main_operator(int p, int q) {
     default:
       if (parentheses_stack == 0 ) {
         if (op_position == p || priority(current_type) <= priority(tokens[op_position].type)) {
-          if (current_type == TK_NEGATIVE && tokens[op_position].type == TK_NEGATIVE) {
-              break;
+          if (priority(tokens[op_position].type) == priority(current_type)) {
+              switch (current_type) {
+              case TK_NEGATIVE:
+              case TK_DEREFERENCE: break;
+              default: op_position = i;
+              }
           }
           else {
             op_position = i;
