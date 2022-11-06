@@ -25,10 +25,10 @@ const char *regs[] = {
 
 void isa_reg_display() {
   for (int i = 0; i < 4; ++i) {
-    printf("%s\t0x%016lx\t%020lu\n", reg_name(4 * i + 0, 64), gpr(4 * i + 0), gpr(4 * i + 0));
-    printf("%s\t0x%016lx\t%020lu\n", reg_name(4 * i + 1, 64), gpr(4 * i + 1), gpr(4 * i + 1));
-    printf("%s\t0x%016lx\t%020lu\n", reg_name(4 * i + 2, 64), gpr(4 * i + 2), gpr(4 * i + 2));
-    printf("%s\t0x%016lx\t%020lu\n", reg_name(4 * i + 3, 64), gpr(4 * i + 3), gpr(4 * i + 3));
+    printf("%s\t0x%016lx\t%020lu\t", reg_name(4 * i + 0, 64), gpr(4 * i + 0), gpr(4 * i + 0));
+    printf("%s\t0x%016lx\t%020lu\t", reg_name(4 * i + 1, 64), gpr(4 * i + 1), gpr(4 * i + 1));
+    printf("%s\t0x%016lx\t%020lu\t", reg_name(4 * i + 2, 64), gpr(4 * i + 2), gpr(4 * i + 2));
+    printf("%s\t0x%016lx\t%020lu\t", reg_name(4 * i + 3, 64), gpr(4 * i + 3), gpr(4 * i + 3));
   }
 }
 
