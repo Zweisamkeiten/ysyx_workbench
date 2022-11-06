@@ -204,12 +204,8 @@ int find_main_operator(int p, int q) {
     default:
       if (parentheses_stack == 0 ) {
         if (op_position == p || priority(current_type) <= priority(tokens[op_position].type)) {
-          if (priority(tokens[op_position].type) == priority(current_type)) {
-              switch (current_type) {
-              case TK_NEGATIVE:
-              case TK_DEREFERENCE: break;
-              default: if(is_binary_operator(current_type)) op_position = i;
-              }
+          if (current_type == TK_NEGATIVE && tokens[op_position].type == TK_NEGATIVE) {
+              break;
           }
           else {
             op_position = i;
