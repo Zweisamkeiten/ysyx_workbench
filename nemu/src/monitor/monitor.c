@@ -101,8 +101,6 @@ void init_monitor(int argc, char *argv[]) {
 
   /* Parse arguments. */
   parse_args(argc, argv);
-  char *a = NULL;
-  *a = '1';
 
   /* Set random seed. */
   init_rand();
