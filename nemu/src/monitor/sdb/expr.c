@@ -195,6 +195,10 @@ int find_main_operator(int p, int q) {
     switch (current_type) {
     case TK_DECIMALINT:
       break;
+    case TK_HEXDECIMALINT:
+      break;
+    case TK_REG:
+      break;
     case TK_BRACKET_L:
       parentheses_stack++;
       break;
@@ -204,8 +208,12 @@ int find_main_operator(int p, int q) {
     default:
       if (parentheses_stack == 0 ) {
         if (op_position == p || priority(current_type) <= priority(tokens[op_position].type)) {
-          if (current_type == TK_NEGATIVE && tokens[op_position].type == TK_NEGATIVE) {
-              break;
+          if (priority(current_type) == priority(tokens[op_position].type)) {
+              switch (current_type) {
+              case TK_NEGATIVE:
+              case TK_DEREFERENCE: break;
+              default: op_position = i;
+              }
           }
           else {
             op_position = i;
