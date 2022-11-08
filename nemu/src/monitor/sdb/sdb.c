@@ -95,27 +95,29 @@ static int cmd_info(char *args) {
 }
 
 static int cmd_x(char *args) {
-  char *esp_str;
-  char *n_str = strtok_r(args, " ", &esp_str);
+  if (args != NULL) {
+    char *esp_str;
+    char *n_str = strtok_r(args, " ", &esp_str);
 
-  if (n_str != NULL) {
-    char **invalid = malloc(sizeof(char *));
-    *invalid = NULL;
-    uint64_t n = strtoull(n_str, invalid, 10);
+    if (n_str != NULL) {
+      char **invalid = malloc(sizeof(char *));
+      *invalid = NULL;
+      uint64_t n = strtoull(n_str, invalid, 10);
 
-    if (*n_str != '\0' && **invalid == '\0') {
-      free(invalid);
+      if (*n_str != '\0' && **invalid == '\0') {
+        free(invalid);
 
-      if (esp_str != NULL) {
-        bool success = true;
-        uint64_t addr = expr(esp_str, &success);
+        if (esp_str != NULL) {
+          bool success = true;
+          uint64_t addr = expr(esp_str, &success);
 
-        if (success) {
-          for (int i = 0; i < n; addr += 4, ++i) {
-            uint32_t data = paddr_read(addr, 4);
-            printf("%#lx:\t0x%08x\n", addr, data);
+          if (success) {
+            for (int i = 0; i < n; addr += 4, ++i) {
+              uint32_t data = paddr_read(addr, 4);
+              printf("%#lx:\t0x%08x\n", addr, data);
+            }
+            return 0;
           }
-          return 0;
         }
       }
     }
