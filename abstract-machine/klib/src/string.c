@@ -53,7 +53,8 @@ char *strncpy(char *dst, const char *src, size_t n) {
  * strcat - concatenate two strings
  */
 char *strcat(char *dst, const char *src) {
-  panic("Not implemented");
+  strcpy(dst + strlen(dst), src);
+  return dst;
 }
 
 /*
