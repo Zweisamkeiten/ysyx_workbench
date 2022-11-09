@@ -29,7 +29,7 @@ size_t strlen(const char *s) {
  * large enough, then anything might happen.
  */
 char *strcpy(char *dst, const char *src) {
-  return memcpy (dst, src, strlen(src) + 1);
+  return memcpy(dst, src, strlen(src) + 1);
 }
 
 /*
@@ -84,8 +84,8 @@ int strncmp(const char *s1, const char *s2, size_t n) {
   
   while (n > 0)
     {
-      c1 = (unsigned char) *s1++;
-      c2 = (unsigned char) *s2++;
+      c1 = (unsigned char)*s1++;
+      c2 = (unsigned char)*s2++;
       if (c1 == '\0' || c1 != c2)
         return c1 - c2;
       n--;
