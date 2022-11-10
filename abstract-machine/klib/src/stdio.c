@@ -23,7 +23,7 @@ enum {
 
 void buf_w(char *buffer, int pos, int size, int ch) {
   if (buffer != NULL && pos < size)
-    buffer[pos] = ch;
+    *(buffer + pos) = ch;
 }
 
 int printf(const char *fmt, ...) {
