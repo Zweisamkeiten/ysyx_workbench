@@ -26,16 +26,6 @@ void buf_w(char *buffer, int pos, int size, int ch) {
     buffer[pos] = ch;
 }
 
-// Function to reverse `buffer[i…j]`
-void reverse(char *buffer, int start, int end)
-{
-  while (start < end) {
-    char t = *(buffer+start); *(buffer+start) = *(buffer+end); *(buffer+end) = t;
-    start++;
-    end--;
-  }
-}
-
 int printf(const char *fmt, ...) {
   panic("Not implemented");
 }
@@ -122,23 +112,27 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
           }
 
           int ret_temp = ret;
+          int div = 1;
+          signed long long int signed_num_tmp = signed_num;
           if (signed_num < 0) {
             buf_w(out, ret++, n, '-');
             ret_temp++;
-            signed_num = -signed_num;
-            continue;
+            signed_num_tmp = -signed_num;
           }
-          while (signed_num != 0)
+          while (signed_num_tmp != 0)
           {
-            int rem = signed_num % base;
-            buf_w(out, ret++, n, rem + '0');
-            signed_num = signed_num/base;
+            signed_num_tmp = signed_num_tmp/base;
+            ret++;
+            div *= base;
           }
 
           // reverse
-          if (out != NULL && ret < n) {
-            reverse(out, ret_temp, ret-1);
+          while (ret_temp != ret)
+          {
+            int num = (signed_num / (div /= base)) % base;
+            buf_w(out, ret_temp++, n, num + '0');
           }
+
           break;
         }
         case 'o': base = 8; goto unsigned_convert;
@@ -153,21 +147,28 @@ unsigned_convert:
           }
 
           int ret_temp = ret;
-          while (unsigned_num != 0)
+          int div = 1;
+          unsigned long long int unsigned_num_tmp = unsigned_num;
+          while (unsigned_num_tmp != 0)
           {
-            int rem = unsigned_num % base;
-            buf_w(out, ret++, n, (rem > 9) ? rem - 10 + 'a' : rem + '0');
-            unsigned_num = unsigned_num/base;
+            unsigned_num_tmp = unsigned_num_tmp/base;
+            ret++;
+            div *= base;
           }
 
           // reverse
-          reverse(out, ret_temp, ret-1);
+          while (ret_temp != ret)
+          {
+            int num = (unsigned_num / (div /= base)) % base;
+            buf_w(out, ret_temp++, n, (num > 9) ? num - 10 + 'a' : num + '0');
+          }
+
           break;
         }
         case 's': {
           cp = va_arg(ap, char *);
           while (*cp != '\0') {
-            buf_w(out, ret++, n, *cp);
+            buf_w(out, ret++, n, *cp++);
           }
           break;
         }
@@ -175,11 +176,13 @@ unsigned_convert:
           buf_w(out, ret++, n, '%');
           break;
         }
-        default: {
-          buf_w(out, n - 1, n, '\0');
-        }
       }
+      state = S_DEFAULT;
+      buf_w(out, n - 1, n, '\0');
+      state = S_DEFAULT;
     }
+    if (ch == '\0')
+      break;
   }
   return ret;
 }
