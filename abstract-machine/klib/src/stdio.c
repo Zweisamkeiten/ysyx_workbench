@@ -179,7 +179,6 @@ unsigned_convert:
       }
       state = S_DEFAULT;
       buf_w(out, n - 1, n, '\0');
-      state = S_DEFAULT;
     }
     if (ch == '\0')
       break;
