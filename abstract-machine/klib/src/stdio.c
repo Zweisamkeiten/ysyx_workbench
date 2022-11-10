@@ -69,6 +69,7 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
         state = S_FLAGS;
         // flags = 0;
       }
+      buf_w(out, ret++, n, ch);
     } 
     else if (state == S_FLAGS) {
       // p: 413
