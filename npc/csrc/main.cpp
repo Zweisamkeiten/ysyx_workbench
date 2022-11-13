@@ -74,9 +74,9 @@ static void reset(int n) {
 
 int main(int argc, char **argv, char **env) {
 
-  top = new Vtop;
   contextp = new VerilatedContext;
   tfp = new VerilatedVcdC;
+  top = new Vtop;
 
   contextp->traceEverOn(true);
   top->trace(tfp, 0);
