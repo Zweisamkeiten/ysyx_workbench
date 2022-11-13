@@ -52,6 +52,7 @@ static const uint32_t img [] = {
 static Vtop *top;
 
 static void single_cycle() {
+  printf("%lx\n", top->o_pc);
   top->i_clk = 0;
   top->eval();
   top->i_clk = 1;
@@ -76,7 +77,6 @@ int main(int argc, char **argv, char **env) {
 
   while (top->o_pc < 0x80000020) {
     single_cycle();
-    printf("%lx\n", top->o_pc);
   }
 
   top->final();
