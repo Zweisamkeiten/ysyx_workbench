@@ -55,7 +55,6 @@ static void single_cycle() {
   top->i_clk = 0;
   top->eval();
   top->i_clk = 1;
-  top->i_inst = pmem_read(top->o_pc, 4);
   top->eval();
 }
 
@@ -77,6 +76,7 @@ int main(int argc, char **argv, char **env) {
   memcpy(guest_to_host(RESET_VECTOR), img, sizeof(img));
 
   while (top->o_pc < 0x80000020) {
+    top->i_inst = pmem_read(top->o_pc, 4);
     single_cycle();
   }
 
