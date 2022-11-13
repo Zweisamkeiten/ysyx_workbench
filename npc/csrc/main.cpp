@@ -72,6 +72,13 @@ static void reset(int n) {
   top->i_rst = 0;
 }
 
+static void ebreak() {
+  top->final();
+  delete top;
+  tfp->close();
+  exit(0);
+}
+
 int main(int argc, char **argv, char **env) {
 
   contextp = new VerilatedContext;
@@ -91,6 +98,7 @@ int main(int argc, char **argv, char **env) {
     top->i_inst = pmem_read(top->o_pc, 4);
     printf("%lx\n", top->o_pc);
     single_cycle();
+    top->final();
   }
 
   top->final();
