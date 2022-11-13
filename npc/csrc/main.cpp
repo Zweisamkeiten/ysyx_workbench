@@ -61,7 +61,6 @@ static void single_cycle() {
 static void reset(int n) {
   top->i_rst = 1;
   while (n-- > 0) {
-    printf("%lx\n", top->o_pc);
     single_cycle();
   }
   top->i_rst = 0;
@@ -77,6 +76,7 @@ int main(int argc, char **argv, char **env) {
 
   while (top->o_pc < 0x80000020) {
     top->i_inst = pmem_read(top->o_pc, 4);
+    printf("%lx\n", top->o_pc);
     single_cycle();
   }
 
