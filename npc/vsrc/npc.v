@@ -6,7 +6,7 @@ module ysyx_22050710_npc (
   output [63:0] o_pc
 );
   ysyx_22050710_pc u_pc (i_clk, i_rst, .i_load(1'b1), .i_inc(1'b1), .i_in(64'b0), o_pc);
-  ysyx_22050710_gpr #(.ADDR_WIDTH(5), .DATA_WIDTH(64)) u_gprs (i_clk, rs1, rs2, rd, wdata, wen, busA, busB);
+  ysyx_22050710_gpr #(.ADDR_WIDTH(32), .DATA_WIDTH(64)) u_gprs (i_clk, rs1, rs2, rd, wdata, wen, busA, busB);
 
   wire [63:0] busA, busB;
   wire [11:0] imm;
