@@ -24,7 +24,7 @@ module ysyx_22050710_npc (
   // decode && to exec addi
   wire [63:0] sextimm;
   wire wen;
-  assign sextimm = {52{1'(imm[11])}, imm};
+  assign sextimm = {52{1'b(imm[11])}, imm};
   assign wen = |rd != 0 ? 1'b1 : 1'b0;
   ysyx_22050710_adder #(64) u_add64 (busA, sextimm, wdata);
 endmodule
