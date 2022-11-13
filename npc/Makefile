@@ -1,4 +1,4 @@
-TOPNAME = top
+TOPNAME = ysyx_22050710_npc
 BUILD_DIR = ./build
 OBJ_DIR = $(BUILD_DIR)/obj_dir
 BIN = $(BUILD_DIR)/$(TOPNAME)
@@ -34,8 +34,8 @@ all:
 $(BIN): $(VSRCS) $(CSRCS) $(NVBOARD_ARCHIVE)
 	$(call git_commit, "build RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo "-- VERILATE & BUILD --------"
-	$(VERILATOR) $(VERILATOR_CFLAGS) $^ \
-		$(addprefix -CFLAGS , $(CFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
+	$(VERILATOR) $(VERILATOR_CFLAGS) \
+		--top-module $TOPNAME $^ --prefix V$TOPNAME $(addprefix -CFLAGS , $(CFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
 		--Mdir $(OBJ_DIR) -o $(abspath $(BIN))
 
 sim: $(BIN)
