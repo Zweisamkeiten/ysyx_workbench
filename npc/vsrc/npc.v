@@ -23,6 +23,7 @@ module ysyx_22050710_npc (
 
   // decode && to exec addi
   wire [63:0] sextimm;
+  wire [63:0] wdata;
   wire wen;
   assign sextimm[63:12] = {52{imm[11]}};
   assign sextimm[11:0] = imm[11:0];
