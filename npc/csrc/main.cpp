@@ -72,7 +72,7 @@ int main(int argc, char **argv, char **env) {
 
   memcpy(guest_to_host(RESET_VECTOR), img, sizeof(img));
 
-  while (top->o_pc < 0x80000024) {
+  while (top->o_pc < 0x80000020) {
     single_cycle();
   }
 
