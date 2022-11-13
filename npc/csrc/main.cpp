@@ -74,6 +74,7 @@ int main(int argc, char **argv, char **env) {
 
   while (top->o_pc < 0x80000020) {
     single_cycle();
+    printf("%lx\n", top->o_pc);
   }
 
   top->final();
