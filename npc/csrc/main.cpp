@@ -68,6 +68,8 @@ static void reset(int n) {
 
 int main(int argc, char **argv, char **env) {
 
+  top = new Vtop;
+
   reset(10);
 
   memcpy(guest_to_host(RESET_VECTOR), img, sizeof(img));
