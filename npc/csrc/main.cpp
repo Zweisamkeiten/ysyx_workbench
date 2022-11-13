@@ -50,12 +50,16 @@ static const uint32_t img [] = {
 };
 
 static Vtop *top;
+VerilatedContext *contextp = NULL;
+VerilatedVcdC *tfp = NULL;
 
 static void single_cycle() {
   top->i_clk = 0;
   top->eval();
   top->i_clk = 1;
   top->eval();
+  contextp->timeInc(1);
+  tfp->dump(contextp->time());
 }
 
 static void reset(int n) {
@@ -69,8 +73,14 @@ static void reset(int n) {
 int main(int argc, char **argv, char **env) {
 
   top = new Vtop;
+  contextp = new VerilatedContext;
+  tfp = new VerilatedVcdC;
 
   reset(10);
+
+  contextp->traceEverOn(true);
+  top->trace(tfp, 0);
+  tfp->open("dump.vcd");
 
   memcpy(guest_to_host(RESET_VECTOR), img, sizeof(img));
 
