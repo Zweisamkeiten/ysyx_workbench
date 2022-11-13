@@ -76,11 +76,12 @@ int main(int argc, char **argv, char **env) {
   contextp = new VerilatedContext;
   tfp = new VerilatedVcdC;
 
-  reset(10);
-
   contextp->traceEverOn(true);
   top->trace(tfp, 0);
   tfp->open("dump.vcd");
+
+
+  reset(10);
 
   memcpy(guest_to_host(RESET_VECTOR), img, sizeof(img));
 
@@ -92,4 +93,5 @@ int main(int argc, char **argv, char **env) {
 
   top->final();
   delete top;
+  tfp->close();
 }
