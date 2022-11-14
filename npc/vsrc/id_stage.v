@@ -19,7 +19,7 @@ module ysyx_22050710_idu (
   assign  funct7  = i_inst[31:25];
 
   // imm gen
-  wire immI, immU, immS, immB, immJ;
+  wire [63:0] immI, immU, immS, immB, immJ;
   assign immI = {{52{i_inst[31]}}, i_inst[31:20]};
   assign immU = {{32{i_inst[31]}}, i_inst[31:12], 12'b0};
   assign immS = {{52{i_inst[31]}}, i_inst[31:25], i_inst[11:7]};
@@ -37,18 +37,18 @@ module ysyx_22050710_idu (
   wire inst_type_j = 1'b0;
 
   wire [2:0] extop;
-  wire [6:0] inst_type = {inst_type_r, inst_type_i, inst_type_u, inst_type_s, inst_type_b, inst_type_j};
+  wire [5:0] inst_type = {inst_type_r, inst_type_i, inst_type_u, inst_type_s, inst_type_b, inst_type_j};
 
   MuxKey #(.NR_KEY(6), .KEY_LEN(6), .DATA_LEN(3)) u_mux0 (
     .out(extop),
     .key(inst_type),
     .lut({
-      6'b100000, 111,
-      6'b010000, 000,
-      6'b001000, 001,
-      6'b000100, 010,
-      6'b000010, 011,
-      6'b000001, 100
+      6'b100000, 3'b111,
+      6'b010000, 3'b000,
+      6'b001000, 3'b001,
+      6'b000100, 3'b010,
+      6'b000010, 3'b011,
+      6'b000001, 3'b100
     })
   );
 

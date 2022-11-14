@@ -14,6 +14,6 @@ module ysyx_22050710_npc (
   wire [3:0] ALUctr;
   ysyx_22050710_idu u_idu (i_inst, imm, ra, rb, rd, wen, ALUAsrc, ALUBsrc, ALUctr);
 
-  ysyx_22050710_exu u_exu (i_clk, ra, rb, rd, imm, wen, ALUAsrc, ALUBsrc, ALUctr);
+  ysyx_22050710_exu u_exu (i_clk, ra, rb, rd, imm, o_pc, wen, ALUAsrc, ALUBsrc, ALUctr);
 
 endmodule
