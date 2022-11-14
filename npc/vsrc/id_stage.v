@@ -8,8 +8,8 @@ module ysyx_22050710_idu (
   output [3:0] o_ALUctr,
 );
 
-  wire [11:0] immI, [19:0] immU, [10:0] immS, [6:0] opcode;
-  wire [2:0] funct3, [6:0] funct7,
+  wire [11:0] immI; wire [19:0] immU; wire [10:0] immS; wire [6:0] opcode;
+  wire [2:0] funct3; wire [6:0] funct7,
 
   assign  opcode  = i_inst[6:0];
   assign  o_ra = i_inst[19:15];
