@@ -47,7 +47,8 @@ static const uint32_t img [] = {
   0x00300193,
   0x00400213,
   0x00500293,
-  0x00600313
+  0x00600313,
+  0x00100073,
 };
 
 static Vtop *top;
