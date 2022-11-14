@@ -19,6 +19,7 @@ module ysyx_22050710_idu (
   assign  funct7  = i_inst[31:25];
 
   // imm gen
+  wire immI, immU, immS, immB, immJ;
   assign immI = {{52{i_inst[31]}}, i_inst[31:20]};
   assign immU = {{32{i_inst[31]}}, i_inst[31:12], 12'b0};
   assign immS = {{52{i_inst[31]}}, i_inst[31:25], i_inst[11:7]};
@@ -67,6 +68,7 @@ module ysyx_22050710_idu (
   assign o_ALUAsrc = |{1'b0} == 1 ? 1'b1 : 1'b0; // '1' when inst about pc
   assign o_ALUBsrc = {o_ALUAsrc, |inst_type[5:0]};
 
+  wire alu_plus, alu_ebreak;
   assign alu_plus = |{inst_addi};
   assign alu_ebreak = inst_ebreak;
 

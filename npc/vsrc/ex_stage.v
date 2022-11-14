@@ -11,7 +11,7 @@ module ysyx_22050710_exu (
 
   wire [63:0] rs1, rs2;
   wire [63:0] result;
-  ysyx_22050710_gpr #(.ADDR_WIDTH(5), .DATA_WIDTH(64)) u_gprs (i_clk, i_rs1, i_rs2, i_rd, result, i_wen, rs1, rs2);
+  ysyx_22050710_gpr #(.ADDR_WIDTH(5), .DATA_WIDTH(64)) u_gprs (i_clk, i_ra, i_rb, i_rd, result, i_wen, rs1, rs2);
   // aader
   wire [63:0] adder_result, add_a, add_b;
   assign add_a = i_ALUAsrc ? i_pc : rs1;
