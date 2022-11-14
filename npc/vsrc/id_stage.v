@@ -5,7 +5,7 @@ module ysyx_22050710_idu (
   output [4:0] o_ra, o_rb, o_rd,
   output o_wen, o_ALUAsrc,
   output [1:0] o_ALUBsrc,
-  output [3:0] o_ALUctr,
+  output [3:0] o_ALUctr
 );
 
   wire [11:0] immI; wire [19:0] immU; wire [10:0] immS; wire [6:0] opcode;
@@ -20,7 +20,7 @@ module ysyx_22050710_idu (
 
   // imm gen
   assign immI = {{52{i_inst[31]}}, i_inst[31:20]};
-  assign immU = {{32{i_inst{31}}}, i_inst[31:12], 12'b0};
+  assign immU = {{32{i_inst[31]}}, i_inst[31:12], 12'b0};
   assign immS = {{52{i_inst[31]}}, i_inst[31:25], i_inst[11:7]};
   assign immB = {{52{i_inst[31]}}, i_inst[7], i_inst[30:25], i_inst[11:8], 1'b0};
   assign immJ = {{44{i_inst[31]}}, i_inst[19:12], i_inst[20], i_inst[30:21], 1'b0};
@@ -38,7 +38,7 @@ module ysyx_22050710_idu (
   wire [2:0] extop;
   wire [6:0] inst_type = {inst_type_r, inst_type_i, inst_type_u, inst_type_s, inst_type_b, inst_type_j};
 
-  MuxKey #(.NR_KEY(6), .KEY_LEN(6), .DATA_LEN(3)) (
+  MuxKey #(.NR_KEY(6), .KEY_LEN(6), .DATA_LEN(3)) u_mux0 (
     .out(extop),
     .key(inst_type),
     .lut({
@@ -51,7 +51,7 @@ module ysyx_22050710_idu (
     })
   );
 
-  MuxKey #(.NR_KEY(5), .KEY_LEN(3), .DATA_LEN(64)) (
+  MuxKey #(.NR_KEY(5), .KEY_LEN(3), .DATA_LEN(64)) u_mux1 (
     .out(o_imm),
     .key(extop),
     .lut({
@@ -70,7 +70,7 @@ module ysyx_22050710_idu (
   assign alu_plus = |{inst_addi};
   assign alu_ebreak = inst_ebreak;
 
-  MuxKey #(.NR_KEY(2), .KEY_LEN(2), .DATA_LEN(4)) (
+  MuxKey #(.NR_KEY(2), .KEY_LEN(2), .DATA_LEN(4)) u_mux2 (
     .out(o_ALUctr),
     .key({alu_plus, alu_ebreak}),
     .lut({
