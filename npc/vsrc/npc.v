@@ -1,4 +1,6 @@
 // ysyx_22050710
+import "DPI-C" function void set_state_end();
+
 module ysyx_22050710_npc (
   input i_clk,
   input i_rst,
@@ -16,4 +18,7 @@ module ysyx_22050710_npc (
 
   ysyx_22050710_exu u_exu (i_clk, ra, rb, rd, imm, o_pc, wen, ALUAsrc, ALUBsrc, ALUctr);
 
+  always @(i_inst) begin
+    if (i_inst == 32'h00100073) set_state_end();
+  end
 endmodule
