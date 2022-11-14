@@ -16,6 +16,7 @@
 #ifndef __CPU_DECODE_H__
 #define __CPU_DECODE_H__
 
+#include <stdio.h>
 #include <isa.h>
 
 typedef struct Decode {
@@ -73,6 +74,7 @@ static inline void pattern_decode_hex(const char *str, int len,
       __key  = (__key  << 4) | (c == '?' ? 0 : (c >= '0' && c <= '9') ? c - '0' : c - 'a' + 10); \
       __mask = (__mask << 4) | (c == '?' ? 0 : 0xf); \
       __shift = (c == '?' ? __shift + 4 : 0); \
+      printf("%lx\n", __shift); \
     } \
   }
 
