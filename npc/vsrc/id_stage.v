@@ -9,7 +9,7 @@ module ysyx_22050710_idu (
 );
 
   wire [11:0] immI; wire [19:0] immU; wire [10:0] immS; wire [6:0] opcode;
-  wire [2:0] funct3; wire [6:0] funct7,
+  wire [2:0] funct3; wire [6:0] funct7;
 
   assign  opcode  = i_inst[6:0];
   assign  o_ra = i_inst[19:15];
