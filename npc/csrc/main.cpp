@@ -1,4 +1,5 @@
 #include "Vtop.h"
+#include "Vtop__Dpi.h"
 #include <verilated.h>
 #include <verilated_vcd_c.h>
 #include <stdio.h>
@@ -46,7 +47,8 @@ static const uint32_t img [] = {
   0x00300193,
   0x00400213,
   0x00500293,
-  0x00600313
+  0x00600313,
+  0x00100073,
 };
 
 static Vtop *top;
@@ -72,6 +74,17 @@ static void reset(int n) {
   top->i_rst = 0;
 }
 
+enum {
+  NPC_RUNNING,
+  NPC_END
+};
+
+static int npc_state = NPC_RUNNING;
+
+void set_state_end() {
+  npc_state = NPC_END;
+}
+
 int main(int argc, char **argv, char **env) {
 
   contextp = new VerilatedContext;
@@ -87,7 +100,7 @@ int main(int argc, char **argv, char **env) {
 
   memcpy(guest_to_host(RESET_VECTOR), img, sizeof(img));
 
-  while (top->o_pc < 0x80000020) {
+  while (npc_state == NPC_RUNNING) {
     top->i_inst = pmem_read(top->o_pc, 4);
     printf("%lx\n", top->o_pc);
     single_cycle();
