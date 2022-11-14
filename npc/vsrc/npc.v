@@ -1,4 +1,6 @@
 // ysyx_22050710
+import "DPI-C" function void set_state_end();
+
 module ysyx_22050710_npc (
   input i_clk,
   input i_rst,
@@ -29,4 +31,8 @@ module ysyx_22050710_npc (
   assign sextimm[11:0] = imm[11:0];
   assign wen = |rd != 0 ? 1'b1 : 1'b0;
   ysyx_22050710_adder #(64) u_add64 (busA, sextimm, wdata);
+
+  always @(i_inst) begin
+    if (i_inst == 32'h00100073) set_state_end();
+  end
 endmodule

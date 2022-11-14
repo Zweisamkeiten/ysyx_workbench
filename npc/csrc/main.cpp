@@ -72,11 +72,15 @@ static void reset(int n) {
   top->i_rst = 0;
 }
 
-static void ebreak() {
-  top->final();
-  delete top;
-  tfp->close();
-  exit(0);
+enum {
+  NPC_RUNNING,
+  NPC_END
+};
+
+static int npc_state = NPC_RUNNING;
+
+static void set_state_end() {
+  npc_state = NPC_END;
 }
 
 int main(int argc, char **argv, char **env) {
@@ -94,11 +98,10 @@ int main(int argc, char **argv, char **env) {
 
   memcpy(guest_to_host(RESET_VECTOR), img, sizeof(img));
 
-  while (top->o_pc < 0x80000020) {
+  while (npc_state == NPC_RUNNING) {
     top->i_inst = pmem_read(top->o_pc, 4);
     printf("%lx\n", top->o_pc);
     single_cycle();
-    top->final();
   }
 
   top->final();
