@@ -5,6 +5,10 @@
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 
+/*
+ * Code adapted from bsdlibc, glibc, and
+ * https://github.com/MrBad/vsnprintf/blob/master/vsnprintf.c
+ */
 enum {
   S_DEFAULT,
   S_FLAGS,
