@@ -42,7 +42,7 @@ static inline void pattern_decode(const char *str, int len,
       __key  = (__key  << 1) | (c == '1' ? 1 : 0); \
       __mask = (__mask << 1) | (c == '?' ? 0 : 1); \
       __shift = (c == '?' ? __shift + 1 : 0); \
-      printf("%lx\n", __shift); \
+      printf("%lu\n", __shift); \
     } \
   }
 
