@@ -79,7 +79,7 @@ enum {
 
 static int npc_state = NPC_RUNNING;
 
-static void set_state_end() {
+void set_state_end() {
   npc_state = NPC_END;
 }
 
