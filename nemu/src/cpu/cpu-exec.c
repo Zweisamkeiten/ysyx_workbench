@@ -18,7 +18,7 @@
 #include <cpu/difftest.h>
 #include <locale.h>
 #ifdef CONFIG_WATCHPOINT
-#include "../monitor/sdb/sdb.h"
+extern void diff_watchpoint_value();
 #endif
 
 /* The assembly code of instructions executed is only output to the screen
@@ -33,28 +33,13 @@ uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
 static bool g_print_step = false;
 
-void device_update();
-
-static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
-#ifdef CONFIG_ITRACE_COND
-  if (ITRACE_COND) { log_write("%s\n", _this->logbuf); }
-#endif
-  if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
-  IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
-  IFDEF(CONFIG_WATCHPOINT, diff_watchpoint_value());
-}
-
-static void exec_once(Decode *s, vaddr_t pc) {
-  s->pc = pc;
-  s->snpc = pc;
-  isa_exec_once(s);
-  cpu.pc = s->dnpc;
 #ifdef CONFIG_ITRACE
-  char *p = s->logbuf;
-  p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->pc);
-  int ilen = s->snpc - s->pc;
+void disassemble_inst_to_buf(char *logbuf, size_t bufsize, uint8_t * inst_val, vaddr_t pc, vaddr_t snpc) {
+  char *p = logbuf;
+  p += snprintf(p, bufsize, FMT_WORD ":", pc);
+  int ilen = snpc - pc;
   int i;
-  uint8_t *inst = (uint8_t *)&s->isa.inst.val;
+  uint8_t *inst = (uint8_t *)inst_val;
   for (i = ilen - 1; i >= 0; i --) {
     p += snprintf(p, 4, " %02x", inst[i]);
   }
@@ -66,8 +51,76 @@ static void exec_once(Decode *s, vaddr_t pc) {
   p += space_len;
 
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
-  disassemble(p, s->logbuf + sizeof(s->logbuf) - p,
-      MUXDEF(CONFIG_ISA_x86, s->snpc, s->pc), (uint8_t *)&s->isa.inst.val, ilen);
+  disassemble(p, logbuf + bufsize - p,
+      MUXDEF(CONFIG_ISA_x86, snpc, pc), (uint8_t *)inst_val, ilen);
+}
+#ifdef CONFIG_IRINGTRACE
+static int iringbuf_index = 0;
+static char *iringbuf[16] = {NULL};
+static MUXDEF(CONFIG_ISA_x86, uint64_t, uint32_t) *last_inst;
+static vaddr_t *snpc;
+
+void print_iringbuf() {
+  Log(ANSI_FMT("INSTRUCTIONS RING STRACE:\n", ANSI_FG_RED));
+  char logbuf[128];
+  disassemble_inst_to_buf(logbuf, 128, (uint8_t *)last_inst, cpu.pc, *snpc);
+  int arrow_len = strlen(" --> ");
+  iringbuf[iringbuf_index] = realloc(iringbuf[iringbuf_index], arrow_len + strlen(logbuf) + 1);
+  char *p = iringbuf[iringbuf_index];
+  memset(p, ' ', arrow_len);
+  p += arrow_len;
+  strcpy(p, logbuf);
+
+  memmove(iringbuf[iringbuf_index], " --> ", 4);
+  for (int i = 0; iringbuf[i] != NULL && i < 16; i++) {
+    if (i == iringbuf_index) {
+      Log(ANSI_FMT("%s", ANSI_FG_RED), iringbuf[i]);
+    }
+    else {
+      Log(ANSI_FMT("%s", ANSI_FG_GREEN), iringbuf[i]);
+    }
+    free(iringbuf[i]);
+  }
+}
+#endif
+#endif
+
+void device_update();
+
+static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
+#ifdef CONFIG_ITRACE_COND
+  if (ITRACE_COND) {
+    log_write("%s\n", _this->logbuf);
+  }
+#endif
+#ifdef CONFIG_IRINGTRACE_COND
+  if (IRINGTRACE_COND) {
+    int arrow_len = strlen(" --> ");
+    iringbuf[iringbuf_index] = realloc(iringbuf[iringbuf_index], arrow_len + strlen(_this->logbuf) + 1);
+    char *p = iringbuf[iringbuf_index];
+    memset(p, ' ', arrow_len);
+    p += arrow_len;
+    strcpy(p, _this->logbuf);
+    iringbuf_index++;
+    iringbuf_index %= 16;
+  }
+#endif
+  if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
+  IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
+  IFDEF(CONFIG_WATCHPOINT, diff_watchpoint_value());
+}
+
+static void exec_once(Decode *s, vaddr_t pc) {
+  s->pc = pc;
+  s->snpc = pc;
+#ifdef CONFIG_IRINGTRACE
+  last_inst = &s->isa.inst.val;
+  snpc = &s->snpc;
+#endif
+  isa_exec_once(s);
+  cpu.pc = s->dnpc;
+#ifdef CONFIG_ITRACE
+  disassemble_inst_to_buf(s->logbuf, 128, (uint8_t *)&s->isa.inst.val, s->pc, s->snpc);
 #endif
 }
 
@@ -92,6 +145,9 @@ static void statistic() {
 }
 
 void assert_fail_msg() {
+#ifdef CONFIG_IRINGTRACE_COND
+  if (IRINGTRACE_COND) print_iringbuf();
+#endif
   isa_reg_display();
   statistic();
 }
