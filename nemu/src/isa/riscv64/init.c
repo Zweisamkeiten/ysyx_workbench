@@ -19,10 +19,10 @@
 // this is not consistent with uint8_t
 // but it is ok since we do not access the array directly
 static const uint32_t img [] = {
-  0x00100513,  // li      a0,1
   0x00000297,  // auipc t0,0
   0x0002b823,  // sd  zero,16(t0)
-  0x0102b503,  // ld  a0,16(t0)
+  // 0x0102b503,  // ld  a0,16(t0)
+  0x00100513,  // li      a0,1
   0x00200593,  // li      a1,2
   0x00200613,  // li      a2,2
   0x00200693,  // li      a3,2
