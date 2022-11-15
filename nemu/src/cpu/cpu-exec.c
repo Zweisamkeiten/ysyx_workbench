@@ -91,7 +91,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
   if (ITRACE_COND) {
     log_write("%s\n", _this->logbuf);
-    #ifdef CONFIG_IRINGTRACE
+    #ifdef CONFIG_IRINGTRACE_COND
     int arrow_len = strlen(" --> ");
     iringbuf[iringbuf_index] = realloc(iringbuf[iringbuf_index], arrow_len + strlen(_this->logbuf) + 1);
     char *p = iringbuf[iringbuf_index];
@@ -143,7 +143,7 @@ static void statistic() {
 }
 
 void assert_fail_msg() {
-#ifdef CONFIG_IRINGTRACE
+#ifdef CONFIG_IRINGTRACE_COND
   print_iringbuf();
 #endif
   isa_reg_display();
