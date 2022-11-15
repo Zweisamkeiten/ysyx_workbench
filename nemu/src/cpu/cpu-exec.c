@@ -55,7 +55,6 @@ void disassemble_inst_to_buf(char *logbuf, size_t bufsize, uint8_t * inst_val, v
       MUXDEF(CONFIG_ISA_x86, snpc, pc), (uint8_t *)&inst_val, ilen);
 }
 #ifdef CONFIG_IRINGTRACE
-#include <cpu/ifetch.h>
 static int iringbuf_index = 0;
 static char *iringbuf[16] = {NULL};
 static MUXDEF(CONFIG_ISA_x86, uint64_t, uint32_t) *last_inst;
