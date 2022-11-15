@@ -33,15 +33,41 @@ uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
 static bool g_print_step = false;
 
+#ifdef CONFIG_IRINGTRACE
+static int iringbuf_index = 0;
+static char *iringbuf[16] = {NULL};
+
+void print_iringbuf() {
+  Log(ANSI_FMT("INSTRUCTIONS RING STRACE:\n", ANSI_FG_RED));
+  memmove(iringbuf[iringbuf_index], " --> ", 4);
+  for (int i = 0; iringbuf[i] != NULL && i < 16; i++) {
+    if (i == iringbuf_index) {
+      Log(ANSI_FMT("%s", ANSI_FG_RED), iringbuf[i]);
+    }
+    else {
+      Log(ANSI_FMT("%s", ANSI_FG_GREEN), iringbuf[i]);
+    }
+    free(iringbuf[i]);
+  }
+}
+#endif
+
 void device_update();
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
-  if (ITRACE_COND) { log_write("%s\n", _this->logbuf); }
-#endif
-#ifdef CONFIG_IRINGTRACE_COND
-  if (IRINGTRACE_COND) {
-    printf("todo\n");
+  if (ITRACE_COND) {
+    log_write("%s\n", _this->logbuf);
+    #ifdef CONFIG_IRINGTRACE
+    int arrow_len = strlen(" --> ");
+    char *p = iringbuf[iringbuf_index];
+    p = realloc(p, arrow_len + strlen(_this->logbuf) + 1);
+    memset(p, ' ', arrow_len);
+    p += arrow_len;
+    strcpy(p, _this->logbuf);
+    iringbuf_index++;
+    iringbuf_index %= 16;
+    #endif
   }
 #endif
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
@@ -97,6 +123,9 @@ static void statistic() {
 }
 
 void assert_fail_msg() {
+#ifdef CONFIG_IRINGTRACE
+  print_iringbuf();
+#endif
   isa_reg_display();
   statistic();
 }
