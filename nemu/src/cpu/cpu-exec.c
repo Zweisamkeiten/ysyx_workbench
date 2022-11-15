@@ -39,7 +39,7 @@ static char *iringbuf[16] = {NULL};
 
 void print_iringbuf() {
   Log(ANSI_FMT("INSTRUCTIONS RING STRACE:\n", ANSI_FG_RED));
-  memmove(iringbuf[iringbuf_index], " --> ", 4);
+  memmove(iringbuf[--iringbuf_index], " --> ", 4);
   for (int i = 0; iringbuf[i] != NULL && i < 16; i++) {
     if (i == iringbuf_index) {
       Log(ANSI_FMT("%s", ANSI_FG_RED), iringbuf[i]);
