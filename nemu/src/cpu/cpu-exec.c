@@ -18,7 +18,7 @@
 #include <cpu/difftest.h>
 #include <locale.h>
 #ifdef CONFIG_WATCHPOINT
-#include "../monitor/sdb/sdb.h"
+extern void diff_watchpoint_value();
 #endif
 
 /* The assembly code of instructions executed is only output to the screen
@@ -34,11 +34,14 @@ static uint64_t g_timer = 0; // unit: us
 static bool g_print_step = false;
 
 #ifdef CONFIG_IRINGTRACE
+#include <cpu/ifetch.h>
 static int iringbuf_index = 0;
 static char *iringbuf[16] = {NULL};
+MUXDEF(CONFIG_ISA_x86, uint64_t, uint32_t) last_inst;
 
 void print_iringbuf() {
   Log(ANSI_FMT("INSTRUCTIONS RING STRACE:\n", ANSI_FG_RED));
+
   memmove(iringbuf[--iringbuf_index], " --> ", 4);
   for (int i = 0; iringbuf[i] != NULL && i < 16; i++) {
     if (i == iringbuf_index) {
