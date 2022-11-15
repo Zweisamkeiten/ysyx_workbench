@@ -61,11 +61,11 @@ word_t paddr_read(paddr_t addr, int len) {
   IFDEF(CONFIG_MTRACE, printf(ANSI_FMT("Reading memory from address: ", ANSI_FG_MAGENTA)
                               ANSI_FMT(FMT_PADDR, ANSI_FG_CYAN)
                               ANSI_FMT(" size: ", ANSI_FG_MAGENTA)
-                              ANSI_FMT("%d", ANSI_FG_CYAN), addr, len));
+                              ANSI_FMT("%d\n", ANSI_FG_CYAN), addr, len));
   #ifdef CONFIG_MTRACE_COND
-  log_write(ANSI_FMT("Writing memory from address:\t", ANSI_FG_MAGENTA)
+  log_write(ANSI_FMT("Reading memory from address: ", ANSI_FG_MAGENTA)
          ANSI_FMT(FMT_PADDR, ANSI_FG_CYAN)
-         ANSI_FMT(" size:\t", ANSI_FG_MAGENTA)
+         ANSI_FMT(" size: ", ANSI_FG_MAGENTA)
          ANSI_FMT("%d\n", ANSI_FG_CYAN), addr, len);
   #endif
 #endif
@@ -82,9 +82,9 @@ void paddr_write(paddr_t addr, int len, word_t data) {
                               ANSI_FMT(" size: ", ANSI_FG_MAGENTA)
                               ANSI_FMT("%d\n", ANSI_FG_CYAN), addr, len));
   #ifdef CONFIG_MTRACE_COND
-  log_write(ANSI_FMT("Writing memory from address:\t", ANSI_FG_MAGENTA)
+  log_write(ANSI_FMT("Writing memory from address: ", ANSI_FG_MAGENTA)
          ANSI_FMT(FMT_PADDR, ANSI_FG_CYAN)
-         ANSI_FMT(" size:\t", ANSI_FG_MAGENTA)
+         ANSI_FMT(" size: ", ANSI_FG_MAGENTA)
          ANSI_FMT("%d\n", ANSI_FG_CYAN), addr, len);
   #endif
 #endif
