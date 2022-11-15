@@ -146,7 +146,7 @@ static void statistic() {
 
 void assert_fail_msg() {
 #ifdef CONFIG_IRINGTRACE_COND
-  print_iringbuf();
+  if (IRINGTRACE_COND) print_iringbuf();
 #endif
   isa_reg_display();
   statistic();
