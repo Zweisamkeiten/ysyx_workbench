@@ -60,8 +60,8 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
     log_write("%s\n", _this->logbuf);
     #ifdef CONFIG_IRINGTRACE
     int arrow_len = strlen(" --> ");
+    iringbuf[iringbuf_index] = realloc(iringbuf[iringbuf_index], arrow_len + strlen(_this->logbuf) + 1);
     char *p = iringbuf[iringbuf_index];
-    p = realloc(p, arrow_len + strlen(_this->logbuf) + 1);
     memset(p, ' ', arrow_len);
     p += arrow_len;
     strcpy(p, _this->logbuf);
