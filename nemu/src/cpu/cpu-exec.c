@@ -39,7 +39,7 @@ void disassemble_inst_to_buf(char *logbuf, size_t bufsize, uint8_t * inst_val, v
   p += snprintf(p, bufsize, FMT_WORD ":", pc);
   int ilen = snpc - pc;
   int i;
-  uint8_t *inst = (uint8_t *)&inst_val;
+  uint8_t *inst = (uint8_t *)inst_val;
   for (i = ilen - 1; i >= 0; i --) {
     p += snprintf(p, 4, " %02x", inst[i]);
   }
@@ -52,7 +52,7 @@ void disassemble_inst_to_buf(char *logbuf, size_t bufsize, uint8_t * inst_val, v
 
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
   disassemble(p, logbuf + bufsize - p,
-      MUXDEF(CONFIG_ISA_x86, snpc, pc), (uint8_t *)&inst_val, ilen);
+      MUXDEF(CONFIG_ISA_x86, snpc, pc), (uint8_t *)inst_val, ilen);
 }
 #ifdef CONFIG_IRINGTRACE
 static int iringbuf_index = 0;
