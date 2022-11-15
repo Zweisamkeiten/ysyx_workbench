@@ -33,16 +33,46 @@ uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
 static bool g_print_step = false;
 
+#ifdef CONFIG_ITRACE
+void disassemble_inst_to_buf(char *logbuf, size_t bufsize, uint8_t * inst_val, vaddr_t pc, vaddr_t snpc) {
+  char *p = logbuf;
+  p += snprintf(p, bufsize, FMT_WORD ":", pc);
+  int ilen = snpc - pc;
+  int i;
+  uint8_t *inst = (uint8_t *)&inst_val;
+  for (i = ilen - 1; i >= 0; i --) {
+    p += snprintf(p, 4, " %02x", inst[i]);
+  }
+  int ilen_max = MUXDEF(CONFIG_ISA_x86, 8, 4);
+  int space_len = ilen_max - ilen;
+  if (space_len < 0) space_len = 0;
+  space_len = space_len * 3 + 1;
+  memset(p, ' ', space_len);
+  p += space_len;
+
+  void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
+  disassemble(p, logbuf + bufsize - p,
+      MUXDEF(CONFIG_ISA_x86, snpc, pc), (uint8_t *)&inst_val, ilen);
+}
 #ifdef CONFIG_IRINGTRACE
 #include <cpu/ifetch.h>
 static int iringbuf_index = 0;
 static char *iringbuf[16] = {NULL};
-MUXDEF(CONFIG_ISA_x86, uint64_t, uint32_t) last_inst;
+static MUXDEF(CONFIG_ISA_x86, uint64_t, uint32_t) *last_inst;
+static vaddr_t *snpc;
 
 void print_iringbuf() {
   Log(ANSI_FMT("INSTRUCTIONS RING STRACE:\n", ANSI_FG_RED));
+  char logbuf[128];
+  disassemble_inst_to_buf(logbuf, 128, (uint8_t *)&last_inst, cpu.pc, *snpc);
+  int arrow_len = strlen(" --> ");
+  iringbuf[iringbuf_index] = realloc(iringbuf[iringbuf_index], arrow_len + strlen(logbuf) + 1);
+  char *p = iringbuf[iringbuf_index];
+  memset(p, ' ', arrow_len);
+  p += arrow_len;
+  strcpy(p, logbuf);
 
-  memmove(iringbuf[--iringbuf_index], " --> ", 4);
+  memmove(iringbuf[iringbuf_index], " --> ", 4);
   for (int i = 0; iringbuf[i] != NULL && i < 16; i++) {
     if (i == iringbuf_index) {
       Log(ANSI_FMT("%s", ANSI_FG_RED), iringbuf[i]);
@@ -53,6 +83,7 @@ void print_iringbuf() {
     free(iringbuf[i]);
   }
 }
+#endif
 #endif
 
 void device_update();
@@ -81,27 +112,14 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 static void exec_once(Decode *s, vaddr_t pc) {
   s->pc = pc;
   s->snpc = pc;
+#ifdef CONFIG_IRINGTRACE
+  last_inst = &s->isa.inst.val;
+  snpc = &s->snpc;
+#endif
   isa_exec_once(s);
   cpu.pc = s->dnpc;
 #ifdef CONFIG_ITRACE
-  char *p = s->logbuf;
-  p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->pc);
-  int ilen = s->snpc - s->pc;
-  int i;
-  uint8_t *inst = (uint8_t *)&s->isa.inst.val;
-  for (i = ilen - 1; i >= 0; i --) {
-    p += snprintf(p, 4, " %02x", inst[i]);
-  }
-  int ilen_max = MUXDEF(CONFIG_ISA_x86, 8, 4);
-  int space_len = ilen_max - ilen;
-  if (space_len < 0) space_len = 0;
-  space_len = space_len * 3 + 1;
-  memset(p, ' ', space_len);
-  p += space_len;
-
-  void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
-  disassemble(p, s->logbuf + sizeof(s->logbuf) - p,
-      MUXDEF(CONFIG_ISA_x86, s->snpc, s->pc), (uint8_t *)&s->isa.inst.val, ilen);
+  disassemble_inst_to_buf(s->logbuf, 128, (uint8_t *)&s->isa.inst.val, s->pc, s->snpc);
 #endif
 }
 
