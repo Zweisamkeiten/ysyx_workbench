@@ -24,6 +24,8 @@ typedef struct Decode {
   vaddr_t dnpc; // dynamic next pc
   ISADecodeInfo isa;
   IFDEF(CONFIG_ITRACE, char logbuf[128]);
+  IFDEF(CONFIG_IRINGTRACE, int iringbuf_index);
+  IFDEF(CONFIG_IRINGTRACE, char *iringbuf[16]);
 } Decode;
 
 // --- pattern matching mechanism ---
