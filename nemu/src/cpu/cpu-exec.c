@@ -204,7 +204,8 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
     log_write("%s\n", ftrace_buf);
   }
 #endif
-  IFDEF(CONFIG_FTRACE, puts(ftrace_buf));
+  // IFDEF(CONFIG_FTRACE, puts(ftrace_buf));
+  printf("%s\n", ftrace_buf);
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
   IFDEF(CONFIG_WATCHPOINT, diff_watchpoint_value());
