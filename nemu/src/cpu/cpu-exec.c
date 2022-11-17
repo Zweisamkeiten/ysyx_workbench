@@ -129,11 +129,11 @@ void disassemble_inst_to_buf(char *logbuf, size_t bufsize, uint8_t * inst_val, v
     char *func_str = NULL;
     if((func_str = check_is_func_call(pc)) != NULL) {
       q += snprintf(q, 128, FMT_WORD ":", pc);
+      stack_depth--;
       for (int i = 0; i < stack_depth; i++) {
         q += snprintf(q, 128, "  ");
       }
       q += snprintf(q, 128, "ret [%s]", func_str);
-      stack_depth--;
       inst_state = INST_RET;
     }
   }
