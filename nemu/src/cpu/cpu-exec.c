@@ -55,7 +55,7 @@ void disassemble_inst_to_buf(char *logbuf, size_t bufsize, uint8_t * inst_val, v
       MUXDEF(CONFIG_ISA_x86, snpc, pc), (uint8_t *)inst_val, ilen);
 #ifdef CONFIG_FTRACE
   if (strchr(p, '\t') != NULL) {
-    if (strncmp(p, "jalr", 4) == 0) {
+    if (strncmp(p, "ret", 3) == 0) {
       printf("jalr\n");
     }
     else if (strncmp(p, "jal", 3) == 0) {
