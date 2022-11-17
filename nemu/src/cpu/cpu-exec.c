@@ -33,6 +33,74 @@ uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
 static bool g_print_step = false;
 
+#ifdef CONFIG_FTRACE
+extern uint8_t * elf_mem_p;
+extern Elf_Ehdr *ehdr;
+
+enum {INST_JAL, INST_JALR, INST_OTHER};
+static char ftrace_buf[128];
+
+typedef struct sym_str_pair_t {
+  Elf_Addr addr;
+  word_t size;
+  char * str;
+} sym_str_pair;
+
+typedef struct sym_str_t {
+  sym_str_pair ** pairs;
+  size_t n_pairs;
+} sym_str_table;
+
+static size_t stack_depth = 0;
+static sym_str_table * func_sym_str_table;
+
+void add_pair_to_table(sym_str_table * table, sym_str_pair pair) {
+  table->pairs[table->n_pairs] = malloc(sizeof(sym_str_pair));
+  table->pairs[table->n_pairs]->addr = pair.addr;
+  table->pairs[table->n_pairs]->str = malloc(strlen(pair.str) + 1);
+  strcpy(table->pairs[table->n_pairs]->str, pair.str);
+  table->n_pairs = table->n_pairs + 1;
+}
+
+void init_func_sym_str_table() {
+  Elf_Shdr *shdr = (Elf_Shdr *)&elf_mem_p[ehdr->e_shoff];
+
+  // the first section header is null
+  for (int i = 1; i < ehdr->e_shnum; i++) {
+    if (shdr[i].sh_type == SHT_SYMTAB) {
+      func_sym_str_table = malloc(sizeof(sym_str_table));
+      func_sym_str_table->pairs = NULL;
+      func_sym_str_table->n_pairs = 0;
+      char *strtab = (char *)&elf_mem_p[shdr[shdr[i].sh_link].sh_offset];
+      Elf_Sym *symt = (Elf_Sym *)&elf_mem_p[shdr[i].sh_offset];
+      for (int j = 0; j < shdr[i].sh_size / sizeof(Elf_Sym); j++) {
+        // st_name 保存了指向符号表中字符串表（位于.dynstr 或者.strtab）
+        // 的偏移地址，偏移地址存放着符号的名称，如 printf。
+        // st_value 存放符号的值（可能是地址或者位置偏移量）。
+        if (ELF_ST_TYPE(symt->st_info) == STT_FUNC) {
+          func_sym_str_table->pairs = realloc(func_sym_str_table->pairs, sizeof(sym_str_pair *) * (func_sym_str_table->n_pairs + 1));
+          sym_str_pair func_sym_str_pair = {.addr = symt->st_value, .str = &strtab[symt->st_name], .size = symt->st_size};
+          add_pair_to_table(func_sym_str_table, func_sym_str_pair);
+        }
+        symt++;
+      }
+      break;
+    }
+  }
+}
+
+char * check_is_func_call(word_t pc) {
+  for (int i = 0; i < func_sym_str_table->n_pairs; i++) {
+    sym_str_pair *curpair = func_sym_str_table->pairs[i];
+    if (curpair->addr <= pc && pc < curpair->addr + curpair->size) {
+      return func_sym_str_table->pairs[i]->str;
+    }
+  }
+  return NULL;
+}
+#endif
+
+
 #ifdef CONFIG_ITRACE
 void disassemble_inst_to_buf(char *logbuf, size_t bufsize, uint8_t * inst_val, vaddr_t pc, vaddr_t snpc) {
   char *p = logbuf;
@@ -54,14 +122,32 @@ void disassemble_inst_to_buf(char *logbuf, size_t bufsize, uint8_t * inst_val, v
   disassemble(p, logbuf + bufsize - p,
       MUXDEF(CONFIG_ISA_x86, snpc, pc), (uint8_t *)inst_val, ilen);
 #ifdef CONFIG_FTRACE
+  char * q = ftrace_buf;
   if (strncmp(p, "ret", 3) == 0) {
-    printf("jalr\n");
+    char *func_str = NULL;
+    if((func_str = check_is_func_call(cpu.pc)) != NULL) {
+      q += snprintf(q, 128, FMT_WORD ":", pc);
+      for (int i = 0; i < stack_depth; i++) {
+        q += snprintf(q, 128, "\t");
+      }
+      q += snprintf(q, 128, "ret [%s]\n", func_str);
+      stack_depth--;
+    }
   }
   else if (strncmp(p, "jal", 3) == 0) {
-    printf("jal\n");
+    char *func_str = NULL;
+    if((func_str = check_is_func_call(cpu.pc)) != NULL) {
+      q += snprintf(q, 128, FMT_WORD ":", pc);
+      for (int i = 0; i < stack_depth; i++) {
+        q += snprintf(q, 128, "\t");
+      }
+      q += snprintf(q, 128, "call [%s@" FMT_WORD "]\n", func_str, cpu.pc);
+      stack_depth++;
+    }
   }
 #endif
 }
+
 #ifdef CONFIG_IRINGTRACE
 static int iringbuf_index = 0;
 static char *iringbuf[16] = {NULL};
@@ -93,61 +179,6 @@ void print_iringbuf() {
 #endif
 #endif
 
-#ifdef CONFIG_FTRACE
-extern uint8_t * elf_mem_p;
-extern Elf_Ehdr *ehdr;
-
-enum {INST_JAL, INST_JALR, INST_OTHER};
-// static size_t stack_depth = 0;
-
-typedef struct sym_str_pair_t {
-  Elf_Addr addr;
-  char * str;
-} sym_str_pair;
-
-typedef struct sym_str_t {
-  sym_str_pair ** pairs;
-  size_t n_pairs;
-} sym_str_table;
-
-static sym_str_table * func_sym_str_table;
-
-void add_pair_to_table(sym_str_table * table, sym_str_pair pair) {
-  table->pairs[table->n_pairs] = malloc(sizeof(sym_str_pair));
-  table->pairs[table->n_pairs]->addr = pair.addr;
-  table->pairs[table->n_pairs]->str = malloc(strlen(pair.str) + 1);
-  strcpy(table->pairs[table->n_pairs]->str, pair.str);
-  table->n_pairs = table->n_pairs + 1;
-}
-
-void init_func_sym_str_table() {
-  Elf_Shdr *shdr = (Elf_Shdr *)&elf_mem_p[ehdr->e_shoff];
-
-  // the first section header is null
-  for (int i = 1; i < ehdr->e_shnum; i++) {
-    if (shdr[i].sh_type == SHT_SYMTAB) {
-      func_sym_str_table = malloc(sizeof(sym_str_table));
-      func_sym_str_table->pairs = NULL;
-      func_sym_str_table->n_pairs = 0;
-      char *strtab = (char *)&elf_mem_p[shdr[shdr[i].sh_link].sh_offset];
-      Elf_Sym *symt = (Elf_Sym *)&elf_mem_p[shdr[i].sh_offset];
-      for (int j = 0; j < shdr[i].sh_size / sizeof(Elf_Sym); j++) {
-        // st_name 保存了指向符号表中字符串表（位于.dynstr 或者.strtab）
-        // 的偏移地址，偏移地址存放着符号的名称，如 printf。
-        // st_value 存放符号的值（可能是地址或者位置偏移量）。
-        if (ELF_ST_TYPE(symt->st_info) == STT_FUNC) {
-          func_sym_str_table->pairs = realloc(func_sym_str_table->pairs, sizeof(sym_str_pair *) * (func_sym_str_table->n_pairs + 1));
-          sym_str_pair func_sym_str_pair = {.addr = symt->st_value, .str = &strtab[symt->st_name]};
-          add_pair_to_table(func_sym_str_table, func_sym_str_pair);
-        }
-        symt++;
-      }
-      break;
-    }
-  }
-}
-#endif
-
 void device_update();
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
@@ -170,9 +201,10 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #endif
 #ifdef CONFIG_FTRACE_COND
   if (FTRACE_COND) {
-    log_write("%s\n", _this->logbuf);
+    log_write("%s\n", ftrace_buf);
   }
 #endif
+  IFDEF(CONFIG_FTRACE, puts(ftrace_buf));
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
   IFDEF(CONFIG_WATCHPOINT, diff_watchpoint_value());
