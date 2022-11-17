@@ -58,7 +58,7 @@ static sym_str_table * func_sym_str_table;
 void add_pair_to_table(sym_str_table * table, sym_str_pair pair) {
   table->pairs[table->n_pairs] = malloc(sizeof(sym_str_pair));
   table->pairs[table->n_pairs]->addr = pair.addr;
-  table->pairs[table->n_pairs]->str = malloc(strlen(pair.str) + -1);
+  table->pairs[table->n_pairs]->str = malloc(strlen(pair.str) + 1);
   table->pairs[table->n_pairs]->size = pair.size;
   strcpy(table->pairs[table->n_pairs]->str, pair.str);
   table->n_pairs = table->n_pairs + 1;
