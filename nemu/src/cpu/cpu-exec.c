@@ -53,6 +53,16 @@ void disassemble_inst_to_buf(char *logbuf, size_t bufsize, uint8_t * inst_val, v
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
   disassemble(p, logbuf + bufsize - p,
       MUXDEF(CONFIG_ISA_x86, snpc, pc), (uint8_t *)inst_val, ilen);
+#ifdef CONFIG_FTRACE
+  if (strchr(p, '\t') != NULL) {
+    if (strncmp(p, "jalr", 4) == 0) {
+      printf("jalr\n");
+    }
+    else if (strncmp(p, "jal", 3) == 0) {
+      printf("jal\n");
+    }
+  }
+#endif
 }
 #ifdef CONFIG_IRINGTRACE
 static int iringbuf_index = 0;
@@ -89,7 +99,7 @@ void print_iringbuf() {
 extern uint8_t * elf_mem_p;
 extern Elf_Ehdr *ehdr;
 
-enum {INST_JAL, INST_JALR};
+enum {INST_JAL, INST_JALR, INST_OTHER};
 // static size_t stack_depth = 0;
 
 typedef struct sym_str_pair_t {

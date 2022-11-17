@@ -150,7 +150,7 @@ config ITRACE_COND
   default "true"
 
 config IRINGTRACE
-  depends on TRACE && TARGET_NATIVE_ELF && ENGINE_INTERPRETER
+  depends on TRACE && TARGET_NATIVE_ELF && ENGINE_INTERPRETER && ITRACE
   bool "Enable instruction ring tracer"
   default y
 
@@ -170,7 +170,7 @@ config MTRACE_COND
   default "false"
 
 config FTRACE
-  depends on TRACE && TARGET_NATIVE_ELF && ENGINE_INTERPRETER
+  depends on TRACE && TARGET_NATIVE_ELF && ENGINE_INTERPRETER && ITRACE
   bool "Enable function call/return tracer"
   default n
 
