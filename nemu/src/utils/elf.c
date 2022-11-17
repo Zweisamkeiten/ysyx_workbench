@@ -16,7 +16,7 @@ void init_elf(const char *elf_file) {
   long size = ftell(fp);
 
   Log("The elf is %s, size = %ld", elf_file, size);
-  
+
   fseek(fp, 0, SEEK_SET);
   elf_mem_p = (uint8_t *)malloc(size);
   fread(elf_mem_p, size, 1, fp);
