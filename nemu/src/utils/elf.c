@@ -1,4 +1,3 @@
-#ifdef CONFIG_FTRACE
 #include <common.h>
 
 // load elf file to mem;
@@ -37,4 +36,3 @@ void init_elf(const char *elf_file) {
 
   Log("Program Entry point: 0x%lx\n", ehdr->e_entry);
 }
-#endif
