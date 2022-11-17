@@ -150,7 +150,7 @@ config ITRACE_COND
   default "true"
 
 config IRINGTRACE
-  depends on TRACE && TARGET_NATIVE_ELF && ENGINE_INTERPRETER
+  depends on TRACE && TARGET_NATIVE_ELF && ENGINE_INTERPRETER && ITRACE
   bool "Enable instruction ring tracer"
   default y
 
@@ -167,6 +167,16 @@ config MTRACE
 config MTRACE_COND
   depends on MTRACE
   string "Only trace memory when the condition is true"
+  default "false"
+
+config FTRACE
+  depends on TRACE && TARGET_NATIVE_ELF && ENGINE_INTERPRETER && ITRACE
+  bool "Enable function call/return tracer"
+  default n
+
+config FTRACE_COND
+  depends on FTRACE
+  string "Only trace function when the condition is true"
   default "false"
 
 config DIFFTEST

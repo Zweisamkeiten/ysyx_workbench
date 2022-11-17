@@ -25,6 +25,7 @@ $(BINARY): compile_git
 # Some convenient rules
 
 override ARGS ?= --log=$(BUILD_DIR)/nemu-log.txt
+# override ARGS += --elf=$(NEMU_HOME)/add-riscv64-nemu.elf
 override ARGS += $(ARGS_DIFF)
 
 # Command to execute NEMU
