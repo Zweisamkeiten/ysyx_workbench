@@ -188,11 +188,6 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
   if (ITRACE_COND) {
     log_write("%s\n", _this->logbuf);
-    if (inst_state != INST_OTHER) {
-      log_write(ANSI_FMT("[FTRACE] %s\n", ANSI_FG_MAGENTA), ftrace_buf);
-      printf(ANSI_FMT("[FTRACE] %s\n", ANSI_FG_MAGENTA), ftrace_buf);
-      inst_state = INST_OTHER;
-    }
   }
 #endif
 #ifdef CONFIG_IRINGTRACE_COND
