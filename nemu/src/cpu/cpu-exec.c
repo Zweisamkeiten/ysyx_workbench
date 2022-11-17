@@ -209,6 +209,11 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 // #endif
   // IFDEF(CONFIG_FTRACE, puts(ftrace_buf));
 #ifdef CONFIG_FTRACE
+  if (inst_state != INST_OTHER) {
+    log_write(ANSI_FMT("[FTRACE] %s\n", ANSI_FG_MAGENTA), ftrace_buf);
+    printf(ANSI_FMT("[FTRACE] %s\n", ANSI_FG_MAGENTA), ftrace_buf);
+    inst_state = INST_OTHER;
+  }
 #endif
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
