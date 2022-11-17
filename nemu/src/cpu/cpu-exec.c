@@ -89,6 +89,9 @@ void print_iringbuf() {
 extern uint8_t * elf_mem_p;
 extern Elf_Ehdr *ehdr;
 
+enum {INST_JAL, INST_JALR};
+// static size_t stack_depth = 0;
+
 typedef struct sym_str_pair_t {
   Elf_Addr addr;
   char * str;
@@ -155,6 +158,11 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
     strcpy(p, _this->logbuf);
     iringbuf_index++;
     iringbuf_index %= 16;
+  }
+#endif
+#ifdef CONFIG_FTRACE_COND
+  if (FTRACE_COND) {
+    log_write("%s\n", _this->logbuf);
   }
 #endif
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
