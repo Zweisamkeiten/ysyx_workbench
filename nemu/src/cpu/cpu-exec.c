@@ -37,7 +37,8 @@ static bool g_print_step = false;
 extern uint8_t * elf_mem_p;
 extern Elf_Ehdr *ehdr;
 
-enum {INST_JAL, INST_JALR, INST_OTHER};
+enum {INST_CALL, INST_RET, INST_OTHER};
+static int inst_state = INST_OTHER;
 static char ftrace_buf[128];
 
 typedef struct sym_str_pair_t {
@@ -132,6 +133,7 @@ void disassemble_inst_to_buf(char *logbuf, size_t bufsize, uint8_t * inst_val, v
       }
       q += snprintf(q, 128, "ret [%s]\n", func_str);
       stack_depth--;
+      inst_state = INST_RET;
     }
   }
   else if (strncmp(p, "jal", 3) == 0) {
@@ -143,6 +145,7 @@ void disassemble_inst_to_buf(char *logbuf, size_t bufsize, uint8_t * inst_val, v
       }
       q += snprintf(q, 128, "call [%s@" FMT_WORD "]\n", func_str, cpu.pc);
       stack_depth++;
+      inst_state = INST_CALL;
     }
   }
 #endif
@@ -205,7 +208,12 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 //   }
 // #endif
   // IFDEF(CONFIG_FTRACE, puts(ftrace_buf));
-  printf("%s\n", ftrace_buf);
+#ifdef CONFIG_FTRACE
+  if (inst_state != INST_OTHER) {
+    printf("%s\n", ftrace_buf);
+    inst_state = INST_OTHER;
+  }
+#endif
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
   IFDEF(CONFIG_WATCHPOINT, diff_watchpoint_value());
