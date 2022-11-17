@@ -115,12 +115,12 @@ void init_func_sym_str_table() {
   // the first section header is null
   for (int i = 1; i < ehdr->e_shnum; i++) {
     if (shdr[i].sh_type == SHT_SYMTAB) {
+      func_sym_str_table = malloc(sizeof(sym_str_table));
+      func_sym_str_table->pairs = NULL;
+      func_sym_str_table->n_pairs = 0;
       char *strtab = (char *)&elf_mem_p[shdr[shdr[i].sh_link].sh_offset];
       Elf_Sym *symt = (Elf_Sym *)&elf_mem_p[shdr[i].sh_offset];
       for (int j = 0; j < shdr[i].sh_size / sizeof(Elf_Sym); j++) {
-        func_sym_str_table = malloc(sizeof(sym_str_table));
-        func_sym_str_table->pairs = NULL;
-        func_sym_str_table->n_pairs = 0;
         // st_name 保存了指向符号表中字符串表（位于.dynstr 或者.strtab）
         // 的偏移地址，偏移地址存放着符号的名称，如 printf。
         // st_value 存放符号的值（可能是地址或者位置偏移量）。
