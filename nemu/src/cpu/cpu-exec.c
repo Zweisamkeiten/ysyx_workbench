@@ -210,7 +210,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
   // IFDEF(CONFIG_FTRACE, puts(ftrace_buf));
 #ifdef CONFIG_FTRACE
   if (inst_state != INST_OTHER) {
-    log_write("%s", ftrace_buf);
+    log_write("%s\n", ftrace_buf);
     printf("%s\n", ftrace_buf);
     inst_state = INST_OTHER;
   }
