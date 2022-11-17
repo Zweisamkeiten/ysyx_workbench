@@ -40,7 +40,7 @@ run: run-env
 
 gdb: run-env
 	$(call git_commit, "gdb NEMU")
-	gdb -s $(BINARY) -x $(NEMU_HOME)/gdbinit $(BINARY) -iex "run $(NEMU_EXEC) &> $(NEMU_HOME)/outfile"
+	gdb -s $(BINARY) -x $(NEMU_HOME)/gdbinit $(BINARY) -iex "run $(ARGS) $(IMG) &> $(NEMU_HOME)/outfile"
 
 clean-tools = $(dir $(shell find ./tools -maxdepth 2 -mindepth 2 -name "Makefile"))
 $(clean-tools):
