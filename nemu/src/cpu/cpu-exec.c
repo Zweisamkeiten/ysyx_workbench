@@ -199,11 +199,11 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
     iringbuf_index %= 16;
   }
 #endif
-#ifdef CONFIG_FTRACE_COND
-  if (FTRACE_COND) {
-    log_write("%s\n", ftrace_buf);
-  }
-#endif
+// #ifdef CONFIG_FTRACE_COND
+//   if (FTRACE_COND) {
+//     log_write("%s\n", ftrace_buf);
+//   }
+// #endif
   // IFDEF(CONFIG_FTRACE, puts(ftrace_buf));
   printf("%s\n", ftrace_buf);
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
