@@ -1,6 +1,5 @@
 #ifdef CONFIG_FTRACE
 #include <common.h>
-#include <elf.h>
 
 // load elf file to mem;
 uint8_t * const elf_mem_p = NULL;
