@@ -131,7 +131,7 @@ void disassemble_inst_to_buf(char *logbuf, size_t bufsize, uint8_t * inst_val, v
       for (int i = 0; i < stack_depth; i++) {
         q += snprintf(q, 128, "\t");
       }
-      q += snprintf(q, 128, "ret [%s]\n", func_str);
+      q += snprintf(q, 128, "ret [%s]", func_str);
       stack_depth--;
       inst_state = INST_RET;
     }
@@ -143,7 +143,7 @@ void disassemble_inst_to_buf(char *logbuf, size_t bufsize, uint8_t * inst_val, v
       for (int i = 0; i < stack_depth; i++) {
         q += snprintf(q, 128, "\t");
       }
-      q += snprintf(q, 128, "call [%s@" FMT_WORD "]\n", func_str, cpu.pc);
+      q += snprintf(q, 128, "call [%s@" FMT_WORD "]", func_str, cpu.pc);
       stack_depth++;
       inst_state = INST_CALL;
     }
