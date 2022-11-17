@@ -25,7 +25,7 @@ $(BINARY): compile_git
 # Some convenient rules
 
 override ARGS ?= --log=$(BUILD_DIR)/nemu-log.txt
-override ARGS += --elf=$(NEMU_HOME)/add-riscv64-nemu.elf &> $(NEMU_HOME)/outfile
+override ARGS += --elf=$(NEMU_HOME)/add-riscv64-nemu.elf
 override ARGS += $(ARGS_DIFF)
 
 # Command to execute NEMU
@@ -40,7 +40,7 @@ run: run-env
 
 gdb: run-env
 	$(call git_commit, "gdb NEMU")
-	gdb -s $(BINARY) -x $(NEMU_HOME)/gdbinit --args $(NEMU_EXEC)
+	gdb -s $(BINARY) -x $(NEMU_HOME)/gdbinit $(BINARY) -iex "run $(NEMU_EXEC) &> $(NEMU_HOME)/outfile"
 
 clean-tools = $(dir $(shell find ./tools -maxdepth 2 -mindepth 2 -name "Makefile"))
 $(clean-tools):
