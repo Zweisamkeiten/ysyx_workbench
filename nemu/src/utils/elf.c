@@ -5,7 +5,7 @@
 uint8_t * const elf_mem_p = NULL;
 Elf_Ehdr *ehdr = NULL;
 
-void load_elf(const char * elf_file) {
+void init_elf(const char * elf_file) {
   if (elf_file == NULL) {
     Log("No elf file is given.");
     return;
