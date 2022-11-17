@@ -77,7 +77,7 @@ static int parse_args(int argc, char *argv[]) {
     {"diff"     , required_argument, NULL, 'd'},
     {"port"     , required_argument, NULL, 'p'},
     {"help"     , no_argument      , NULL, 'h'},
-    IFDEF(CONFIG_FTRACE, {"elf"      , required_argument, NULL, 'e'},)
+    IFDEF(CONFIG_FTRACE, {"elf"      , required_argument, NULL, 'e'}),
     {0          , 0                , NULL,  0 },
   };
   int o;
@@ -95,7 +95,7 @@ static int parse_args(int argc, char *argv[]) {
         printf("\t-l,--log=FILE           output log to FILE\n");
         printf("\t-d,--diff=REF_SO        run DiffTest with reference REF_SO\n");
         printf("\t-p,--port=PORT          run DiffTest with port PORT\n");
-        IFDEF(CONFIG_FTRACE, printf("\t-e,--elf=FILE           enable FTRACE, parse a elf file\n");)
+        IFDEF(CONFIG_FTRACE, printf("\t-e,--elf=FILE           enable FTRACE, parse a elf file\n"));
         printf("\n");
         exit(0);
     }
