@@ -86,9 +86,6 @@ void print_iringbuf() {
 #endif
 
 #ifdef CONFIG_FTRACE
-extern uint8_t * const elf_mem_p;
-extern Elf_Ehdr *ehdr;
-
 typedef struct sym_str_pair_t {
   Elf_Addr addr;
   char * str;
