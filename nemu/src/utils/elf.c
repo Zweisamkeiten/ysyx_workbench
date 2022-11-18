@@ -2,6 +2,9 @@
 
 // load elf file to mem;
 uint8_t * elf_mem_p = NULL;
+
+#ifdef CONFIG_FTRACE
+
 Elf_Ehdr *ehdr = NULL;
 
 void init_elf(const char *elf_file) {
@@ -35,3 +38,4 @@ void init_elf(const char *elf_file) {
 
   Log("Program Entry point: 0x%lx\n", ehdr->e_entry);
 }
+#endif
