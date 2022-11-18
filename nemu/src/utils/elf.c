@@ -1,3 +1,4 @@
+#ifdef CONFIG_FTRACE
 #include <common.h>
 
 // load elf file to mem;
@@ -6,8 +7,7 @@ Elf_Ehdr *ehdr = NULL;
 
 void init_elf(const char *elf_file) {
   if (elf_file == NULL) {
-    Log("No elf file is given.");
-    return;
+    Assert(0, "No elf file is given.");
   }
 
   FILE *fp = fopen(elf_file, "rb");
@@ -36,3 +36,4 @@ void init_elf(const char *elf_file) {
 
   Log("Program Entry point: 0x%lx\n", ehdr->e_entry);
 }
+#endif
