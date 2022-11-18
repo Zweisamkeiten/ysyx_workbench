@@ -6,7 +6,8 @@ Elf_Ehdr *ehdr = NULL;
 
 void init_elf(const char *elf_file) {
   if (elf_file == NULL) {
-    Assert(0, "No elf file is given.");
+    Log("No elf file is given.");
+    return;
   }
 
   FILE *fp = fopen(elf_file, "rb");
