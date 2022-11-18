@@ -1,10 +1,10 @@
-#ifdef CONFIG_FTRACE
 #include <common.h>
 
 // load elf file to mem;
 uint8_t * elf_mem_p = NULL;
 Elf_Ehdr *ehdr = NULL;
 
+#ifdef CONFIG_FTRACE
 void init_elf(const char *elf_file) {
   if (elf_file == NULL) {
     Assert(0, "No elf file is given.");
