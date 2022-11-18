@@ -2,9 +2,11 @@
 
 // load elf file to mem;
 uint8_t * elf_mem_p = NULL;
-Elf_Ehdr *ehdr = NULL;
 
 #ifdef CONFIG_FTRACE
+
+Elf_Ehdr *ehdr = NULL;
+
 void init_elf(const char *elf_file) {
   if (elf_file == NULL) {
     Assert(0, "No elf file is given.");
