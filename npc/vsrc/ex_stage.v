@@ -34,7 +34,7 @@ module ysyx_22050710_exu (
     })
   );
 
-  /* always @(i_ALUctr) begin */
-  /*   if (i_ALUctr == 4'b1111) set_state_end(); */
-  /* end */
+  always @(i_ALUctr) begin
+    if (i_ALUctr == 4'b1111) set_state_end();
+  end
 endmodule
