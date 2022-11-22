@@ -102,7 +102,7 @@ void *memset(void *s, int c, size_t n) {
   unsigned char *sp = (unsigned char *)s;
 
   for (size_t i = 0; i < n; i++) {
-    *sp++ = c;
+    *(sp + i) = c;
   }
 
   return sp;
@@ -154,8 +154,8 @@ int memcmp(const void *s1, const void *s2, size_t n) {
   }
 
   for (size_t i = 0; i < n; i++) {
-    if (*s1p + i != *s2p + i) {
-      compareStatus = *s1p - *s2p;
+    if (*(s1p + i) != *(s2p + i)) {
+      compareStatus = *(s1p + i) - *(s2p + i);
       break;
     }
   }

@@ -119,19 +119,19 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
           }
 
           int ret_temp = ret;
-          int div = 1;
+          unsigned long long int div = 1;
           signed long long int signed_num_tmp = signed_num;
           if (signed_num < 0) {
             buf_w(out, ret++, n, '-');
             ret_temp++;
             signed_num_tmp = -signed_num;
+            signed_num = -signed_num;
           }
-          while (signed_num_tmp != 0)
-          {
+          do {
             signed_num_tmp = signed_num_tmp/base;
             ret++;
             div *= base;
-          }
+          } while (signed_num_tmp != 0);
 
           // reverse
           while (ret_temp != ret)
@@ -154,14 +154,13 @@ unsigned_convert:
           }
 
           int ret_temp = ret;
-          int div = 1;
+          unsigned long long div = 1;
           unsigned long long int unsigned_num_tmp = unsigned_num;
-          while (unsigned_num_tmp != 0)
-          {
+          do {
             unsigned_num_tmp = unsigned_num_tmp/base;
             ret++;
             div *= base;
-          }
+          } while (unsigned_num_tmp != 0);
 
           // reverse
           while (ret_temp != ret)
