@@ -5,14 +5,12 @@ module ysyx_22050710_exu (
   input i_clk,
   input [4:0] i_ra, i_rb, i_rd,
   input [63:0] i_imm, i_pc,
-  input i_wen, i_ALUAsrc,
+  input i_ALUAsrc,
   input [1:0] i_ALUBsrc,
-  input [3:0] i_ALUctr
+  input [3:0] i_ALUctr,
+  output [63:0] o_ALUresult
 );
 
-  wire [63:0] rs1, rs2;
-  wire [63:0] result;
-  ysyx_22050710_gpr #(.ADDR_WIDTH(5), .DATA_WIDTH(64)) u_gprs (i_clk, i_ra, i_rb, i_rd, result, i_wen, rs1, rs2);
   // aader
   wire [63:0] adder_result, add_a, add_b;
   assign add_a = i_ALUAsrc ? i_pc : rs1;
@@ -32,7 +30,7 @@ module ysyx_22050710_exu (
   assign copy_result = i_imm;
 
   MuxKey #(.NR_KEY(2), .KEY_LEN(4), .DATA_LEN(64)) u_mux1 (
-    .out(result),
+    .out(o_ALUresult),
     .key(i_ALUctr),
     .lut({
       4'b0011, copy_result,

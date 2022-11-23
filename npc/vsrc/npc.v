@@ -6,8 +6,11 @@ module ysyx_22050710_npc (
   input [31:0] i_inst,
   output [63:0] o_pc
 );
-  wire [63:0] pc_adder = (PCBsrc ? ra : o_pc) + (PCAsrc ? imm : 64'd4);
+  wire [63:0] pc_adder = (PCBsrc ? ALUAsrc : o_pc) + (PCAsrc ? imm : 64'd4);
   ysyx_22050710_pc u_pc (i_clk, i_rst, .i_in(pc_adder), o_pc);
+
+  wire [63:0] rs1, rs2, ALUresult;
+  ysyx_22050710_gpr #(.ADDR_WIDTH(5), .DATA_WIDTH(64)) u_gprs (i_clk, i_ra, i_rb, i_rd, result, i_wen, rs1, rs2);
 
   wire [63:0] imm;
   wire [4:0] ra, rb, rd;
@@ -17,6 +20,6 @@ module ysyx_22050710_npc (
   wire PCAsrc, PCBsrc;
   ysyx_22050710_idu u_idu (i_inst, imm, ra, rb, rd, wen, ALUAsrc, ALUBsrc, ALUctr, PCAsrc, PCBsrc);
 
-  ysyx_22050710_exu u_exu (i_clk, ra, rb, rd, imm, o_pc, wen, ALUAsrc, ALUBsrc, ALUctr);
+  ysyx_22050710_exu u_exu (i_clk, ra, rb, rd, imm, o_pc, wen, ALUAsrc, ALUBsrc, ALUctr, ALUresult);
 
 endmodule
