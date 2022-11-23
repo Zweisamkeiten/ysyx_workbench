@@ -7,7 +7,7 @@ module ysyx_22050710_npc (
   output [63:0] o_pc
 );
   wire [63:0] pc_adder = o_pc + imm;
-  ysyx_22050710_pc u_pc (i_clk, i_rst, .i_load(1'b1), .i_inc(!i_ALUAsrc), .i_in(pc_adder), o_pc);
+  ysyx_22050710_pc u_pc (i_clk, i_rst, .i_load(1'b1), .i_inc(!ALUAsrc), .i_in(pc_adder), o_pc);
 
   wire [63:0] imm;
   wire [4:0] ra, rb, rd;
