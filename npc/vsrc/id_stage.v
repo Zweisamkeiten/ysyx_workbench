@@ -77,7 +77,7 @@ module ysyx_22050710_idu (
   assign o_ALUAsrc = |{inst_type_j, inst_auipc, inst_jalr} == 1 ? 1'b1 : 1'b0; // '1' when inst about pc
   assign o_ALUBsrc = {|{inst_jal, inst_jalr}, |inst_type[4:1] & !inst_jalr};
 
-  assign o_PCAsrc = |{inst_type_j, inst_type_b};
+  assign o_PCAsrc = |{inst_jal, inst_jalr};
   assign o_PCBsrc = inst_jalr;
 
   wire alu_copyimm, alu_plus, alu_ebreak;
