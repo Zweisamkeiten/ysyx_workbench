@@ -28,8 +28,8 @@ module ysyx_22050710_exu (
   assign adder_result = add_a + add_b;
 
   // copy imm
-  wire [63:0] copy_imm_result;
-  assign  copy_imm_result = i_imm;
+  wire [63:0] copy_result;
+  assign copy_result = i_imm;
 
   MuxKey #(.NR_KEY(2), .KEY_LEN(4), .DATA_LEN(64)) u_mux1 (
     .out(result),
