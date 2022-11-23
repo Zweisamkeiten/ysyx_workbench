@@ -76,6 +76,7 @@ static void reset(int n) {
 
 enum {
   NPC_RUNNING,
+  NPC_ABORT,
   NPC_END
 };
 
@@ -83,6 +84,10 @@ static int npc_state = NPC_RUNNING;
 
 void set_state_end() {
   npc_state = NPC_END;
+}
+
+void set_state_abort() {
+  npc_state = NPC_ABORT;
 }
 
 int main(int argc, char **argv, char **env) {
@@ -120,8 +125,13 @@ int main(int argc, char **argv, char **env) {
 
   while (npc_state == NPC_RUNNING) {
     top->i_inst = pmem_read(top->o_pc, 4);
-    printf("%lx\n", top->o_pc);
+    // printf("%lx\n", top->o_pc);
     single_cycle();
+  }
+
+  switch (npc_state) {
+    case NPC_END: printf("Successful exit.\n"); break;
+    case NPC_ABORT: printf("Unimplemented inst at PC: 0x%016lx\n", top->o_pc); break;
   }
 
   top->final();

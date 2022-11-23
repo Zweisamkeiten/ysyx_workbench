@@ -1,5 +1,6 @@
 // ysyx_22050710
-/* import "DPI-C" function void set_state_end(); */
+import "DPI-C" function void set_state_end();
+import "DPI-C" function void set_state_abort();
 module ysyx_22050710_exu (
   input i_clk,
   input [4:0] i_ra, i_rb, i_rd,
@@ -35,6 +36,7 @@ module ysyx_22050710_exu (
   );
 
   always @(i_ALUctr) begin
-    if (i_ALUctr == 4'b1111) set_state_end();
+    if (i_ALUctr == 4'b1111) set_state_abort(); // invalid inst
+    if (i_ALUctr == 4'b1110) set_state_end(); // ebreak
   end
 endmodule
