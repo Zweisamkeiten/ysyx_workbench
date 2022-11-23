@@ -105,13 +105,13 @@ int main(int argc, char **argv, char **env) {
 
   if (argc == 2) {
     FILE *fp = fopen(argv[1], "rb");
-    fprintf(stderr, "Can not open '%s'", argv[1]);
+    fprintf(stderr, "Can not open '%s\n'", argv[1]);
     assert(fp != NULL);
 
     fseek(fp, 0, SEEK_END);
     long size = ftell(fp);
 
-    fprintf(stdout, "The image is %s, size = %ld", argv[1], size);
+    fprintf(stdout, "The image is %s, size = %ld\n", argv[1], size);
 
     fseek(fp, 0, SEEK_SET);
     int ret = fread(guest_to_host(RESET_VECTOR), size, 1, fp);
