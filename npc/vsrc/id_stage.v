@@ -27,17 +27,19 @@ module ysyx_22050710_idu (
   assign immJ = {{44{i_inst[31]}}, i_inst[19:12], i_inst[20], i_inst[30:21], 1'b0};
   
   // RV32I and RV64I
+  wire inst_lui    = (opcode[6:0] == 7'b0110111);
   wire inst_auipc  = (opcode[6:0] == 7'b0010111);
+  wire inst_jal    = (opcode[6:0] == 7'b1101111);
   wire inst_addi   = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b000);
   wire inst_ebreak = (opcode[6:0] == 7'b1110011) & (funct3[2:0] == 3'b000);
   /* wire inst_invalid = |{inst_addi, inst_ebreak} */
 
   wire inst_type_r = 1'b0;
   wire inst_type_i = |{inst_addi, inst_ebreak};
-  wire inst_type_u = |{inst_auipc};
+  wire inst_type_u = |{inst_lui, inst_auipc};
   wire inst_type_s = 1'b0;
   wire inst_type_b = 1'b0;
-  wire inst_type_j = 1'b0;
+  wire inst_type_j = |{inst_jal};
 
   wire [2:0] extop;
   wire [5:0] inst_type = {inst_type_r, inst_type_i, inst_type_u, inst_type_s, inst_type_b, inst_type_j};
@@ -68,11 +70,11 @@ module ysyx_22050710_idu (
   );
 
   assign o_wen = |{inst_type_r, inst_type_i, inst_type_u, inst_type_j};
-  assign o_ALUAsrc = |{1'b0} == 1 ? 1'b1 : 1'b0; // '1' when inst about pc
-  assign o_ALUBsrc = {o_ALUAsrc, |inst_type[5:0]};
+  assign o_ALUAsrc = |{inst_type_j, inst_type_b} == 1 ? 1'b1 : 1'b0; // '1' when inst about pc
+  assign o_ALUBsrc = {{inst_type_j}, |inst_type[4:1]};
 
   wire alu_plus, alu_ebreak;
-  assign alu_plus = |{inst_auipc, inst_addi};
+  assign alu_plus = |{inst_lui, inst_auipc, inst_jal, inst_addi};
   assign alu_ebreak = inst_ebreak;
 
   MuxKeyWithDefault #(.NR_KEY(2), .KEY_LEN(2), .DATA_LEN(4)) u_mux2 (
