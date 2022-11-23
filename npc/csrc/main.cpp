@@ -20,15 +20,15 @@
 #define PMEM_RIGHT ((paddr_t)CONFIG_MBASE + CONFIG_MSIZE - 1)
 #define CONFIG_PC_RESET_OFFSET 0x0
 #define RESET_VECTOR (PMEM_LEFT + CONFIG_PC_RESET_OFFSET)
-typedef MUXDEF(CONFIG_ISA64, uint64_t, uint32_t) word_t;
-typedef MUXDEF(PMEM64, uint64_t, uint32_t) paddr_t;
+typedef uint64_t word_t;
+typedef uint64_t paddr_t;
 
 static word_t host_read(void *addr, int len) {
   switch (len) {
     case 1: return *(uint8_t  *)addr;
     case 2: return *(uint16_t *)addr;
     case 4: return *(uint32_t *)addr;
-    IFDEF(CONFIG_ISA64, case 8: return *(uint64_t *)addr);
+    case 8: return *(uint64_t *)addr;
     default: MUXDEF(CONFIG_RT_CHECK, assert(0), return 0);
   }
 }
@@ -124,6 +124,7 @@ int main(int argc, char **argv, char **env) {
   }
 
   while (npc_state == NPC_RUNNING) {
+    printf("%lx\n", pmem_read(top->o_pc, 4));
     top->i_inst = pmem_read(top->o_pc, 4);
     // printf("%lx\n", top->o_pc);
     single_cycle();
