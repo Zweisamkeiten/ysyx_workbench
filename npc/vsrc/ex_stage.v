@@ -27,10 +27,15 @@ module ysyx_22050710_exu (
   );
   assign adder_result = add_a + add_b;
 
-  MuxKey #(.NR_KEY(1), .KEY_LEN(4), .DATA_LEN(64)) u_mux1 (
+  // copy imm
+  wire [63:0] copy_result;
+  assign copy_result = i_imm;
+
+  MuxKey #(.NR_KEY(2), .KEY_LEN(4), .DATA_LEN(64)) u_mux1 (
     .out(result),
     .key(i_ALUctr),
     .lut({
+      4'b0011, copy_result,
       4'b0000, adder_result
     })
   );
