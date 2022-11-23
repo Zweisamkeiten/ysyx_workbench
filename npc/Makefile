@@ -2,7 +2,8 @@ TOPNAME = ysyx_22050710_npc
 BUILD_DIR = ./build
 OBJ_DIR = $(BUILD_DIR)/obj_dir
 BIN = $(BUILD_DIR)/$(TOPNAME)
-INC_PATH ?=
+IIMG ?=
+NPC_EXEC := $(BIN) $(IMG)
 
 ifeq ($(VERILATOR_ROOT),)
 VERILATOR = verilator
@@ -41,7 +42,7 @@ $(BIN): $(VSRCS) $(CSRCS) $(NVBOARD_ARCHIVE)
 sim: $(BIN)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo "-- Simulation --------"
-	$(BIN)
+	$(NPC_EXEC)
 
 clean:
 	rm -rf $(BUILD_DIR)
