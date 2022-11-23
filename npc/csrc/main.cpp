@@ -124,6 +124,8 @@ int main(int argc, char **argv, char **env) {
   }
 
   printf("%d\n", npc_state == NPC_RUNNING);
+  printf("%d\n", NPC_RUNNING);
+  printf("%d\n", npc_state);
   while (npc_state == NPC_RUNNING) {
     printf("%lx\n", pmem_read(top->o_pc, 4));
     top->i_inst = pmem_read(top->o_pc, 4);
