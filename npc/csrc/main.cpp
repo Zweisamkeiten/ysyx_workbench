@@ -133,12 +133,12 @@ int main(int argc, char **argv, char **env) {
     if (npc_state != NPC_RUNNING) break;
   }
 
+  top->final();
+  delete top;
+  tfp->close();
+
   switch (npc_state) {
     case NPC_END: printf("Successful exit.\n"); break;
     case NPC_ABORT: printf("Unimplemented inst at PC: 0x%016lx\n", last); exit(1);
   }
-
-  top->final();
-  delete top;
-  tfp->close();
 }
