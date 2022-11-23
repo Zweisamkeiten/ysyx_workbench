@@ -124,8 +124,10 @@ int main(int argc, char **argv, char **env) {
   }
 
   npc_state = NPC_RUNNING;
+  word_t last = top->o_pc;
   while (1) {
     top->i_inst = pmem_read(top->o_pc, 4);
+    last = top->o_pc;
     // printf("%lx\n", top->o_pc);
     single_cycle();
     if (npc_state != NPC_RUNNING) break;
@@ -133,7 +135,7 @@ int main(int argc, char **argv, char **env) {
 
   switch (npc_state) {
     case NPC_END: printf("Successful exit.\n"); break;
-    case NPC_ABORT: printf("Unimplemented inst at PC: 0x%016lx\n", top->o_pc); break;
+    case NPC_ABORT: printf("Unimplemented inst at PC: 0x%016lx\n", last); break;
   }
 
   top->final();
