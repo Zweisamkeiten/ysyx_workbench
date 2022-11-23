@@ -135,7 +135,7 @@ int main(int argc, char **argv, char **env) {
 
   switch (npc_state) {
     case NPC_END: printf("Successful exit.\n"); break;
-    case NPC_ABORT: printf("Unimplemented inst at PC: 0x%016lx\n", last); break;
+    case NPC_ABORT: printf("Unimplemented inst at PC: 0x%016lx\n", last); exit(1);
   }
 
   top->final();
