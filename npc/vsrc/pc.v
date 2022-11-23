@@ -1,6 +1,7 @@
 module ysyx_22050710_pc (
   input i_clk,
   input i_rst,
+  input i_load,
   input [63:0] i_in,
   output [63:0] o_pc
 );
