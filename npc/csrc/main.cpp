@@ -121,6 +121,7 @@ int main(int argc, char **argv, char **env) {
   }
   else {
     memcpy(guest_to_host(RESET_VECTOR), img, sizeof(img));
+    printf("%lx\n", pmem_read(top->o_pc, 4));
   }
 
   while (npc_state == NPC_RUNNING) {
