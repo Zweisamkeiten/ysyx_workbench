@@ -95,7 +95,6 @@ int main(int argc, char **argv, char **env) {
   contextp = new VerilatedContext;
   tfp = new VerilatedVcdC;
   top = new Vtop;
-  printf("%d\n", npc_state);
 
   contextp->traceEverOn(true);
   top->trace(tfp, 0);
@@ -126,7 +125,6 @@ int main(int argc, char **argv, char **env) {
 
   npc_state = NPC_RUNNING;
   while (npc_state == NPC_RUNNING) {
-    printf("%lx\n", pmem_read(top->o_pc, 4));
     top->i_inst = pmem_read(top->o_pc, 4);
     // printf("%lx\n", top->o_pc);
     single_cycle();
