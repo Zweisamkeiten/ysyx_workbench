@@ -19,7 +19,7 @@ module ysyx_22050710_exu (
 
   // aader
   wire [63:0] adder_result, add_a, add_b;
-  assign add_a = i_ALUAsrc ? i_pc : rs1;
+  assign add_a = i_ALUAsrc ? o_pc : rs1;
   MuxKey #(.NR_KEY(3), .KEY_LEN(2), .DATA_LEN(64)) u_mux0 (
     .out(add_b),
     .key(i_ALUBsrc),
