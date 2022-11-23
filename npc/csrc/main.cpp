@@ -123,7 +123,7 @@ int main(int argc, char **argv, char **env) {
     memcpy(guest_to_host(RESET_VECTOR), img, sizeof(img));
   }
 
-  printf("%d\n", npc_state);
+  printf("%d\n", npc_state == NPC_RUNNING);
   while (npc_state == NPC_RUNNING) {
     printf("%lx\n", pmem_read(top->o_pc, 4));
     top->i_inst = pmem_read(top->o_pc, 4);
