@@ -42,7 +42,6 @@ static word_t pmem_read(paddr_t addr, int len) {
 }
 
 static const uint32_t img [] = {
-  0x00000413,
   0x00100093,
   0x00200113,
   0x00300193,
