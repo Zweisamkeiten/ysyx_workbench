@@ -126,7 +126,7 @@ int main(int argc, char **argv, char **env) {
   while (npc_state == NPC_RUNNING) {
     printf("%lx\n", pmem_read(top->o_pc, 4));
     top->i_inst = pmem_read(top->o_pc, 4);
-    // printf("%lx\n", top->o_pc);
+    printf("%lx\n", top->o_pc);
     single_cycle();
   }
 
