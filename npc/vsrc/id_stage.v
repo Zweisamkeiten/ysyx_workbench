@@ -28,6 +28,7 @@ module ysyx_22050710_idu (
   
   wire inst_addi   = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b000);
   wire inst_ebreak = (opcode[6:0] == 7'b1110011) & (funct3[2:0] == 3'b000);
+  /* wire inst_invalid = |{inst_addi, inst_ebreak} */
 
   wire inst_type_r = 1'b0;
   wire inst_type_i = |{inst_addi, inst_ebreak};
@@ -72,12 +73,13 @@ module ysyx_22050710_idu (
   assign alu_plus = |{inst_addi};
   assign alu_ebreak = inst_ebreak;
 
-  MuxKey #(.NR_KEY(2), .KEY_LEN(2), .DATA_LEN(4)) u_mux2 (
+  MuxKeyWithDefault #(.NR_KEY(2), .KEY_LEN(2), .DATA_LEN(4)) u_mux2 (
     .out(o_ALUctr),
     .key({alu_plus, alu_ebreak}),
+    .default_out(4'b1111),
     .lut({
       2'b10, 4'b0000,
-      2'b01, 4'b1111
+      2'b01, 4'b1110
     })
   );
 endmodule

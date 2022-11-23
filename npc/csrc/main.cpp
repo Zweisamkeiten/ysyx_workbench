@@ -20,15 +20,15 @@
 #define PMEM_RIGHT ((paddr_t)CONFIG_MBASE + CONFIG_MSIZE - 1)
 #define CONFIG_PC_RESET_OFFSET 0x0
 #define RESET_VECTOR (PMEM_LEFT + CONFIG_PC_RESET_OFFSET)
-typedef MUXDEF(CONFIG_ISA64, uint64_t, uint32_t) word_t;
-typedef MUXDEF(PMEM64, uint64_t, uint32_t) paddr_t;
+typedef uint64_t word_t;
+typedef uint64_t paddr_t;
 
 static word_t host_read(void *addr, int len) {
   switch (len) {
     case 1: return *(uint8_t  *)addr;
     case 2: return *(uint16_t *)addr;
     case 4: return *(uint32_t *)addr;
-    IFDEF(CONFIG_ISA64, case 8: return *(uint64_t *)addr);
+    case 8: return *(uint64_t *)addr;
     default: MUXDEF(CONFIG_RT_CHECK, assert(0), return 0);
   }
 }
@@ -75,6 +75,7 @@ static void reset(int n) {
 }
 
 enum {
+  NPC_ABORT,
   NPC_RUNNING,
   NPC_END
 };
@@ -83,6 +84,10 @@ static int npc_state = NPC_RUNNING;
 
 void set_state_end() {
   npc_state = NPC_END;
+}
+
+void set_state_abort() {
+  npc_state = NPC_ABORT;
 }
 
 int main(int argc, char **argv, char **env) {
@@ -117,9 +122,20 @@ int main(int argc, char **argv, char **env) {
   else {
     memcpy(guest_to_host(RESET_VECTOR), img, sizeof(img));
   }
+
+  npc_state = NPC_RUNNING;
+  word_t last = top->o_pc;
+  while (1) {
     top->i_inst = pmem_read(top->o_pc, 4);
-    printf("%lx\n", top->o_pc);
+    last = top->o_pc;
+    // printf("%lx\n", top->o_pc);
     single_cycle();
+    if (npc_state != NPC_RUNNING) break;
+  }
+
+  switch (npc_state) {
+    case NPC_END: printf("Successful exit.\n"); break;
+    case NPC_ABORT: printf("Unimplemented inst at PC: 0x%016lx\n", last); exit(1);
   }
 
   top->final();
