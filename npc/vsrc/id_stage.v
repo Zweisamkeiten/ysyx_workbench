@@ -73,7 +73,7 @@ module ysyx_22050710_idu (
   assign o_ALUAsrc = |{inst_type_j, inst_type_b} == 1 ? 1'b1 : 1'b0; // '1' when inst about pc
   assign o_ALUBsrc = {{inst_type_j}, |inst_type[4:1]};
 
-  wire alu_plus, alu_ebreak;
+  wire alu_copyimm, alu_plus, alu_ebreak;
   assign alu_copyimm = |{inst_lui};
   assign alu_plus = |{inst_auipc, inst_jal, inst_addi};
   assign alu_ebreak = inst_ebreak;
