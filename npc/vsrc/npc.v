@@ -6,8 +6,6 @@ module ysyx_22050710_npc (
   input [31:0] i_inst,
   output [63:0] o_pc
 );
-  ysyx_22050710_pc u_pc (i_clk, i_rst, .i_load(1'b1), .i_inc(1'b1), .i_in(64'b0), o_pc);
-
   wire [63:0] imm;
   wire [4:0] ra, rb, rd;
   wire wen, ALUAsrc;

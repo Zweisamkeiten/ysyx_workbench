@@ -4,7 +4,7 @@ import "DPI-C" function void set_state_abort();
 module ysyx_22050710_exu (
   input i_clk,
   input [4:0] i_ra, i_rb, i_rd,
-  input [63:0] i_imm, i_pc,
+  input [63:0] i_imm,
   input i_wen, i_ALUAsrc,
   input [1:0] i_ALUBsrc,
   input [3:0] i_ALUctr
@@ -13,6 +13,10 @@ module ysyx_22050710_exu (
   wire [63:0] rs1, rs2;
   wire [63:0] result;
   ysyx_22050710_gpr #(.ADDR_WIDTH(5), .DATA_WIDTH(64)) u_gprs (i_clk, i_ra, i_rb, i_rd, result, i_wen, rs1, rs2);
+
+  wire [63:0] pc_adder = o_pc + i_imm;
+  ysyx_22050710_pc u_pc (i_clk, i_rst, .i_load(1'b1), .i_inc(!i_ALUAsrc), .i_in(pc_adder), o_pc);
+
   // aader
   wire [63:0] adder_result, add_a, add_b;
   assign add_a = i_ALUAsrc ? i_pc : rs1;
