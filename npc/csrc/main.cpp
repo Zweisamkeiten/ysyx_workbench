@@ -98,9 +98,25 @@ int main(int argc, char **argv, char **env) {
 
   reset(10);
 
-  memcpy(guest_to_host(RESET_VECTOR), img, sizeof(img));
+  if (argc == 2) {
+    FILE *fp = fopen(argv[1], "rb");
+    if (fp == NULL) fprintf(stderr, "Can not open '%s\n'", argv[1]);
+    assert(fp != NULL);
 
-  while (npc_state == NPC_RUNNING) {
+    fseek(fp, 0, SEEK_END);
+    long size = ftell(fp);
+
+    fprintf(stdout, "The image is %s, size = %ld\n", argv[1], size);
+
+    fseek(fp, 0, SEEK_SET);
+    int ret = fread(guest_to_host(RESET_VECTOR), size, 1, fp);
+    assert(ret == 1);
+
+    fclose(fp);
+  }
+  else {
+    memcpy(guest_to_host(RESET_VECTOR), img, sizeof(img));
+  }
     top->i_inst = pmem_read(top->o_pc, 4);
     printf("%lx\n", top->o_pc);
     single_cycle();
