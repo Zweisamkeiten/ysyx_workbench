@@ -44,9 +44,7 @@ static char *log_file = NULL;
 static char *diff_so_file = NULL;
 static char *img_file = NULL;
 static int difftest_port = 1234;
-#ifdef CONFIG_FTRACE
 static char *elf_file = NULL;
-#endif
 
 static long load_img() {
   if (img_file == NULL) {
