@@ -91,11 +91,11 @@ void set_state_abort() {
 }
 
 int main(int argc, char **argv, char **env) {
-  printf("%d\n", npc_state);
 
   contextp = new VerilatedContext;
   tfp = new VerilatedVcdC;
   top = new Vtop;
+  printf("%d\n", npc_state);
 
   contextp->traceEverOn(true);
   top->trace(tfp, 0);
