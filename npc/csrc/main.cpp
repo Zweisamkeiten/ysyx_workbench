@@ -124,9 +124,10 @@ int main(int argc, char **argv, char **env) {
   }
 
   npc_state = NPC_RUNNING;
-  while (npc_state == NPC_RUNNING) {
+  while (1) {
     top->i_inst = pmem_read(top->o_pc, 4);
     // printf("%lx\n", top->o_pc);
+    if (npc_state != NPC_RUNNING) break;
     single_cycle();
   }
 
