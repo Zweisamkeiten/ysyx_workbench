@@ -5,7 +5,8 @@ module ysyx_22050710_idu (
   output [4:0] o_ra, o_rb, o_rd,
   output o_wen, o_ALUAsrc,
   output [1:0] o_ALUBsrc,
-  output [3:0] o_ALUctr
+  output [3:0] o_ALUctr,
+  output o_PCAsrc, o_PCBsrc
 );
 
   wire [6:0] opcode;
@@ -30,6 +31,7 @@ module ysyx_22050710_idu (
   wire inst_lui    = (opcode[6:0] == 7'b0110111);
   wire inst_auipc  = (opcode[6:0] == 7'b0010111);
   wire inst_jal    = (opcode[6:0] == 7'b1101111);
+  wire inst_jalr   = (opcode[6:0] == 7'b1100111) & (funct3[2:0] == 3'b000);
   wire inst_addi   = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b000);
   wire inst_ebreak = (opcode[6:0] == 7'b1110011) & (funct3[2:0] == 3'b000);
 
@@ -37,7 +39,7 @@ module ysyx_22050710_idu (
   wire inst_sd     = (opcode[6:0] == 7'b0100011) & (funct3[2:0] == 3'b011);
 
   wire inst_type_r = 1'b0;
-  wire inst_type_i = |{inst_addi, inst_ebreak};
+  wire inst_type_i = |{inst_addi, inst_ebreak, inst_jalr};
   wire inst_type_u = |{inst_lui, inst_auipc};
   wire inst_type_s = |{inst_sd};
   wire inst_type_b = 1'b0;
@@ -72,8 +74,11 @@ module ysyx_22050710_idu (
   );
 
   assign o_wen = |{inst_type_r, inst_type_i, inst_type_u, inst_type_j};
-  assign o_ALUAsrc = |{inst_type_j, inst_type_b} == 1 ? 1'b1 : 1'b0; // '1' when inst about pc
-  assign o_ALUBsrc = {{inst_type_j}, |inst_type[4:1]};
+  assign o_ALUAsrc = |{inst_type_j, inst_auipc, inst_jalr} == 1 ? 1'b1 : 1'b0; // '1' when inst about pc
+  assign o_ALUBsrc = {|{inst_jal, inst_jalr}, |inst_type[4:1] & !inst_jalr};
+
+  assign o_PCAsrc = |{inst_jal, inst_jalr};
+  assign o_PCBsrc = inst_jalr;
 
   wire alu_copyimm, alu_plus, alu_ebreak;
   assign alu_copyimm = |{inst_lui};
