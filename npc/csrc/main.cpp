@@ -75,8 +75,8 @@ static void reset(int n) {
 }
 
 enum {
-  NPC_RUNNING,
   NPC_ABORT,
+  NPC_RUNNING,
   NPC_END
 };
 
