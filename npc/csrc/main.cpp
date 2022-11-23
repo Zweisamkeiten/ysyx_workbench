@@ -104,6 +104,7 @@ int main(int argc, char **argv, char **env) {
   reset(10);
 
   if (argc == 2) {
+    printf("%s\n", argv[1]);
     FILE *fp = fopen(argv[1], "rb");
     fprintf(stderr, "Can not open '%s\n'", argv[1]);
     assert(fp != NULL);
