@@ -25,6 +25,7 @@ CSRCS = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cc" -or -name "*
 include $(NVBOARD_HOME)/scripts/nvboard.mk
 
 # rules for verilator
+INC_PATH := $(NPC_HOME)/csrc/include
 INCFLAGS = $(addprefix -I, $(INC_PATH))
 CFLAGS += $(INCFLAGS)
 LDFLAGS += -lSDL2 -lSDL2_image
