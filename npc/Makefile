@@ -1,6 +1,6 @@
 TOPNAME = ysyx_22050710_npc
 BUILD_DIR = ./build
-OBJ_DIR = $(realpath $(BUILD_DIR)/obj_dir)
+OBJ_DIR = $(realpath $(BUILD_DIR))/obj_dir
 BIN = $(BUILD_DIR)/$(TOPNAME)
 IIMG ?=
 NPC_EXEC := $(BIN) $(IMG)
