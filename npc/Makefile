@@ -37,7 +37,7 @@ LDFLAGS += -lSDL2 -lSDL2_image
 ### Rule (compile): a single `.c` -> `.o` (gcc)
 $(OBJ_DIR)/%.o: %.c
 	@mkdir -p $(dir $@) && echo + CC $<
-	@$(CC) -std=gnu11 $(CFLAGS) -c -o $@ $(realpath $<)
+	@$(CC) -std=gnu11 $(CFLAGS) -c -o $@ $<
 
 all: $(OBJS)
 	@echo "Write this Makefile by your self."
