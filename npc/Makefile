@@ -11,8 +11,7 @@ else
 export VERILATOR_ROOT
 VERILATOR = $(VERILATOR_ROOT)/bin/verilator
 endif
-VERILATOR_BUILDFLAGS += -cc --exe -j $(shell nproc) -Wall -Wno-DECLFILENAME --trace
-VERILATOR_CFLAGS += --build -cc --exe -j -Wall -Wno-DECLFILENAME
+VERILATOR_CFLAGS += --build -cc --exe -j $(shell nproc)
 
 default: $(BIN)
 
@@ -22,7 +21,6 @@ $(shell mkdir -p $(BUILD_DIR))
 VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
 CSRCS = $(shell realpath --relative-to $(abspath ./) $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cc" -or -name "*.cpp"))
 OBJS      = $(addprefix $(OBJ_DIR)/, $(addsuffix .o, $(basename $(filter-out csrc/main.cpp, $(CSRCS)))))
-TOP_SIM_SRC = csrc/main.cpp
 
 # rules for NVBoard
 include $(NVBOARD_HOME)/scripts/nvboard.mk
