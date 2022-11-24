@@ -85,10 +85,10 @@ int main(int argc, char **argv, char **env) {
   }
 
   npc_state.state = NPC_RUNNING;
-  pc = top->o_pc;
+  *pc = top->o_pc;
   while (1) {
     top->i_inst = paddr_read(top->o_pc, 4);
-    last = top->o_pc;
+    *pc = top->o_pc;
     // printf("%lx\n", top->o_pc);
     single_cycle();
     if (npc_state.state != NPC_RUNNING) break;
