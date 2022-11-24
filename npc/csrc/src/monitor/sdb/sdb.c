@@ -3,6 +3,8 @@
 #include <common.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+#include <memory/paddr.h>
+#include "sdb.h"
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char* rl_gets() {
@@ -20,6 +22,39 @@ static char* rl_gets() {
   }
 
   return line_read;
+}
+
+static int cmd_x(char *args) {
+  if (args != NULL) {
+    char *esp_str;
+    char *n_str = strtok_r(args, " ", &esp_str);
+
+    if (n_str != NULL) {
+      char **invalid = (char **)malloc(sizeof(char *));
+      *invalid = NULL;
+      uint64_t n = strtoull(n_str, invalid, 10);
+
+      if (*n_str != '\0' && **invalid == '\0') {
+        free(invalid);
+
+        if (esp_str != NULL) {
+          bool success = true;
+          uint64_t addr = expr(esp_str, &success);
+
+          if (success) {
+            for (int i = 0; i < n; addr += 4, ++i) {
+              uint32_t data = paddr_read(addr, 4);
+              printf("%#lx:\t0x%08x\n", addr, data);
+            }
+            return 0;
+          }
+        }
+      }
+    }
+  }
+
+  printf(ANSI_FMT("ERROR: x <N> <EXPR>\n", ANSI_FG_RED));
+  return 0;
 }
 
 static int cmd_info(char *args) {
@@ -53,7 +88,6 @@ static int cmd_si(char *args) {
     }
   } else {
     cpu_exec(1);
-    isa_reg_display();
     return 0;
   }
 
@@ -84,6 +118,7 @@ static struct {
   { "q", "Exit NEMU", cmd_q },
   { "si", "single step", cmd_si },
   { "info", "print the program state", cmd_info },
+  { "x", "scan memory", cmd_x },
 };
 
 #define NR_CMD ARRLEN(cmd_table)
