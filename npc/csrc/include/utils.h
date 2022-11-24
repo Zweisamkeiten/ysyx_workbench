@@ -29,7 +29,7 @@ typedef struct {
 } NPCState;
 
 extern NPCState npc_state;
-extern word_t * pc;
+extern word_t pc;
 
 // ----------- timer -----------
 

@@ -41,7 +41,7 @@ static void reset(int n) {
 }
 
 NPCState npc_state = {.state = NPC_STOP};
-word_t *pc;
+word_t pc;
 
 void set_state_end() {
   npc_state.state = NPC_END;
@@ -85,10 +85,10 @@ int main(int argc, char **argv, char **env) {
   }
 
   npc_state.state = NPC_RUNNING;
-  pc = &(top->o_pc);
+  pc = top->o_pc;
   while (1) {
     top->i_inst = paddr_read(top->o_pc, 4);
-    *pc = top->o_pc;
+    pc = top->o_pc;
     // printf("%lx\n", top->o_pc);
     single_cycle();
     if (npc_state.state != NPC_RUNNING) break;
@@ -100,6 +100,6 @@ int main(int argc, char **argv, char **env) {
 
   switch (npc_state.state) {
     case NPC_END: printf(ANSI_FMT( "Successful exit.\n", ANSI_FG_GREEN)); break;
-    case NPC_ABORT: printf(ANSI_FMT("Unimplemented inst at PC: 0x%016lx\n", ANSI_FG_RED), *pc); exit(1);
+    case NPC_ABORT: printf(ANSI_FMT("Unimplemented inst at PC: 0x%016lx\n", ANSI_FG_RED), pc); exit(1);
   }
 }
