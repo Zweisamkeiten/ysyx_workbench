@@ -22,6 +22,23 @@ static char* rl_gets() {
   return line_read;
 }
 
+static int cmd_info(char *args) {
+  char *sub_cmd = strtok(args, " ");
+  if (sub_cmd != NULL) {
+    if (strcmp(sub_cmd, "r") == 0) {
+      // print the reg state
+      isa_reg_display();
+      printf(ANSI_FMT("%s:", ANSI_FG_BLUE) ANSI_FMT("\t0x%016lx\t", ANSI_FG_GREEN) ANSI_FMT("%020lu\n", ANSI_FG_MAGENTA), "pc", cpu.pc, cpu.pc);
+      return 0;
+    }
+    else if (strcmp(sub_cmd, "w") == 0) {
+      return 0;
+    }
+  }
+  printf(ANSI_FMT("ERROR: info <r/w>\n", ANSI_FG_RED));
+  return 0;
+}
+
 static int cmd_si(char *args) {
   char *steps_str = strtok(args, " ");
 
@@ -66,6 +83,7 @@ static struct {
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
   { "si", "single step", cmd_si },
+  { "info", "print the program state", cmd_info },
 };
 
 #define NR_CMD ARRLEN(cmd_table)
