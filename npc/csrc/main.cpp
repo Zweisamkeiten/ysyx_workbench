@@ -4,63 +4,8 @@
 #include <verilated_vcd_c.h>
 #include <stdio.h>
 #include <stdarg.h>
-// ----------- log -----------
-
-#define ANSI_FG_BLACK   "\33[1;30m"
-#define ANSI_FG_RED     "\33[1;31m"
-#define ANSI_FG_GREEN   "\33[1;32m"
-#define ANSI_FG_YELLOW  "\33[1;33m"
-#define ANSI_FG_BLUE    "\33[1;34m"
-#define ANSI_FG_MAGENTA "\33[1;35m"
-#define ANSI_FG_CYAN    "\33[1;36m"
-#define ANSI_FG_WHITE   "\33[1;37m"
-#define ANSI_BG_BLACK   "\33[1;40m"
-#define ANSI_BG_RED     "\33[1;41m"
-#define ANSI_BG_GREEN   "\33[1;42m"
-#define ANSI_BG_YELLOW  "\33[1;43m"
-#define ANSI_BG_BLUE    "\33[1;44m"
-#define ANSI_BG_MAGENTA "\33[1;35m"
-#define ANSI_BG_CYAN    "\33[1;46m"
-#define ANSI_BG_WHITE   "\33[1;47m"
-#define ANSI_NONE       "\33[0m"
-
-#define ANSI_FMT(str, fmt) fmt str ANSI_NONE
-
-#define CONFIG_ISA64 1
-#define CONFIG_MSIZE 0x8000000
-#define CONFIG_MBASE 0x80000000
-#define PG_ALIGN __attribute((aligned(4096)))
-#define CHOOSE2nd(a, b, ...) b
-#define MUXDEF(macro, X, Y)  MUX_MACRO_PROPERTY(__P_DEF_, macro, X, Y)
-#define MUX_WITH_COMMA(contain_comma, a, b) CHOOSE2nd(contain_comma a, b)
-#define MUX_MACRO_PROPERTY(p, macro, a, b) MUX_WITH_COMMA(concat(p, macro), a, b)
-#define __IGNORE(...)
-#define __KEEP(...) __VA_ARGS__
-#define IFDEF(macro, ...) MUXDEF(macro, __KEEP, __IGNORE)(__VA_ARGS__)
-#define PMEM_LEFT  ((paddr_t)CONFIG_MBASE)
-#define PMEM_RIGHT ((paddr_t)CONFIG_MBASE + CONFIG_MSIZE - 1)
-#define CONFIG_PC_RESET_OFFSET 0x0
-#define RESET_VECTOR (PMEM_LEFT + CONFIG_PC_RESET_OFFSET)
-typedef uint64_t word_t;
-typedef uint64_t paddr_t;
-
-static word_t host_read(void *addr, int len) {
-  switch (len) {
-    case 1: return *(uint8_t  *)addr;
-    case 2: return *(uint16_t *)addr;
-    case 4: return *(uint32_t *)addr;
-    case 8: return *(uint64_t *)addr;
-    default: MUXDEF(CONFIG_RT_CHECK, assert(0), return 0);
-  }
-}
-
-static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
-uint8_t* guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
-
-static word_t pmem_read(paddr_t addr, int len) {
-  word_t ret = host_read(guest_to_host(addr), len);
-  return ret;
-}
+#include <common.h>
+#include <memory/paddr.h>
 
 static const uint32_t img [] = {
   0x00100093,
@@ -95,20 +40,15 @@ static void reset(int n) {
   top->i_rst = 0;
 }
 
-enum {
-  NPC_ABORT,
-  NPC_RUNNING,
-  NPC_END
-};
-
-static int npc_state = NPC_RUNNING;
+NPCState npc_state = {.state = NPC_STOP};
+word_t pc;
 
 void set_state_end() {
-  npc_state = NPC_END;
+  npc_state.state = NPC_END;
 }
 
 void set_state_abort() {
-  npc_state = NPC_ABORT;
+  npc_state.state = NPC_ABORT;
 }
 
 int main(int argc, char **argv, char **env) {
@@ -144,22 +84,22 @@ int main(int argc, char **argv, char **env) {
     memcpy(guest_to_host(RESET_VECTOR), img, sizeof(img));
   }
 
-  npc_state = NPC_RUNNING;
-  word_t last = top->o_pc;
+  npc_state.state = NPC_RUNNING;
+  pc = top->o_pc;
   while (1) {
-    top->i_inst = pmem_read(top->o_pc, 4);
-    last = top->o_pc;
+    top->i_inst = paddr_read(top->o_pc, 4);
+    pc = top->o_pc;
     // printf("%lx\n", top->o_pc);
     single_cycle();
-    if (npc_state != NPC_RUNNING) break;
+    if (npc_state.state != NPC_RUNNING) break;
   }
 
   top->final();
   delete top;
   tfp->close();
 
-  switch (npc_state) {
+  switch (npc_state.state) {
     case NPC_END: printf(ANSI_FMT( "Successful exit.\n", ANSI_FG_GREEN)); break;
-    case NPC_ABORT: printf(ANSI_FMT("Unimplemented inst at PC: 0x%016lx\n", ANSI_FG_RED), last); exit(1);
+    case NPC_ABORT: printf(ANSI_FMT("Unimplemented inst at PC: 0x%016lx\n", ANSI_FG_RED), pc); exit(1);
   }
 }
