@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <common.h>
+#include <memory/paddr.h>
 
 static const uint32_t img [] = {
   0x00100093,
