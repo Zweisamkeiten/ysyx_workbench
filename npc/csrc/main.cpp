@@ -82,7 +82,7 @@ int main(int argc, char **argv, char **env) {
     memcpy(guest_to_host(RESET_VECTOR), img, sizeof(img));
   }
 
-  npc_state = NPC_RUNNING;
+  npc_state.state = NPC_RUNNING;
   word_t last = top->o_pc;
   while (1) {
     top->i_inst = pmem_read(top->o_pc, 4);
