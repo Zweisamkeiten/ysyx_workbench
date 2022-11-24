@@ -19,8 +19,8 @@ $(shell mkdir -p $(BUILD_DIR))
 
 # project source
 VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
-CSRCS = $(shell realpath --relative-to $(abspath ./) $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cc" -or -name "*.cpp"))
-OBJS      = $(addprefix $(OBJ_DIR)/, $(addsuffix .o, $(basename $(filter-out csrc/main.cpp, $(CSRCS)))))
+CSRCS = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cc" -or -name "*.cpp")
+OBJS      = $(addprefix $(OBJ_DIR)/, $(addsuffix .o, $(basename $(filter-out $(NPC_HOME)/csrc/main.cpp, $(CSRCS)))))
 
 # rules for NVBoard
 include $(NVBOARD_HOME)/scripts/nvboard.mk
