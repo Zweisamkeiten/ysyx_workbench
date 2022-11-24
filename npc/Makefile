@@ -27,7 +27,7 @@ include $(NVBOARD_HOME)/scripts/nvboard.mk
 # rules for verilator
 INC_PATH := $(NPC_HOME)/csrc/include
 INCFLAGS = $(addprefix -I, $(INC_PATH))
-CFLAGS += $(INCFLAGS) -Og -ggdb3
+CFLAGS += $(INCFLAGS) -Og -ggdb3 -Wall -Werror
 LDFLAGS += -lSDL2 -lSDL2_image
 
 all:
