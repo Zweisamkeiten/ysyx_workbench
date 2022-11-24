@@ -67,12 +67,12 @@ void free_wp(WP *wp) {
 }
 
 int set_watchpoint(char *e, word_t value) {
-  WP* new = new_wp();
+  WP* new_w = new_wp();
   char *expr = (char *)calloc(1, sizeof(char) * (strlen(e) + 1));
   strcpy(expr, e);
-  new->expr = expr;
-  new->value = value;
-  return new->NO;
+  new_w->expr = expr;
+  new_w->value = value;
+  return new_w->NO;
 }
 
 bool delete_watchpoint(int n) {
