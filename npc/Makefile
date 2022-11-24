@@ -35,7 +35,7 @@ CFLAGS += $(INCFLAGS) -Wall -Werror
 LDFLAGS += -lSDL2 -lSDL2_image
 
 ### Rule (compile): a single `.c` -> `.o` (gcc)
-$(OBJ_DIR)/%.o: %.c
+$(OBJ_DIR)/%.o: $(shell realpath --relative-to $(abspath .) %.c)
 	@mkdir -p $(dir $@) && echo + CC $<
 	@$(CC) -std=gnu11 $(CFLAGS) -c -o $@ $(abspath $<)
 
