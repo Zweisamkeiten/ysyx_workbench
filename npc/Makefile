@@ -48,7 +48,8 @@ $(BIN): $(VSRCS) $(WARP_SIM_SRC) $(NVBOARD_ARCHIVE) $(OBJS)
 	$(call git_commit, "build RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo "-- VERILATE & BUILD --------"
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
-		--top-module $(TOPNAME) $(VSRCS) $(WARP_SIM_SRC) $(NVBOARD_ARCHIVE) $(OBJS) --prefix Vtop --trace $(addprefix -CFLAGS , $(CFLAGS)) $(addprefix -CXXFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
+		--top-module $(TOPNAME) $(VSRCS) $(WARP_SIM_SRC) $(NVBOARD_ARCHIVE) $(OBJS) --prefix Vtop --trace $(addprefix -CFLAGS , $(CFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
+		-I $(INC_PATH) \
 		--Mdir $(OBJ_DIR) -o $(abspath $(BIN))
 
 sim: $(BIN)
