@@ -100,6 +100,6 @@ int main(int argc, char **argv, char **env) {
 
   switch (npc_state.state) {
     case NPC_END: printf(ANSI_FMT( "Successful exit.\n", ANSI_FG_GREEN)); break;
-    case NPC_ABORT: printf(ANSI_FMT("Unimplemented inst at PC: 0x%016lx\n", ANSI_FG_RED), pc); exit(1);
+    case NPC_ABORT: printf(ANSI_FMT("Unimplemented inst at PC: 0x%016lx\n", ANSI_FG_RED), *pc); exit(1);
   }
 }
