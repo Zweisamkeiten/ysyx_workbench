@@ -39,20 +39,14 @@ static void reset(int n) {
   top->i_rst = 0;
 }
 
-enum {
-  NPC_ABORT,
-  NPC_RUNNING,
-  NPC_END
-};
-
-NPC_STATE npc_state = {.state=NPC_STOP};
+NPCState npc_state = {.state = NPC_STOP};
 
 void set_state_end() {
-  npc_state = NPC_END;
+  npc_state.state = NPC_END;
 }
 
 void set_state_abort() {
-  npc_state = NPC_ABORT;
+  npc_state.state = NPC_ABORT;
 }
 
 int main(int argc, char **argv, char **env) {
