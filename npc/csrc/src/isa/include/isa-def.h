@@ -19,7 +19,7 @@
 #include <common.h>
 
 typedef struct {
-  word_t gpr[32];
+  uint64_t *gpr;
   vaddr_t pc;
 } CPU_state;
 
