@@ -33,7 +33,7 @@ INC_PATH := $(NPC_HOME)/csrc/include
 # INC_PATH += /usr/share/verilator/include/vltstd
 INCFLAGS = $(addprefix -I, $(INC_PATH))
 CFLAGS += $(INCFLAGS) -Wall -Werror
-LDFLAGS += -lSDL2 -lSDL2_image
+LDFLAGS += -lSDL2 -lSDL2_image -lreadline
 
 ### Rule (compile): a single `.c` -> `.o` (gcc)
 # $(OBJ_DIR)/%.o: %.c
