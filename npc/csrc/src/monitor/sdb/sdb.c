@@ -22,6 +22,27 @@ static char* rl_gets() {
   return line_read;
 }
 
+static int cmd_si(char *args) {
+  char *steps_str = strtok(args, " ");
+
+  if (steps_str != NULL) {
+    char **invalid = (char **)malloc(sizeof(char *));
+    *invalid = NULL;
+    uint64_t steps = strtoull(steps_str, invalid, 10);
+    if (*steps_str != '\0' && **invalid == '\0') {
+      cpu_exec(steps);
+      free(invalid);
+      return 0;
+    }
+  } else {
+    cpu_exec(1);
+    return 0;
+  }
+
+  printf(ANSI_FMT("ERROR: si [steps]\n", ANSI_FG_RED));
+  return 0;
+}
+
 static int cmd_c(char *args) {
   cpu_exec(-1);
   return 0;
@@ -43,6 +64,7 @@ static struct {
   { "help", "Display information about all supported commands", cmd_help },
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
+  { "si", "single step", cmd_si },
 };
 
 #define NR_CMD ARRLEN(cmd_table)
