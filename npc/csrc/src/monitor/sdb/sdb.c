@@ -67,6 +67,8 @@ static int cmd_info(char *args) {
       return 0;
     }
     else if (strcmp(sub_cmd, "w") == 0) {
+      // print the watchpoint state
+      watchpoints_display();
       return 0;
     }
   }
