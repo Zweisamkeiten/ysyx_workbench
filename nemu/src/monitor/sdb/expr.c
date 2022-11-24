@@ -277,7 +277,7 @@ word_t eval(int p, int q, bool *is_valid) {
      */
     if (tokens[p].type == TK_REG) {
       word_t val = isa_reg_str2val(tokens[p].str + 1, is_valid);
-      if (is_valid == false) {
+      if (*is_valid == false) {
         printf(ANSI_FMT("Get reg %s value failed.\n", ANSI_FG_RED), tokens[p].str);
       }
       return val;

@@ -68,7 +68,7 @@ void free_wp(WP *wp) {
 
 int set_watchpoint(char *e, word_t value) {
   WP* new = new_wp();
-  char *expr = calloc(1, sizeof(char) * (strlen(e) + 1));
+  char *expr = (char *)calloc(1, sizeof(char) * (strlen(e) + 1));
   strcpy(expr, e);
   new->expr = expr;
   new->value = value;
@@ -115,7 +115,7 @@ void diff_watchpoint_value() {
              ANSI_FMT("0x%016lx\t->\t0x%016lx\n", ANSI_FG_GREEN)
              ANSI_FMT("\t%020lu\t->\t%020lu\n", ANSI_FG_GREEN), i->NO, i->expr, i->value, new_value, i->value, new_value);
       i->value = new_value;
-      nemu_state.state = NEMU_STOP;
+      npc_state.state = NPC_STOP;
     }
   }
 }
