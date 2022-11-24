@@ -36,6 +36,7 @@ static int cmd_si(char *args) {
     }
   } else {
     cpu_exec(1);
+    isa_reg_display();
     return 0;
   }
 
