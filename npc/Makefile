@@ -49,7 +49,7 @@ $(BIN): $(VSRCS) $(WARP_SIM_SRC) $(NVBOARD_ARCHIVE) $(OBJS)
 	@echo "-- VERILATE & BUILD --------"
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $(VSRCS) $(WARP_SIM_SRC) $(NVBOARD_ARCHIVE) $(OBJS) --prefix Vtop --trace $(addprefix -CFLAGS , $(CFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
-		-I $(INC_PATH) \
+		-MAKEFLAGS CXXFLAGS = $(addprefix -CXXFLAGS , $(CXXFLAGS))
 		--Mdir $(OBJ_DIR) -o $(abspath $(BIN))
 
 sim: $(BIN)
