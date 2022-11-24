@@ -5,7 +5,6 @@
 #include <memory/paddr.h>
 
 CPU_state cpu = {};
-static uint64_t g_timer = 0; // unit: us
 
 void exec_once() {
   top->i_inst = paddr_read(top->o_pc, 4);
@@ -34,12 +33,7 @@ void cpu_exec(uint64_t n) {
     npc_state.state = NPC_RUNNING;
   }
 
-  uint64_t timer_start = get_time();
-
   execute(n);
-
-  uint64_t timer_end = get_time();
-  g_timer += timer_end - timer_start;
 
   switch (npc_state.state) {
   case NPC_RUNNING:
