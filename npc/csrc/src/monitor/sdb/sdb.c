@@ -3,6 +3,11 @@
 #include <common.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+#include <memory/paddr.h>
+#include "sdb.h"
+
+void init_regex();
+void init_wp_pool();
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char* rl_gets() {
@@ -22,6 +27,39 @@ static char* rl_gets() {
   return line_read;
 }
 
+static int cmd_x(char *args) {
+  if (args != NULL) {
+    char *esp_str;
+    char *n_str = strtok_r(args, " ", &esp_str);
+
+    if (n_str != NULL) {
+      char **invalid = (char **)malloc(sizeof(char *));
+      *invalid = NULL;
+      uint64_t n = strtoull(n_str, invalid, 10);
+
+      if (*n_str != '\0' && **invalid == '\0') {
+        free(invalid);
+
+        if (esp_str != NULL) {
+          bool success = true;
+          uint64_t addr = expr(esp_str, &success);
+
+          if (success) {
+            for (int i = 0; i < n; addr += 4, ++i) {
+              uint32_t data = paddr_read(addr, 4);
+              printf("%#lx:\t0x%08x\n", addr, data);
+            }
+            return 0;
+          }
+        }
+      }
+    }
+  }
+
+  printf(ANSI_FMT("ERROR: x <N> <EXPR>\n", ANSI_FG_RED));
+  return 0;
+}
+
 static int cmd_info(char *args) {
   char *sub_cmd = strtok(args, " ");
   if (sub_cmd != NULL) {
@@ -32,6 +70,8 @@ static int cmd_info(char *args) {
       return 0;
     }
     else if (strcmp(sub_cmd, "w") == 0) {
+      // print the watchpoint state
+      watchpoints_display();
       return 0;
     }
   }
@@ -71,6 +111,46 @@ static int cmd_q(char *args) {
   return -1;
 }
 
+static int cmd_w(char *args) {
+  char *e= args;
+
+  if (e != NULL) {
+    bool success = true;
+    word_t result = expr(e, &success);
+    if (success == true) {
+      int No = set_watchpoint(e, result);
+      printf(ANSI_FMT("Watchpoint %d: %s\n", ANSI_FG_GREEN), No, e);
+    }
+    else {
+      printf(ANSI_FMT("Invalid expression.\n", ANSI_FG_RED));
+    }
+    return 0;
+  }
+  printf(ANSI_FMT("ERROR: w <EXPR>\n", ANSI_FG_RED));
+  return 0;
+}
+
+static int cmd_d(char *args) {
+  char *n_str = strtok(args, " ");
+
+  if (n_str != NULL) {
+    char **invalid = (char **)malloc(sizeof(char *));
+    *invalid = NULL;
+    int n = strtol(n_str, invalid, 10);
+    if (*n_str != '\0' && **invalid == '\0') {
+      free(invalid);
+      if(delete_watchpoint(n) == true) {
+        printf(ANSI_FMT("Watchpoint number %d deleted\n", ANSI_FG_GREEN), n);
+      }
+      else {
+        printf(ANSI_FMT("No watchpoint number %d\n", ANSI_FG_RED), n);
+      }
+      return 0;
+    }
+  }
+  return 0;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -80,9 +160,12 @@ static struct {
 } cmd_table [] = {
   { "help", "Display information about all supported commands", cmd_help },
   { "c", "Continue the execution of the program", cmd_c },
-  { "q", "Exit NEMU", cmd_q },
+  { "q", "Exit NPC", cmd_q },
   { "si", "single step", cmd_si },
   { "info", "print the program state", cmd_info },
+  { "x", "scan memory", cmd_x },
+  { "w", "set a new watchpoint", cmd_w },
+  { "d", "delete a watchpoint", cmd_d },
 };
 
 #define NR_CMD ARRLEN(cmd_table)
@@ -139,4 +222,9 @@ void sdb_mainloop() {
 }
 
 void init_sdb() {
+  /* Compile the regular expressions. */
+  init_regex();
+
+  /* Initialize the watchpoint pool. */
+  init_wp_pool();
 }
