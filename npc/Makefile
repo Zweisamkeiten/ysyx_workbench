@@ -28,7 +28,7 @@ include $(NVBOARD_HOME)/scripts/nvboard.mk
 
 # rules for verilator
 INC_PATH := $(NPC_HOME)/csrc/include
-# INC_PATH += $(OBJ_DIR)
+INC_PATH += $(NPC_HOME)/csrc/src/isa/include
 # INC_PATH += /usr/share/verilator/include
 # INC_PATH += /usr/share/verilator/include/vltstd
 INCFLAGS = $(addprefix -I, $(INC_PATH))
