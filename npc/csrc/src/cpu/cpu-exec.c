@@ -4,7 +4,7 @@
 #include <sim.h>
 #include <memory/paddr.h>
 
-CPU_state cpu = {.gpr=cpu_gpr};
+CPU_state cpu = {};
 
 void exec_once() {
   top->i_inst = paddr_read(top->o_pc, 4);
