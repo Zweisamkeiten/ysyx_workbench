@@ -11,7 +11,8 @@ else
 export VERILATOR_ROOT
 VERILATOR = $(VERILATOR_ROOT)/bin/verilator
 endif
-VERILATOR_CFLAGS += --build -cc --exe -j
+VERILATOR_BUILDFLAGS += -cc --exe -j $(shell nproc) -Wall -Wno-DECLFILENAME --trace
+VERILATOR_CFLAGS += --build -cc --exe -j -Wall -Wno-DECLFILENAME
 
 default: $(BIN)
 
@@ -19,21 +20,31 @@ $(shell mkdir -p $(BUILD_DIR))
 
 # project source
 VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
-CSRCS = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cc" -or -name "*.cpp")
+CSRCS = $(shell realpath --relative-to $(abspath ./) $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cc" -or -name "*.cpp"))
+OBJS      = $(addprefix $(OBJ_DIR)/, $(addsuffix .o, $(basename $(filter-out csrc/main.cpp, $(CSRCS)))))
+TOP_SIM_SRC = csrc/main.cpp
 
 # rules for NVBoard
 include $(NVBOARD_HOME)/scripts/nvboard.mk
 
 # rules for verilator
 INC_PATH := $(NPC_HOME)/csrc/include
+INC_PATH += $(OBJ_DIR)
+INC_PATH += /usr/share/verilator/include
+INC_PATH += /usr/share/verilator/include/vltstd
 INCFLAGS = $(addprefix -I, $(INC_PATH))
-CFLAGS += $(INCFLAGS) -Og -ggdb3 -Wall -Werror
+CFLAGS += $(INCFLAGS) -Wall -Werror
 LDFLAGS += -lSDL2 -lSDL2_image
 
-all:
+### Rule (compile): a single `.c` -> `.o` (gcc)
+$(OBJ_DIR)/%.o: %.c
+	@mkdir -p $(dir $@) && echo + CC $<
+	@$(CC) -std=gnu11 $(CFLAGS) -c -o $@ $(realpath $<)
+
+all: $(OBJS)
 	@echo "Write this Makefile by your self."
 
-$(BIN): $(VSRCS) $(CSRCS) $(NVBOARD_ARCHIVE)
+$(BIN): $(VSRCS) $(NPC_HOME)/csrc/main.cpp $(NVBOARD_ARCHIVE) $(OBJS)
 	$(call git_commit, "build RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo "-- VERILATE & BUILD --------"
 	$(VERILATOR) $(VERILATOR_CFLAGS) \

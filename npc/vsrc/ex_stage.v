@@ -2,7 +2,6 @@
 import "DPI-C" function void set_state_end();
 import "DPI-C" function void set_state_abort();
 module ysyx_22050710_exu (
-  input i_clk,
   input [63:0] i_rs1, i_rs2,
   input [63:0] i_imm, i_pc,
   input i_ALUAsrc,
