@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <common.h>
+#include <isa.h>
 #include <memory/paddr.h>
 
 static const uint32_t img [] = {
@@ -13,17 +14,7 @@ static const uint32_t img [] = {
   0x00100073,
 };
 
-
 NPCState npc_state = {.state = NPC_STOP};
-word_t pc;
-
-void set_state_end() {
-  npc_state.state = NPC_END;
-}
-
-void set_state_abort() {
-  npc_state.state = NPC_ABORT;
-}
 
 void init_monitor(int, char *[]);
 void engine_start();
@@ -41,6 +32,6 @@ int main(int argc, char **argv, char **env) {
 
   switch (npc_state.state) {
     case NPC_END: printf(ANSI_FMT( "Successful exit.\n", ANSI_FG_GREEN)); break;
-    case NPC_ABORT: printf(ANSI_FMT("Unimplemented inst at PC: 0x%016lx\n", ANSI_FG_RED), pc); exit(1);
+    case NPC_ABORT: printf(ANSI_FMT("Unimplemented inst at PC: 0x%016lx\n", ANSI_FG_RED), cpu.pc); exit(1);
   }
 }

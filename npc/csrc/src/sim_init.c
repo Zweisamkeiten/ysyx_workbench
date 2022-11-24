@@ -6,6 +6,15 @@ Vtop *top;
 VerilatedContext *contextp = NULL;
 VerilatedVcdC *tfp = NULL;
 
+void set_state_end() {
+  npc_state.state = NPC_END;
+}
+
+void set_state_abort() {
+  npc_state.state = NPC_ABORT;
+}
+
+
 void single_cycle() {
   top->i_clk = 0;
   top->eval();
