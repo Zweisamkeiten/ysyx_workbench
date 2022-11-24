@@ -33,6 +33,7 @@ INC_PATH += /usr/share/verilator/include
 INC_PATH += /usr/share/verilator/include/vltstd
 INCFLAGS = $(addprefix -I, $(INC_PATH))
 CFLAGS += $(INCFLAGS) -Wall -Werror
+CXXFLAGS := $(CFLAGS)
 LDFLAGS += -lSDL2 -lSDL2_image
 
 ### Rule (compile): a single `.c` -> `.o` (gcc)
@@ -47,7 +48,7 @@ $(BIN): $(VSRCS) $(WARP_SIM_SRC) $(NVBOARD_ARCHIVE) $(OBJS)
 	$(call git_commit, "build RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo "-- VERILATE & BUILD --------"
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
-		--top-module $(TOPNAME) $(VSRCS) $(WARP_SIM_SRC) $(NVBOARD_ARCHIVE) $(OBJS) --prefix Vtop --trace $(addprefix -CFLAGS , $(CFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
+		--top-module $(TOPNAME) $(VSRCS) $(WARP_SIM_SRC) $(NVBOARD_ARCHIVE) $(OBJS) --prefix Vtop --trace $(addprefix -CFLAGS , $(CFLAGS)) $(addprefix -CXXFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
 		--Mdir $(OBJ_DIR) -o $(abspath $(BIN))
 
 sim: $(BIN)
