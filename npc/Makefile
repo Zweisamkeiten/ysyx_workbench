@@ -77,7 +77,7 @@ $(BIN): $(OBJS) $(VERILATE_OBJ)# $(NVBOARD_ARCHIVE)
 	@g++  -I. $(INCFLAGS) -MMD -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow -Wall -Werror -Og -ggdb3 -DITRACE_COND= -DIRINGTRACE_COND= -DFTRACE_COND=true  -std=gnu++17 -Os -c -o $(VERILATOR_OBJ_DIR)/verilated.o /usr/share/verilator/include/verilated.cpp
 	@g++  -I. $(INCFLAGS) -MMD -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow -Wall -Werror -Og -ggdb3 -DITRACE_COND= -DIRINGTRACE_COND= -DFTRACE_COND=true  -std=gnu++17 -Os -c -o $(VERILATOR_OBJ_DIR)/verilated_dpi.o /usr/share/verilator/include/verilated_dpi.cpp
 	@g++  -I. $(INCFLAGS) -MMD -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow -Wall -Werror -Og -ggdb3 -DITRACE_COND= -DIRINGTRACE_COND= -DFTRACE_COND=true  -std=gnu++17 -Os -c -o $(VERILATOR_OBJ_DIR)/verilated_vcd_c.o /usr/share/verilator/include/verilated_vcd_c.cpp
-	@$(LD) -o $@ $(realpath $(OBJS)) $(shell find $(VERILATOR_OBJ_DIR) -name "*.o") $(VERILATOR_OBJ_DIR)/Vtop__ALL.a $(LDFLAGS) $(LIBS)
+	@$(LD) -o $@ $(realpath $(OBJS)) $(filter-out $(VERILATOR_OBJ_DIR)/Vtop__ALL.o, $(shell find $(VERILATOR_OBJ_DIR) -name "*.o")) $(VERILATOR_OBJ_DIR)/Vtop__ALL.a $(LDFLAGS) $(LIBS)
 
 all: $(BIN)
 
