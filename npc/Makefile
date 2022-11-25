@@ -19,6 +19,8 @@ $(shell mkdir -p $(BUILD_DIR))
 -include $(NPC_HOME)/csrc/include/config/auto.conf
 -include $(NPC_HOME)/csrc/include/config/auto.conf.cmd
 
+NAME = sim
+
 # Include all filelist.mk to merge file lists
 FILELIST_MK = $(shell find ./csrc -name "filelist.mk")
 include $(FILELIST_MK)
@@ -28,6 +30,7 @@ DIRS-BLACKLIST-y += $(DIRS-BLACKLIST)
 SRCS-BLACKLIST-y += $(SRCS-BLACKLIST) $(shell find $(DIRS-BLACKLIST-y) -name "*.c")
 SRCS-y += $(shell find $(DIRS-y) -name "*.c")
 SRCS = $(filter-out $(SRCS-BLACKLIST-y),$(SRCS-y))
+$(info $(CXXSRCS))
 
 # Extract compiler and options from menuconfig
 CC = $(call remove_quote,$(CONFIG_CC))
@@ -47,38 +50,37 @@ include $(NPC_HOME)/scripts/config.mk
 # Include rules for build
 include $(NPC_HOME)/scripts/build.mk
 
-NAME = sim
-
 # rules for NVBoard
 # include $(NVBOARD_HOME)/scripts/nvboard.mk
 # LDFLAGS += -lSDL2 -lSDL2_image
 
 # # project source
 VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
+VALL = $(VERILATOR_OBJ_DIR)/Vtop__ALL.a
 
-build-vsrc: $(VSRCS)
+$(VALL): $(VSRCS)
 	$(call git_commit, "build RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo "-- VERILATE & BUILD --------"
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $^ --prefix Vtop --trace --Mdir $(VERILATOR_OBJ_DIR)
 
-build-verilator:
+VERILATOR_SRC: verilated.cpp verilated_dpi.cpp verilated_vcd_c.cpp
+VERILATOR_OBJ: $(addprefix $(VERILATOR_OBJ_DIR)/, $(VERILATOR_SRC:%.cpp=%.o))
+$(VERILATOR_OBJ): $(addprefix /usr/share/verilator/, $(VERILATOR_SRC))
 	@g++  -I. $(INCFLAGS) -MMD -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow -Wall -Werror -Og -ggdb3 -DITRACE_COND= -DIRINGTRACE_COND= -DFTRACE_COND=true  -std=gnu++17 -Os -c -o $(VERILATOR_OBJ_DIR)/verilated.o /usr/share/verilator/include/verilated.cpp
 	@g++  -I. $(INCFLAGS) -MMD -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow -Wall -Werror -Og -ggdb3 -DITRACE_COND= -DIRINGTRACE_COND= -DFTRACE_COND=true  -std=gnu++17 -Os -c -o $(VERILATOR_OBJ_DIR)/verilated_dpi.o /usr/share/verilator/include/verilated_dpi.cpp
 	@g++  -I. $(INCFLAGS) -MMD -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow -Wall -Werror -Og -ggdb3 -DITRACE_COND= -DIRINGTRACE_COND= -DFTRACE_COND=true  -std=gnu++17 -Os -c -o $(VERILATOR_OBJ_DIR)/verilated_vcd_c.o /usr/share/verilator/include/verilated_vcd_c.cpp
-
-build-csrc: build-vsrc $(OBJS)
 
 sim: $(BIN)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo "-- Simulation --------"
 	$(NPC_EXEC)
 
-$(BIN): build-csrc build-verilator $(OBJS) # $(NVBOARD_ARCHIVE)
-	@$(LD) -o $@ $(realpath $(OBJS)) $(filter-out $(VERILATOR_OBJ_DIR)/Vtop__ALL.o, $(shell find $(VERILATOR_OBJ_DIR) -name "*.o")) $(VERILATOR_OBJ_DIR)/Vtop__ALL.a $(LDFLAGS) $(LIBS)
+$(BIN): $(VALL) $(VERILATOR_OBJ) $(OBJS) # $(NVBOARD_ARCHIVE)
+	@$(LD) -o $@ $(realpath $(OBJS)) $(VERILATOR_OBJ) $(VALL) $(LDFLAGS) $(LIBS)
 
 all: $(BIN)
 
-.PHONY: default all sim run build build-csrc build-vsrc build-verilator
+.PHONY: default all sim run
 
 include ../Makefile
