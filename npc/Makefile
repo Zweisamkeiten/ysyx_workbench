@@ -19,10 +19,7 @@ $(shell mkdir -p $(BUILD_DIR))
 
 # project source
 VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
-CSRCS = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cc" -or -name "*.cpp")
-# CSRCS = $(shell realpath --relative-to $(abspath ./) $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cc" -or -name "*.cpp"))
-# OBJS      = $(addprefix $(OBJ_DIR)/, $(addsuffix .o, $(basename $(filter-out csrc/main.cpp, $(CSRCS)))))
-SRCS += $(shell find ./csrc -name "*.c")
+SRCS += $(filter-out ./csrc/src/sim_init.cc, $(shell find ./csrc -name "*.c"))
 CXXSRCS += $(shell find ./csrc -name "*.cc")
 CPPSRCS += $(shell find ./csrc -name "*.cpp")
 NAME = sim
