@@ -8,9 +8,42 @@ extern "C" {
 
 CPU_state cpu = {};
 #define BUFSIZE 128
+#define MAX_INST_TO_PRINT 10
+uint64_t g_nr_guest_inst = 0;
+static bool g_print_step = false;
 #ifdef CONFIG_ITRACE
 static char itrace_logbuf[BUFSIZE];
 #endif
+
+static void trace_and_difftest(vaddr_t dnpc) {
+#ifdef CONFIG_ITRACE_COND
+  if (ITRACE_COND) {
+    log_write("%s\n", _this->logbuf);
+  }
+#endif
+#ifdef CONFIG_IRINGTRACE_COND
+  if (IRINGTRACE_COND) {
+    int arrow_len = strlen(" --> ");
+    iringbuf[iringbuf_index] = realloc(iringbuf[iringbuf_index], arrow_len + strlen(_this->logbuf) + 1);
+    char *p = iringbuf[iringbuf_index];
+    memset(p, ' ', arrow_len);
+    p += arrow_len;
+    strcpy(p, _this->logbuf);
+    iringbuf_index++;
+    iringbuf_index %= 16;
+  }
+#endif
+#ifdef CONFIG_FTRACE
+  if (inst_state != INST_OTHER) {
+    if (FTRACE_COND) log_write(ANSI_FMT("[FTRACE] %s\n", ANSI_FG_MAGENTA), ftrace_buf);
+    printf(ANSI_FMT("[FTRACE] %s\n", ANSI_FG_MAGENTA), ftrace_buf);
+    inst_state = INST_OTHER;
+  }
+#endif
+  if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
+  IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
+  IFDEF(CONFIG_WATCHPOINT, diff_watchpoint_value());
+}
 
 void exec_once() {
   top->i_inst = paddr_read(top->o_pc, 4);
@@ -27,17 +60,20 @@ void exec_once() {
   disassemble(p, itrace_logbuf + BUFSIZE - p, cpu.pc, (uint8_t *)cpu.inst, 4);
 #endif
   single_cycle();
+  trace_and_difftest(top->o_pc);
 }
 
 static void execute(uint64_t n) {
   for (;n > 0; n --) {
     exec_once();
+    g_nr_guest_inst ++;
     if (npc_state.state != NPC_RUNNING) break;
   }
 }
 
 /* Simulate how the CPU works. */
 void cpu_exec(uint64_t n) {
+  g_print_step = (n < MAX_INST_TO_PRINT);
   switch (npc_state.state) {
   case NPC_END:
   case NPC_ABORT:
