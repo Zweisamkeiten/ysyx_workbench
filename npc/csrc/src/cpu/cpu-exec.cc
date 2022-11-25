@@ -7,6 +7,7 @@ extern "C" {
 }
 
 CPU_state cpu = {};
+ISADecodeInfo inst = {};
 #define BUFSIZE 128
 #define MAX_INST_TO_PRINT 10
 uint64_t g_nr_guest_inst = 0;
@@ -64,8 +65,7 @@ void exec_once() {
   memset(p, ' ', space_len);
   p += space_len;
 
-  char text[100000];
-  disassemble(text, 128, cpu.pc, (uint8_t *)(cpu.inst), 4);
+  disassemble(p, itrace_logbuf + BUFSIZE - p, cpu.pc, (uint8_t *)(paddr_read(cpu.pc, 4)), 4);
 #endif
   single_cycle();
   trace_and_difftest(top->o_pc);
