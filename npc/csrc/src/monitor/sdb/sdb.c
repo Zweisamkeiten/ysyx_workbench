@@ -111,6 +111,46 @@ static int cmd_q(char *args) {
   return -1;
 }
 
+static int cmd_w(char *args) {
+  char *e= args;
+
+  if (e != NULL) {
+    bool success = true;
+    word_t result = expr(e, &success);
+    if (success == true) {
+      int No = set_watchpoint(e, result);
+      printf(ANSI_FMT("Watchpoint %d: %s\n", ANSI_FG_GREEN), No, e);
+    }
+    else {
+      printf(ANSI_FMT("Invalid expression.\n", ANSI_FG_RED));
+    }
+    return 0;
+  }
+  printf(ANSI_FMT("ERROR: w <EXPR>\n", ANSI_FG_RED));
+  return 0;
+}
+
+static int cmd_d(char *args) {
+  char *n_str = strtok(args, " ");
+
+  if (n_str != NULL) {
+    char **invalid = (char **)malloc(sizeof(char *));
+    *invalid = NULL;
+    int n = strtol(n_str, invalid, 10);
+    if (*n_str != '\0' && **invalid == '\0') {
+      free(invalid);
+      if(delete_watchpoint(n) == true) {
+        printf(ANSI_FMT("Watchpoint number %d deleted\n", ANSI_FG_GREEN), n);
+      }
+      else {
+        printf(ANSI_FMT("No watchpoint number %d\n", ANSI_FG_RED), n);
+      }
+      return 0;
+    }
+  }
+  return 0;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -120,10 +160,12 @@ static struct {
 } cmd_table [] = {
   { "help", "Display information about all supported commands", cmd_help },
   { "c", "Continue the execution of the program", cmd_c },
-  { "q", "Exit NEMU", cmd_q },
+  { "q", "Exit NPC", cmd_q },
   { "si", "single step", cmd_si },
   { "info", "print the program state", cmd_info },
   { "x", "scan memory", cmd_x },
+  { "w", "set a new watchpoint", cmd_w },
+  { "d", "delete a watchpoint", cmd_d },
 };
 
 #define NR_CMD ARRLEN(cmd_table)
