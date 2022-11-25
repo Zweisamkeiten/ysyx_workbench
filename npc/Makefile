@@ -15,6 +15,7 @@ VERILATOR_CFLAGS += --build -cc -j $(shell nproc) -Wall -Wno-DECLFILENAME
 
 default: $(BIN)
 
+$(shell mkdir -p $(BUILD_DIR))
 -include $(NPC_HOME)/csrc/include/config/auto.conf
 -include $(NPC_HOME)/csrc/include/config/auto.conf.cmd
 
