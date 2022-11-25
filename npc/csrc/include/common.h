@@ -22,6 +22,7 @@
 #include <string.h>
 #include <macro.h>
 #include <conf.h>
+#include <generated/autoconf.h>
 
 #include <assert.h>
 #include <stdlib.h>
