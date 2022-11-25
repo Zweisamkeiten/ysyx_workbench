@@ -33,8 +33,8 @@ include $(NVBOARD_HOME)/scripts/nvboard.mk
 # rules for verilator
 INC_PATH := $(NPC_HOME)/csrc/include
 INC_PATH += $(NPC_HOME)/csrc/src/isa/include
-# INC_PATH += /usr/share/verilator/include
-# INC_PATH += /usr/share/verilator/include/vltstd
+INC_PATH += /usr/share/verilator/include
+INC_PATH += /usr/share/verilator/include/vltstd
 INCFLAGS = $(addprefix -I, $(INC_PATH))
 CFLAGS += $(INCFLAGS) -Og -ggdb3
 LDFLAGS += -lSDL2 -lSDL2_image -lreadline
