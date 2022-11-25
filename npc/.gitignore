@@ -10,3 +10,5 @@
 !.gitignore
 !README.md
 build/*
+csrc/include/generated/*
+csrc/include/config/*

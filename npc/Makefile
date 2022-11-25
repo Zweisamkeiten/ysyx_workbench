@@ -35,6 +35,17 @@ INCFLAGS = $(addprefix -I, $(INC_PATH))
 CFLAGS += $(INCFLAGS) -Wall -Werror -Og -ggdb3
 LDFLAGS += -lSDL2 -lSDL2_image -lreadline
 
+-include $(NPC_HOME)/csrc/include/config/auto.conf
+-include $(NPC_HOME)/csrc/include/config/auto.conf.cmd
+
+CFLAGS_TRACE += -DITRACE_COND=$(if $(CONFIG_ITRACE_COND),$(call remove_quote,$(CONFIG_ITRACE_COND)),true)
+CFLAGS_TRACE += -DIRINGTRACE_COND=$(if $(CONFIG_IRINGTRACE_COND),$(call remove_quote,$(CONFIG_IRINGTRACE_COND)),true)
+CFLAGS_TRACE += -DFTRACE_COND=$(if $(CONFIG_FTRACE_COND),$(call remove_quote,$(CONFIG_FTRACE_COND)),true)
+CFLAGS  += $(CFLAGS_TRACE)
+
+# Include rules for menuconfig
+include $(NPC_HOME)/scripts/config.mk
+
 ### Rule (compile): a single `.c` -> `.o` (gcc)
 # $(OBJ_DIR)/%.o: %.c
 # 	@mkdir -p $(dir $@) && echo + CC $<
