@@ -71,10 +71,12 @@ sim: $(BIN)
 
 build-csrc: build-vsrc $(OBJS)
 
-$(OBJS) += $(BUILD_DIR)/obj_dir/Vtop__ALL.o
+$(OBJS) += ./build/obj_dir/Vtop__ALL.o
 
 $(BIN): $(OBJS) $(NVBOARD_ARCHIVE)
 	@$(LD) -o $@ $^ $(LDFLAGS) $(LIBS)
+
+all: $(BIN)
 
 .PHONY: default all run build
 
