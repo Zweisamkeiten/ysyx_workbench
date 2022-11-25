@@ -1,6 +1,6 @@
 TOPNAME = ysyx_22050710_npc
 BUILD_DIR = ./build
-OBJ_DIR = $(BUILD_DIR)/obj_dir
+VERILATOR_OBJ_DIR = $(BUILD_DIR)/obj_dir
 BIN = $(BUILD_DIR)/$(TOPNAME)
 IIMG ?=
 NPC_EXEC := $(BIN) $(IMG)
@@ -62,7 +62,7 @@ build: $(VSRCS)
 	$(call git_commit, "build RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo "-- VERILATE & BUILD --------"
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
-		--top-module $(TOPNAME) $^ --prefix Vtop --trace --Mdir $(OBJ_DIR)
+		--top-module $(TOPNAME) $^ --prefix Vtop --trace --Mdir $(VERILATOR_OBJ_DIR)
 
 sim: $(BIN)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
