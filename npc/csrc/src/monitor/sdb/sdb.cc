@@ -45,7 +45,7 @@ static int cmd_x(char *args) {
           uint64_t addr = expr(esp_str, &success);
 
           if (success) {
-            for (int i = 0; i < n; addr += 4, ++i) {
+            for (uint64_t i = 0; i < n; addr += 4, ++i) {
               uint32_t data = paddr_read(addr, 4);
               printf("%#lx:\t0x%08x\n", addr, data);
             }

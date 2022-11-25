@@ -70,10 +70,8 @@ sim: $(BIN)
 
 build-csrc: build-vsrc $(OBJS)
 
-$(OBJS) += ./build/obj_dir/Vtop__ALL.o
-
 $(BIN): $(OBJS) # $(NVBOARD_ARCHIVE)
-	@$(LD) -o $@ $^ $(LDFLAGS) $(LIBS)
+	@$(LD) -o $@ $(BUILD_DIR)/obj_dir/Vtop__ALL.a $(realpath $(OBJS)) $(LDFLAGS) $(LIBS)
 
 all: $(BIN)
 

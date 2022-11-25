@@ -2,7 +2,9 @@
 #include <cpu/decode.h>
 #include <isa.h>
 #include <sim.hpp>
-#include <memory/paddr.h>
+extern "C" {
+  #include <memory/paddr.h>
+}
 
 CPU_state cpu = {};
 #define BUFSIZE 128
