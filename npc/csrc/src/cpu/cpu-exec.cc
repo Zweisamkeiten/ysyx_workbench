@@ -64,7 +64,8 @@ void exec_once() {
   memset(p, ' ', space_len);
   p += space_len;
 
-  disassemble(p, itrace_logbuf + BUFSIZE - p, cpu.pc, (uint8_t *)(cpu.inst), 4);
+  char text[100000];
+  disassemble(text, 128, cpu.pc, (uint8_t *)(cpu.inst), 4);
 #endif
   single_cycle();
   trace_and_difftest(top->o_pc);
