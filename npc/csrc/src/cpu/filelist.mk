@@ -1,1 +1,1 @@
-CXXSRCS-y += csrc/src/cpu/cpu-exec.cc
+CXXSRCS += csrc/src/cpu/cpu-exec.cc

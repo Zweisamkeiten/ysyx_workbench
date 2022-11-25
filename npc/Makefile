@@ -63,12 +63,12 @@ $(VALL): $(VSRCS)
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $^ --prefix Vtop --trace --Mdir $(VERILATOR_OBJ_DIR)
 
-VERILATOR_SRC: verilated.cpp verilated_dpi.cpp verilated_vcd_c.cpp
-VERILATOR_OBJ: $(addprefix $(VERILATOR_OBJ_DIR)/, $(VERILATOR_SRC:%.cpp=%.o))
-$(VERILATOR_OBJ): $(addprefix /usr/share/verilator/, $(VERILATOR_SRC))
-	@g++  -I. $(INCFLAGS) -MMD -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow -Wall -Werror -Og -ggdb3 -DITRACE_COND= -DIRINGTRACE_COND= -DFTRACE_COND=true  -std=gnu++17 -Os -c -o $(VERILATOR_OBJ_DIR)/verilated.o /usr/share/verilator/include/verilated.cpp
-	@g++  -I. $(INCFLAGS) -MMD -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow -Wall -Werror -Og -ggdb3 -DITRACE_COND= -DIRINGTRACE_COND= -DFTRACE_COND=true  -std=gnu++17 -Os -c -o $(VERILATOR_OBJ_DIR)/verilated_dpi.o /usr/share/verilator/include/verilated_dpi.cpp
-	@g++  -I. $(INCFLAGS) -MMD -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow -Wall -Werror -Og -ggdb3 -DITRACE_COND= -DIRINGTRACE_COND= -DFTRACE_COND=true  -std=gnu++17 -Os -c -o $(VERILATOR_OBJ_DIR)/verilated_vcd_c.o /usr/share/verilator/include/verilated_vcd_c.cpp
+VERILATOR_SRC = verilated.cpp verilated_dpi.cpp verilated_vcd_c.cpp
+VERILATOR_OBJ = $(addprefix $(VERILATOR_OBJ_DIR)/, $(VERILATOR_SRC:%.cpp=%.o))
+$(VERILATOR_OBJ): $(VALL)
+	@g++  -I. $(INCLUDES) -MMD -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow -Wall -Werror -Og -ggdb3 -DITRACE_COND= -DIRINGTRACE_COND= -DFTRACE_COND=true  -std=gnu++17 -Os -c -o $(VERILATOR_OBJ_DIR)/verilated.o /usr/share/verilator/include/verilated.cpp
+	@g++  -I. $(INCLUDES) -MMD -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow -Wall -Werror -Og -ggdb3 -DITRACE_COND= -DIRINGTRACE_COND= -DFTRACE_COND=true  -std=gnu++17 -Os -c -o $(VERILATOR_OBJ_DIR)/verilated_dpi.o /usr/share/verilator/include/verilated_dpi.cpp
+	@g++  -I. $(INCLUDES) -MMD -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow -Wall -Werror -Og -ggdb3 -DITRACE_COND= -DIRINGTRACE_COND= -DFTRACE_COND=true  -std=gnu++17 -Os -c -o $(VERILATOR_OBJ_DIR)/verilated_vcd_c.o /usr/share/verilator/include/verilated_vcd_c.cpp
 
 sim: $(BIN)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
@@ -80,6 +80,6 @@ $(BIN): $(VALL) $(VERILATOR_OBJ) $(OBJS) # $(NVBOARD_ARCHIVE)
 
 all: $(BIN)
 
-.PHONY: default all sim run
+.PHONY: default all sim
 
 include ../Makefile
