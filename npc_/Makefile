@@ -22,8 +22,6 @@ VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
 CSRCS = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cc" -or -name "*.cpp")
 # CSRCS = $(shell realpath --relative-to $(abspath ./) $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cc" -or -name "*.cpp"))
 # OBJS      = $(addprefix $(OBJ_DIR)/, $(addsuffix .o, $(basename $(filter-out csrc/main.cpp, $(CSRCS)))))
-SRCS += $(filter-out ./csrc/src/sim_init.c, $(shell find ./csrc -name "*.c"))
-NAME = sim
 
 # rules for NVBoard
 include $(NVBOARD_HOME)/scripts/nvboard.mk
@@ -58,17 +56,18 @@ include $(NPC_HOME)/scripts/build.mk
 all: $(OBJS)
 	@echo "Write this Makefile by your self."
 
-build: $(VSRCS)
+$(BIN): $(VSRCS) $(CSRCS) $(NVBOARD_ARCHIVE)
 	$(call git_commit, "build RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo "-- VERILATE & BUILD --------"
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
-		--top-module $(TOPNAME) $^ --prefix Vtop --trace --Mdir $(OBJ_DIR)
+		--top-module $(TOPNAME) $^ --prefix Vtop --trace $(addprefix -CFLAGS , $(CFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
+		--Mdir $(OBJ_DIR) -o $(abspath $(BIN))
 
 sim: $(BIN)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo "-- Simulation --------"
 	$(NPC_EXEC)
 
-.PHONY: default all run build
+.PHONY: default all run
 
 include ../Makefile

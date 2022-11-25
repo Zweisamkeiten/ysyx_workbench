@@ -1,0 +1,11 @@
+top=top
+
+a (SW3, SW2, SW1, SW0)
+b (SW7, SW6, SW5, SW4)
+opt (SW10, SW9, SW8)
+out (LD3, LD2, LD1, LD0)
+cf (LD4)
+of (LD5)
+zf (LD6)
+sf (LD7)
+
