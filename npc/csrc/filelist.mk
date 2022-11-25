@@ -1,1 +1,1 @@
-CXXSRCS-y += csrc/main.cpp
+CPPSRCS += csrc/main.cpp

@@ -21,7 +21,6 @@ $(shell mkdir -p $(BUILD_DIR))
 
 # Include all filelist.mk to merge file lists
 FILELIST_MK = $(shell find ./csrc -name "filelist.mk")
-FILELIST_MK += $(shell find ./vsrc -name "filelist.mk")
 include $(FILELIST_MK)
 
 # Filter out directories and files in blacklist to obtain the final set of source files

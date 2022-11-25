@@ -1,4 +1,4 @@
-CXXSRCS-y += csrc/src/sim_init.cc
+CXXSRCS += csrc/src/sim_init.cc
 DIRS-y += csrc/src/cpu csrc/src/utils csrc/src/engine
 DIRS-y += csrc/src/memory
 INC_PATH += /usr/share/verilator/include

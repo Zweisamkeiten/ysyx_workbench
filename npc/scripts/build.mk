@@ -25,9 +25,6 @@ CFLAGS  := -O2 -MMD -Wall -Werror $(INCLUDES) $(CFLAGS)
 LDFLAGS := -O2 $(LDFLAGS)
 
 OBJS = $(SRCS:%.c=$(OBJ_DIR)/%.o) $(CXXSRCS:%.cc=$(OBJ_DIR)/%.o) $(CPPSRCS:%.cpp=$(OBJ_DIR)/%.o)
-$(info $(SRCS))
-$(info $(CXXSRCS))
-$(info $(CPPSRCS))
 
 # Compilation patterns
 $(OBJ_DIR)/%.o: %.c
