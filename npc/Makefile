@@ -32,11 +32,10 @@ include $(NVBOARD_HOME)/scripts/nvboard.mk
 
 # rules for verilator
 INC_PATH := $(NPC_HOME)/csrc/include
-INC_PATH := $(NPC_HOME)/build/obj_dir
+INC_PATH += $(NPC_HOME)/build/obj_dir
 INC_PATH += $(NPC_HOME)/csrc/src/isa/include
 INC_PATH += /usr/share/verilator/include
 INC_PATH += /usr/share/verilator/include/vltstd
-INCFLAGS = $(addprefix -I, $(INC_PATH))
 CFLAGS += $(INCFLAGS) -Wall -Werror -Og -ggdb3
 LDFLAGS += -lSDL2 -lSDL2_image -lreadline
 
@@ -73,7 +72,7 @@ build-csrc: build-vsrc $(OBJS)
 
 $(OBJS) += ./build/obj_dir/Vtop__ALL.o
 
-$(BIN): $(OBJS) $(NVBOARD_ARCHIVE)
+$(BIN): $(OBJS) # $(NVBOARD_ARCHIVE)
 	@$(LD) -o $@ $^ $(LDFLAGS) $(LIBS)
 
 all: $(BIN)

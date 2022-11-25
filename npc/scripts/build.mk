@@ -2,7 +2,6 @@
 
 # Add necessary options if the target is a shared library
 ifeq ($(SHARE),1)
-SO = -so
 CFLAGS  += -fPIC
 LDFLAGS += -rdynamic -shared -fPIC
 endif
@@ -10,11 +9,8 @@ endif
 WORK_DIR  = $(shell pwd)
 BUILD_DIR = $(WORK_DIR)/build
 
-INC_PATH := $(WORK_DIR)/build/obj_dir $(INC_PATH)
-INC_PATH += $(WORK_DIR)/csrc/include
-INC_PATH += $(WORK_DIR)/csrc/isa/include
-OBJ_DIR  = $(BUILD_DIR)/obj-$(NAME)$(SO)
-BINARY   = $(BUILD_DIR)/$(NAME)$(SO)
+OBJ_DIR  = $(BUILD_DIR)/obj-$(NAME)
+BINARY   = $(filter-out $(BUILD_DIR)/sim, $(BUILD_DIR)/$(NAME))
 
 # Compilation flags
 ifeq ($(CC),clang)
