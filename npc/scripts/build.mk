@@ -9,6 +9,7 @@ endif
 WORK_DIR  = $(shell pwd)
 BUILD_DIR = $(WORK_DIR)/build
 
+INC_PATH := $(WORK_DIR)/csrc/include $(INC_PATH)
 OBJ_DIR  = $(BUILD_DIR)/obj-$(NAME)
 BINARY   = $(filter-out $(BUILD_DIR)/sim, $(BUILD_DIR)/$(NAME))
 

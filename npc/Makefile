@@ -13,44 +13,35 @@ VERILATOR = $(VERILATOR_ROOT)/bin/verilator
 endif
 VERILATOR_CFLAGS += --build -cc -j $(shell nproc) -Wall -Wno-DECLFILENAME
 
+remove_quote = $(patsubst "%",%,$(1))
+
 default: $(BIN)
 
 $(shell mkdir -p $(BUILD_DIR))
+-include $(NPC_HOME)/csrc/include/config/auto.conf
+-include $(NPC_HOME)/csrc/include/config/auto.conf.cmd
 
-# project source
-VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
-CSRCS = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cc" -or -name "*.cpp")
-# CSRCS = $(shell realpath --relative-to $(abspath ./) $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cc" -or -name "*.cpp"))
-# OBJS      = $(addprefix $(OBJ_DIR)/, $(addsuffix .o, $(basename $(filter-out csrc/main.cpp, $(CSRCS)))))
-SRCS += $(shell find ./csrc -name "*.c")
-CXXSRCS += $(shell find ./csrc -name "*.cc")
-CPPSRCS += $(shell find ./csrc -name "*.cpp")
 NAME = sim
-
-# rules for NVBoard
-include $(NVBOARD_HOME)/scripts/nvboard.mk
-
-# rules for verilator
-INC_PATH := $(NPC_HOME)/csrc/include
-INC_PATH += $(NPC_HOME)/build/obj_dir
-INC_PATH += $(NPC_HOME)/csrc/src/isa/include
-INC_PATH += /usr/share/verilator/include
-INC_PATH += /usr/share/verilator/include/vltstd
-INCFLAGS = $(addprefix -I, $(INC_PATH))
-CFLAGS += $(INCFLAGS) -Wall -Werror -Og -ggdb3
-LDFLAGS += -lSDL2 -lSDL2_image -lreadline
 
 # Include all filelist.mk to merge file lists
 FILELIST_MK = $(shell find ./csrc -name "filelist.mk")
 include $(FILELIST_MK)
 
--include $(NPC_HOME)/csrc/include/config/auto.conf
--include $(NPC_HOME)/csrc/include/config/auto.conf.cmd
+# Filter out directories and files in blacklist to obtain the final set of source files
+DIRS-BLACKLIST-y += $(DIRS-BLACKLIST)
+SRCS-BLACKLIST-y += $(SRCS-BLACKLIST) $(shell find $(DIRS-BLACKLIST-y) -name "*.c")
+SRCS-y += $(shell find $(DIRS-y) -name "*.c")
+SRCS = $(filter-out $(SRCS-BLACKLIST-y),$(SRCS-y))
 
+# Extract compiler and options from menuconfig
+CC = $(call remove_quote,$(CONFIG_CC))
+CFLAGS_BUILD += $(call remove_quote,$(CONFIG_CC_OPT))
+CFLAGS_BUILD += $(if $(CONFIG_CC_DEBUG),-Og -ggdb3,)
 CFLAGS_TRACE += -DITRACE_COND=$(if $(CONFIG_ITRACE_COND),$(call remove_quote,$(CONFIG_ITRACE_COND)),true)
 CFLAGS_TRACE += -DIRINGTRACE_COND=$(if $(CONFIG_IRINGTRACE_COND),$(call remove_quote,$(CONFIG_IRINGTRACE_COND)),true)
 CFLAGS_TRACE += -DFTRACE_COND=$(if $(CONFIG_FTRACE_COND),$(call remove_quote,$(CONFIG_FTRACE_COND)),true)
-CFLAGS  += $(CFLAGS_TRACE)
+CFLAGS  += $(CFLAGS_BUILD) $(CFLAGS_TRACE)
+LDFLAGS += $(CFLAGS_BUILD)
 
 # Include rules for menuconfig
 include $(NPC_HOME)/scripts/config.mk
@@ -58,30 +49,37 @@ include $(NPC_HOME)/scripts/config.mk
 # Include rules for build
 include $(NPC_HOME)/scripts/build.mk
 
-build-vsrc: $(VSRCS)
+# rules for NVBoard
+# include $(NVBOARD_HOME)/scripts/nvboard.mk
+# LDFLAGS += -lSDL2 -lSDL2_image
+
+# # project source
+VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
+VALL = $(VERILATOR_OBJ_DIR)/Vtop__ALL.a
+
+$(VALL): $(VSRCS)
 	$(call git_commit, "build RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo "-- VERILATE & BUILD --------"
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $^ --prefix Vtop --trace --Mdir $(VERILATOR_OBJ_DIR)
-	# -DVM_TRACE=1
+
+VERILATOR_SRC = verilated.cpp verilated_dpi.cpp verilated_vcd_c.cpp
+VERILATOR_OBJ = $(addprefix $(VERILATOR_OBJ_DIR)/, $(VERILATOR_SRC:%.cpp=%.o))
+$(VERILATOR_OBJ): $(VALL)
+	@g++  -I. $(INCLUDES) -MMD -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow -Wall -Werror -Og -ggdb3 -DITRACE_COND= -DIRINGTRACE_COND= -DFTRACE_COND=true  -std=gnu++17 -Os -c -o $(VERILATOR_OBJ_DIR)/verilated.o /usr/share/verilator/include/verilated.cpp
+	@g++  -I. $(INCLUDES) -MMD -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow -Wall -Werror -Og -ggdb3 -DITRACE_COND= -DIRINGTRACE_COND= -DFTRACE_COND=true  -std=gnu++17 -Os -c -o $(VERILATOR_OBJ_DIR)/verilated_dpi.o /usr/share/verilator/include/verilated_dpi.cpp
+	@g++  -I. $(INCLUDES) -MMD -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow -Wall -Werror -Og -ggdb3 -DITRACE_COND= -DIRINGTRACE_COND= -DFTRACE_COND=true  -std=gnu++17 -Os -c -o $(VERILATOR_OBJ_DIR)/verilated_vcd_c.o /usr/share/verilator/include/verilated_vcd_c.cpp
 
 sim: $(BIN)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo "-- Simulation --------"
 	$(NPC_EXEC)
 
-build-csrc: build-vsrc $(OBJS)
-
-build-verilator:
-	@g++  -I. $(INCFLAGS) -MMD -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow -Wall -Werror -Og -ggdb3 -DITRACE_COND= -DIRINGTRACE_COND= -DFTRACE_COND=true  -std=gnu++17 -Os -c -o $(VERILATOR_OBJ_DIR)/verilated.o /usr/share/verilator/include/verilated.cpp
-	@g++  -I. $(INCFLAGS) -MMD -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow -Wall -Werror -Og -ggdb3 -DITRACE_COND= -DIRINGTRACE_COND= -DFTRACE_COND=true  -std=gnu++17 -Os -c -o $(VERILATOR_OBJ_DIR)/verilated_dpi.o /usr/share/verilator/include/verilated_dpi.cpp
-	@g++  -I. $(INCFLAGS) -MMD -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow -Wall -Werror -Og -ggdb3 -DITRACE_COND= -DIRINGTRACE_COND= -DFTRACE_COND=true  -std=gnu++17 -Os -c -o $(VERILATOR_OBJ_DIR)/verilated_vcd_c.o /usr/share/verilator/include/verilated_vcd_c.cpp
-
-$(BIN): build-vsrc build-verilator $(OBJS) # $(NVBOARD_ARCHIVE)
-	@$(LD) -o $@ $(realpath $(OBJS)) $(filter-out $(VERILATOR_OBJ_DIR)/Vtop__ALL.o, $(shell find $(VERILATOR_OBJ_DIR) -name "*.o")) $(VERILATOR_OBJ_DIR)/Vtop__ALL.a $(LDFLAGS) $(LIBS)
+$(BIN): $(VALL) $(VERILATOR_OBJ) $(OBJS) # $(NVBOARD_ARCHIVE)
+	@$(LD) -o $@ $(realpath $(OBJS)) $(VERILATOR_OBJ) $(VALL) $(LDFLAGS) $(LIBS)
 
 all: $(BIN)
 
-.PHONY: default all run build build-csrc build-vsrc build-verilator
+.PHONY: default all sim
 
 include ../Makefile
