@@ -41,7 +41,7 @@ static void trace_and_difftest(vaddr_t dnpc) {
     inst_state = INST_OTHER;
   }
 #endif
-  if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
+  if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(itrace_logbuf)); }
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
   IFDEF(CONFIG_WATCHPOINT, diff_watchpoint_value());
 }
