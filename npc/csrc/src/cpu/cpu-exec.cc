@@ -57,8 +57,13 @@ void exec_once() {
   for (int i = 3; i >= 0; i --) {
     p += snprintf(p, 4, " %02x", inst[i]);
   }
-  memset(p, ' ', 1);
-  p += 1;
+  int ilen_max = 4;
+  int space_len = ilen_max - 4;
+  if (space_len < 0) space_len = 0;
+  space_len = space_len * 3 + 1;
+  memset(p, ' ', space_len);
+  p += space_len;
+
   disassemble(p, itrace_logbuf + BUFSIZE - p, cpu.pc, (uint8_t *)inst, 4);
 #endif
   single_cycle();
