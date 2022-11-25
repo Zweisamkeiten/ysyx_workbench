@@ -25,7 +25,7 @@ Q            := @
 KCONFIG_PATH := $(NPC_HOME)/tools/kconfig
 FIXDEP_PATH  := $(NPC_HOME)/tools/fixdep
 Kconfig      := $(NPC_HOME)/Kconfig
-rm-distclean += include/generated include/config .config .config.old
+rm-distclean += csrc/include/generated csrc/include/config .config .config.old
 silent := -s
 
 CONF   := $(KCONFIG_PATH)/build/conf
@@ -41,7 +41,7 @@ $(MCONF):
 $(FIXDEP):
 	$(Q)$(MAKE) $(silent) -C $(FIXDEP_PATH)
 
-menuconfig: $(MCONF) $(CONF) $(FIXDEP)
+menuconfig: $(MCONF) $(CONF)
 	$(Q)$(MCONF) $(Kconfig)
 	$(Q)$(CONF) $(silent) --syncconfig $(Kconfig)
 

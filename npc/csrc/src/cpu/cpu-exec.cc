@@ -1,7 +1,7 @@
 #include <cpu/cpu.h>
 #include <cpu/decode.h>
 #include <isa.h>
-#include <sim.h>
+#include <sim.hpp>
 #include <memory/paddr.h>
 
 CPU_state cpu = {};

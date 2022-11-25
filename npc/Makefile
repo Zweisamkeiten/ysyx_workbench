@@ -22,7 +22,9 @@ VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
 CSRCS = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cc" -or -name "*.cpp")
 # CSRCS = $(shell realpath --relative-to $(abspath ./) $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cc" -or -name "*.cpp"))
 # OBJS      = $(addprefix $(OBJ_DIR)/, $(addsuffix .o, $(basename $(filter-out csrc/main.cpp, $(CSRCS)))))
-SRCS += $(filter-out ./csrc/src/sim_init.c, $(shell find ./csrc -name "*.c"))
+SRCS += $(shell find ./csrc -name "*.c")
+CXXSRCS += $(shell find ./csrc -name "*.cc")
+CPPSRCS += $(shell find ./csrc -name "*.cpp")
 NAME = sim
 
 # rules for NVBoard
@@ -34,7 +36,7 @@ INC_PATH += $(NPC_HOME)/csrc/src/isa/include
 # INC_PATH += /usr/share/verilator/include
 # INC_PATH += /usr/share/verilator/include/vltstd
 INCFLAGS = $(addprefix -I, $(INC_PATH))
-CFLAGS += $(INCFLAGS) -Wall -Werror -Og -ggdb3
+CFLAGS += $(INCFLAGS) -Og -ggdb3
 LDFLAGS += -lSDL2 -lSDL2_image -lreadline
 
 # Include all filelist.mk to merge file lists
@@ -55,10 +57,10 @@ include $(NPC_HOME)/scripts/config.mk
 # Include rules for build
 include $(NPC_HOME)/scripts/build.mk
 
-all: $(OBJS)
+build-csrc: $(OBJS)
 	@echo "Write this Makefile by your self."
 
-build: $(VSRCS)
+build-vsrc: $(VSRCS)
 	$(call git_commit, "build RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo "-- VERILATE & BUILD --------"
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
