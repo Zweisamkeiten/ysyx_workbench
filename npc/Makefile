@@ -64,14 +64,17 @@ build-vsrc: $(VSRCS)
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $^ --prefix Vtop --trace --Mdir $(VERILATOR_OBJ_DIR)
 
-build-csrc: build-vsrc $(OBJS)
-
 sim: $(BIN)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo "-- Simulation --------"
 	$(NPC_EXEC)
 
-all: build-csrc
+build-csrc: build-vsrc $(OBJS)
+
+$(OBJS) += $(BUILD_DIR)/obj_dir/Vtop__ALL.o
+
+$(BIN): $(OBJS) $(NVBOARD_ARCHIVE)
+	@$(LD) -o $@ $^ $(LDFLAGS) $(LIBS)
 
 .PHONY: default all run build
 
