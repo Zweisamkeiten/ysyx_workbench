@@ -20,22 +20,25 @@ static void welcome() {
 static long load_img(int argc, char ** argv) {
   if (argc != 2) {
     printf("No image is given. Use the default built-in image.\n");
+    return 0;
   }
-  FILE *fp = fopen(argv[1], "rb");
-  if (fp == NULL) fprintf(stderr, "Can not open '%s\n'", argv[1]);
-  assert(fp != NULL);
+  else {
+    FILE *fp = fopen(argv[1], "rb");
+    if (fp == NULL) fprintf(stderr, "Can not open '%s\n'", argv[1]);
+    assert(fp != NULL);
 
-  fseek(fp, 0, SEEK_END);
-  long size = ftell(fp);
+    fseek(fp, 0, SEEK_END);
+    long size = ftell(fp);
 
-  fprintf(stdout, "The image is %s, size = %ld\n", argv[1], size);
+    fprintf(stdout, "The image is %s, size = %ld\n", argv[1], size);
 
-  fseek(fp, 0, SEEK_SET);
-  int ret = fread(guest_to_host(RESET_VECTOR), size, 1, fp);
-  assert(ret == 1);
+    fseek(fp, 0, SEEK_SET);
+    int ret = fread(guest_to_host(RESET_VECTOR), size, 1, fp);
+    assert(ret == 1);
 
-  fclose(fp);
-  return size;
+    fclose(fp);
+    return size;
+  }
 }
 
 void init_monitor(int argc, char *argv[]) {
