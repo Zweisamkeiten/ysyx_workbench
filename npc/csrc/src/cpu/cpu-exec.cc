@@ -57,6 +57,8 @@ void exec_once() {
   for (int i = 3; i >= 0; i --) {
     p += snprintf(p, 4, " %02x", inst[i]);
   }
+  memset(p, ' ', 1);
+  p += 1;
   disassemble(p, itrace_logbuf + BUFSIZE - p, cpu.pc, (uint8_t *)inst, 4);
 #endif
   single_cycle();
