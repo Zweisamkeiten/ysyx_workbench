@@ -8,7 +8,7 @@ void init_sdb();
 void init_sim();
 
 static void welcome() {
-  printf("Trace: %s", MUXNDEF(CONFIG_TRACE, ANSI_FMT("ON\n", ANSI_FG_GREEN), ANSI_FMT("OFF\n", ANSI_FG_RED)));
+  printf("Trace: %s", MUXDEF(CONFIG_TRACE, ANSI_FMT("ON\n", ANSI_FG_GREEN), ANSI_FMT("OFF\n", ANSI_FG_RED)));
   IFDEF(CONFIG_TRACE, printf("If trace is enabled, a log file will be generated "
         "to record the trace. This may lead to a large log file. "
         "If it is not necessary, you can disable it in menuconfig\n"));
@@ -19,6 +19,7 @@ static void welcome() {
 
 static long load_img(int argc, char ** argv) {
   if (argc != 2) {
+    printf("Trace: %s", MUXDEF(CONFIG_TRACE, ANSI_FMT("ON\n", ANSI_FG_GREEN), ANSI_FMT("OFF\n", ANSI_FG_RED)));
     printf("No image is given. Use the default built-in image.\n");
     return 0;
   }
