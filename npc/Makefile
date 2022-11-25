@@ -75,7 +75,7 @@ sim: $(BIN)
 	@echo "-- Simulation --------"
 	$(NPC_EXEC)
 
-$(BIN): build-vsrc build-verilator $(OBJS) # $(NVBOARD_ARCHIVE)
+$(BIN): build-csrc build-verilator $(OBJS) # $(NVBOARD_ARCHIVE)
 	@$(LD) -o $@ $(realpath $(OBJS)) $(filter-out $(VERILATOR_OBJ_DIR)/Vtop__ALL.o, $(shell find $(VERILATOR_OBJ_DIR) -name "*.o")) $(VERILATOR_OBJ_DIR)/Vtop__ALL.a $(LDFLAGS) $(LIBS)
 
 all: $(BIN)
