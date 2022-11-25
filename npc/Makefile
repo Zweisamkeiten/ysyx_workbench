@@ -19,8 +19,8 @@ $(shell mkdir -p $(BUILD_DIR))
 
 # project source
 VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
-SRCS += $(filter-out ./csrc/src/sim_init.cc, $(shell find ./csrc -name "*.c"))
-CXXSRCS += $(shell find ./csrc -name "*.cc")
+SRCS += $(shell find ./csrc -name "*.c")
+CXXSRCS += $(filter-out ./csrc/src/sim_init.cc, $(shell find ./csrc -name "*.cc"))
 CPPSRCS += $(shell find ./csrc -name "*.cpp")
 NAME = sim
 
@@ -67,6 +67,8 @@ sim: $(BIN)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo "-- Simulation --------"
 	$(NPC_EXEC)
+
+all: build-vsrc build-csrc
 
 .PHONY: default all run build
 
