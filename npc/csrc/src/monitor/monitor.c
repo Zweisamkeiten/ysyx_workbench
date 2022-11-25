@@ -19,7 +19,6 @@ static void welcome() {
 
 static long load_img(int argc, char ** argv) {
   if (argc != 2) {
-    printf("Trace: %s", MUXDEF(CONFIG_TRACE, ANSI_FMT("ON\n", ANSI_FG_GREEN), ANSI_FMT("OFF\n", ANSI_FG_RED)));
     printf("No image is given. Use the default built-in image.\n");
     return 0;
   }
