@@ -1,4 +1,4 @@
-#include <sim.h>
+#include <sim.hpp>
 #include <common.h>
 #include <isa.h>
 
@@ -18,7 +18,11 @@ extern "C" void set_gpr_ptr(const svOpenArrayHandle r) {
   cpu.gpr = (uint64_t *)(((VerilatedDpiOpenVar*)r)->datap());
 }
 
-void single_cycle() {
+extern "C" void set_inst_ptr(const svOpenArrayHandle r) {
+  cpu.inst = (uint32_t *)(((VerilatedDpiOpenVar*)r)->datap());
+}
+
+extern "C" void single_cycle() {
   top->i_clk = 0;
   top->eval();
   contextp->timeInc(1);
@@ -37,7 +41,7 @@ static void reset(int n) {
   top->i_rst = 0;
 }
 
-void init_sim() {
+extern "C" void init_sim() {
   contextp = new VerilatedContext;
   tfp = new VerilatedVcdC;
   top = new Vtop;
@@ -53,7 +57,7 @@ void init_sim() {
   cpu.pc = top->o_pc;
 }
 
-void end_sim() {
+extern "C" void end_sim() {
   top->final();
   delete top;
   tfp->close();

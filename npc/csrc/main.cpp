@@ -5,10 +5,10 @@
 
 NPCState npc_state = {.state = NPC_STOP};
 
-void init_monitor(int, char *[]);
-void engine_start();
-int is_exit_status_bad();
-void end_sim();
+extern "C" void init_monitor(int argc, char *argv[]);
+extern "C" void engine_start();
+extern "C" int is_exit_status_bad();
+extern "C" void end_sim();
 
 int main(int argc, char **argv, char **env) {
 

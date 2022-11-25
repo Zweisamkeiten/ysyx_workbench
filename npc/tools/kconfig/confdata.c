@@ -228,7 +228,7 @@ static const char *conf_get_autoconfig_name(void)
 {
 	char *name = getenv("KCONFIG_AUTOCONFIG");
 
-	return name ? name : "include/config/auto.conf";
+	return name ? name : "csrc/include/config/auto.conf";
 }
 
 static int conf_set_sym_val(struct symbol *sym, int def, int def_flags, char *p)
@@ -972,7 +972,7 @@ static int conf_touch_deps(void)
 	struct symbol *sym;
 	int res, i;
 
-	strcpy(depfile_path, "include/config/");
+	strcpy(depfile_path, "csrc/include/config/");
 	depfile_prefix_len = strlen(depfile_path);
 
 	name = conf_get_autoconfig_name();
@@ -1049,7 +1049,7 @@ int conf_write_autoconf(int overwrite)
 	if (!overwrite && is_present(autoconf_name))
 		return 0;
 
-	conf_write_dep("include/config/auto.conf.cmd");
+	conf_write_dep("csrc/include/config/auto.conf.cmd");
 
 	if (conf_touch_deps())
 		return 1;
@@ -1081,7 +1081,7 @@ int conf_write_autoconf(int overwrite)
 
 	name = getenv("KCONFIG_AUTOHEADER");
 	if (!name)
-		name = "include/generated/autoconf.h";
+		name = "csrc/include/generated/autoconf.h";
 	if (make_parent_dir(name))
 		return 1;
 	if (rename(".tmpconfig.h", name))

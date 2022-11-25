@@ -1,13 +1,15 @@
-#include <isa.h>
 #include <cpu/cpu.h>
+extern "C" {
+#include <isa.h>
 #include <common.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <memory/paddr.h>
 #include "sdb.h"
+}
 
-void init_regex();
-void init_wp_pool();
+extern "C" void init_regex();
+extern "C" void init_wp_pool();
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char* rl_gets() {
@@ -45,7 +47,7 @@ static int cmd_x(char *args) {
           uint64_t addr = expr(esp_str, &success);
 
           if (success) {
-            for (int i = 0; i < n; addr += 4, ++i) {
+            for (uint64_t i = 0; i < n; addr += 4, ++i) {
               uint32_t data = paddr_read(addr, 4);
               printf("%#lx:\t0x%08x\n", addr, data);
             }
@@ -193,7 +195,7 @@ static int cmd_help(char *args) {
   return 0;
 }
 
-void sdb_mainloop() {
+extern "C" void sdb_mainloop() {
   for (char *str; (str = rl_gets()) != NULL; ) {
     char *str_end = str + strlen(str);
 
@@ -221,7 +223,7 @@ void sdb_mainloop() {
   }
 }
 
-void init_sdb() {
+extern "C" void init_sdb() {
   /* Compile the regular expressions. */
   init_regex();
 

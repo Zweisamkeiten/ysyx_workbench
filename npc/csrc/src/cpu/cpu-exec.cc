@@ -1,8 +1,10 @@
 #include <cpu/cpu.h>
 #include <cpu/decode.h>
 #include <isa.h>
-#include <sim.h>
-#include <memory/paddr.h>
+#include <sim.hpp>
+extern "C" {
+  #include <memory/paddr.h>
+}
 
 CPU_state cpu = {};
 
@@ -14,7 +16,6 @@ void exec_once() {
 }
 
 static void execute(uint64_t n) {
-  Decode s;
   for (;n > 0; n --) {
     exec_once();
     if (npc_state.state != NPC_RUNNING) break;

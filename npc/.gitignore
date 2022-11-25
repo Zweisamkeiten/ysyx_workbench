@@ -9,6 +9,7 @@
 !*.cpp
 !.gitignore
 !README.md
-build/*
+build/obj_dir/*
+build/obj-sim/*
 csrc/include/generated/*
 csrc/include/config/*
