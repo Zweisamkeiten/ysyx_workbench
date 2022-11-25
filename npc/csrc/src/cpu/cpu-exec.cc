@@ -12,7 +12,7 @@ CPU_state cpu = {};
 uint64_t g_nr_guest_inst = 0;
 static bool g_print_step = false;
 #ifdef CONFIG_ITRACE
-static char itrace_logbuf[BUFSIZE];
+char itrace_logbuf[BUFSIZE];
 extern "C" void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 #endif
 
