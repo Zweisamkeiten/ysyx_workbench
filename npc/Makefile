@@ -42,6 +42,7 @@ CFLAGS_TRACE += -DIRINGTRACE_COND=$(if $(CONFIG_IRINGTRACE_COND),$(call remove_q
 CFLAGS_TRACE += -DFTRACE_COND=$(if $(CONFIG_FTRACE_COND),$(call remove_quote,$(CONFIG_FTRACE_COND)),true)
 CFLAGS  += $(CFLAGS_BUILD) $(CFLAGS_TRACE)
 LDFLAGS += $(CFLAGS_BUILD)
+$(info $(CXXSRCS))
 
 # Include rules for menuconfig
 include $(NPC_HOME)/scripts/config.mk

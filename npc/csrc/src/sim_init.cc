@@ -2,10 +2,6 @@
 #include <common.h>
 #include <isa.h>
 
-#ifndef __STDC_FORMAT_MACROS
-#define __STDC_FORMAT_MACROS
-#endif
-
 Vtop *top;
 VerilatedContext *contextp = NULL;
 VerilatedVcdC *tfp = NULL;
