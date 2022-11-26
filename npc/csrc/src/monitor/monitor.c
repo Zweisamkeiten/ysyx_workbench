@@ -7,6 +7,7 @@ void init_isa();
 void init_sdb();
 void init_sim();
 void init_disasm(const char *triple);
+void init_elf(const char * elf_file);
 
 static void welcome() {
   printf("Trace: %s", MUXDEF(CONFIG_TRACE, ANSI_FMT("ON\n", ANSI_FG_GREEN), ANSI_FMT("OFF\n", ANSI_FG_RED)));
@@ -19,7 +20,7 @@ static void welcome() {
 }
 
 static long load_img(int argc, char ** argv) {
-  if (argc != 2) {
+  if (argc < 2) {
     printf("No image is given. Use the default built-in image.\n");
     return 0;
   }
@@ -56,6 +57,8 @@ void init_monitor(int argc, char *argv[]) {
 
   /* Load the image to memory. This will overwrite the built-in image. */
   load_img(argc, argv);
+
+  IFDEF(CONFIG_FTRACE, init_elf(argv[2]));
 
   /* Initialize the simple debugger. */
   init_sdb();
