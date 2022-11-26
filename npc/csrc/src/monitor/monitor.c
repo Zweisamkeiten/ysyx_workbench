@@ -7,7 +7,7 @@ void init_isa();
 void init_sdb();
 void init_sim();
 void init_disasm(const char *triple);
-void init_elf(int argc, char ** argv);
+void init_elf(const char * elf_file);
 
 static void welcome() {
   printf("Trace: %s", MUXDEF(CONFIG_TRACE, ANSI_FMT("ON\n", ANSI_FG_GREEN), ANSI_FMT("OFF\n", ANSI_FG_RED)));
