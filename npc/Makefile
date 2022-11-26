@@ -73,7 +73,6 @@ $(VERILATOR_OBJ): $(VALL)
 $(BIN): $(VALL) $(VERILATOR_OBJ) $(OBJS) # $(NVBOARD_ARCHIVE)
 	@$(LD) -o $@ $(realpath $(OBJS)) $(VERILATOR_OBJ) $(VALL) $(LDFLAGS) $(LIBS)
 
-
 run-env: $(BIN)
 
 sim: run-env
