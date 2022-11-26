@@ -2,6 +2,7 @@
 #include <sim.hpp>
 extern "C" {
   #include <isa.h>
+  #include <cpu/difftest.h>
   #include <memory/paddr.h>
 }
 #ifdef CONFIG_WATCHPOINT
