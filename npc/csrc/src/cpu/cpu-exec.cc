@@ -203,7 +203,8 @@ void exec_once() {
 #ifdef CONFIG_ITRACE
   disassemble_inst_to_buf(itrace_logbuf, 128, (uint8_t *)cpu.inst, cpu.pc, cpu.pc + 4);
 #endif
-  trace_and_difftest(top->o_pc);
+  cpu.pc = top->o_pc;
+  trace_and_difftest(cpu.pc);
 }
 
 static void execute(uint64_t n) {
