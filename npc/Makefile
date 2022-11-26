@@ -84,7 +84,8 @@ sim: run-env
 gdb: run-env
 	$(call git_commit, "gdb sim RTL")
 	gdb -s $(BIN) -x $(NPC_HOME)/gdbinit $(BIN)
-all: $(BIN)
+
+all: run-env
 
 .PHONY: default all run-env sim gdb
 
