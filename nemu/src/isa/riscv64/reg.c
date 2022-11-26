@@ -44,3 +44,19 @@ word_t isa_reg_str2val(const char *s, bool *success) {
   }
   return 0;
 }
+
+void isa_diff_set_regs(void* diff_context) {
+  CPU_state * ctx = (CPU_state *)diff_context;
+  for (int i = 0; i < 32; i++) {
+    cpu.gpr[i] = ctx->gpr[i];
+  }
+  cpu.pc = ctx->pc;
+}
+
+void isa_diff_get_regs(void *diff_context) {
+  CPU_state * ctx = (CPU_state *)diff_context;
+  for (int i = 0; i < 32; i++) {
+    ctx->gpr[i] = cpu.gpr[i];
+  }
+  ctx->pc = cpu.pc;
+}

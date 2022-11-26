@@ -231,6 +231,7 @@ void assert_fail_msg() {
 /* Simulate how the CPU works. */
 void cpu_exec(uint64_t n) {
   g_print_step = (n < MAX_INST_TO_PRINT);
+  IFDEF(CONFIG_FTRACE, init_func_sym_str_table();)
   switch (npc_state.state) {
   case NPC_END:
   case NPC_ABORT:
