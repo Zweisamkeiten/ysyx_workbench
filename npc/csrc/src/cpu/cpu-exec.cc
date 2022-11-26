@@ -196,7 +196,7 @@ void exec_once() {
   cpu.pc = top->o_pc;
   // printf("%lx\n", top->o_pc);
 #ifdef CONFIG_IRINGTRACE
-  last_inst = cpu.inst;
+  last_inst = *(cpu.inst);
   snpc = cpu.pc;
 #endif
   single_cycle();
