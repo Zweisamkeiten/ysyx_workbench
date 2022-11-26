@@ -18,7 +18,7 @@ module ysyx_22050710_exu (
     .key(i_ALUBsrc),
     .lut({
       2'b00, i_rs2,
-      2'b01, i_imm,
+      2'b01, i_imm + 1,
       2'b10, 64'd4
     })
   );
