@@ -33,7 +33,7 @@ module ysyx_22050710_exu (
     .key(i_ALUctr),
     .lut({
       4'b0011, copy_result,
-      4'b0000, adder_result + 1
+      4'b0000, adder_result
     })
   );
 
