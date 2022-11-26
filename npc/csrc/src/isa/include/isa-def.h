@@ -20,6 +20,7 @@
 
 typedef struct {
   uint64_t *gpr;
+  uint32_t *inst;
   vaddr_t pc;
 } CPU_state;
 
