@@ -1,7 +1,7 @@
+#include <cpu/cpu.h>
 #include <sim.hpp>
 extern "C" {
   #include <isa.h>
-  #include <cpu/cpu.h>
   #include <memory/paddr.h>
 }
 #ifdef CONFIG_WATCHPOINT

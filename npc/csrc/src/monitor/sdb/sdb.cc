@@ -1,7 +1,6 @@
 #include <cpu/cpu.h>
 extern "C" {
 #include <isa.h>
-#include <common.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <memory/paddr.h>
