@@ -73,7 +73,6 @@ $(VERILATOR_OBJ): $(VALL)
 $(BIN): $(VALL) $(VERILATOR_OBJ) $(OBJS) # $(NVBOARD_ARCHIVE)
 	@$(LD) -o $@ $(realpath $(OBJS)) $(VERILATOR_OBJ) $(VALL) $(LDFLAGS) $(LIBS)
 
-
 run-env: $(BIN)
 
 sim: run-env
@@ -84,7 +83,8 @@ sim: run-env
 gdb: run-env
 	$(call git_commit, "gdb sim RTL")
 	gdb -s $(BIN) -x $(NPC_HOME)/gdbinit $(BIN)
-all: $(BIN)
+
+all: run-env
 
 .PHONY: default all run-env sim gdb
 
