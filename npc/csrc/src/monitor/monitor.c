@@ -6,6 +6,7 @@ void init_mem();
 void init_isa();
 void init_sdb();
 void init_sim();
+void init_disasm(const char *triple);
 
 static void welcome() {
   printf("Trace: %s", MUXDEF(CONFIG_TRACE, ANSI_FMT("ON\n", ANSI_FG_GREEN), ANSI_FMT("OFF\n", ANSI_FG_RED)));
@@ -58,6 +59,8 @@ void init_monitor(int argc, char *argv[]) {
 
   /* Initialize the simple debugger. */
   init_sdb();
+
+  init_disasm()
 
   /* Display welcome message. */
   welcome();
