@@ -123,12 +123,12 @@ void disassemble_inst_to_buf(char *logbuf, size_t bufsize, uint8_t * inst_val, v
   }
   else if (strncmp(p, "jal", 3) == 0) {
     char *func_str = NULL;
-    if((func_str = check_is_func_call(cpu.pc)) != NULL) {
+    if((func_str = check_is_func_call(top->o_pc)) != NULL) {
       q += snprintf(q, 128, FMT_WORD ":", pc);
       for (size_t i = 0; i < stack_depth; i++) {
         q += snprintf(q, 128, "  ");
       }
-      q += snprintf(q, 128, "call [%s@" FMT_WORD "]", func_str, cpu.pc);
+      q += snprintf(q, 128, "call [%s@" FMT_WORD "]", func_str, top->o_pc);
       stack_depth++;
       inst_state = INST_CALL;
     }
