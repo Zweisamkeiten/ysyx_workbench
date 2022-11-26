@@ -3,7 +3,7 @@ module ysyx_22050710_idu (
   input [31:0] i_inst,
   output [63:0] o_imm,
   output [4:0] o_ra, o_rb, o_rd,
-  output o_wen, o_ALUAsrc,
+  output o_RegWr, o_ALUAsrc,
   output [1:0] o_ALUBsrc,
   output [3:0] o_ALUctr,
   output o_PCAsrc, o_PCBsrc
@@ -73,7 +73,7 @@ module ysyx_22050710_idu (
     })
   );
 
-  assign o_wen = |{inst_type_r, inst_type_i, inst_type_u, inst_type_j};
+  assign o_RegWr = |{inst_type_r, inst_type_i, inst_type_u, inst_type_j};
   assign o_ALUAsrc = |{inst_type_j, inst_auipc, inst_jalr} == 1 ? 1'b1 : 1'b0; // '1' when inst about pc
   assign o_ALUBsrc = {|{inst_jal, inst_jalr}, |inst_type[4:1] & !inst_jalr};
 
