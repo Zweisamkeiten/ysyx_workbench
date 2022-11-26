@@ -1,7 +1,7 @@
 /***************************************************************************************
 * Copyright (c) 2014-2022 Zihao Yu, Nanjing University
 *
-* NPC is licensed under Mulan PSL v2.
+* NEMU is licensed under Mulan PSL v2.
 * You can use this software according to the terms and conditions of the Mulan PSL v2.
 * You may obtain a copy of Mulan PSL v2 at:
 *          http://license.coscl.org.cn/MulanPSL2
@@ -13,24 +13,14 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
-#ifndef __ISA_RISCV64_H__
-#define __ISA_RISCV64_H__
+#ifndef __DIFFTEST_DEF_H__
+#define __DIFFTEST_DEF_H__
 
-#include <common.h>
+#include <stdint.h>
+#include <generated/autoconf.h>
 
-typedef struct {
-  uint64_t *gpr;
-  uint32_t *inst;
-  vaddr_t pc;
-} NPC_CPU_state;
+enum { DIFFTEST_TO_DUT, DIFFTEST_TO_REF };
 
-// decode
-typedef struct {
-  union {
-    uint32_t val;
-  } inst;
-} ISADecodeInfo;
-
-#define isa_mmu_check(vaddr, len, type) (MMU_DIRECT)
+# define DIFFTEST_REG_SIZE (sizeof(uint64_t) * 33) // GRPs + pc
 
 #endif

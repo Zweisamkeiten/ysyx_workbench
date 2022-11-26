@@ -8,6 +8,9 @@ void init_sdb();
 void init_sim();
 void init_disasm(const char *triple);
 void init_elf(const char * elf_file);
+void init_difftest(char *ref_so_file, long img_size, int port);
+
+static int difftest_port = 1234;
 
 static void welcome() {
   printf("Trace: %s", MUXDEF(CONFIG_TRACE, ANSI_FMT("ON\n", ANSI_FG_GREEN), ANSI_FMT("OFF\n", ANSI_FG_RED)));
@@ -56,7 +59,10 @@ void init_monitor(int argc, char *argv[]) {
   init_isa();
 
   /* Load the image to memory. This will overwrite the built-in image. */
-  load_img(argc, argv);
+  long img_size = load_img(argc, argv);
+
+  /* Initialize differential testing. */
+  init_difftest(argv[3], img_size, difftest_port);
 
   IFDEF(CONFIG_FTRACE, init_elf(argv[2]));
 
