@@ -16,7 +16,7 @@ module ysyx_22050710_npc (
     .i_clk(i_clk), 
     .i_ra(ra), .i_rb(rb), .i_rb(rd),
     .i_waddr(ALUresult), .i_wen(RegWr),
-    .obus_A(rs1), .o_busB(rs2)
+    .o_busA(rs1), .o_busB(rs2)
   );
 
   wire [63:0] imm;
