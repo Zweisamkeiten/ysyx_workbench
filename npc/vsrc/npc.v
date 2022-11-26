@@ -14,7 +14,7 @@ module ysyx_22050710_npc (
   wire [63:0] rs1, rs2, ALUresult;
   ysyx_22050710_gpr #(.ADDR_WIDTH(5), .DATA_WIDTH(64)) u_gprs (
     .i_clk(i_clk), 
-    .i_ra(ra), .i_rb(rb), .i_rb(rd),
+    .i_ra(ra), .i_rb(rb), .i_rd(rd),
     .i_waddr(ALUresult), .i_wen(RegWr),
     .o_busA(rs1), .o_busB(rs2)
   );
