@@ -9,7 +9,7 @@ extern "C" {
 extern void diff_watchpoint_value();
 #endif
 
-CPU_state cpu = {};
+NPC_CPU_state cpu = {};
 #define BUFSIZE 128
 #define MAX_INST_TO_PRINT 10
 uint64_t g_nr_guest_inst = 0;
