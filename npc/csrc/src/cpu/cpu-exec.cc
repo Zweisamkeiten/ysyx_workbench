@@ -50,10 +50,10 @@ static void trace_and_difftest(vaddr_t dnpc) {
 void exec_once() {
   top->i_inst = paddr_read(top->o_pc, 4);
   cpu.pc = top->o_pc;
-  word_t inst_123 = paddr_read(cpu.pc, 4);
   // printf("%lx\n", top->o_pc);
 #ifdef CONFIG_ITRACE
-  uint8_t *inst = (uint8_t *)(cpu.inst);
+  uint32_t test = 0x00009117;
+  uint8_t *inst = (uint8_t *)&test;
   char *p = itrace_logbuf;
   p += snprintf(p, BUFSIZE, FMT_WORD ":", cpu.pc);
   for (int i = 3; i >= 0; i --) {
@@ -66,7 +66,7 @@ void exec_once() {
   memset(p, ' ', space_len);
   p += space_len;
 
-  disassemble(p, itrace_logbuf + BUFSIZE - p, cpu.pc, (uint8_t *)(inst_123), 4);
+  disassemble(p, itrace_logbuf + BUFSIZE - p, cpu.pc, (uint8_t *)(inst), 4);
 #endif
   single_cycle();
   trace_and_difftest(top->o_pc);
