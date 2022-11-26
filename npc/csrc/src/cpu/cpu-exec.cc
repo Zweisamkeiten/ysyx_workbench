@@ -2,13 +2,14 @@
 #include <sim.hpp>
 extern "C" {
   #include <isa.h>
+  #include <cpu/difftest.h>
   #include <memory/paddr.h>
 }
 #ifdef CONFIG_WATCHPOINT
 extern void diff_watchpoint_value();
 #endif
 
-CPU_state cpu = {};
+NPC_CPU_state cpu = {};
 #define BUFSIZE 128
 #define MAX_INST_TO_PRINT 10
 uint64_t g_nr_guest_inst = 0;
@@ -202,7 +203,8 @@ void exec_once() {
 #ifdef CONFIG_ITRACE
   disassemble_inst_to_buf(itrace_logbuf, 128, (uint8_t *)cpu.inst, cpu.pc, cpu.pc + 4);
 #endif
-  trace_and_difftest(top->o_pc);
+  cpu.pc = top->o_pc;
+  trace_and_difftest(cpu.pc);
 }
 
 static void execute(uint64_t n) {
