@@ -36,4 +36,14 @@ typedef uint64_t paddr_t;
 
 #include <debug.h>
 
+#ifdef CONFIG_FTRACE
+#include <elf.h>
+typedef Elf64_Ehdr Elf_Ehdr;
+typedef Elf64_Shdr Elf_Shdr;
+typedef Elf64_Addr Elf_Addr;
+typedef Elf64_Sym Elf_Sym;
+#define ELF_ST_TYPE(val) ELF64_ST_TYPE(val)
+
+#endif
+
 #endif
