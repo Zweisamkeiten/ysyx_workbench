@@ -14,7 +14,6 @@ uint64_t g_nr_guest_inst = 0;
 static bool g_print_step = false;
 #ifdef CONFIG_ITRACE
 char itrace_logbuf[BUFSIZE];
-extern "C" void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 #endif
 
 static void trace_and_difftest(vaddr_t dnpc) {
@@ -66,6 +65,7 @@ void exec_once() {
   memset(p, ' ', space_len);
   p += space_len;
 
+  void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
   disassemble(p, itrace_logbuf + BUFSIZE - p, cpu.pc, (uint8_t *)(inst), 4);
 #endif
   single_cycle();
