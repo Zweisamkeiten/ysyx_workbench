@@ -45,8 +45,14 @@ word_t isa_reg_str2val(const char *s, bool *success) {
   return 0;
 }
 
+typedef struct {
+  uint64_t *gpr;
+  uint32_t *inst;
+  vaddr_t pc;
+} Dut_CPU_state;
+
 void isa_diff_set_regs(void* diff_context) {
-  CPU_state * ctx = (CPU_state *)diff_context;
+  Dut_CPU_state * ctx = (Dut_CPU_state *)diff_context;
   for (int i = 0; i < 32; i++) {
     cpu.gpr[i] = ctx->gpr[i];
   }
@@ -54,7 +60,7 @@ void isa_diff_set_regs(void* diff_context) {
 }
 
 void isa_diff_get_regs(void *diff_context) {
-  CPU_state * ctx = (CPU_state *)diff_context;
+  Dut_CPU_state * ctx = (Dut_CPU_state *)diff_context;
   for (int i = 0; i < 32; i++) {
     ctx->gpr[i] = cpu.gpr[i];
   }
