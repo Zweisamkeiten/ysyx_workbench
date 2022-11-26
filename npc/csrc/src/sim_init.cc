@@ -14,11 +14,11 @@ void set_state_abort() {
   npc_state.state = NPC_ABORT;
 }
 
-extern "C" void set_gpr_ptr(const svOpenArrayHandle r) {
+void set_gpr_ptr(const svOpenArrayHandle r) {
   cpu.gpr = (uint64_t *)(((VerilatedDpiOpenVar*)r)->datap());
 }
 
-extern "C" void set_inst_ptr(const svOpenArrayHandle r) {
+void set_inst_ptr(const svOpenArrayHandle r) {
   cpu.inst = (uint32_t *)(((VerilatedDpiOpenVar*)r)->datap());
 }
 
