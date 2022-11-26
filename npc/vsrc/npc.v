@@ -12,16 +12,32 @@ module ysyx_22050710_npc (
   ysyx_22050710_pc u_pc (i_clk, i_rst, .i_load(1'b1), .i_in(pc_adder), o_pc);
 
   wire [63:0] rs1, rs2, ALUresult;
-  ysyx_22050710_gpr #(.ADDR_WIDTH(5), .DATA_WIDTH(64)) u_gprs (i_clk, ra, rb, rd, ALUresult, wen, rs1, rs2);
+  ysyx_22050710_gpr #(.ADDR_WIDTH(5), .DATA_WIDTH(64)) u_gprs (
+    .i_clk(i_clk),
+    .i_ra(ra), .i_rb(rb), .i_waddr(rd),
+    .i_wdata(ALUresult), .i_wen(RegWr),
+    .o_busA(rs1), .o_busB(rs2)
+  );
 
   wire [63:0] imm;
   wire [4:0] ra, rb, rd;
-  wire wen, ALUAsrc;
+  wire RegWr, ALUAsrc;
   wire [1:0] ALUBsrc;
   wire [3:0] ALUctr;
   wire PCAsrc, PCBsrc;
-  ysyx_22050710_idu u_idu (i_inst, imm, ra, rb, rd, wen, ALUAsrc, ALUBsrc, ALUctr, PCAsrc, PCBsrc);
+  ysyx_22050710_idu u_idu (
+    .i_inst(i_inst),
+    .o_imm(imm),
+    .o_ra(ra), .o_rb(rb), .o_rd(rd),
+    .o_RegWr(RegWr),
+    .o_ALUAsrc(ALUAsrc), .o_ALUBsrc(ALUBsrc), .o_ALUctr(ALUctr),
+    .o_PCAsrc(PCAsrc), .o_PCBsrc(PCBsrc)
+  );
 
-  ysyx_22050710_exu u_exu (rs1, rs2, imm, o_pc, ALUAsrc, ALUBsrc, ALUctr, ALUresult);
+  ysyx_22050710_exu u_exu (
+    .i_rs1(rs1), .i_rs2(rs2),
+    .i_imm(imm), .i_pc(o_pc),
+    .i_ALUAsrc(ALUAsrc), .i_ALUBsrc(ALUBsrc), .i_ALUctr(ALUctr), .o_ALUresult(ALUresult)
+  );
 
 endmodule
