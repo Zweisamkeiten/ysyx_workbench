@@ -1,6 +1,6 @@
 // ysyx_22050710
-import "DPI-C" function void set_inst_ptr(input int [31:0] a);
-import "DPI-C" function void set_pc_ptr(input longint [63:0] a);
+import "DPI-C" function void set_inst_ptr(input int a);
+import "DPI-C" function void set_pc_ptr(input longint a);
 
 module ysyx_22050710_npc (
   input i_clk,
