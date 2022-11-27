@@ -11,8 +11,12 @@ module ysyx_22050710_datamem (
   output [63:0] o_data
 );
 
-  wire [63:0] rdata;
+  wire [63:0] rdata, wdata;
+  wire [63:0] raddr, waddr;
   assign o_data = rdata;
+  assign wdata = i_data;
+  assign raddr = i_addr;
+  assign waddr = i_addr;
   wire [7:0] wmask;
 
   MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(8)) u_mux1 (
@@ -32,10 +36,10 @@ module ysyx_22050710_datamem (
 
   always @(*) begin
     if (i_WrEn) begin
-      npc_pmem_write(i_addr, rdata, wmask);
+      npc_pmem_write(waddr, wdata, wmask);
     end
     else begin
-      npc_pmem_read(i_addr, rdata);
+      npc_pmem_read(raddr, rdata);
     end
   end
 
