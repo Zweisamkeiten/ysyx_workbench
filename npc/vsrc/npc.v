@@ -7,12 +7,12 @@ module ysyx_22050710_npc (
   input i_rst
 );
 
-  wire [31:0] inst;
   initial begin
-    set_pc_ptr(pc);
     set_inst_ptr(inst);
+    set_pc_ptr(pc);
   end
 
+  wire [31:0] inst;
   wire [63:0] pc;
   wire [31:0] unused;
   ysyx_22050710_ifu u_ifu (
