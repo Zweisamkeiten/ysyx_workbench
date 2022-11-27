@@ -22,19 +22,19 @@ extern "C" void set_gpr_ptr(const svOpenArrayHandle r) {
   cpu.gpr = (uint64_t *)(((VerilatedDpiOpenVar*)r)->datap());
 }
 
-extern "C" void set_pc_ptr(const svLogicVecVal* a) {
-  npcpc = (uint64_t *)((VerilatedVarProps*)a);
+extern "C" void set_pc_ptr(const svOpenArrayHandle r) {
+  npcpc = (uint64_t *)(((VerilatedDpiOpenVar*)r)->datap());
 }
 
-extern "C" void set_inst_ptr(const svLogicVecVal* a) {
-  cpu.inst = (uint32_t *)((VerilatedVarProps*)a);
+extern "C" void set_inst_ptr(const svOpenArrayHandle r) {
+  cpu.inst = (uint32_t *)(((VerilatedDpiOpenVar*)r)->datap());
 }
 
 extern "C" void npc_pmem_read(long long raddr, long long *rdata) {
   // 总是读取地址为`raddr & ~0x7ull`的8字节返回给`rdata`
   *rdata = paddr_read(raddr, 8);
-  printf("0x%016llx\n", *rdata);
-  printf("npc: 0x%016lx\n", *npcpc);
+  // printf("0x%016llx\n", *rdata);
+  // printf("npc: 0x%016lx\n", *npcpc);
 }
 
 extern "C" void npc_pmem_write(long long waddr, long long wdata, char wmask) {
