@@ -6,7 +6,7 @@ module ysyx_22050710_ifu (
 
   wire [63:0] rdata;
   assign o_inst = rdata[63:32];
-  always @(*) begin
+  always @(i_pc) begin
     npc_pmem_read(i_pc, rdata);
   end
 endmodule
