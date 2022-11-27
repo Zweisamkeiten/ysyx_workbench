@@ -7,13 +7,13 @@ module ysyx_22050710_ifu (
 );
 
   wire [63:0] rdata;
-  assign o_inst = rdata[63:32];
-  assign o_unused = rdata[31:0];
+  assign o_inst = rdata[31:0];
+  assign o_unused = rdata[63:32];
 
   always @(posedge i_clk) begin
     if (!i_rst) begin
       npc_pmem_read(i_pc, rdata);
-      $display(rdata[63:32]);
+      $display(rdata[31:0]);
     end
   end
 endmodule
