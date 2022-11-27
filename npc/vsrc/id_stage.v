@@ -6,7 +6,9 @@ module ysyx_22050710_idu (
   output o_RegWr, o_ALUAsrc,
   output [1:0] o_ALUBsrc,
   output [3:0] o_ALUctr,
-  output o_PCAsrc, o_PCBsrc
+  output o_PCAsrc, o_PCBsrc,
+  output o_MemtoReg, o_MemWr,
+  output [2:0] o_MemOP
 );
 
   wire [6:0] opcode;
@@ -80,12 +82,41 @@ module ysyx_22050710_idu (
   assign o_PCAsrc = |{inst_jal, inst_jalr};
   assign o_PCBsrc = inst_jalr;
 
+  assign o_MemtoReg = |{1'b0};
+  assign o_MemWr = inst_type_s;
+
+  wire signed_byte, signed_halfword, signed_word, signed_doubleword;
+  wire unsigned_byte, unsigned_halfword, unsigned_word;
+  assign signed_byte = |{1'b0};
+  assign signed_halfword = |{1'b0};
+  assign signed_word = |{1'b0};
+  assign signed_doubleword = |{inst_sd};
+  assign unsigned_byte = |{1'b0};
+  assign unsigned_halfword = |{1'b0};
+  assign unsigned_word = |{1'b0};
+ 
+  MuxKeyWithDefault #(.NR_KEY(7), .KEY_LEN(7), .DATA_LEN(3)) u_mux2 (
+    .out(o_MemOP),
+    .key({signed_byte, unsigned_byte, signed_halfword, unsigned_halfword, signed_word, unsigned_word, signed_doubleword}),
+    .default_out(3'b111),
+    .lut({
+      7'b1000000, 3'b000,
+      7'b0100000, 3'b001,
+      7'b0010000, 3'b010,
+      7'b0001000, 3'b011,
+      7'b0000100, 3'b100,
+      7'b0000010, 3'b101,
+      7'b0000001, 3'b110
+    })
+  );
+
+
   wire alu_copyimm, alu_plus, alu_ebreak;
   assign alu_copyimm = |{inst_lui};
   assign alu_plus = |{inst_auipc, inst_jal, inst_jalr, inst_addi, inst_sd};
   assign alu_ebreak = inst_ebreak;
 
-  MuxKeyWithDefault #(.NR_KEY(3), .KEY_LEN(3), .DATA_LEN(4)) u_mux2 (
+  MuxKeyWithDefault #(.NR_KEY(3), .KEY_LEN(3), .DATA_LEN(4)) u_mux3 (
     .out(o_ALUctr),
     .key({alu_copyimm, alu_plus, alu_ebreak}),
     .default_out(4'b1111),
