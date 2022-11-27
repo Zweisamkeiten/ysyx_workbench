@@ -14,7 +14,6 @@ module ysyx_22050710_npc (
   end
 
   wire [31:0] inst;
-  assign t_inst = inst;
   wire [63:0] pc;
   wire [31:0] unused;
   ysyx_22050710_ifu u_ifu (
