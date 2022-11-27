@@ -4,7 +4,7 @@ import "DPI-C" function void set_pc_ptr(input logic [63:0] a[]);
 
 module ysyx_22050710_npc (
   input i_clk,
-  input i_rst
+  input i_rst,
 );
 
   initial begin
