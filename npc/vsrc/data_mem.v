@@ -32,10 +32,10 @@ module ysyx_22050710_datamem (
 
   always @(*) begin
     if (i_WrEn) begin
-      pmem_write(i_addr, rdata, wmask);
+      npc_pmem_write(i_addr, rdata, wmask);
     end
     else begin
-      pmem_read(i_addr, rdata);
+      npc_pmem_read(i_addr, rdata);
     end
   end
 

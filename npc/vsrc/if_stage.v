@@ -7,6 +7,6 @@ module ysyx_22050710_ifu (
 );
 
   always @(*) begin
-    pmem_read(i_pc, o_inst);
+    npc_pmem_read(i_pc, o_inst);
   end
 endmodule
