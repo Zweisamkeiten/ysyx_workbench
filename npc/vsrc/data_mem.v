@@ -34,7 +34,7 @@ module ysyx_22050710_datamem (
   );
 
 
-  always @(*) begin
+  always @(i_WrEn, waddr, wdata, raddr, rdata, wmask) begin
     if (i_WrEn) begin
       npc_pmem_write(waddr, wdata, wmask);
     end
