@@ -5,8 +5,8 @@ module ysyx_22050710_npc (
   input i_clk,
   input i_rst,
 );
-  wire [31:0] inst,
-  wire [63:0] pc
+  wire [31:0] inst;
+  wire [63:0] pc;
   ysyx_22050710_if u_ifu (
     .i_pc(pc),
     .o_inst(inst)
