@@ -7,7 +7,7 @@ module ysyx_22050710_npc (
 );
   wire [31:0] inst;
   wire [63:0] pc;
-  ysyx_22050710_if u_ifu (
+  ysyx_22050710_ifu u_ifu (
     .i_pc(pc),
     .o_inst(inst)
   );
