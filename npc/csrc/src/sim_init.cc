@@ -9,7 +9,6 @@ Vtop *top;
 VerilatedContext *contextp = NULL;
 VerilatedVcdC *tfp = NULL;
 uint64_t * npcpc;
-const svLogicVecVal * npcpca;
 
 void set_state_end() {
   npc_state.state = NPC_END;
@@ -24,12 +23,11 @@ extern "C" void set_gpr_ptr(const svOpenArrayHandle r) {
 }
 
 extern "C" void set_pc_ptr(const svLogicVecVal* a) {
-  npcpca = a;
-  npcpc = (uint64_t *)(((VerilatedVar*)a)->datap());
+  npcpc = (uint64_t *)(a);
 }
 
 extern "C" void set_inst_ptr(const svLogicVecVal* a) {
-  cpu.inst = (uint32_t *)(((VerilatedVar*)a)->datap());
+  cpu.inst = (uint32_t *)(a);
 }
 
 extern "C" void npc_pmem_read(long long raddr, long long *rdata) {
