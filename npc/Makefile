@@ -60,7 +60,7 @@ VALL = $(VERILATOR_OBJ_DIR)/Vtop__ALL.a
 $(VALL): $(VSRCS)
 	$(call git_commit, "build RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo "-- VERILATE & BUILD --------"
-	!$(VERILATOR) $(VERILATOR_CFLAGS) \
+	-$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $^ --prefix Vtop --trace --Mdir $(VERILATOR_OBJ_DIR)
 
 VERILATOR_SRC = verilated.cpp verilated_dpi.cpp verilated_vcd_c.cpp
