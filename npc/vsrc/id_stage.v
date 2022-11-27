@@ -95,9 +95,10 @@ module ysyx_22050710_idu (
   assign unsigned_halfword = |{1'b0};
   assign unsigned_word = |{1'b0};
   
-  MuxKey #(.NR_KEY(7), .KEY_LEN(7), .DATA_LEN(3)) u_mux2 (
+  MuxKeyWithDefault #(.NR_KEY(7), .KEY_LEN(7), .DATA_LEN(3)) u_mux2 (
     .out(o_MemOP),
     .key({signed_byte, unsigned_byte, signed_halfword, unsigned_halfword, signed_word, unsigned_word, signed_doubleword}),
+    .default_out(3'b111),
     .lut({
       7'b1000000, 3'b000,
       7'b0100000, 3'b001,

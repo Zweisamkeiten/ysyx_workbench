@@ -38,10 +38,10 @@ module ysyx_22050710_datamem (
   always @(posedge i_clk) begin
     if (!i_rst) begin
       if (i_WrEn) begin
-        npc_pmem_write(waddr, wdata, wmask);
+        if (i_MemOp != 3'b111) npc_pmem_write(waddr, wdata, wmask);
       end
       else begin
-        npc_pmem_read(raddr, rdata);
+        if (i_MemOp != 3'b111) npc_pmem_read(raddr, rdata);
       end
     end
   end
