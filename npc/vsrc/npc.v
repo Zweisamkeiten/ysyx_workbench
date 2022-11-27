@@ -5,7 +5,6 @@ import "DPI-C" function void set_pc_ptr(input logic [63:0] a[]);
 module ysyx_22050710_npc (
   input i_clk,
   input i_rst,
-  output [31:0] inst_temp
 );
 
   initial begin
@@ -14,7 +13,6 @@ module ysyx_22050710_npc (
   end
 
   wire [31:0] inst;
-  assign inst_temp = inst;
   wire [63:0] pc;
   wire [31:0] unused;
   ysyx_22050710_ifu u_ifu (
