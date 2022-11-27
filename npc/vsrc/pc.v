@@ -1,4 +1,4 @@
-import "DPI-C" function void set_pc_ptr(input logic [63:0] a[]);
+import "DPI-C" function void set_pc_ptr(input logic [63:0] a);
 
 module ysyx_22050710_pc (
   input i_clk,
