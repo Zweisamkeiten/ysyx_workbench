@@ -20,7 +20,7 @@ module ysyx_22050710_npc (
   ysyx_22050710_gpr #(.ADDR_WIDTH(5), .DATA_WIDTH(64)) u_gprs (
     .i_clk(i_clk),
     .i_ra(ra), .i_rb(rb), .i_waddr(rd),
-    .i_wdata(ALUresult), .i_wen(RegWr),
+    .i_wdata(muxbusW), .i_wen(RegWr),
     .o_busA(rs1), .o_busB(rs2)
   );
 
@@ -47,5 +47,17 @@ module ysyx_22050710_npc (
     .i_imm(imm), .i_pc(pc),
     .i_ALUAsrc(ALUAsrc), .i_ALUBsrc(ALUBsrc), .i_ALUctr(ALUctr), .o_ALUresult(ALUresult)
   );
+
+  wire [63:0] mem_out_data;
+  ysyx_22050710_datamem u_datamem (
+    .i_addr(ALUresult),
+    .i_data(rs2),
+    .i_MemOP(MemOP),
+    .i_Wren(MemWr),
+    .o_data(mem_out_data)
+  );
+
+  wire [63:0] muxbusW;
+  assign muxbusW = MemtoReg ? mem_out_data : ALUresult;
 
 endmodule
