@@ -6,6 +6,9 @@ module ysyx_22050710_ifu (
 
   wire [63:0] rdata;
   assign o_inst = rdata[63:32];
+  wire [31:0] notused;
+  assign notused = rdata[31:0];
+
   always @(i_pc) begin
     npc_pmem_read(i_pc, rdata);
   end
