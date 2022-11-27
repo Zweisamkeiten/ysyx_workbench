@@ -8,6 +8,7 @@ extern "C" {
 Vtop *top;
 VerilatedContext *contextp = NULL;
 VerilatedVcdC *tfp = NULL;
+uint64_t * npcpc;
 
 void set_state_end() {
   npc_state.state = NPC_END;
