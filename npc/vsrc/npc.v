@@ -53,7 +53,7 @@ module ysyx_22050710_npc (
     .i_addr(ALUresult),
     .i_data(rs2),
     .i_MemOP(MemOP),
-    .i_Wren(MemWr),
+    .i_WrEn(MemWr),
     .o_data(mem_out_data)
   );
 
