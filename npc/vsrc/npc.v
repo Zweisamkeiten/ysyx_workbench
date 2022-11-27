@@ -39,7 +39,7 @@ module ysyx_22050710_npc (
     .o_RegWr(RegWr),
     .o_ALUAsrc(ALUAsrc), .o_ALUBsrc(ALUBsrc), .o_ALUctr(ALUctr),
     .o_PCAsrc(PCAsrc), .o_PCBsrc(PCBsrc),
-    .o_MemToReg(MemtoReg), .o_MemWr(MemWr), .o_MemOP(MemOP)
+    .o_MemtoReg(MemtoReg), .o_MemWr(MemWr), .o_MemOP(MemOP)
   );
 
   ysyx_22050710_exu u_exu (
