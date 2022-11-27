@@ -11,6 +11,10 @@ module ysyx_22050710_npc (
     set_pc_ptr(pc);
   end
 
+  initial begin
+    set_inst_ptr(inst);
+  end
+
   wire [31:0] inst;
   wire [63:0] pc;
   wire [31:0] unused;
