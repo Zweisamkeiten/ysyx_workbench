@@ -31,7 +31,7 @@ module ysyx_22050710_npc (
   wire [3:0] ALUctr;
   wire PCAsrc, PCBsrc;
   wire MemtoReg, MemWr;
-  wire [2:0] MemOP
+  wire [2:0] MemOP;
   ysyx_22050710_idu u_idu (
     .i_inst(inst),
     .o_imm(imm),
