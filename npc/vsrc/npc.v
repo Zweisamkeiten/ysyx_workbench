@@ -8,7 +8,6 @@ module ysyx_22050710_npc (
 );
 
   initial begin
-    set_inst_ptr(inst);
     set_pc_ptr(pc);
   end
 
