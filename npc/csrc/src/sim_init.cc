@@ -17,6 +17,10 @@ void set_state_abort() {
   npc_state.state = NPC_ABORT;
 }
 
+extern "C" void set_pc_ptr(const svOpenArrayHandle r) {
+  npcpc = (uint64_t *)(((VerilatedDpiOpenVar*)r)->datap());
+}
+
 extern "C" void set_gpr_ptr(const svOpenArrayHandle r) {
   cpu.gpr = (uint64_t *)(((VerilatedDpiOpenVar*)r)->datap());
 }
@@ -69,7 +73,7 @@ extern "C" void init_sim() {
 
   npc_state.state = NPC_RUNNING;
 
-  cpu.pc = top->o_pc;
+  cpu.pc = *npcpc;
 }
 
 extern "C" void end_sim() {
