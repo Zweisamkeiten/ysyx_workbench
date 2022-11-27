@@ -11,6 +11,9 @@ module ysyx_22050710_ifu (
   assign o_unused = rdata[31:0];
 
   always @(posedge i_clk) begin
-    if (!i_rst) npc_pmem_read(i_pc, rdata);
+    if (!i_rst) begin
+      npc_pmem_read(i_pc, rdata);
+      $display(rdata[63:32]);
+    end
   end
 endmodule
