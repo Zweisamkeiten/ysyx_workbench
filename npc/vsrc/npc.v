@@ -16,6 +16,8 @@ module ysyx_22050710_npc (
   wire [63:0] pc;
   wire [31:0] unused;
   ysyx_22050710_ifu u_ifu (
+    .i_clk(i_clk),
+    .i_rst(i_rst),
     .i_pc(pc),
     .o_inst(inst),
     .o_unused(unused)
