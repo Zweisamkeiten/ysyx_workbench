@@ -35,7 +35,7 @@ extern "C" void npc_pmem_read(long long raddr, long long *rdata) {
   *rdata = paddr_read(raddr, 8);
   printf("0x%016llx\n", *rdata);
   printf("npc: 0x%016lx\n", *npcpc);
-  printf("cpu.inst: 0x%016x\n", *cpu.inst);
+  printf("cpu.inst: 0x%016x\n", *(cpu.inst));
 }
 
 extern "C" void npc_pmem_write(long long waddr, long long wdata, char wmask) {
