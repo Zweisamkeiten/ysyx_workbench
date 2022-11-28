@@ -19,7 +19,7 @@ module ysyx_22050710_npc (
     .i_clk(i_clk),
     .i_rst(i_rst),
     .i_pc(pc),
-    .o_inst(inst),
+    .o_inst(inst)
     /* .o_unused(unused) */
   );
 
