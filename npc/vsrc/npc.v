@@ -24,7 +24,13 @@ module ysyx_22050710_npc (
   );
 
   wire [63:0] pc_adder = (PCBsrc ? rs1 : pc) + (PCAsrc ? imm : 64'd4);
-  ysyx_22050710_pc u_pc (i_clk, i_rst, .i_load(1'b1), .i_in(pc_adder), pc);
+  ysyx_22050710_pc u_pc (
+    .i_clk(i_clk),
+    .i_rst(i_rst),
+    .i_load(1'b1),
+    .i_in(pc_adder),
+    .o_pc(pc)
+  );
 
   wire [63:0] rs1, rs2, ALUresult;
   ysyx_22050710_gpr #(.ADDR_WIDTH(5), .DATA_WIDTH(64)) u_gprs (
