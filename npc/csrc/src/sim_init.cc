@@ -23,12 +23,11 @@ extern "C" void set_gpr_ptr(const svOpenArrayHandle r) {
 }
 
 extern "C" void set_pc_ptr(const svOpenArrayHandle r) {
-  npcpc = (uint64_t *)(((VerilatedDpiOpenVar*)r)->datap());
-  npcpc = top->rootp
+  // npcpc = (uint64_t *)(((VerilatedDpiOpenVar*)r)->datap());
 }
 
 extern "C" void set_inst_ptr(const svOpenArrayHandle r) {
-  cpu.inst = (uint32_t *)(((VerilatedDpiOpenVar*)r)->datap());
+  // cpu.inst = (uint32_t *)(((VerilatedDpiOpenVar*)r)->datap());
 }
 
 extern "C" void npc_pmem_read(long long raddr, long long *rdata) {
@@ -78,6 +77,8 @@ extern "C" void init_sim() {
 
   npc_state.state = NPC_RUNNING;
 
+  npcpc = &(top->__PVT__ysyx_22050710_npc->__PVT__pc);
+  cpu.inst = &(top->__PVT__ysyx_22050710_npc->__PVT__inst);
   cpu.pc = *npcpc;
 }
 
