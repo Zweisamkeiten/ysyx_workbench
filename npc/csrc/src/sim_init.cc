@@ -9,6 +9,8 @@ Vtop *top;
 VerilatedContext *contextp = NULL;
 VerilatedVcdC *tfp = NULL;
 uint64_t * npcpc;
+const svLogicVecVal * pctemp;
+const svLogicVecVal * insttemp;
 
 void set_state_end() {
   npc_state.state = NPC_END;
@@ -23,11 +25,13 @@ extern "C" void set_gpr_ptr(const svOpenArrayHandle r) {
 }
 
 extern "C" void set_pc_ptr(const svLogicVecVal* a) {
-  npcpc = (uint64_t *)((uint64_t)a->aval);
+  pctemp = a;
+  npcpc = (uint64_t *)((uint64_t)a);
 }
 
 extern "C" void set_inst_ptr(const svLogicVecVal* a) {
-  cpu.inst = (uint32_t *)((uint64_t)a->aval);
+  insttemp = a;
+  cpu.inst = (uint32_t *)((uint64_t)a);
 }
 
 extern "C" void npc_pmem_read(long long raddr, long long *rdata) {
@@ -35,6 +39,11 @@ extern "C" void npc_pmem_read(long long raddr, long long *rdata) {
   *rdata = paddr_read(raddr, 8);
   printf("0x%016llx\n", *rdata);
   printf("npc: 0x%016lx\n", *npcpc);
+  printf("cpu.inst: 0x%016x\n", *cpu.inst);
+  printf("pctemp->aval: 0x%016x\n", pctemp->aval);
+  printf("pctemp->bval: 0x%016x\n", pctemp->bval);
+  printf("insttemp->aval: 0x%016x\n", insttemp->aval);
+  printf("insttemp->bval: 0x%016x\n", insttemp->bval);
 }
 
 extern "C" void npc_pmem_write(long long waddr, long long wdata, char wmask) {
