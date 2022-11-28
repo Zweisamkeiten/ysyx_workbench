@@ -1,4 +1,5 @@
 // ysyx_22050710 Instruction Decode Unit
+import "DPI-C" function void set_inst_ptr(input logic [31:0] a[]);
 module ysyx_22050710_idu (
   input [31:0] i_inst,
   output [63:0] o_imm,
@@ -10,6 +11,11 @@ module ysyx_22050710_idu (
   output o_MemtoReg, o_MemWr,
   output [2:0] o_MemOP
 );
+
+  initial begin
+    set_inst_ptr(i_inst);
+  end
+
 
   wire [6:0] opcode;
   wire [2:0] funct3; /* wire [6:0] funct7; */
