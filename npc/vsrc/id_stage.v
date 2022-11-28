@@ -34,6 +34,7 @@ module ysyx_22050710_idu (
   wire inst_auipc  = (opcode[6:0] == 7'b0010111);
   wire inst_jal    = (opcode[6:0] == 7'b1101111);
   wire inst_jalr   = (opcode[6:0] == 7'b1100111) & (funct3[2:0] == 3'b000);
+  wire inst_lw     = (opcode[6:0] == 7'b0000011) & (funct3[2:0] == 3'b010);
   wire inst_sw     = (opcode[6:0] == 7'b0100011) & (funct3[2:0] == 3'b010);
   wire inst_addi   = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b000);
   wire inst_ebreak = (opcode[6:0] == 7'b1110011) & (funct3[2:0] == 3'b000);
@@ -42,7 +43,7 @@ module ysyx_22050710_idu (
   wire inst_sd     = (opcode[6:0] == 7'b0100011) & (funct3[2:0] == 3'b011);
 
   wire inst_type_r = 1'b0;
-  wire inst_type_i = |{inst_addi, inst_ebreak, inst_jalr};
+  wire inst_type_i = |{inst_lw, inst_addi, inst_ebreak, inst_jalr};
   wire inst_type_u = |{inst_lui, inst_auipc};
   wire inst_type_s = |{inst_sw, inst_sd};
   wire inst_type_b = 1'b0;
@@ -83,14 +84,14 @@ module ysyx_22050710_idu (
   assign o_PCAsrc = |{inst_jal, inst_jalr};
   assign o_PCBsrc = inst_jalr;
 
-  assign o_MemtoReg = |{1'b0};
+  assign o_MemtoReg = |{inst_lw};
   assign o_MemWr = inst_type_s;
 
   wire signed_byte, signed_halfword, signed_word, signed_doubleword;
   wire unsigned_byte, unsigned_halfword, unsigned_word;
   assign signed_byte = |{1'b0};
   assign signed_halfword = |{1'b0};
-  assign signed_word = |{inst_sw};
+  assign signed_word = |{inst_lw, inst_sw};
   assign signed_doubleword = |{inst_sd};
   assign unsigned_byte = |{1'b0};
   assign unsigned_halfword = |{1'b0};
