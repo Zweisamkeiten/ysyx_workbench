@@ -22,11 +22,11 @@ extern "C" void set_gpr_ptr(const svOpenArrayHandle r) {
   cpu.gpr = (uint64_t *)(((VerilatedDpiOpenVar*)r)->datap());
 }
 
-extern "C" void set_gpr_ptr(const svOpenArrayHandle r) {
+extern "C" void set_pc_ptr(const svOpenArrayHandle r) {
   npcpc = (uint64_t *)(((VerilatedDpiOpenVar*)r)->datap());
 }
 
-extern "C" void set_gpr_ptr(const svOpenArrayHandle r) {
+extern "C" void set_inst_ptr(const svOpenArrayHandle r) {
   cpu.inst = (uint32_t *)(((VerilatedDpiOpenVar*)r)->datap());
 }
 
