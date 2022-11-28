@@ -136,16 +136,16 @@ void disassemble_inst_to_buf(char *logbuf, size_t bufsize, uint8_t * inst_val, v
 #endif
 }
 
+static vaddr_t snpc; // use at IRINGTRACE and difftest
 #ifdef CONFIG_IRINGTRACE
 static int iringbuf_index = 0;
 static char *iringbuf[16] = {NULL};
 static uint32_t *last_inst;
-static vaddr_t *snpc;
 
 void print_iringbuf() {
   printf(ANSI_FMT("INSTRUCTIONS RING STRACE:\n", ANSI_FG_RED));
   char logbuf[128];
-  disassemble_inst_to_buf(logbuf, 128, (uint8_t *)last_inst, cpu.pc, *snpc);
+  disassemble_inst_to_buf(logbuf, 128, (uint8_t *)last_inst, cpu.pc, snpc);
   int arrow_len = strlen(" --> ");
   iringbuf[iringbuf_index] = realloc(iringbuf[iringbuf_index], arrow_len + strlen(logbuf) + 1);
   char *p = iringbuf[iringbuf_index];
@@ -187,7 +187,7 @@ static void trace_and_difftest(vaddr_t dnpc) {
   }
 #endif
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(itrace_logbuf)); }
-  IFDEF(CONFIG_DIFFTEST, difftest_step(cpu.pc, dnpc));
+  IFDEF(CONFIG_DIFFTEST, difftest_step(snpc, dnpc));
   IFDEF(CONFIG_WATCHPOINT, diff_watchpoint_value());
 }
 
@@ -196,8 +196,8 @@ void exec_once() {
   // printf("%lx\n", top->o_pc);
 #ifdef CONFIG_IRINGTRACE
   last_inst = *(cpu.inst);
-  snpc = cpu.pc;
 #endif
+  snpc = cpu.pc;
   single_cycle();
 #ifdef CONFIG_ITRACE
   disassemble_inst_to_buf(itrace_logbuf, 128, (uint8_t *)cpu.inst, cpu.pc, cpu.pc + 4);
