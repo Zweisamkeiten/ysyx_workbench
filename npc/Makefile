@@ -80,12 +80,16 @@ sim: run-env
 	@echo "-- Simulation --------"
 	$(NPC_EXEC)
 
-gdb: run-env
+gdbbatch: run-env
 	$(call git_commit, "gdb sim RTL")
 	gdb -s $(BIN) -x $(NPC_HOME)/gdbinit $(BIN)
 
+gdb: run-env
+	$(call git_commit, "gdb sim RTL")
+	gdb -s $(BIN) $(BIN) -iex "set args $(IMG) $(ELF) $(REF)"
+
 all: run-env
 
-.PHONY: default all run-env sim gdb
+.PHONY: default all run-env sim gdbbatch gdb
 
 include ../Makefile
