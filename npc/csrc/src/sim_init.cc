@@ -23,11 +23,11 @@ extern "C" void set_gpr_ptr(const svOpenArrayHandle r) {
 }
 
 extern "C" void set_pc_ptr(const svLogicVecVal* a) {
-  npcpc = (uint64_t *)(a);
+  npcpc = (uint64_t *)((uint64_t)a->aval);
 }
 
 extern "C" void set_inst_ptr(const svLogicVecVal* a) {
-  cpu.inst = (uint32_t *)(a);
+  cpu.inst = (uint32_t *)((uint64_t)a->aval);
 }
 
 extern "C" void npc_pmem_read(long long raddr, long long *rdata) {
