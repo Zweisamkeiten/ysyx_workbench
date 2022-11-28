@@ -187,7 +187,7 @@ static void trace_and_difftest(vaddr_t dnpc) {
   }
 #endif
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(itrace_logbuf)); }
-  IFDEF(CONFIG_DIFFTEST, difftest_step(cpu.pc, dnpc));
+  IFDEF(CONFIG_DIFFTEST, difftest_step(snpc, dnpc));
   IFDEF(CONFIG_WATCHPOINT, diff_watchpoint_value());
 }
 
@@ -203,7 +203,7 @@ void exec_once() {
   disassemble_inst_to_buf(itrace_logbuf, 128, (uint8_t *)cpu.inst, cpu.pc, cpu.pc + 4);
 #endif
   cpu.pc = *npcpc;
-  trace_and_difftest(snpc);
+  trace_and_difftest(cpu.pc);
 }
 
 static void execute(uint64_t n) {
