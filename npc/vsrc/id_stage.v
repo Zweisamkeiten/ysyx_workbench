@@ -115,7 +115,7 @@ module ysyx_22050710_idu (
 
   wire alu_copyimm, alu_plus, alu_ebreak;
   assign alu_copyimm = |{inst_lui};
-  assign alu_plus = |{inst_auipc, inst_jal, inst_jalr, inst_sw, inst_addi, inst_sd};
+  assign alu_plus = |{inst_auipc, inst_jal, inst_jalr, inst_lw, inst_sw, inst_addi, inst_sd};
   assign alu_ebreak = inst_ebreak;
 
   MuxKeyWithDefault #(.NR_KEY(3), .KEY_LEN(3), .DATA_LEN(4)) u_mux3 (
