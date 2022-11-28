@@ -24,6 +24,7 @@ extern "C" void set_gpr_ptr(const svOpenArrayHandle r) {
 
 extern "C" void set_pc_ptr(const svOpenArrayHandle r) {
   npcpc = (uint64_t *)(((VerilatedDpiOpenVar*)r)->datap());
+  npcpc = top->rootp
 }
 
 extern "C" void set_inst_ptr(const svOpenArrayHandle r) {
