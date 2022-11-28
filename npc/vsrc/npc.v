@@ -1,5 +1,5 @@
 // ysyx_22050710
-import "DPI-C" function void set_inst_ptr(input logic [31:0] a[]);
+import "DPI-C" function void set_inst_ptr(input logic [63:0] a[]);
 import "DPI-C" function void set_pc_ptr(input logic [63:0] a[]);
 
 module ysyx_22050710_npc (
@@ -8,20 +8,11 @@ module ysyx_22050710_npc (
 );
 
   initial begin
-    set_inst_ptr(inst);
     set_pc_ptr(pc);
+    set_inst_ptr(inst);
   end
 
-  wire [63:0] pc_adder = (PCBsrc ? rs1 : pc) + (PCAsrc ? imm : 64'd4);
-  ysyx_22050710_pc u_pc (
-    .i_clk(i_clk),
-    .i_rst(i_rst),
-    .i_load(1'b1),
-    .i_in(pc_adder),
-    .o_pc(pc)
-  );
-
-  wire [31:0] inst;
+  wire [63:0] inst;
   wire [63:0] pc;
   wire [31:0] unused;
   ysyx_22050710_ifu u_ifu (
@@ -30,6 +21,15 @@ module ysyx_22050710_npc (
     .i_pc(pc),
     .o_inst(inst),
     .o_unused(unused)
+  );
+
+  wire [63:0] pc_adder = (PCBsrc ? rs1 : pc) + (PCAsrc ? imm : 64'd4);
+  ysyx_22050710_pc u_pc (
+    .i_clk(i_clk),
+    .i_rst(i_rst),
+    .i_load(1'b1),
+    .i_in(pc_adder),
+    .o_pc(pc)
   );
 
   wire [63:0] rs1, rs2, ALUresult;
