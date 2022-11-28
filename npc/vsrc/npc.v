@@ -20,7 +20,7 @@ module ysyx_22050710_npc (
     .i_rst(i_rst),
     .i_pc(pc),
     .o_inst(inst),
-    .o_unused(unused)
+    /* .o_unused(unused) */
   );
 
   wire [63:0] pc_adder = (PCBsrc ? rs1 : pc) + (PCAsrc ? imm : 64'd4);
