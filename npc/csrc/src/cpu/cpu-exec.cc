@@ -203,7 +203,7 @@ void exec_once() {
   disassemble_inst_to_buf(itrace_logbuf, 128, (uint8_t *)cpu.inst, cpu.pc, cpu.pc + 4);
 #endif
   cpu.pc = *npcpc;
-  trace_and_difftest(cpu.pc);
+  trace_and_difftest(snpc);
 }
 
 static void execute(uint64_t n) {
