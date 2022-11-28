@@ -3,7 +3,7 @@ BUILD_DIR = ./build
 VERILATOR_OBJ_DIR = $(BUILD_DIR)/obj_dir
 BIN = $(BUILD_DIR)/$(TOPNAME)
 IIMG ?=
-NPC_EXEC := $(BIN) $(IMG) $(ELF)
+NPC_EXEC := $(BIN) $(IMG) $(ELF) $(REF)
 
 ifeq ($(VERILATOR_ROOT),)
 VERILATOR = verilator
