@@ -3,7 +3,7 @@ BUILD_DIR = ./build
 VERILATOR_OBJ_DIR = $(BUILD_DIR)/obj_dir
 BIN = $(BUILD_DIR)/$(TOPNAME)
 IMG ?=
-NPC_EXEC := $(BIN) $(IMG)
+NPC_EXEC := $(BIN) $(IMG) $(ELF)
 
 ifeq ($(VERILATOR_ROOT),)
 VERILATOR = verilator
@@ -11,7 +11,7 @@ else
 export VERILATOR_ROOT
 VERILATOR = $(VERILATOR_ROOT)/bin/verilator
 endif
-VERILATOR_CFLAGS += --build -cc -j $(shell nproc) -Wall -Wno-DECLFILENAME
+VERILATOR_CFLAGS += --build -cc -j $(shell nproc) -Wall -Wno-DECLFILENAME # -O0
 
 remove_quote = $(patsubst "%",%,$(1))
 
