@@ -34,7 +34,6 @@ module ysyx_22050710_datamem (
     })
   );
 
-
   always @(posedge i_clk) begin
     if (!i_rst) begin
       if (i_WrEn) begin
@@ -45,6 +44,5 @@ module ysyx_22050710_datamem (
       end
     end
   end
-
   
 endmodule
