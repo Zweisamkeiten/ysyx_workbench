@@ -6,7 +6,7 @@ extern "C" {
   #include <memory/paddr.h>
 }
 #ifdef CONFIG_WATCHPOINT
-extern void diff_watchpoint_value();
+extern "C" void diff_watchpoint_value();
 #endif
 
 NPC_CPU_state cpu = {};
