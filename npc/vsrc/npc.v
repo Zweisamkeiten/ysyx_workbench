@@ -9,17 +9,17 @@ module ysyx_22050710_npc (
 
   initial begin
     set_pc_ptr(pc);
-    set_inst_ptr(inst_temp);
+    set_inst_ptr(inst);
   end
 
-  wire [31:0] inst_temp;
+  wire [31:0] inst;
   wire [63:0] pc;
   wire [31:0] unused;
   ysyx_22050710_ifu u_ifu (
     .i_clk(i_clk),
     .i_rst(i_rst),
     .i_pc(pc),
-    .o_inst(inst_temp),
+    .o_inst(inst),
     .o_unused(unused)
   );
 
@@ -49,7 +49,7 @@ module ysyx_22050710_npc (
   wire MemtoReg, MemWr;
   wire [2:0] MemOP;
   ysyx_22050710_idu u_idu (
-    .i_inst(inst_temp),
+    .i_inst(inst),
     .o_imm(imm),
     .o_ra(ra), .o_rb(rb), .o_rd(rd),
     .o_RegWr(RegWr),
