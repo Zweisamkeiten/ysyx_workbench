@@ -8,9 +8,11 @@ module ysyx_22050710_npc (
 );
 
   initial begin
-    set_inst_ptr(inst);
+    set_inst_ptr(inst_tmp);
     set_pc_ptr(pc);
   end
+  wire [31:0] inst_tmp;
+  assign inst_tmp = inst;
 
   wire [31:0] inst;
   wire [63:0] pc;
