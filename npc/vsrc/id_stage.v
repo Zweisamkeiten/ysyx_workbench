@@ -28,7 +28,7 @@ module ysyx_22050710_idu (
   assign immS = {{52{i_inst[31]}}, i_inst[31:25], i_inst[11:7]};
   assign immB = {{52{i_inst[31]}}, i_inst[7], i_inst[30:25], i_inst[11:8], 1'b0};
   assign immJ = {{44{i_inst[31]}}, i_inst[19:12], i_inst[20], i_inst[30:21], 1'b0};
-
+  
   // RV32I and RV64I
   wire inst_lui    = (opcode[6:0] == 7'b0110111);
   wire inst_auipc  = (opcode[6:0] == 7'b0010111);

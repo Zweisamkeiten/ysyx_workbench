@@ -1,15 +1,10 @@
 // ysyx_22050710
-import "DPI-C" function void set_inst_ptr(input logic [31:0] a[]);
 module ysyx_22050710_ifu (
   input i_clk, i_rst,
   input [63:0] i_pc,
   output [31:0] o_inst,
   output [31:0] o_unused
 );
-
-  initial begin
-    set_inst_ptr(o_inst);
-  end
 
   wire [63:0] rdata;
   assign o_inst = rdata[31:0];
