@@ -33,7 +33,7 @@ module ysyx_22050710_datamem (
     })
   );
 
-  MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(64)) u_mux2 (
+  MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(64)) u_mux23333 (
     .out(o_data),
     .key(i_MemOP),
     .lut({
