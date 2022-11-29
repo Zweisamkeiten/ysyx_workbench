@@ -88,8 +88,11 @@ gdb: run-env
 	$(call git_commit, "gdb sim RTL")
 	gdb -s $(BIN) $(BIN) -iex "set args $(IMG) $(ELF) $(REF)"
 
+wave:
+	gtkwave $(NPC_HOME)/dump.vcd &
+
 all: run-env
 
-.PHONY: default all run-env sim gdbbatch gdb
+.PHONY: default all run-env sim gdbbatch gdb wave
 
 include ../Makefile
