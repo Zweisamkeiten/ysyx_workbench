@@ -34,18 +34,18 @@ module ysyx_22050710_datamem (
     })
   );
 
-  MuxKeyWithDefault #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(64)) u_mux23333 (
+  MuxKeyWithDefault #(.NR_KEY(1), .KEY_LEN(3), .DATA_LEN(64)) u_mux23333 (
     .out(o_data),
     .key(i_MemOP),
     .default_out(rdata),
     .lut({
-      3'b000, {{56{rdata[7]}}, rdata[7:0]},
-      3'b001, {{56{1'b0}}, rdata[7:0]},
-      3'b010, {{48{rdata[15]}}, rdata[15:0]},
-      3'b011, {{48{1'b0}}, rdata[15:0]},
-      3'b100, {{32{rdata[31]}}, rdata[31:0]},
-      3'b101, {{32{1'b0}}, rdata[31:0]},
-      3'b110, rdata[63:0]
+      /* 3'b000, {{56{rdata[7]}}, rdata[7:0]}, */
+      /* 3'b001, {{56{1'b0}}, rdata[7:0]}, */
+      /* 3'b010, {{48{rdata[15]}}, rdata[15:0]}, */
+      /* 3'b011, {{48{1'b0}}, rdata[15:0]}, */
+      3'b100, {{32{rdata[31]}}, rdata[31:0]}
+      /* 3'b101, {{32{1'b0}}, rdata[31:0]}, */
+      /* 3'b110, rdata[63:0] */
     })
   );
   /* assign o_data = rdata; */
