@@ -34,7 +34,10 @@ module ysyx_22050710_idu (
   wire inst_auipc  = (opcode[6:0] == 7'b0010111);
   wire inst_jal    = (opcode[6:0] == 7'b1101111);
   wire inst_jalr   = (opcode[6:0] == 7'b1100111) & (funct3[2:0] == 3'b000);
+  wire inst_beq    = (opcode[6:0] == 7'b1100011) & (funct3[2:0] == 3'b000);
   wire inst_bne    = (opcode[6:0] == 7'b1100011) & (funct3[2:0] == 3'b001);
+  wire inst_bltu   = (opcode[6:0] == 7'b1100011) & (funct3[2:0] == 3'b100);
+  wire inst_bgeu   = (opcode[6:0] == 7'b1100011) & (funct3[2:0] == 3'b100);
   wire inst_lw     = (opcode[6:0] == 7'b0000011) & (funct3[2:0] == 3'b010);
   wire inst_sw     = (opcode[6:0] == 7'b0100011) & (funct3[2:0] == 3'b010);
   wire inst_addi   = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b000);
@@ -52,7 +55,7 @@ module ysyx_22050710_idu (
   wire inst_type_i = |{inst_lw, inst_addi, inst_sltiu, inst_addiw, inst_ebreak, inst_jalr};
   wire inst_type_u = |{inst_lui, inst_auipc};
   wire inst_type_s = |{inst_sw, inst_sd};
-  wire inst_type_b = |{inst_bne};
+  wire inst_type_b = |{inst_beq, inst_bne, inst_bltu, inst_bgeu};
   wire inst_type_j = |{inst_jal};
 
   wire [2:0] extop;
@@ -126,7 +129,7 @@ module ysyx_22050710_idu (
   wire alu_copyimm = |{inst_lui};
   wire alu_plus = |{inst_auipc, inst_jal, inst_jalr, inst_lw, inst_sw, inst_addi, inst_add, inst_sd};
   wire alu_plus_and_signedext = |{inst_addiw, inst_addw};
-  wire alu_sub = |{inst_bne, inst_sub};
+  wire alu_sub = |{inst_type_b, inst_sub};
   wire alu_sltu = |{inst_sltiu};
   wire alu_ebreak = inst_ebreak;
 
@@ -144,14 +147,17 @@ module ysyx_22050710_idu (
     })
   );
 
-  MuxKeyWithDefault #(.NR_KEY(3), .KEY_LEN(3), .DATA_LEN(3)) u_mux4 (
+  MuxKeyWithDefault #(.NR_KEY(6), .KEY_LEN(6), .DATA_LEN(3)) u_mux4 (
     .out(o_Branch),
-    .key({inst_jal, inst_jalr, inst_bne}),
+    .key({inst_jal, inst_jalr, inst_beq, inst_bne, inst_bltu, inst_bgeu}),
     .default_out(3'b000),
     .lut({
-      3'b100, 3'b001,
-      3'b010, 3'b010,
-      3'b001, 3'b101
+      4'b100000, 3'b001,
+      4'b010000, 3'b010,
+      4'b001000, 3'b100,
+      4'b000100, 3'b101,
+      4'b000010, 3'b110,
+      4'b000001, 3'b111
     })
   );
 
