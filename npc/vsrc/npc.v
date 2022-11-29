@@ -101,8 +101,4 @@ module ysyx_22050710_npc (
   wire [63:0] muxbusW;
   assign muxbusW = MemtoReg ? mem_out_data : ALUresult;
 
-  always @(posedge i_clk) begin
-    $display(mem_out_data);
-  end
-
 endmodule
