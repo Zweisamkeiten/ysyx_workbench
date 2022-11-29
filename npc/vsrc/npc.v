@@ -90,7 +90,7 @@ module ysyx_22050710_npc (
   wire [63:0] mem_out_data;
   ysyx_22050710_datamem u_datamem (
     .i_clk(i_clk),
-    .i_rst(i_rst),
+    /* .i_rst(i_rst), */
     .i_addr(ALUresult),
     .i_data(rs2),
     .i_MemOP(MemOP),
