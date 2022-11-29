@@ -15,6 +15,7 @@ module ysyx_22050710_npc (
     .o_unused(unused)
   );
 
+  wire Less, Zero;
   wire PCAsrc, PCBsrc;
   MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(1)) u_mux0 (
     .out(PCAsrc),
@@ -78,7 +79,6 @@ module ysyx_22050710_npc (
     .o_MemtoReg(MemtoReg), .o_MemWr(MemWr), .o_MemOP(MemOP)
   );
 
-  wire Less, Zero;
   ysyx_22050710_exu u_exu (
     .i_rs1(rs1), .i_rs2(rs2),
     .i_imm(imm), .i_pc(pc),
