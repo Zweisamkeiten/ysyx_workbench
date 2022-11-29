@@ -46,7 +46,6 @@ extern "C" void single_cycle() {
   tfp->dump(contextp->time());
   top->i_clk = 1;
   top->eval();
-  printf("rdata: 0x%016lx\n", top->rootp->ysyx_22050710_npc__DOT__u_datamem__DOT__rdata);
   contextp->timeInc(1);
   tfp->dump(contextp->time());
 }
@@ -72,8 +71,10 @@ extern "C" void init_sim() {
 
   npc_state.state = NPC_RUNNING;
 
-  npcpc = &(top->rootp->ysyx_22050710_npc__DOT__pc);
-  cpu.inst = (uint32_t *)&(top->rootp->ysyx_22050710_npc__DOT__u_ifu__DOT__rdata);
+  // npcpc = &(top->rootp->ysyx_22050710_npc__DOT__pc);
+  npcpc = &(top->__PVT__ysyx_22050710_npc->__PVT__pc);
+  // cpu.inst = (uint32_t *)&(top->rootp->ysyx_22050710_npc__DOT__u_ifu__DOT__rdata);
+  cpu.inst = (uint32_t *)&(top->__PVT__ysyx_22050710_npc->__PVT__inst);
   cpu.pc = *npcpc;
 }
 
