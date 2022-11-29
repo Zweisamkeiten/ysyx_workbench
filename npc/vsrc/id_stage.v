@@ -124,7 +124,7 @@ module ysyx_22050710_idu (
   assign alu_copyimm = |{inst_lui};
   assign alu_plus = |{inst_auipc, inst_jal, inst_jalr, inst_lw, inst_sw, inst_addi, inst_sd};
   assign alu_plus_and_signedext = |{inst_addiw, inst_addw};
-  assign alu_sub = |{inst_bne}
+  assign alu_sub = |{inst_bne};
   assign alu_ebreak = inst_ebreak;
 
   MuxKeyWithDefault #(.NR_KEY(5), .KEY_LEN(4), .DATA_LEN(4)) u_mux3 (
@@ -132,11 +132,11 @@ module ysyx_22050710_idu (
     .key({alu_copyimm, alu_plus, alu_plus_and_signedext, alu_sub, alu_ebreak}),
     .default_out(4'b1111),
     .lut({
-      4'b10000, 4'b0011,
-      4'b01000, 4'b0000,
-      4'b00100, 4'b1001,
-      4'b00010, 4'b1000,
-      4'b00001, 4'b1110
+      5'b10000, 4'b0011,
+      5'b01000, 4'b0000,
+      5'b00100, 4'b1001,
+      5'b00010, 4'b1000,
+      5'b00001, 4'b1110
     })
   );
 
