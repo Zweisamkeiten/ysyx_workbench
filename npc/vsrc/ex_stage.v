@@ -11,8 +11,10 @@ module ysyx_22050710_exu (
   output [63:0] o_ALUresult
 );
 
-  assign o_Zero = ~(|o_ALUresult);
-  assign o_Less = o_ALUresult[63] == 1 ? 1'b1 : 1'b0;
+  wire [63:0] ALUresult_temp;
+  assign o_ALUresult = ALUresult_temp;
+  assign o_Zero = ~(|ALUresult_temp);
+  assign o_Less = ALUresult_temp[63] == 1 ? 1'b1 : 1'b0;
 
   // adder
   wire [63:0] adder_result, sub_result, add_a, add_b;
@@ -38,7 +40,7 @@ module ysyx_22050710_exu (
   assign adder_result_cut32_and_ext = {{32{adder_result[31]}}, adder_result[31:0]};
 
   MuxKey #(.NR_KEY(5), .KEY_LEN(4), .DATA_LEN(64)) u_mux1 (
-    .out(o_ALUresult),
+    .out(ALUresult_temp),
     .key(i_ALUctr),
     .lut({
       4'b0011, copy_result,
