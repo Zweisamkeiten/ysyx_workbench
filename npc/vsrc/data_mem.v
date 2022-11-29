@@ -37,7 +37,7 @@ module ysyx_22050710_datamem (
   MuxKeyWithDefault #(.NR_KEY(1), .KEY_LEN(3), .DATA_LEN(64)) u_mux23333 (
     .out(o_data),
     .key(i_MemOP),
-    .default(rdata),
+    .default_out(rdata),
     .lut({
       /* 3'b000, {{56{rdata[7]}}, rdata[7:0]}, */
       /* 3'b001, {{56{1'b0}}, rdata[7:0]}, */
