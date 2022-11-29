@@ -90,12 +90,12 @@ module ysyx_22050710_exu (
     .key(i_MemOP),
     .lut({
       3'b000, {{56{i_rdata[7]}}, i_rdata[7:0]},
-      3'b, {{56{1'b0}}, i_rdata[7:0]},
-      3'b, {{48{i_rdata[15]}}, i_rdata[15:0]},
-      3'b, {{48{1'b0}}, i_rdata[15:0]},
-      3'b, {{32{i_rdata[31]}}, i_rdata[31:0]},
-      3'b, {{32{i_rdata[31]}}, i_rdata[31:0]},
-      3'b, i_rdata
+      3'b001, {{56{1'b0}}, i_rdata[7:0]},
+      3'b010, {{48{i_rdata[15]}}, i_rdata[15:0]},
+      3'b011, {{48{1'b0}}, i_rdata[15:0]},
+      3'b100, {{32{i_rdata[31]}}, i_rdata[31:0]},
+      3'b101, {{32{i_rdata[31]}}, i_rdata[31:0]},
+      3'b110, i_rdata
     })
   );
 
