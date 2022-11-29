@@ -38,6 +38,7 @@ module ysyx_22050710_idu (
   wire inst_lw     = (opcode[6:0] == 7'b0000011) & (funct3[2:0] == 3'b010);
   wire inst_sw     = (opcode[6:0] == 7'b0100011) & (funct3[2:0] == 3'b010);
   wire inst_addi   = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b000);
+  wire inst_sltiu  = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b011);
   wire inst_add    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b000) & (funct7[6:0] == 7'b0000000);
   wire inst_sub    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b000) & (funct7[6:0] == 7'b0100000);
   wire inst_ebreak = (opcode[6:0] == 7'b1110011) & (funct3[2:0] == 3'b000);
@@ -48,7 +49,7 @@ module ysyx_22050710_idu (
   wire inst_addw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b000) & (funct7[6:0] == 7'b0000000);
 
   wire inst_type_r = |{inst_add, inst_sub, inst_addw};
-  wire inst_type_i = |{inst_lw, inst_addi, inst_addiw, inst_ebreak, inst_jalr};
+  wire inst_type_i = |{inst_lw, inst_addi, inst_sltiu, inst_addiw, inst_ebreak, inst_jalr};
   wire inst_type_u = |{inst_lui, inst_auipc};
   wire inst_type_s = |{inst_sw, inst_sd};
   wire inst_type_b = |{inst_bne};
@@ -122,23 +123,24 @@ module ysyx_22050710_idu (
   );
 
 
-  wire alu_copyimm, alu_plus, alu_plus_and_signedext, alu_sub, alu_ebreak;
-  assign alu_copyimm = |{inst_lui};
-  assign alu_plus = |{inst_auipc, inst_jal, inst_jalr, inst_lw, inst_sw, inst_addi, inst_add, inst_sd};
-  assign alu_plus_and_signedext = |{inst_addiw, inst_addw};
-  assign alu_sub = |{inst_bne, inst_sub};
-  assign alu_ebreak = inst_ebreak;
+  wire alu_copyimm = |{inst_lui};
+  wire alu_plus = |{inst_auipc, inst_jal, inst_jalr, inst_lw, inst_sw, inst_addi, inst_add, inst_sd};
+  wire alu_plus_and_signedext = |{inst_addiw, inst_addw};
+  wire alu_sub = |{inst_bne, inst_sub};
+  wire alu_sltu = |{inst_sltiu};
+  wire alu_ebreak = inst_ebreak;
 
-  MuxKeyWithDefault #(.NR_KEY(5), .KEY_LEN(5), .DATA_LEN(4)) u_mux3 (
+  MuxKeyWithDefault #(.NR_KEY(6), .KEY_LEN(6), .DATA_LEN(4)) u_mux3 (
     .out(o_ALUctr),
-    .key({alu_copyimm, alu_plus, alu_plus_and_signedext, alu_sub, alu_ebreak}),
+    .key({alu_copyimm, alu_plus, alu_plus_and_signedext, alu_sub, alu_sltu, alu_ebreak}),
     .default_out(4'b1111),
     .lut({
-      5'b10000, 4'b0011,
-      5'b01000, 4'b0000,
-      5'b00100, 4'b1001,
-      5'b00010, 4'b1000,
-      5'b00001, 4'b1110
+      6'b100000, 4'b0011,
+      6'b010000, 4'b0000,
+      6'b001000, 4'b1001,
+      6'b000100, 4'b1000,
+      6'b000010, 4'b1010,
+      6'b000001, 4'b1110
     })
   );
 
