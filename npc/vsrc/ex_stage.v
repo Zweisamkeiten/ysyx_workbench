@@ -27,7 +27,7 @@ module ysyx_22050710_exu (
     })
   );
   assign adder_result = add_a + add_b;
-  assign sub_result = add_a + ((64{1'b1}^(add_b)) + 1);
+  assign sub_result = add_a + (({64{1'b1}}^(add_b)) + 1);
 
   // copy imm
   wire [63:0] copy_result;
