@@ -14,24 +14,22 @@ module ysyx_22050710_npc (
   );
 
   wire [63:0] rs1, rs2, ALUresult;
-  wire [63:0] muxbusW;
-  assign muxbusW = MemtoReg ? mem_out_data : ALUresult;
+  wire [63:0] busW;
   ysyx_22050710_gpr #(.ADDR_WIDTH(5), .DATA_WIDTH(64)) u_gprs (
     .i_clk(i_clk),
     .i_ra(ra), .i_rb(rb), .i_waddr(rd),
-    .i_wdata(muxbusW), .i_wen(RegWr),
+    .i_wdata(busW), .i_wen(RegWr),
     .o_busA(rs1), .o_busB(rs2)
   );
 
-  wire [63:0] mem_out_data;
+  wire [63:0] rdata;
   ysyx_22050710_datamem u_datamem (
-    .i_clk(i_clk),
     .i_rst(i_rst),
     .i_addr(ALUresult),
     .i_data(rs2),
     .i_MemOP(MemOP),
     .i_WrEn(MemWr),
-    .o_data(mem_out_data)
+    .o_data(rdata)
   );
 
   wire [31:0] inst;
@@ -68,8 +66,12 @@ module ysyx_22050710_npc (
     .i_imm(imm), .i_pc(pc),
     .i_ALUAsrc(ALUAsrc), .i_ALUBsrc(ALUBsrc), .i_ALUctr(ALUctr),
     .i_Branch(Branch),
+    .i_MemOP(MemOP),
+    .i_MemtoReg(MemtoReg),
+    .i_rdata(rdata),
     .o_ALUresult(ALUresult),
-    .o_nextpc(nextpc)
+    .o_nextpc(nextpc),
+    .o_busW(busW)
   );
 
 endmodule

@@ -47,12 +47,13 @@ module ysyx_22050710_idu (
   wire inst_ebreak = (opcode[6:0] == 7'b1110011) & (funct3[2:0] == 3'b000);
 
   // RV64I
+  wire inst_ld     = (opcode[6:0] == 7'b0000011) & (funct3[2:0] == 3'b011);
   wire inst_sd     = (opcode[6:0] == 7'b0100011) & (funct3[2:0] == 3'b011);
   wire inst_addiw  = (opcode[6:0] == 7'b0011011) & (funct3[2:0] == 3'b000);
   wire inst_addw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b000) & (funct7[6:0] == 7'b0000000);
 
   wire inst_type_r = |{inst_add, inst_sub, inst_addw};
-  wire inst_type_i = |{inst_lw, inst_addi, inst_sltiu, inst_addiw, inst_ebreak, inst_jalr};
+  wire inst_type_i = |{inst_jalr, inst_lw, inst_addi, inst_sltiu, inst_addiw, inst_ld, inst_ebreak};
   wire inst_type_u = |{inst_lui, inst_auipc};
   wire inst_type_s = |{inst_sw, inst_sd};
   wire inst_type_b = |{inst_beq, inst_bne, inst_bltu, inst_bgeu};
@@ -97,7 +98,7 @@ module ysyx_22050710_idu (
   /* 为10时选择常数4 用于跳转时计算返回地址PC+4 */
   assign o_ALUBsrc = {|{inst_jal, inst_jalr}, |inst_type[4:2] & !inst_jalr};
 
-  assign o_MemtoReg = |{inst_lw};
+  assign o_MemtoReg = |{inst_lw, inst_ld};
   assign o_MemWr = inst_type_s;
 
   wire signed_byte, signed_halfword, signed_word, signed_doubleword;
@@ -105,7 +106,7 @@ module ysyx_22050710_idu (
   assign signed_byte = |{1'b0};
   assign signed_halfword = |{1'b0};
   assign signed_word = |{inst_lw, inst_sw};
-  assign signed_doubleword = |{inst_sd};
+  assign signed_doubleword = |{inst_ld, inst_sd};
   assign unsigned_byte = |{1'b0};
   assign unsigned_halfword = |{1'b0};
   assign unsigned_word = |{1'b0};
@@ -127,7 +128,7 @@ module ysyx_22050710_idu (
 
 
   wire alu_copyimm = |{inst_lui};
-  wire alu_plus = |{inst_auipc, inst_jal, inst_jalr, inst_lw, inst_sw, inst_addi, inst_add, inst_sd};
+  wire alu_plus = |{inst_auipc, inst_jal, inst_jalr, inst_lw, inst_sw, inst_addi, inst_add, inst_ld, inst_sd};
   wire alu_plus_and_signedext = |{inst_addiw, inst_addw};
   wire alu_sub = |{inst_type_b, inst_sub};
   wire alu_sltu = |{inst_sltiu};
@@ -152,12 +153,12 @@ module ysyx_22050710_idu (
     .key({inst_jal, inst_jalr, inst_beq, inst_bne, inst_bltu, inst_bgeu}),
     .default_out(3'b000),
     .lut({
-      4'b100000, 3'b001,
-      4'b010000, 3'b010,
-      4'b001000, 3'b100,
-      4'b000100, 3'b101,
-      4'b000010, 3'b110,
-      4'b000001, 3'b111
+      6'b100000, 3'b001,
+      6'b010000, 3'b010,
+      6'b001000, 3'b100,
+      6'b000100, 3'b101,
+      6'b000010, 3'b110,
+      6'b000001, 3'b111
     })
   );
 
