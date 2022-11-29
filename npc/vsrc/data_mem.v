@@ -51,7 +51,7 @@ module ysyx_22050710_datamem (
   /* assign o_data = rdata; */
 
   always @(*) begin
-    if (!i_rst)  npc_pmem_read2(raddr, rdata);
+    npc_pmem_read2(raddr, rdata);
     if (i_WrEn) npc_pmem_write(waddr, wdata, wmask);
     /* if (!i_rst) begin */
     /*   if (i_WrEn) begin */
