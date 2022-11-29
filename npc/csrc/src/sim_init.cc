@@ -46,6 +46,7 @@ extern "C" void single_cycle() {
   tfp->dump(contextp->time());
   top->i_clk = 1;
   top->eval();
+  printf("rdata: 0x%016lx\n", top->rootp->ysyx_22050710_npc__DOT__u_datamem__DOT__rdata);
   contextp->timeInc(1);
   tfp->dump(contextp->time());
 }
