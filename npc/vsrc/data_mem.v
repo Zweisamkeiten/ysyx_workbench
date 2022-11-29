@@ -33,6 +33,13 @@ module ysyx_22050710_datamem (
     })
   );
 
+  /* wire [63:0] signedbyte = {{56{rdata[7]}}, rdata[7:0]}; */
+  /* wire [63:0] unsignedbyte = {{56{1'b0}}, rdata[7:0]}; */
+  /* wire [63:0] signedhalfword = {{48{rdata[15]}}, rdata[15:0]}; */
+  /* wire [63:0] unsignedhalfword = {{48{1'b0}}, rdata[15:0]}; */
+  /* wire [63:0] signedword = {{32{rdata[31]}}, rdata[31:0]}; */
+  /* wire [63:0] unsignedword = {{32{1'b0}}, rdata[31:0]}; */
+  /* wire [63:0] doubleword = rdata; */
   /* MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(64)) u_mux23333 ( */
   /*   .out(o_data), */
   /*   .key(i_MemOP), */
@@ -69,7 +76,7 @@ module ysyx_22050710_datamem (
              3'b011: o_data = {{48{1'b0}}, rdata[15:0]};
              3'b100: o_data = {{32{rdata[31]}}, rdata[31:0]};
              3'b101: o_data = {{32{1'b0}}, rdata[31:0]};
-             default: o_data <= rdata;
+             default: o_data = rdata;
           endcase
         end
       end
