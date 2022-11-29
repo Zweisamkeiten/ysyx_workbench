@@ -71,7 +71,7 @@ module ysyx_22050710_datamem (
     /*       endcase */
     /*     end */
     /*   end */
-    end
+    /* end */
   end
   
 endmodule
