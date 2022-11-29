@@ -7,6 +7,7 @@ module ysyx_22050710_exu (
   input i_ALUAsrc,
   input [1:0] i_ALUBsrc,
   input [3:0] i_ALUctr,
+  input [2:0] i_Branch,
   output [63:0] o_ALUresult,
   output [63:0] o_nextpc
 );
@@ -15,7 +16,7 @@ module ysyx_22050710_exu (
   wire PCAsrc, PCBsrc;
   MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(1)) u_mux0 (
     .out(PCAsrc),
-    .key(Branch),
+    .key(i_Branch),
     .lut({
       3'b000, 1'b0,
       3'b001, 1'b1,
@@ -28,7 +29,7 @@ module ysyx_22050710_exu (
   );
   MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(1)) u_mux1 (
     .out(PCBsrc),
-    .key(Branch),
+    .key(i_Branch),
     .lut({
       3'b000, 1'b0,
       3'b001, 1'b0,

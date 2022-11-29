@@ -67,6 +67,7 @@ module ysyx_22050710_npc (
     .i_rs1(rs1), .i_rs2(rs2),
     .i_imm(imm), .i_pc(pc),
     .i_ALUAsrc(ALUAsrc), .i_ALUBsrc(ALUBsrc), .i_ALUctr(ALUctr),
+    .i_Branch(Branch),
     .o_ALUresult(ALUresult),
     .o_nextpc(nextpc)
   );
