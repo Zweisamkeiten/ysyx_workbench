@@ -51,24 +51,26 @@ module ysyx_22050710_datamem (
   /* assign o_data = rdata; */
 
   always @(*) begin
-    if (!i_rst) begin
-      if (i_WrEn) begin
-        if (i_MemOP != 3'b111) npc_pmem_write(waddr, wdata, wmask);
-      end
-      else begin
-        if (i_MemOP != 3'b111) begin
-          npc_pmem_read2(raddr, rdata);
-          /* case (i_MemOP)  */
-          /*    3'b000: o_data = {{56{rdata[7]}}, rdata[7:0]}; */
-          /*    3'b001: o_data = {{56{1'b0}}, rdata[7:0]}; */
-          /*    3'b010: o_data = {{48{rdata[15]}}, rdata[15:0]}; */
-          /*    3'b011: o_data = {{48{1'b0}}, rdata[15:0]}; */
-          /*    3'b100: o_data = {{32{rdata[31]}}, rdata[31:0]}; */
-          /*    3'b101: o_data = {{32{1'b0}}, rdata[31:0]}; */
-          /*    default: o_data = rdata; */
-          /* endcase */
-        end
-      end
+    npc_pmem_read2(raddr, rdata);
+    if (i_WrEn) npc_pmem_write(waddr, wdata, wmask);
+    /* if (!i_rst) begin */
+    /*   if (i_WrEn) begin */
+    /*     if (i_MemOP != 3'b111) npc_pmem_write(waddr, wdata, wmask); */
+    /*   end */
+    /*   else begin */
+    /*     if (i_MemOP != 3'b111) begin */
+    /*       npc_pmem_read2(raddr, rdata); */
+    /*       case (i_MemOP)  */
+    /*          3'b000: o_data = {{56{rdata[7]}}, rdata[7:0]}; */
+    /*          3'b001: o_data = {{56{1'b0}}, rdata[7:0]}; */
+    /*          3'b010: o_data = {{48{rdata[15]}}, rdata[15:0]}; */
+    /*          3'b011: o_data = {{48{1'b0}}, rdata[15:0]}; */
+    /*          3'b100: o_data = {{32{rdata[31]}}, rdata[31:0]}; */
+    /*          3'b101: o_data = {{32{1'b0}}, rdata[31:0]}; */
+    /*          default: o_data = rdata; */
+    /*       endcase */
+    /*     end */
+    /*   end */
     end
   end
   
