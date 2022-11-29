@@ -69,7 +69,7 @@ module ysyx_22050710_datamem (
       else begin
         if (i_MemOP != 3'b111) begin
           npc_pmem_read(raddr, rdata);
-          case (i_MemOP)
+          case (i_MemOP) 
              3'b000: o_data = {{56{rdata[7]}}, rdata[7:0]};
              3'b001: o_data = {{56{1'b0}}, rdata[7:0]};
              3'b010: o_data = {{48{rdata[15]}}, rdata[15:0]};
