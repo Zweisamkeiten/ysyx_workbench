@@ -34,24 +34,22 @@ module ysyx_22050710_datamem (
     })
   );
 
-  wire [63:0] out_temp;
-  MuxKeyWithDefault #(.NR_KEY(1), .KEY_LEN(3), .DATA_LEN(64)) u_mux23333 (
-    .out(out_temp),
-    .key(i_MemOP),
-    .default_out(rdata),
-    .lut({
+  /* MuxKeyWithDefault #(.NR_KEY(1), .KEY_LEN(3), .DATA_LEN(64)) u_mux23333 ( */
+  /*   .out(o_data), */
+  /*   .key(i_MemOP), */
+  /*   .default_out(rdata), */
+  /*   .lut({ */
       /* 3'b000, {{56{rdata[7]}}, rdata[7:0]}, */
       /* 3'b001, {{56{1'b0}}, rdata[7:0]}, */
       /* 3'b010, {{48{rdata[15]}}, rdata[15:0]}, */
       /* 3'b011, {{48{1'b0}}, rdata[15:0]}, */
       /* 3'b100, {{32{rdata[31]}}, rdata[31:0]}, */
-      3'b100, rdata
+      /* 3'b100, rdata */
       /* 3'b101, {{32{1'b0}}, rdata[31:0]}, */
       /* 3'b110, rdata[63:0] */
-    })
-  );
-  /* assign o_data = rdata; */
-  assign o_data = out_temp;
+  /*   }) */
+  /* ); */
+  assign o_data = rdata;
 
   always @(posedge i_clk) begin
     if (!i_rst) begin
@@ -61,7 +59,6 @@ module ysyx_22050710_datamem (
       else begin
         if (i_MemOP != 3'b111) begin
           npc_pmem_read2(raddr, rdata);
-          $display(out_temp);
           /* case (i_MemOP)  */
           /*    3'b000: o_data = {{56{rdata[7]}}, rdata[7:0]}; */
           /*    3'b001: o_data = {{56{1'b0}}, rdata[7:0]}; */
