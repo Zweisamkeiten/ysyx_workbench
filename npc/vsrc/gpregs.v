@@ -14,7 +14,7 @@ module ysyx_22050710_gpr #(ADDR_WIDTH = 5, DATA_WIDTH = 64) (
   assign o_busA = |i_ra == 0 ? 64'b0 : rf[i_ra];
   assign o_busB = |i_rb == 0 ? 64'b0 : rf[i_rb];
 
-  always @(negedge i_clk) begin
+  always @(posedge i_clk) begin
     if (i_wen) rf[i_waddr] <= i_wdata;
   end
 endmodule

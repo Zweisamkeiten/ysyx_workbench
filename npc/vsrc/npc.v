@@ -91,7 +91,6 @@ module ysyx_22050710_npc (
   ysyx_22050710_datamem u_datamem (
     .i_clk(i_clk),
     .i_rst(i_rst),
-    .i_rdclk(i_clk),
     .i_addr(ALUresult),
     .i_data(rs2),
     .i_MemOP(MemOP),
