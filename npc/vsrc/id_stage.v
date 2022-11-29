@@ -41,10 +41,11 @@ module ysyx_22050710_idu (
 
   // RV64I
   wire inst_sd     = (opcode[6:0] == 7'b0100011) & (funct3[2:0] == 3'b011);
+  wire inst_addiw  = (opcode[6:0] == 7'b0011011) & (funct3[2:0] == 3'b000);
   wire inst_addw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b000) & (funct7[6:0] == 7'b0000000);
 
   wire inst_type_r = |{inst_addw};
-  wire inst_type_i = |{inst_lw, inst_addi, inst_ebreak, inst_jalr};
+  wire inst_type_i = |{inst_lw, inst_addi, inst_addiw, inst_ebreak, inst_jalr};
   wire inst_type_u = |{inst_lui, inst_auipc};
   wire inst_type_s = |{inst_sw, inst_sd};
   wire inst_type_b = 1'b0;
@@ -124,7 +125,7 @@ module ysyx_22050710_idu (
   wire alu_copyimm, alu_plus, alu_plus_and_signedext, alu_ebreak;
   assign alu_copyimm = |{inst_lui};
   assign alu_plus = |{inst_auipc, inst_jal, inst_jalr, inst_lw, inst_sw, inst_addi, inst_sd};
-  assign alu_plus_and_signedext = |{inst_addw};
+  assign alu_plus_and_signedext = |{inst_addiw, inst_addw};
   assign alu_ebreak = inst_ebreak;
 
   MuxKeyWithDefault #(.NR_KEY(4), .KEY_LEN(4), .DATA_LEN(4)) u_mux3 (
