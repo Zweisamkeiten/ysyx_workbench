@@ -9,7 +9,7 @@ module ysyx_22050710_datamem (
   input [63:0] i_data,
   input [2:0] i_MemOP,
   input i_WrEn,
-  output [63:0] o_data
+  output reg [63:0] o_data
 );
 
   wire [63:0] rdata, wdata;
