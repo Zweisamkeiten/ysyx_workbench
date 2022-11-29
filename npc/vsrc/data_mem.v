@@ -34,9 +34,10 @@ module ysyx_22050710_datamem (
     })
   );
 
-  always @(posedge i_clk) begin
+  always @(*) begin
     if (!i_rst & i_MemOP != 3'b111) npc_pmem_read(raddr, rdata);
-    if (!i_rst & i_WrEn & i_MemOP != 3'b111) npc_pmem_write(waddr, wdata, wmask);
+    else rdata = 64'b0;
+    if (i_WrEn & i_MemOP != 3'b111) npc_pmem_write(waddr, wdata, wmask);
   end
   
 endmodule
