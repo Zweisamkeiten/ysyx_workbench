@@ -3,10 +3,10 @@ module ysyx_22050710_idu (
   input [31:0] i_inst,
   output [63:0] o_imm,
   output [4:0] o_ra, o_rb, o_rd,
+  output [2:0] o_Branch,
   output o_RegWr, o_ALUAsrc,
   output [1:0] o_ALUBsrc,
   output [3:0] o_ALUctr,
-  output o_PCAsrc, o_PCBsrc,
   output o_MemtoReg, o_MemWr,
   output [2:0] o_MemOP
 );
@@ -34,6 +34,7 @@ module ysyx_22050710_idu (
   wire inst_auipc  = (opcode[6:0] == 7'b0010111);
   wire inst_jal    = (opcode[6:0] == 7'b1101111);
   wire inst_jalr   = (opcode[6:0] == 7'b1100111) & (funct3[2:0] == 3'b000);
+  wire inst_bne    = (opcode[6:0] == 7'b1100011) & (funct3[2:0] == 3'b001);
   wire inst_lw     = (opcode[6:0] == 7'b0000011) & (funct3[2:0] == 3'b010);
   wire inst_sw     = (opcode[6:0] == 7'b0100011) & (funct3[2:0] == 3'b010);
   wire inst_addi   = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b000);
@@ -48,7 +49,7 @@ module ysyx_22050710_idu (
   wire inst_type_i = |{inst_lw, inst_addi, inst_addiw, inst_ebreak, inst_jalr};
   wire inst_type_u = |{inst_lui, inst_auipc};
   wire inst_type_s = |{inst_sw, inst_sd};
-  wire inst_type_b = 1'b0;
+  wire inst_type_b = |{inst_bne};
   wire inst_type_j = |{inst_jal};
 
   wire [2:0] extop;
@@ -88,10 +89,7 @@ module ysyx_22050710_idu (
   /* 为00时选择rs2. */
   /* 为01时选择imm 当是立即数移位指令时，只有低5位有效, */
   /* 为10时选择常数4 用于跳转时计算返回地址PC+4 */
-  assign o_ALUBsrc = {|{inst_jal, inst_jalr}, |inst_type[4:1] & !inst_jalr};
-
-  assign o_PCAsrc = |{inst_jal, inst_jalr};
-  assign o_PCBsrc = inst_jalr;
+  assign o_ALUBsrc = {|{inst_jal, inst_jalr}, |inst_type[4:2] & !inst_jalr};
 
   assign o_MemtoReg = |{inst_lw};
   assign o_MemWr = inst_type_s;
@@ -122,21 +120,35 @@ module ysyx_22050710_idu (
   );
 
 
-  wire alu_copyimm, alu_plus, alu_plus_and_signedext, alu_ebreak;
+  wire alu_copyimm, alu_plus, alu_plus_and_signedext, alu_sub, alu_ebreak;
   assign alu_copyimm = |{inst_lui};
   assign alu_plus = |{inst_auipc, inst_jal, inst_jalr, inst_lw, inst_sw, inst_addi, inst_sd};
   assign alu_plus_and_signedext = |{inst_addiw, inst_addw};
+  assign alu_sub = |{inst_bne};
   assign alu_ebreak = inst_ebreak;
 
-  MuxKeyWithDefault #(.NR_KEY(4), .KEY_LEN(4), .DATA_LEN(4)) u_mux3 (
+  MuxKeyWithDefault #(.NR_KEY(5), .KEY_LEN(5), .DATA_LEN(4)) u_mux3 (
     .out(o_ALUctr),
-    .key({alu_copyimm, alu_plus, alu_plus_and_signedext, alu_ebreak}),
+    .key({alu_copyimm, alu_plus, alu_plus_and_signedext, alu_sub, alu_ebreak}),
     .default_out(4'b1111),
     .lut({
-      4'b1000, 4'b0011,
-      4'b0100, 4'b0000,
-      4'b0010, 4'b1001,
-      4'b0001, 4'b1110
+      5'b10000, 4'b0011,
+      5'b01000, 4'b0000,
+      5'b00100, 4'b1001,
+      5'b00010, 4'b1000,
+      5'b00001, 4'b1110
     })
   );
+
+  MuxKeyWithDefault #(.NR_KEY(3), .KEY_LEN(3), .DATA_LEN(3)) u_mux4 (
+    .out(o_Branch),
+    .key({inst_jal, inst_jalr, inst_bne}),
+    .default_out(3'b000),
+    .lut({
+      3'b100, 3'b001,
+      3'b010, 3'b010,
+      3'b001, 3'b101
+    })
+  );
+
 endmodule
