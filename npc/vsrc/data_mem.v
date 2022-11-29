@@ -69,7 +69,7 @@ module ysyx_22050710_datamem (
              3'b011: o_data = {{48{1'b0}}, rdata[15:0]};
              3'b100: o_data = {{32{rdata[31]}}, rdata[31:0]};
              3'b101: o_data = {{32{1'b0}}, rdata[31:0]};
-             default: o_data = rdata;
+             default: o_data <= rdata;
           endcase
         end
       end
