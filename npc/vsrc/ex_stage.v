@@ -7,17 +7,47 @@ module ysyx_22050710_exu (
   input i_ALUAsrc,
   input [1:0] i_ALUBsrc,
   input [3:0] i_ALUctr,
-  output o_Less, o_Zero,
-  output [63:0] o_ALUresult
+  input [2:0] i_Branch,
+  output [63:0] o_ALUresult,
+  output [63:0] o_nextpc
 );
 
-  assign o_Zero = ~(|o_ALUresult);
-  assign o_Less = o_ALUresult[63] == 1 ? 1'b1 : 1'b0;
+  assign o_nextpc = (PCBsrc ? i_rs1 : i_pc) + (PCAsrc ? i_imm : 64'd4);
+  wire PCAsrc, PCBsrc;
+  MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(1)) u_mux0 (
+    .out(PCAsrc),
+    .key(i_Branch),
+    .lut({
+      3'b000, 1'b0,
+      3'b001, 1'b1,
+      3'b010, 1'b1,
+      3'b100, Zero == 1 ? 1'b1 : 1'b0,
+      3'b101, Zero == 1 ? 1'b0 : 1'b1,
+      3'b110, Less == 1 ? 1'b1 : 1'b0,
+      3'b111, Less == 1 ? 1'b0 : 1'b1
+    })
+  );
+  MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(1)) u_mux1 (
+    .out(PCBsrc),
+    .key(i_Branch),
+    .lut({
+      3'b000, 1'b0,
+      3'b001, 1'b0,
+      3'b010, 1'b1,
+      3'b100, 1'b0,
+      3'b101, 1'b0,
+      3'b110, 1'b0,
+      3'b111, 1'b0
+    })
+  );
+
+  wire Zero = ~(|o_ALUresult);
+  wire Less = o_ALUresult[63] == 1 ? 1'b1 : 1'b0;
 
   // adder
   wire [63:0] adder_result, sub_result, add_a, add_b;
   assign add_a = i_ALUAsrc ? i_pc : i_rs1;
-  MuxKey #(.NR_KEY(3), .KEY_LEN(2), .DATA_LEN(64)) u_mux0 (
+  MuxKey #(.NR_KEY(3), .KEY_LEN(2), .DATA_LEN(64)) u_mux2 (
     .out(add_b),
     .key(i_ALUBsrc),
     .lut({
@@ -37,7 +67,7 @@ module ysyx_22050710_exu (
   wire [63:0] adder_result_cut32_and_ext;
   assign adder_result_cut32_and_ext = {{32{adder_result[31]}}, adder_result[31:0]};
 
-  MuxKey #(.NR_KEY(5), .KEY_LEN(4), .DATA_LEN(64)) u_mux1 (
+  MuxKey #(.NR_KEY(5), .KEY_LEN(4), .DATA_LEN(64)) u_mux3 (
     .out(o_ALUresult),
     .key(i_ALUctr),
     .lut({
