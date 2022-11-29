@@ -1,6 +1,7 @@
 // ysyx_22050710
 
 import "DPI-C" function void npc_pmem_read(input longint raddr, output longint rdata);
+import "DPI-C" function void npc_pmem_read2(input longint raddr, output longint rdata);
 import "DPI-C" function void npc_pmem_write(input longint waddr, input longint wdata, input byte wmask);
 
 module ysyx_22050710_datamem (
@@ -54,7 +55,7 @@ module ysyx_22050710_datamem (
       end
       else begin
         if (i_MemOP != 3'b111) begin
-          npc_pmem_read(raddr, rdata);
+          npc_pmem_read2(raddr, rdata);
           /* case (i_MemOP) */
           /*    3'b000: o_data = {{56{rdata[7]}}, rdata[7:0]}; */
           /*    3'b001: o_data = {{56{1'b0}}, rdata[7:0]}; */
