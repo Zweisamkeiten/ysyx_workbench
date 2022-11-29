@@ -12,7 +12,7 @@ module ysyx_22050710_datamem (
   output [63:0] o_data
 );
 
-  wire reg [63:0] rdata, wdata;
+  reg [63:0] rdata, wdata;
   wire [63:0] raddr, waddr;
   assign o_data = rdata;
   assign wdata = i_data;
