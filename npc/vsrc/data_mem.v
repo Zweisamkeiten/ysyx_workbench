@@ -34,8 +34,9 @@ module ysyx_22050710_datamem (
     })
   );
 
+  wire [63:0] out_temp;
   MuxKeyWithDefault #(.NR_KEY(1), .KEY_LEN(3), .DATA_LEN(64)) u_mux23333 (
-    .out(o_data),
+    .out(out_temp),
     .key(i_MemOP),
     .default_out(rdata),
     .lut({
@@ -50,6 +51,7 @@ module ysyx_22050710_datamem (
     })
   );
   /* assign o_data = rdata; */
+  assign o_data = out_temp;
 
   always @(posedge i_clk) begin
     if (!i_rst) begin
