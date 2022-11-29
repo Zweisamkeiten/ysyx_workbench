@@ -54,7 +54,7 @@ module ysyx_22050710_datamem (
       end
       else begin
         if (i_MemOP != 3'b111) npc_pmem_read(raddr, rdata);
-        $display(rdata[7:0]);
+        $display({{32{rdata[31]}}, rdata[31:0]});
       end
     end
   end
