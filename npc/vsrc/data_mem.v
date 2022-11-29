@@ -61,7 +61,7 @@ module ysyx_22050710_datamem (
   /*   }) */
   /* ); */
 
-  always_comb @(posedge i_clk) begin
+  always @(posedge i_clk) begin
     if (!i_rst) begin
       if (i_WrEn) begin
         if (i_MemOP != 3'b111) npc_pmem_write(waddr, wdata, wmask);
