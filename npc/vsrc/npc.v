@@ -4,15 +4,43 @@ module ysyx_22050710_npc (
   input i_rst
 );
 
-  wire [31:0] inst_test;
+  wire [31:0] inst;
   wire [63:0] pc;
   wire [31:0] unused;
   ysyx_22050710_ifu u_ifu (
     .i_clk(i_clk),
     .i_rst(i_rst),
     .i_pc(pc),
-    .o_inst(inst_test),
+    .o_inst(inst),
     .o_unused(unused)
+  );
+
+  wire PCAsrc, PCBsrc;
+  MuxKey #(.NR_KEY(7), .KEY_LEN(1), .DATA_LEN(3)) u_mux0 (
+    .out(PCAsrc),
+    .key(Branch),
+    .lut({
+      3'b000, 1'b0,
+      3'b001, 1'b1,
+      3'b010, 1'b1,
+      3'b100, Zero == 1 ? 1'b1 : 1'b0,
+      3'b101, Zero == 1 ? 1'b0 : 1'b1,
+      3'b110, Less == 1 ? 1'b1 : 1'b0,
+      3'b111, Less == 1 ? 1'b0 : 1'b1
+    })
+  );
+  MuxKey #(.NR_KEY(7), .KEY_LEN(1), .DATA_LEN(3)) u_mux1 (
+    .out(PCBsrc),
+    .key(Branch),
+    .lut({
+      3'b000, 1'b0,
+      3'b001, 1'b0,
+      3'b010, 1'b1,
+      3'b100, 1'b0,
+      3'b101, 1'b0,
+      3'b110, 1'b0,
+      3'b111, 1'b0
+    })
   );
 
   wire [63:0] pc_adder = (PCBsrc ? rs1 : pc) + (PCAsrc ? imm : 64'd4);
@@ -34,26 +62,29 @@ module ysyx_22050710_npc (
 
   wire [63:0] imm;
   wire [4:0] ra, rb, rd;
+  wire [2:0] Branch;
   wire RegWr, ALUAsrc;
   wire [1:0] ALUBsrc;
   wire [3:0] ALUctr;
-  wire PCAsrc, PCBsrc;
   wire MemtoReg, MemWr;
   wire [2:0] MemOP;
   ysyx_22050710_idu u_idu (
-    .i_inst(inst_test),
+    .i_inst(inst),
     .o_imm(imm),
     .o_ra(ra), .o_rb(rb), .o_rd(rd),
+    .o_Branch(Branch),
     .o_RegWr(RegWr),
     .o_ALUAsrc(ALUAsrc), .o_ALUBsrc(ALUBsrc), .o_ALUctr(ALUctr),
-    .o_PCAsrc(PCAsrc), .o_PCBsrc(PCBsrc),
     .o_MemtoReg(MemtoReg), .o_MemWr(MemWr), .o_MemOP(MemOP)
   );
 
+  wire Less, Zero;
   ysyx_22050710_exu u_exu (
     .i_rs1(rs1), .i_rs2(rs2),
     .i_imm(imm), .i_pc(pc),
-    .i_ALUAsrc(ALUAsrc), .i_ALUBsrc(ALUBsrc), .i_ALUctr(ALUctr), .o_ALUresult(ALUresult)
+    .i_ALUAsrc(ALUAsrc), .i_ALUBsrc(ALUBsrc), .i_ALUctr(ALUctr),
+    .o_Less(Less), .o_Zero(Zero),
+    .o_ALUresult(ALUresult)
   );
 
   wire [63:0] mem_out_data;
