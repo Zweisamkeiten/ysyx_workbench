@@ -53,7 +53,7 @@ module ysyx_22050710_idu (
   wire inst_type_i = |{inst_lw, inst_addi, inst_sltiu, inst_addiw, inst_ebreak, inst_jalr};
   wire inst_type_u = |{inst_lui, inst_auipc};
   wire inst_type_s = |{inst_sw, inst_sd};
-  wire inst_type_b = |{isnt_beq, inst_bne};
+  wire inst_type_b = |{inst_beq, inst_bne};
   wire inst_type_j = |{inst_jal};
 
   wire [2:0] extop;
