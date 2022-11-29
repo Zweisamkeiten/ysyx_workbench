@@ -38,7 +38,7 @@ module ysyx_22050710_exu (
     .lut({
       4'b0011, copy_result,
       4'b0000, adder_result,
-      4'b1110, adder_result_cut32_and_ext
+      4'b1001, adder_result_cut32_and_ext
     })
   );
 
