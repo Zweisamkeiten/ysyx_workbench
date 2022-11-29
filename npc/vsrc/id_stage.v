@@ -127,7 +127,7 @@ module ysyx_22050710_idu (
   assign alu_sub = |{inst_bne};
   assign alu_ebreak = inst_ebreak;
 
-  MuxKeyWithDefault #(.NR_KEY(5), .KEY_LEN(4), .DATA_LEN(4)) u_mux3 (
+  MuxKeyWithDefault #(.NR_KEY(5), .KEY_LEN(5), .DATA_LEN(4)) u_mux3 (
     .out(o_ALUctr),
     .key({alu_copyimm, alu_plus, alu_plus_and_signedext, alu_sub, alu_ebreak}),
     .default_out(4'b1111),
