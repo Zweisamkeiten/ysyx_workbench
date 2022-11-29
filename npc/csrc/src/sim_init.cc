@@ -46,7 +46,6 @@ extern "C" void single_cycle() {
   tfp->dump(contextp->time());
   top->i_clk = 1;
   top->eval();
-  printf("ALUresult: 0x%016lx\n", top->rootp->ysyx_22050710_npc__DOT__ALUresult);
   contextp->timeInc(1);
   tfp->dump(contextp->time());
 }
