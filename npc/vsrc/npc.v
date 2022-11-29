@@ -16,7 +16,7 @@ module ysyx_22050710_npc (
   );
 
   wire PCAsrc, PCBsrc;
-  MuxKey #(.NR_KEY(7), .KEY_LEN(1), .DATA_LEN(3)) u_mux0 (
+  MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(1)) u_mux0 (
     .out(PCAsrc),
     .key(Branch),
     .lut({
@@ -29,7 +29,7 @@ module ysyx_22050710_npc (
       3'b111, Less == 1 ? 1'b0 : 1'b1
     })
   );
-  MuxKey #(.NR_KEY(7), .KEY_LEN(1), .DATA_LEN(3)) u_mux1 (
+  MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(1)) u_mux1 (
     .out(PCBsrc),
     .key(Branch),
     .lut({
