@@ -14,6 +14,7 @@ module ysyx_22050710_datamem (
 
   wire [63:0] rdata, wdata;
   wire [63:0] raddr, waddr;
+  assign o_data = rdata;
   assign wdata = i_data;
   assign raddr = i_addr;
   assign waddr = i_addr;
