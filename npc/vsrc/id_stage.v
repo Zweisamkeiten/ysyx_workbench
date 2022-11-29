@@ -127,7 +127,7 @@ module ysyx_22050710_idu (
   wire alu_plus = |{inst_auipc, inst_jal, inst_jalr, inst_lw, inst_sw, inst_addi, inst_add, inst_sd};
   wire alu_plus_and_signedext = |{inst_addiw, inst_addw};
   wire alu_sub = |{inst_bne, inst_sub};
-  wire alu_sltu = |{inst_sltiu}
+  wire alu_sltu = |{inst_sltiu};
   wire alu_ebreak = inst_ebreak;
 
   MuxKeyWithDefault #(.NR_KEY(6), .KEY_LEN(6), .DATA_LEN(4)) u_mux3 (
