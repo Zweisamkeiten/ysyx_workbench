@@ -12,7 +12,7 @@ module ysyx_22050710_datamem (
   output [63:0] o_data
 );
 
-  reg [63:0] rdata, wdata;
+  reg [63:0] rdata; wire [63:0] wdata;
   wire [63:0] raddr, waddr;
   assign o_data = rdata;
   assign wdata = i_data;
@@ -37,7 +37,7 @@ module ysyx_22050710_datamem (
   always @(*) begin
     if (!i_rst & i_MemOP != 3'b111) npc_pmem_read(raddr, rdata);
     else rdata = 64'b0;
-    if (i_WrEn) npc_pmem_write(waddr, wdata, wmask);
+    if (i_WrEn & i_MemOP != 3'b111) npc_pmem_write(waddr, wdata, wmask);
   end
   
 endmodule
