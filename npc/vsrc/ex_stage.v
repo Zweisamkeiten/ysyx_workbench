@@ -37,13 +37,14 @@ module ysyx_22050710_exu (
   wire [63:0] adder_result_cut32_and_ext;
   assign adder_result_cut32_and_ext = {{32{adder_result[31]}}, adder_result[31:0]};
 
-  MuxKey #(.NR_KEY(4), .KEY_LEN(4), .DATA_LEN(64)) u_mux1 (
+  MuxKey #(.NR_KEY(5), .KEY_LEN(4), .DATA_LEN(64)) u_mux1 (
     .out(o_ALUresult),
     .key(i_ALUctr),
     .lut({
       4'b0011, copy_result,
       4'b0000, adder_result,
       4'b1001, adder_result_cut32_and_ext,
+      4'b1010, sub_result[63] == 1 ? 64'b1 : 64'b0,
       4'b1000, sub_result
     })
   );
