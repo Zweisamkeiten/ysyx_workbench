@@ -4,7 +4,7 @@ import "DPI-C" function void npc_pmem_read(input longint raddr, output longint r
 import "DPI-C" function void npc_pmem_write(input longint waddr, input longint wdata, input byte wmask);
 
 module ysyx_22050710_datamem (
-  input i_clk, i_rst,
+  input i_rst,
   input [63:0] i_addr,
   input [63:0] i_data,
   input [2:0] i_MemOP,
@@ -12,7 +12,7 @@ module ysyx_22050710_datamem (
   output [63:0] o_data
 );
 
-  wire [63:0] rdata, wdata;
+  reg [63:0] rdata; wire [63:0] wdata;
   wire [63:0] raddr, waddr;
   assign o_data = rdata;
   assign wdata = i_data;
@@ -34,15 +34,10 @@ module ysyx_22050710_datamem (
     })
   );
 
-  always @(posedge i_clk) begin
-    if (!i_rst) begin
-      if (i_WrEn) begin
-        if (i_MemOP != 3'b111) npc_pmem_write(waddr, wdata, wmask);
-      end
-      else begin
-        if (i_MemOP != 3'b111) npc_pmem_read(raddr, rdata);
-      end
-    end
+  always @(*) begin
+    if (!i_rst & i_MemOP != 3'b111) npc_pmem_read(raddr, rdata);
+    else rdata = 64'b0;
+    if (i_WrEn & i_MemOP != 3'b111) npc_pmem_write(waddr, wdata, wmask);
   end
   
 endmodule

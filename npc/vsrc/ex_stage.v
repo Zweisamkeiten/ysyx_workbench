@@ -8,8 +8,12 @@ module ysyx_22050710_exu (
   input [1:0] i_ALUBsrc,
   input [3:0] i_ALUctr,
   input [2:0] i_Branch,
+  input [2:0] i_MemOP,
+  input i_MemtoReg,
+  input [63:0] i_rdata,
   output [63:0] o_ALUresult,
-  output [63:0] o_nextpc
+  output [63:0] o_nextpc,
+  output [63:0] o_busW
 );
 
   assign o_nextpc = (PCBsrc ? i_rs1 : i_pc) + (PCAsrc ? i_imm : 64'd4);
@@ -76,6 +80,22 @@ module ysyx_22050710_exu (
       4'b1001, adder_result_cut32_and_ext,
       4'b1010, sub_result[63] == 1 ? 64'b1 : 64'b0,
       4'b1000, sub_result
+    })
+  );
+
+  wire [63:0] rdata;
+  assign o_busW = i_MemtoReg ? rdata : o_ALUresult;
+  MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(64)) u_mux4 (
+    .out(rdata),
+    .key(i_MemOP),
+    .lut({
+      3'b000, {{56{i_rdata[7]}}, i_rdata[7:0]},
+      3'b001, {{56{1'b0}}, i_rdata[7:0]},
+      3'b010, {{48{i_rdata[15]}}, i_rdata[15:0]},
+      3'b011, {{48{1'b0}}, i_rdata[15:0]},
+      3'b100, {{32{i_rdata[31]}}, i_rdata[31:0]},
+      3'b101, {{32{i_rdata[31]}}, i_rdata[31:0]},
+      3'b110, i_rdata
     })
   );
 
