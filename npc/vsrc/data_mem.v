@@ -63,7 +63,7 @@ module ysyx_22050710_datamem (
     end
   end
 
-  always @(posedge i_rdclk) begin
+  always @(negedge i_rdclk) begin
     case (i_MemOP) 
        3'b000: o_data <= {{56{rdata[7]}}, rdata[7:0]};
        3'b001: o_data <= {{56{1'b0}}, rdata[7:0]};
