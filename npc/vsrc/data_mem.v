@@ -49,6 +49,7 @@ module ysyx_22050710_datamem (
       /* 3'b110, rdata[63:0] */
   /*   }) */
   /* ); */
+  assign o_data = rdata;
 
   always @(posedge i_clk) begin
     if (!i_rst) begin
