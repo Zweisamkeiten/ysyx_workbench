@@ -104,7 +104,7 @@ module ysyx_22050710_npc (
   wire [63:0] mem_data;
   MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(64)) u_mux23333 (
     .out(mem_data),
-    .key(i_MemOP),
+    .key(MemOP),
     .lut({
       3'b000, {{56{mem_out_data[7]}}, mem_out_data[7:0]},
       3'b001, {{56{1'b0}}, mem_out_data[7:0]},
