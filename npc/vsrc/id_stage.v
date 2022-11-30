@@ -37,6 +37,8 @@ module ysyx_22050710_idu (
   wire inst_bne    = (opcode[6:0] == 7'b1100011) & (funct3[2:0] == 3'b001);
   wire inst_bltu   = (opcode[6:0] == 7'b1100011) & (funct3[2:0] == 3'b100);
   wire inst_bgeu   = (opcode[6:0] == 7'b1100011) & (funct3[2:0] == 3'b100);
+  wire inst_lh     = (opcode[6:0] == 7'b0000011) & (funct3[2:0] == 3'b001);
+  wire inst_lhu    = (opcode[6:0] == 7'b0000011) & (funct3[2:0] == 3'b101);
   wire inst_lw     = (opcode[6:0] == 7'b0000011) & (funct3[2:0] == 3'b010);
   wire inst_lbu    = (opcode[6:0] == 7'b0000011) & (funct3[2:0] == 3'b100);
   wire inst_sb     = (opcode[6:0] == 7'b0100011) & (funct3[2:0] == 3'b000);
@@ -46,6 +48,7 @@ module ysyx_22050710_idu (
   wire inst_sltiu  = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b011);
   wire inst_add    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b000) & (funct7[6:0] == 7'b0000000);
   wire inst_sub    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b000) & (funct7[6:0] == 7'b0100000);
+  wire inst_or     = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b110) & (funct7[6:0] == 7'b0000000);
   wire inst_ebreak = (opcode[6:0] == 7'b1110011) & (funct3[2:0] == 3'b000);
 
   // RV64I
@@ -58,18 +61,21 @@ module ysyx_22050710_idu (
   // RV64M
   wire inst_remw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b110) & (funct7[6:0] == 7'b0000001);
 
-  wire inst_type_r = |{inst_add, inst_sub, inst_addw, inst_remw};
-  wire inst_type_i = |{inst_jalr, inst_lw, inst_lbu, inst_addi, inst_sltiu, inst_addiw, inst_ld, inst_slli, inst_ebreak};
-  wire inst_type_u = |{inst_lui, inst_auipc};
-  wire inst_type_s = |{inst_sb, inst_sh, inst_sw, inst_sd};
-  wire inst_type_b = |{inst_beq, inst_bne, inst_bltu, inst_bgeu};
+  wire inst_type_r = |{inst_add,    inst_sub,   inst_or,    inst_addw,  inst_remw};
+  wire inst_type_i = |{inst_jalr,   inst_lh,    inst_lhu,   inst_lw,    inst_lbu,
+                       inst_addi,   inst_sltiu, inst_addiw, inst_ld,    inst_slli,
+                       inst_ebreak
+                       };
+  wire inst_type_u = |{inst_lui,    inst_auipc};
+  wire inst_type_s = |{inst_sb,     inst_sh,    inst_sw,    inst_sd};
+  wire inst_type_b = |{inst_beq,    inst_bne,   inst_bltu,  inst_bgeu};
   wire inst_type_j = |{inst_jal};
 
   wire [2:0] extop;
   wire [5:0] inst_type = {inst_type_r, inst_type_i, inst_type_u, inst_type_s, inst_type_b, inst_type_j};
 
   // Load类指令
-  wire inst_load  = |{inst_lw, inst_lbu, inst_ld};
+  wire inst_load  = |{inst_lh, inst_lhu, inst_lw, inst_lbu, inst_ld};
   // Store类指令
   wire inst_store = |{inst_sb, inst_sh, inst_sw, inst_sd};
 
@@ -112,16 +118,16 @@ module ysyx_22050710_idu (
   /* 为10时选择常数4 用于跳转时计算返回地址PC+4 */
   assign o_ALUBsrc  = {|{inst_jal, inst_jalr}, |inst_type[4:2] & !inst_jalr};
 
-  assign o_MemtoReg = |{inst_lw, inst_lbu, inst_ld};
+  assign o_MemtoReg = |{inst_load};
   assign o_MemWr    = inst_type_s;
 
   // 写时可以不用注意符号拓展, 都放在带符号中''
   wire signed_byte        = |{inst_sb};
-  wire signed_halfword    = |{inst_sh};
+  wire signed_halfword    = |{inst_sh, inst_lh};
   wire signed_word        = |{inst_lw, inst_sw};
   wire signed_doubleword  = |{inst_ld, inst_sd};
   wire unsigned_byte      = |{inst_lbu};
-  wire unsigned_halfword  = |{1'b0};
+  wire unsigned_halfword  = |{inst_lhu};
   wire unsigned_word      = |{1'b0};
  
   MuxKeyWithDefault #(.NR_KEY(7), .KEY_LEN(7), .DATA_LEN(3)) u_mux2 (
@@ -146,22 +152,24 @@ module ysyx_22050710_idu (
                             };
   wire alu_sub          = |{inst_type_b, inst_sub};
   wire alu_sltu         = |{inst_sltiu};
+  wire alu_or           = |{inst_or};
   wire alu_sll          = |{inst_slli};
   wire alu_singed_rem   = |{inst_remw};
   wire alu_ebreak       = inst_ebreak;
 
-  MuxKeyWithDefault #(.NR_KEY(7), .KEY_LEN(7), .DATA_LEN(4)) u_mux3 (
+  MuxKeyWithDefault #(.NR_KEY(8), .KEY_LEN(8), .DATA_LEN(4)) u_mux3 (
     .out(o_ALUctr),
-    .key({alu_copyimm, alu_plus, alu_sub, alu_sltu, alu_sll, alu_singed_rem, alu_ebreak}),
-    .default_out(4'b1111),
+    .key({alu_copyimm, alu_plus, alu_sub, alu_sltu, alu_or, alu_sll, alu_singed_rem, alu_ebreak}),
+    .default_out(4'b1111), // invalid
     .lut({
-      7'b1000000, 4'b0011,
-      7'b0100000, 4'b0000,
-      7'b0010000, 4'b1000,
-      7'b0001000, 4'b1010,
-      7'b0000100, 4'b1100,
-      7'b0000010, 4'b1101,
-      7'b0000001, 4'b1110
+      8'b10000000, 4'b0011,  // copy imm
+      8'b01000000, 4'b0000,  // add a + b
+      8'b00100000, 4'b1000,  // sub a - b
+      8'b00010000, 4'b1010,  // sltu a <u b
+      8'b00001000, 4'b0110,  // or a | b
+      8'b00000100, 4'b0001,  // sll <<
+      8'b00000010, 4'b1101,  // signed rem %
+      8'b00000001, 4'b1110   // ebreak
     })
   );
 
