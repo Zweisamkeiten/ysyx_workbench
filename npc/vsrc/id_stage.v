@@ -77,6 +77,10 @@ module ysyx_22050710_idu (
 
   // RV32M
   wire inst_mul    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b000) & (funct7[6:0] == 7'b0000001);
+  wire inst_div    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b100) & (funct7[6:0] == 7'b0000001);
+  wire inst_divu   = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b101) & (funct7[6:0] == 7'b0000001);
+  wire inst_rem    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b110) & (funct7[6:0] == 7'b0000001);
+  wire inst_remu   = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b111) & (funct7[6:0] == 7'b0000001);
 
   // RV64M
   wire inst_mulw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b000) & (funct7[6:0] == 7'b0000001);
@@ -85,8 +89,8 @@ module ysyx_22050710_idu (
 
   wire inst_type_r = |{inst_add,    inst_sub,   inst_sll,   inst_slt,   inst_sltu,
                        inst_or,     inst_and,   inst_addw,  inst_subw,  inst_mul,
-                       inst_sllw,   inst_srlw,  inst_sraw,  inst_mulw,  inst_divw,
-                       inst_remw
+                       inst_div,    inst_divu,  inst_rem,   inst_remu,  inst_sllw,
+                       inst_srlw,   inst_sraw,  inst_mulw,  inst_divw,  inst_remw
                        };
   wire inst_type_i = |{inst_jalr,   inst_lh,    inst_lhu,   inst_lw,    inst_lbu,
                        inst_addi,   inst_xori,  inst_andi,  inst_sltiu, inst_addiw,
@@ -189,33 +193,37 @@ module ysyx_22050710_idu (
   wire alu_srl          = |{inst_srli, inst_srliw, inst_srlw};
   wire alu_sra          = |{inst_srai, inst_sraiw, inst_sraw};
   wire alu_singed_mul   = |{inst_mul, inst_mulw};
-  wire alu_singed_div   = |{inst_divw};
-  wire alu_singed_rem   = |{inst_remw};
+  wire alu_singed_div   = |{inst_div, inst_divw};
+  wire alu_unsinged_div = |{inst_divu};
+  wire alu_singed_rem   = |{inst_rem, inst_remw};
+  wire alu_unsinged_rem = |{inst_remu};
   wire alu_ebreak       = inst_ebreak;
 
-  MuxKeyWithDefault #(.NR_KEY(15), .KEY_LEN(15), .DATA_LEN(5)) u_mux3 (
+  MuxKeyWithDefault #(.NR_KEY(17), .KEY_LEN(17), .DATA_LEN(5)) u_mux3 (
     .out(o_ALUctr),
-    .key({alu_copyimm,    alu_plus,       alu_sub,        alu_slt,  alu_sltu,
-          alu_xor,        alu_and,        alu_or,         alu_sll,  alu_srl,  alu_sra,
-          alu_singed_mul, alu_singed_div, alu_singed_rem,
+    .key({alu_copyimm,    alu_plus,       alu_sub,          alu_slt,        alu_sltu,
+          alu_xor,        alu_and,        alu_or,           alu_sll,        alu_srl,  alu_sra,
+          alu_singed_mul, alu_singed_div, alu_unsinged_div, alu_singed_rem, alu_unsinged_rem,
           alu_ebreak}),
     .default_out(5'b11111), // invalid
     .lut({
-      15'b100000000000000, 5'b00011,  // copy imm
-      15'b010000000000000, 5'b00000,  // add a + b
-      15'b001000000000000, 5'b01000,  // sub a - b
-      15'b000100000000000, 5'b00010,  // slt  a <s b
-      15'b000010000000000, 5'b01010,  // sltu a <u b
-      15'b000001000000000, 5'b00100,  // xor a ^ b
-      15'b000000100000000, 5'b00111,  // and a & b
-      15'b000000010000000, 5'b00110,  // or a | b
-      15'b000000001000000, 5'b00001,  // sll <<
-      15'b000000000100000, 5'b00101,  // srl >>
-      15'b000000000010000, 5'b01101,  // sra >>>
-      15'b000000000001000, 5'b11100,  // signed mul *
-      15'b000000000000100, 5'b11011,  // signed div /
-      15'b000000000000010, 5'b11101,  // signed rem %
-      15'b000000000000001, 5'b11110   // ebreak
+      17'b10000000000000000, 5'b00011,  // copy imm
+      17'b01000000000000000, 5'b00000,  // add a + b
+      17'b00100000000000000, 5'b01000,  // sub a - b
+      17'b00010000000000000, 5'b00010,  // slt  a <s b
+      17'b00001000000000000, 5'b01010,  // sltu a <u b
+      17'b00000100000000000, 5'b00100,  // xor a ^ b
+      17'b00000010000000000, 5'b00111,  // and a & b
+      17'b00000001000000000, 5'b00110,  // or a | b
+      17'b00000000100000000, 5'b00001,  // sll <<
+      17'b00000000010000000, 5'b00101,  // srl >>
+      17'b00000000001000000, 5'b01101,  // sra >>>
+      17'b00000000000100000, 5'b11100,  // signed mul *
+      17'b00000000000010000, 5'b11011,  // signed   div /
+      17'b00000000000001000, 5'b11010,  // unsigned div /
+      17'b00000000000000100, 5'b11101,  // signed   rem %
+      17'b00000000000000010, 5'b11001,  // unsigned rem %
+      17'b00000000000000001, 5'b11110   // ebreak
     })
   );
 
