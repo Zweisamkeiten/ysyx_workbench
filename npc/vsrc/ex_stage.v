@@ -45,7 +45,7 @@ module ysyx_22050710_exu (
     })
   );
 
-  wire Zero = ~(|o_ALUresult);
+  wire Zero = ~(|sub_result);
   wire Less;
   MuxKey #(.NR_KEY(2), .KEY_LEN(5), .DATA_LEN(1)) u_mux2 (
     .out(Less),
@@ -55,7 +55,6 @@ module ysyx_22050710_exu (
       5'b01010, unsigned_Less
     })
   );
-
   wire signed_Less = carry == 0
                    ? (sub_result[63] == 1 ? 1'b1 : 1'b0)
                    : (sub_result[63] == 0 ? 1'b1 : 1'b0);
