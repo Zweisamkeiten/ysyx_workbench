@@ -178,28 +178,28 @@ module ysyx_22050710_idu (
   wire alu_singed_rem   = |{inst_remw};
   wire alu_ebreak       = inst_ebreak;
 
-  MuxKeyWithDefault #(.NR_KEY(14), .KEY_LEN(14), .DATA_LEN(4)) u_mux3 (
+  MuxKeyWithDefault #(.NR_KEY(14), .KEY_LEN(14), .DATA_LEN(5)) u_mux3 (
     .out(o_ALUctr),
     .key({alu_copyimm,    alu_plus,       alu_sub,        alu_sltu,
           alu_xor,        alu_and,        alu_or,         alu_sll,  alu_srl,  alu_sra,
           alu_singed_mul, alu_singed_div, alu_singed_rem,
           alu_ebreak}),
-    .default_out(4'b1111), // invalid
+    .default_out(5'b11111), // invalid
     .lut({
-      14'b10000000000000, 4'b0011,  // copy imm
-      14'b01000000000000, 4'b0000,  // add a + b
-      14'b00100000000000, 4'b1000,  // sub a - b
-      14'b00010000000000, 4'b1010,  // sltu a <u b
-      14'b00001000000000, 4'b0100,  // xor a ^ b
-      14'b00000100000000, 4'b0111,  // and a & b
-      14'b00000010000000, 4'b0110,  // or a | b
-      14'b00000001000000, 4'b0001,  // sll <<
-      14'b00000000100000, 4'b0101,  // srl >>
-      14'b00000000010000, 4'b0101,  // sra >>>
-      14'b00000000001000, 4'b1100,  // signed mul *
-      14'b00000000000100, 4'b1011,  // signed div /
-      14'b00000000000010, 4'b1101,  // signed rem %
-      14'b00000000000001, 4'b1110   // ebreak
+      14'b10000000000000, 5'b00011,  // copy imm
+      14'b01000000000000, 5'b00000,  // add a + b
+      14'b00100000000000, 5'b01000,  // sub a - b
+      14'b00010000000000, 5'b01010,  // sltu a <u b
+      14'b00001000000000, 5'b00100,  // xor a ^ b
+      14'b00000100000000, 5'b00111,  // and a & b
+      14'b00000010000000, 5'b00110,  // or a | b
+      14'b00000001000000, 5'b00001,  // sll <<
+      14'b00000000100000, 5'b00101,  // srl >>
+      14'b00000000010000, 5'b01101,  // sra >>>
+      14'b00000000001000, 5'b11100,  // signed mul *
+      14'b00000000000100, 5'b11011,  // signed div /
+      14'b00000000000010, 5'b11101,  // signed rem %
+      14'b00000000000001, 5'b11110   // ebreak
     })
   );
 
