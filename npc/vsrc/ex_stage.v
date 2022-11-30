@@ -98,7 +98,10 @@ module ysyx_22050710_exu (
   // sll
   wire [63:0] sll_result = src_a << src_b;
 
-  MuxKey #(.NR_KEY(11), .KEY_LEN(4), .DATA_LEN(64)) u_mux3 (
+  // srl
+  wire [63:0] srl_result = src_a >> src_b;
+
+  MuxKey #(.NR_KEY(12), .KEY_LEN(4), .DATA_LEN(64)) u_mux3 (
     .out(aluresult),
     .key(i_ALUctr),
     .lut({
@@ -110,6 +113,7 @@ module ysyx_22050710_exu (
       4'b0111, and_result,
       4'b0110, or_result,
       4'b0001, sll_result,
+      4'b0101, srl_result,
       4'b1100, signed_mul_result,
       4'b1011, signed_div_result,
       4'b1101, signed_rem_result
