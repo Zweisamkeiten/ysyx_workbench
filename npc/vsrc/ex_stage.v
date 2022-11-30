@@ -46,7 +46,16 @@ module ysyx_22050710_exu (
   );
 
   wire Zero = ~(|o_ALUresult);
-  wire Less = signed_Less | unsigned_Less;
+  wire Less;
+  MuxKey #(.NR_KEY(2), .KEY_LEN(5), .DATA_LEN(1)) u_mux2 (
+    .out(Less),
+    .key(i_ALUctr),
+    .lut({
+      5'b00010, signed_Less,
+      5'b01010, unsigned_Less
+    })
+  );
+
   wire signed_Less = carry == 0
                    ? (sub_result[63] == 1 ? 1'b1 : 1'b0)
                    : (sub_result[63] == 0 ? 1'b1 : 1'b0);
@@ -65,7 +74,7 @@ module ysyx_22050710_exu (
   // ALU
   wire [63:0] src_a, src_b;
   assign src_a = i_ALUAsrc ? i_pc : src1;
-  MuxKey #(.NR_KEY(3), .KEY_LEN(2), .DATA_LEN(64)) u_mux2 (
+  MuxKey #(.NR_KEY(3), .KEY_LEN(2), .DATA_LEN(64)) u_mux3 (
     .out(src_b),
     .key(i_ALUBsrc),
     .lut({
@@ -117,7 +126,7 @@ module ysyx_22050710_exu (
                                   ? {{32{src_a[31]}}, $signed(src_a[31:0]) >>> $signed(src_b[5:0])}
                                   : $signed(src_a) >>> $signed(src_b[5:0]);
 
-  MuxKey #(.NR_KEY(16), .KEY_LEN(5), .DATA_LEN(64)) u_mux3 (
+  MuxKey #(.NR_KEY(16), .KEY_LEN(5), .DATA_LEN(64)) u_mux4 (
     .out(aluresult),
     .key(i_ALUctr),
     .lut({
@@ -142,7 +151,7 @@ module ysyx_22050710_exu (
 
   wire [63:0] rdata;
   assign o_busW = i_MemtoReg ? rdata : o_ALUresult;
-  MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(64)) u_mux4 (
+  MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(64)) u_mux5 (
     .out(rdata),
     .key(i_MemOP),
     .lut({
