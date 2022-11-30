@@ -86,13 +86,16 @@ module ysyx_22050710_exu (
   // signed rem
   wire signed [63:0] signed_rem_result = $signed(src_a) % $signed(src_b);
 
+  // and
+  wire [63:0] and_result = src_a & src_b;
+
   // or
   wire [63:0] or_result = src_a | src_b;
 
   // sll
   wire [63:0] sll_result = src_a << src_b;
 
-  MuxKey #(.NR_KEY(9), .KEY_LEN(4), .DATA_LEN(64)) u_mux3 (
+  MuxKey #(.NR_KEY(10), .KEY_LEN(4), .DATA_LEN(64)) u_mux3 (
     .out(aluresult),
     .key(i_ALUctr),
     .lut({
@@ -100,6 +103,7 @@ module ysyx_22050710_exu (
       4'b0000, adder_result,
       4'b1010, sub_result[63] == 1 ? 64'b1 : 64'b0, // sltu
       4'b1000, sub_result,
+      4'b0111, and_result,
       4'b0110, or_result,
       4'b0001, sll_result,
       4'b1100, signed_mul_result,
