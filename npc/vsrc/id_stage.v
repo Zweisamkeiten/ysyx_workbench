@@ -144,7 +144,7 @@ module ysyx_22050710_idu (
 
   assign o_MemtoReg = |{inst_load};
   assign o_MemWr    = inst_store;
-  assign o_MemWr    = inst_load;
+  assign o_MemRd    = inst_load;
 
   // 写时可以不用注意符号拓展, 都放在带符号中''
   wire signed_byte        = |{inst_sb};
