@@ -157,6 +157,6 @@ module ysyx_22050710_exu (
   end
 
   always @(*) begin
-    $display("%h", sra_result);
+    $display("%h", $signed(src_a[31:0]) >> $signed(src_b[5:0]));
   end
 endmodule
