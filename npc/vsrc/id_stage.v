@@ -37,7 +37,12 @@ module ysyx_22050710_idu (
   wire inst_bne    = (opcode[6:0] == 7'b1100011) & (funct3[2:0] == 3'b001);
   wire inst_bltu   = (opcode[6:0] == 7'b1100011) & (funct3[2:0] == 3'b100);
   wire inst_bgeu   = (opcode[6:0] == 7'b1100011) & (funct3[2:0] == 3'b100);
+  wire inst_lh     = (opcode[6:0] == 7'b0000011) & (funct3[2:0] == 3'b001);
+  wire inst_lhu    = (opcode[6:0] == 7'b0000011) & (funct3[2:0] == 3'b101);
   wire inst_lw     = (opcode[6:0] == 7'b0000011) & (funct3[2:0] == 3'b010);
+  wire inst_lbu    = (opcode[6:0] == 7'b0000011) & (funct3[2:0] == 3'b100);
+  wire inst_sb     = (opcode[6:0] == 7'b0100011) & (funct3[2:0] == 3'b000);
+  wire inst_sh     = (opcode[6:0] == 7'b0100011) & (funct3[2:0] == 3'b001);
   wire inst_sw     = (opcode[6:0] == 7'b0100011) & (funct3[2:0] == 3'b010);
   wire inst_addi   = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b000);
   wire inst_sltiu  = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b011);
@@ -56,9 +61,9 @@ module ysyx_22050710_idu (
   wire inst_remw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b110) & (funct7[6:0] == 7'b0000001);
 
   wire inst_type_r = |{inst_add, inst_sub, inst_addw, inst_remw};
-  wire inst_type_i = |{inst_jalr, inst_lw, inst_addi, inst_sltiu, inst_addiw, inst_ld, inst_slli, inst_ebreak};
+  wire inst_type_i = |{inst_jalr, inst_lh, inst_lhu, inst_lw, inst_lbu, inst_addi, inst_sltiu, inst_addiw, inst_ld, inst_slli, inst_ebreak};
   wire inst_type_u = |{inst_lui, inst_auipc};
-  wire inst_type_s = |{inst_sw, inst_sd};
+  wire inst_type_s = |{inst_sb, inst_sh, inst_sw, inst_sd};
   wire inst_type_b = |{inst_beq, inst_bne, inst_bltu, inst_bgeu};
   wire inst_type_j = |{inst_jal};
 
@@ -66,9 +71,9 @@ module ysyx_22050710_idu (
   wire [5:0] inst_type = {inst_type_r, inst_type_i, inst_type_u, inst_type_s, inst_type_b, inst_type_j};
 
   // Load类指令
-  wire inst_load  = |{inst_lw, inst_ld};
+  wire inst_load  = |{inst_lh, inst_lhu, inst_lw, inst_lbu, inst_ld};
   // Store类指令
-  wire inst_store = |{inst_sw, inst_sd};
+  wire inst_store = |{inst_sb, inst_sh, inst_sw, inst_sd};
 
   // 是否需要对操作数进行32位截断
   assign o_word_cut = |{inst_addiw, inst_addw, inst_remw};
@@ -109,15 +114,16 @@ module ysyx_22050710_idu (
   /* 为10时选择常数4 用于跳转时计算返回地址PC+4 */
   assign o_ALUBsrc  = {|{inst_jal, inst_jalr}, |inst_type[4:2] & !inst_jalr};
 
-  assign o_MemtoReg = |{inst_lw, inst_ld};
+  assign o_MemtoReg = |{inst_load};
   assign o_MemWr    = inst_type_s;
 
-  wire signed_byte        = |{1'b0};
-  wire signed_halfword    = |{1'b0};
+  // 写时可以不用注意符号拓展, 都放在带符号中''
+  wire signed_byte        = |{inst_sb};
+  wire signed_halfword    = |{inst_sh, inst_lh};
   wire signed_word        = |{inst_lw, inst_sw};
   wire signed_doubleword  = |{inst_ld, inst_sd};
-  wire unsigned_byte      = |{1'b0};
-  wire unsigned_halfword  = |{1'b0};
+  wire unsigned_byte      = |{inst_lbu};
+  wire unsigned_halfword  = |{inst_lhu};
   wire unsigned_word      = |{1'b0};
  
   MuxKeyWithDefault #(.NR_KEY(7), .KEY_LEN(7), .DATA_LEN(3)) u_mux2 (
