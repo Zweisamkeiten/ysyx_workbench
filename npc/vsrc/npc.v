@@ -25,11 +25,11 @@ module ysyx_22050710_npc (
 
   wire [63:0] rdata;
   ysyx_22050710_datamem u_datamem (
+    .i_rst(i_rst),
     .i_addr(ALUresult),
     .i_data(rs2),
     .i_MemOP(MemOP),
     .i_WrEn(MemWr),
-    .i_RdEn(MemRd),
     .o_data(rdata)
   );
 
@@ -45,9 +45,9 @@ module ysyx_22050710_npc (
   wire [63:0] imm;
   wire [4:0] ra, rb, rd;
   wire [2:0] Branch;
-  wire ALUAsrc; wire [1:0] ALUBsrc; wire [4:0] ALUctr;
+  wire ALUAsrc; wire [1:0] ALUBsrc; wire [3:0] ALUctr;
   wire word_cut;
-  wire RegWr, MemtoReg, MemWr, MemRd; wire [2:0] MemOP;
+  wire RegWr, MemtoReg, MemWr; wire [2:0] MemOP;
   ysyx_22050710_idu u_idu (
     .i_inst(inst),
     .o_imm(imm),
@@ -55,7 +55,7 @@ module ysyx_22050710_npc (
     .o_Branch(Branch),
     .o_ALUAsrc(ALUAsrc), .o_ALUBsrc(ALUBsrc), .o_ALUctr(ALUctr),
     .o_word_cut(word_cut),
-    .o_RegWr(RegWr), .o_MemtoReg(MemtoReg), .o_MemWr(MemWr), .o_MemRd(MemRd), .o_MemOP(MemOP)
+    .o_RegWr(RegWr), .o_MemtoReg(MemtoReg), .o_MemWr(MemWr), .o_MemOP(MemOP)
   );
 
   ysyx_22050710_exu u_exu (
