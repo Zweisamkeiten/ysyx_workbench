@@ -117,7 +117,7 @@ module ysyx_22050710_exu (
   );
 
   always @(*) begin
-    $display(src_a);
+    $display(i_rs1);
   end
 
   always @(i_ALUctr) begin
