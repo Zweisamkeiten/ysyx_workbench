@@ -57,7 +57,7 @@ module ysyx_22050710_exu (
   // if operand has been cut, the aluresult need signed extend to 64bits from
   // [32:0]
   wire [63:0] aluresult;
-  assign o_ALUresult = i_word_cut ? {{32{aluresult[31]}}, aluresult[31:0]};
+  assign o_ALUresult = i_word_cut ? {{32{aluresult[31]}}, aluresult[31:0]} : aluresult;
 
   // adder
   wire [63:0] adder_result, sub_result, add_a, add_b;
