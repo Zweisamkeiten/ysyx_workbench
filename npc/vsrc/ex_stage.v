@@ -104,12 +104,13 @@ module ysyx_22050710_exu (
   // sra
   wire signed [63:0] sra_result = $signed(src_a) >> src_b;
 
-  MuxKey #(.NR_KEY(13), .KEY_LEN(5), .DATA_LEN(64)) u_mux3 (
+  MuxKey #(.NR_KEY(14), .KEY_LEN(5), .DATA_LEN(64)) u_mux3 (
     .out(aluresult),
     .key(i_ALUctr),
     .lut({
       5'b00011, copy_result,
       5'b00000, adder_result,
+      5'b00010, sub_result[63] == 1 ? 64'b1 : 64'b0, // slt
       5'b01010, sub_result[63] == 1 ? 64'b1 : 64'b0, // sltu
       5'b01000, sub_result,
       5'b00100, xor_result,
