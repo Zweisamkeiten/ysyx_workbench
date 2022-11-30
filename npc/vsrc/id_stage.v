@@ -65,13 +65,16 @@ module ysyx_22050710_idu (
   wire inst_subw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b000) & (funct7[6:0] == 7'b0100000);
   wire inst_sllw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b001) & (funct7[6:0] == 7'b0000000);
 
+  // RV32M
+  wire inst_mul    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b000) & (funct7[6:0] == 7'b0000001);
+
   // RV64M
   wire inst_mulw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b000) & (funct7[6:0] == 7'b0000001);
   wire inst_divw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b100) & (funct7[6:0] == 7'b0000001);
   wire inst_remw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b110) & (funct7[6:0] == 7'b0000001);
 
   wire inst_type_r = |{inst_add,    inst_sub,   inst_or,    inst_addw,  inst_subw,
-                       inst_sllw,   inst_mulw,   inst_divw, inst_remw
+                       inst_mul,    inst_sllw,  inst_mulw,  inst_divw,  inst_remw
                        };
   wire inst_type_i = |{inst_jalr,   inst_lh,    inst_lhu,   inst_lw,    inst_lbu,
                        inst_addi,   inst_xori,  inst_andi,  inst_sltiu, inst_addiw,
@@ -168,7 +171,7 @@ module ysyx_22050710_idu (
   wire alu_or           = |{inst_or};
   wire alu_sll          = |{inst_slli, inst_sllw};
   wire alu_srl          = |{inst_srli};
-  wire alu_singed_mul   = |{inst_mulw};
+  wire alu_singed_mul   = |{inst_mul, inst_mulw};
   wire alu_singed_div   = |{inst_divw};
   wire alu_singed_rem   = |{inst_remw};
   wire alu_ebreak       = inst_ebreak;
