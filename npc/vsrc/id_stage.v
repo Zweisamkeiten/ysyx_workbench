@@ -110,7 +110,7 @@ module ysyx_22050710_idu (
   /* 为10时选择常数4 用于跳转时计算返回地址PC+4 */
   assign o_ALUBsrc  = {|{inst_jal, inst_jalr}, |inst_type[4:2] & !inst_jalr};
 
-  assign o_MemtoReg = |{inst_lw, inst_ld};
+  assign o_MemtoReg = |{inst_lw, inst_lbu, inst_ld};
   assign o_MemWr    = inst_type_s;
 
   wire signed_byte        = |{1'b0};
