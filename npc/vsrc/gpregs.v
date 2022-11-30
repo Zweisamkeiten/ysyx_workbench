@@ -17,8 +17,8 @@ module ysyx_22050710_gpr #(ADDR_WIDTH = 5, DATA_WIDTH = 64) (
   assign o_busB = |i_rb == 0 ? 64'b0 : rf[i_rb];
 
   always @(*) begin
-    $display(o_busA);
-    $display(o_busB);
+    $display(i_ra);
+    $display(i_rb);
   end
 
   always @(posedge i_clk) begin
