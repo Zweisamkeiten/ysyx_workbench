@@ -135,13 +135,13 @@ module ysyx_22050710_idu (
     .key({signed_byte, unsigned_byte, signed_halfword, unsigned_halfword, signed_word, unsigned_word, signed_doubleword}),
     .default_out(3'b111),
     .lut({
-      7'b1000000, 3'b000,
-      7'b0100000, 3'b001,
-      7'b0010000, 3'b010,
-      7'b0001000, 3'b011,
-      7'b0000100, 3'b100,
-      7'b0000010, 3'b101,
-      7'b0000001, 3'b110
+      7'b1000000, 3'b000, // signed_byte
+      7'b0100000, 3'b001, // unsigned_byte
+      7'b0010000, 3'b010, // signed_halfword
+      7'b0001000, 3'b011, // unsigned_halfword
+      7'b0000100, 3'b100, // signed_word
+      7'b0000010, 3'b101, // unsigned_word
+      7'b0000001, 3'b110  // signed_doubleword
     })
   );
 
