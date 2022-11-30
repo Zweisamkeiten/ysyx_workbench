@@ -183,9 +183,9 @@ module ysyx_22050710_idu (
   wire alu_plus         = |{inst_auipc, inst_jal,   inst_jalr,  inst_addi, inst_add,
                             inst_load,  inst_store, inst_addiw, inst_addw
                             };
-  wire alu_sub          = |{inst_type_b, inst_sub, inst_subw};
-  wire alu_slt          = |{inst_slt};
-  wire alu_sltu         = |{inst_sltiu, inst_sltu};
+  wire alu_sub          = |{inst_sub, inst_subw};
+  wire alu_signed_less  = |{inst_beq, inst_bne, inst_blt, inst_bge, inst_slt}; // branch set signed Less || slt rs1, rs2
+  wire alu_unsinged_less= |{inst_bltu, inst_bgeu, inst_sltiu, inst_sltu}; // branch set unsigned Less || sltu rs1, rs2
   wire alu_xor          = |{inst_xori};
   wire alu_and          = |{inst_andi, inst_and};
   wire alu_or           = |{inst_or};
@@ -201,7 +201,7 @@ module ysyx_22050710_idu (
 
   MuxKeyWithDefault #(.NR_KEY(17), .KEY_LEN(17), .DATA_LEN(5)) u_mux3 (
     .out(o_ALUctr),
-    .key({alu_copyimm,    alu_plus,       alu_sub,          alu_slt,        alu_sltu,
+    .key({alu_copyimm,    alu_plus,       alu_sub,          alu_signed_less,alu_unsinged_less,
           alu_xor,        alu_and,        alu_or,           alu_sll,        alu_srl,  alu_sra,
           alu_singed_mul, alu_singed_div, alu_unsinged_div, alu_singed_rem, alu_unsinged_rem,
           alu_ebreak}),
@@ -210,8 +210,8 @@ module ysyx_22050710_idu (
       17'b10000000000000000, 5'b00011,  // copy imm
       17'b01000000000000000, 5'b00000,  // add a + b
       17'b00100000000000000, 5'b01000,  // sub a - b
-      17'b00010000000000000, 5'b00010,  // slt  a <s b
-      17'b00001000000000000, 5'b01010,  // sltu a <u b
+      17'b00010000000000000, 5'b00010,  // branch set signed Less || slt  a <s b
+      17'b00001000000000000, 5'b01010,  // branch set unsigned Less || sltu a <u b
       17'b00000100000000000, 5'b00100,  // xor a ^ b
       17'b00000010000000000, 5'b00111,  // and a & b
       17'b00000001000000000, 5'b00110,  // or a | b
