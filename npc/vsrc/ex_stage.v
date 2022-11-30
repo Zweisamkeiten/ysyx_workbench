@@ -58,7 +58,7 @@ module ysyx_22050710_exu (
   wire signed_Less = overflow == 0
                    ? (sub_result[63] == 1 ? 1'b1 : 1'b0)
                    : (sub_result[63] == 0 ? 1'b1 : 1'b0);
-  wire unsigned_Less = 1'b1 ^ cout; // CF = cin ^ cout
+  wire unsigned_Less = (1'b1 ^ cout)^Zero; // CF = cin ^ cout
 
   // word_cut: cut operand to 32bits and unsigned extend OR dont cut
   wire [63:0] src1 = i_word_cut ? {{32{1'b0}}, i_rs1[31:0]} : i_rs1;
