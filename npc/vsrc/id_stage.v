@@ -48,6 +48,7 @@ module ysyx_22050710_idu (
   wire inst_sw     = (opcode[6:0] == 7'b0100011) & (funct3[2:0] == 3'b010);
   wire inst_addi   = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b000);
   wire inst_sltiu  = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b011);
+  wire inst_xori   = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b100);
   wire inst_andi   = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b111);
   wire inst_add    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b000) & (funct7[6:0] == 7'b0000000);
   wire inst_sub    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b000) & (funct7[6:0] == 7'b0100000);
@@ -72,8 +73,8 @@ module ysyx_22050710_idu (
                        inst_sllw,   inst_mulw,   inst_divw, inst_remw
                        };
   wire inst_type_i = |{inst_jalr,   inst_lh,    inst_lhu,   inst_lw,    inst_lbu,
-                       inst_addi,   inst_andi,  inst_sltiu, inst_addiw, inst_ld,
-                       inst_slli,   inst_ebreak
+                       inst_addi,   inst_xori,  inst_andi,  inst_sltiu, inst_addiw,
+                       inst_ld,     inst_slli,   inst_ebreak
                        };
   wire inst_type_u = |{inst_lui,    inst_auipc};
   wire inst_type_s = |{inst_sb,     inst_sh,    inst_sw,    inst_sd};
@@ -161,6 +162,7 @@ module ysyx_22050710_idu (
                             };
   wire alu_sub          = |{inst_type_b, inst_sub, inst_subw};
   wire alu_sltu         = |{inst_sltiu};
+  wire alu_xor          = |{inst_xori};
   wire alu_and          = |{inst_andi};
   wire alu_or           = |{inst_or};
   wire alu_sll          = |{inst_slli, inst_sllw};
@@ -169,22 +171,23 @@ module ysyx_22050710_idu (
   wire alu_singed_rem   = |{inst_remw};
   wire alu_ebreak       = inst_ebreak;
 
-  MuxKeyWithDefault #(.NR_KEY(11), .KEY_LEN(11), .DATA_LEN(4)) u_mux3 (
+  MuxKeyWithDefault #(.NR_KEY(12), .KEY_LEN(12), .DATA_LEN(4)) u_mux3 (
     .out(o_ALUctr),
-    .key({alu_copyimm, alu_plus, alu_sub, alu_sltu, alu_and, alu_or, alu_sll, alu_singed_mul, alu_singed_div, alu_singed_rem, alu_ebreak}),
+    .key({alu_copyimm, alu_plus, alu_sub, alu_sltu, alu_xor, alu_and, alu_or, alu_sll, alu_singed_mul, alu_singed_div, alu_singed_rem, alu_ebreak}),
     .default_out(4'b1111), // invalid
     .lut({
-      11'b10000000000, 4'b0011,  // copy imm
-      11'b01000000000, 4'b0000,  // add a + b
-      11'b00100000000, 4'b1000,  // sub a - b
-      11'b00010000000, 4'b1010,  // sltu a <u b
-      11'b00001000000, 4'b0111,  // and a & b
-      11'b00000100000, 4'b0110,  // or a | b
-      11'b00000010000, 4'b0001,  // sll <<
-      11'b00000001000, 4'b1100,  // signed mul *
-      11'b00000000100, 4'b1011,  // signed div /
-      11'b00000000010, 4'b1101,  // signed rem %
-      11'b00000000001, 4'b1110   // ebreak
+      12'b100000000000, 4'b0011,  // copy imm
+      12'b010000000000, 4'b0000,  // add a + b
+      12'b001000000000, 4'b1000,  // sub a - b
+      12'b000100000000, 4'b1010,  // sltu a <u b
+      12'b000001000000, 4'b0111,  // and a & b
+      12'b000000100000, 4'b0110,  // or a | b
+      12'b000000010000, 4'b0001,  // sll <<
+      12'b000000001000, 4'b1100,  // signed mul *
+      12'b000000000100, 4'b1011,  // signed div /
+      12'b000000000010, 4'b1101,  // signed rem %
+      12'b000000000001, 4'b1110   // ebreak
+      13'b0000100000000, 4'b0100,  // xor a ^ b
     })
   );
 
