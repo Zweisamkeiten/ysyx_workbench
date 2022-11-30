@@ -10,6 +10,11 @@ extern "C" {
 extern "C" void init_regex();
 extern "C" void init_wp_pool();
 
+static bool is_batch_mode = false;
+extern "C" void sdb_set_batch_mode() {
+  is_batch_mode = true;
+}
+
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char* rl_gets() {
   static char *line_read = NULL;
@@ -215,6 +220,11 @@ static int cmd_help(char *args) {
 }
 
 extern "C" void sdb_mainloop() {
+  if (is_batch_mode) {
+    cmd_c(NULL);
+    return;
+  }
+
   for (char *str; (str = rl_gets()) != NULL; ) {
     char *str_end = str + strlen(str);
 
