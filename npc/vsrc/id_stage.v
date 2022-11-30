@@ -60,11 +60,14 @@ module ysyx_22050710_idu (
   // RV64M
   wire inst_remw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b110) & (funct7[6:0] == 7'b0000001);
 
-  wire inst_type_r = |{inst_add, inst_sub, inst_addw, inst_remw};
-  wire inst_type_i = |{inst_jalr, inst_lh, inst_lhu, inst_lw, inst_lbu, inst_addi, inst_sltiu, inst_addiw, inst_ld, inst_slli, inst_ebreak};
-  wire inst_type_u = |{inst_lui, inst_auipc};
-  wire inst_type_s = |{inst_sb, inst_sh, inst_sw, inst_sd};
-  wire inst_type_b = |{inst_beq, inst_bne, inst_bltu, inst_bgeu};
+  wire inst_type_r = |{inst_add,    inst_sub,   inst_addw,  inst_remw};
+  wire inst_type_i = |{inst_jalr,   inst_lh,    inst_lhu,   inst_lw,    inst_lbu,
+                       inst_addi,   inst_sltiu, inst_addiw, inst_ld,    inst_slli,
+                       inst_ebreak
+                       };
+  wire inst_type_u = |{inst_lui,    inst_auipc};
+  wire inst_type_s = |{inst_sb,     inst_sh,    inst_sw,    inst_sd};
+  wire inst_type_b = |{inst_beq,    inst_bne,   inst_bltu,  inst_bgeu};
   wire inst_type_j = |{inst_jal};
 
   wire [2:0] extop;
