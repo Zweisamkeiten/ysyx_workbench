@@ -25,5 +25,8 @@ image: $(IMAGE).elf
 run: image
 	$(MAKE) -C $(NPC_HOME) sim IMG=$(IMAGE).bin ELF=$(IMAGE).elf REF=$(NEMU_HOME)/build/riscv64-nemu-interpreter-so
 
+runbatch: image
+	$(MAKE) -C $(NPC_HOME) sim IMG=$(IMAGE).bin ELF=$(IMAGE).elf REF=$(NEMU_HOME)/build/riscv64-nemu-interpreter-so IFRUNBATCH="1"
+
 gdb: image
 	$(MAKE) -C $(NPC_HOME) gdb IMG=$(IMAGE).bin ELF=$(IMAGE).elf REF=$(NEMU_HOME)/build/riscv64-nemu-interpreter-so
