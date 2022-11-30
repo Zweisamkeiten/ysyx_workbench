@@ -6,7 +6,7 @@ import "DPI-C" function void set_state_abort();
 module ysyx_22050710_exu (
   input   [63:0] i_rs1, i_rs2,
   input   [63:0] i_imm, i_pc,
-  input   i_ALUAsrc, input [1:0] i_ALUBsrc, input [3:0] i_ALUctr,
+  input   i_ALUAsrc, input [1:0] i_ALUBsrc, input [4:0] i_ALUctr,
   input   i_word_cut,
   input   [2:0] i_Branch,
   input   [2:0] i_MemOP, input i_MemtoReg,
@@ -101,22 +101,26 @@ module ysyx_22050710_exu (
   // srl
   wire [63:0] srl_result = src_a >> src_b;
 
-  MuxKey #(.NR_KEY(12), .KEY_LEN(4), .DATA_LEN(64)) u_mux3 (
+  // sra
+  wire signed [63:0] sra_result = $signed(src_a) >> src_b;
+
+  MuxKey #(.NR_KEY(13), .KEY_LEN(5), .DATA_LEN(64)) u_mux3 (
     .out(aluresult),
     .key(i_ALUctr),
     .lut({
-      4'b0011, copy_result,
-      4'b0000, adder_result,
-      4'b1010, sub_result[63] == 1 ? 64'b1 : 64'b0, // sltu
-      4'b1000, sub_result,
-      4'b0100, xor_result,
-      4'b0111, and_result,
-      4'b0110, or_result,
-      4'b0001, sll_result,
-      4'b0101, srl_result,
-      4'b1100, signed_mul_result,
-      4'b1011, signed_div_result,
-      4'b1101, signed_rem_result
+      5'b00011, copy_result,
+      5'b00000, adder_result,
+      5'b01010, sub_result[63] == 1 ? 64'b1 : 64'b0, // sltu
+      5'b01000, sub_result,
+      5'b00100, xor_result,
+      5'b00111, and_result,
+      5'b00110, or_result,
+      5'b00001, sll_result,
+      5'b00101, srl_result,
+      5'b01101, sra_result,
+      5'b11100, signed_mul_result,
+      5'b11011, signed_div_result,
+      5'b11101, signed_rem_result
     })
   );
 
@@ -137,7 +141,7 @@ module ysyx_22050710_exu (
   );
 
   always @(i_ALUctr) begin
-    if (i_ALUctr == 4'b1111) set_state_abort(); // invalid inst
-    if (i_ALUctr == 4'b1110) set_state_end(); // ebreak
+    if (i_ALUctr == 5'b11111) set_state_abort(); // invalid inst
+    if (i_ALUctr == 5'b11110) set_state_end(); // ebreak
   end
 endmodule
