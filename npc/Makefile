@@ -78,7 +78,7 @@ run-env: $(BIN)
 sim: run-env
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo "-- Simulation --------"
-	$(NPC_EXEC)
+	$(NPC_EXEC) $(IFRUNBATCH)
 
 gdbbatch: run-env
 	$(call git_commit, "gdb sim RTL")
