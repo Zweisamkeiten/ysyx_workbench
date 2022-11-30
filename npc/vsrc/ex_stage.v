@@ -119,5 +119,6 @@ module ysyx_22050710_exu (
   always @(i_ALUctr) begin
     if (i_ALUctr == 4'b1111) set_state_abort(); // invalid inst
     if (i_ALUctr == 4'b1110) set_state_end(); // ebreak
+    $display(i_ALUctr);
   end
 endmodule
