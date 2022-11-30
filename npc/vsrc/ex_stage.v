@@ -28,7 +28,7 @@ module ysyx_22050710_exu (
       3'b100, Zero == 1 ? 1'b1 : 1'b0,
       3'b101, Zero == 1 ? 1'b0 : 1'b1,
       3'b110, Less == 1 ? 1'b1 : 1'b0,
-      3'b111, Less == 1 | Zero == 1 ? 1'b0 : 1'b1
+      3'b111, Less == 1 ? 1'b0 : 1'b1
     })
   );
   MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(1)) u_mux1 (
@@ -154,5 +154,9 @@ module ysyx_22050710_exu (
   always @(i_ALUctr) begin
     if (i_ALUctr == 5'b11111) set_state_abort(); // invalid inst
     if (i_ALUctr == 5'b11110) set_state_end(); // ebreak
+  end
+
+  always @(*) begin
+    $display(Less);
   end
 endmodule
