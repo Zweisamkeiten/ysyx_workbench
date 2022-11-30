@@ -45,8 +45,20 @@ module ysyx_22050710_exu (
     })
   );
 
-  wire Zero = ~(|o_ALUresult);
-  wire Less = o_ALUresult[63] == 1 ? 1'b1 : 1'b0;
+  wire Zero = ~(|sub_result);
+  wire Less;
+  MuxKey #(.NR_KEY(2), .KEY_LEN(5), .DATA_LEN(1)) u_mux2 (
+    .out(Less),
+    .key(i_ALUctr),
+    .lut({
+      5'b00010, signed_Less,
+      5'b01010, unsigned_Less
+    })
+  );
+  wire signed_Less = overflow == 0
+                   ? (sub_result[63] == 1 ? 1'b1 : 1'b0)
+                   : (sub_result[63] == 0 ? 1'b1 : 1'b0);
+  wire unsigned_Less = (1'b1 ^ cout) & ~(|src_b == 1'b0); // CF = cin ^ cout
 
   // word_cut: cut operand to 32bits and unsigned extend OR dont cut
   wire [63:0] src1 = i_word_cut ? {{32{1'b0}}, i_rs1[31:0]} : i_rs1;
@@ -61,7 +73,7 @@ module ysyx_22050710_exu (
   // ALU
   wire [63:0] src_a, src_b;
   assign src_a = i_ALUAsrc ? i_pc : src1;
-  MuxKey #(.NR_KEY(3), .KEY_LEN(2), .DATA_LEN(64)) u_mux2 (
+  MuxKey #(.NR_KEY(3), .KEY_LEN(2), .DATA_LEN(64)) u_mux3 (
     .out(src_b),
     .key(i_ALUBsrc),
     .lut({
@@ -72,7 +84,9 @@ module ysyx_22050710_exu (
   );
   // adder
   wire[63:0] adder_result = src_a + src_b;
-  wire[63:0] sub_result   = src_a + (({64{1'b1}}^(src_b)) + 1);
+  wire [63:0] sub_result; wire cout;
+  wire overflow = ~(src_a[63] ^ src_b[63]) ^ ~(src_a[62] ^ src_b[62]);
+  assign {cout, sub_result}   = {1'b0, src_a} + {1'b0, (({64{1'b1}}^(src_b)) + 1)};
 
   // copy imm
   wire [63:0] copy_result = i_imm;
@@ -112,14 +126,14 @@ module ysyx_22050710_exu (
                                   ? {{32{src_a[31]}}, $signed(src_a[31:0]) >>> $signed(src_b[5:0])}
                                   : $signed(src_a) >>> $signed(src_b[5:0]);
 
-  MuxKey #(.NR_KEY(16), .KEY_LEN(5), .DATA_LEN(64)) u_mux3 (
+  MuxKey #(.NR_KEY(16), .KEY_LEN(5), .DATA_LEN(64)) u_mux4 (
     .out(aluresult),
     .key(i_ALUctr),
     .lut({
       5'b00011, copy_result,
       5'b00000, adder_result,
-      5'b00010, sub_result[63] == 1 ? 64'b1 : 64'b0, // slt
-      5'b01010, sub_result[63] == 1 ? 64'b1 : 64'b0, // sltu
+      5'b00010, signed_Less == 1 ? 64'b1 : 64'b0, // slt
+      5'b01010, unsigned_Less == 1 ? 64'b1 : 64'b0, // sltu
       5'b01000, sub_result,
       5'b00100, xor_result,
       5'b00111, and_result,
@@ -137,7 +151,7 @@ module ysyx_22050710_exu (
 
   wire [63:0] rdata;
   assign o_busW = i_MemtoReg ? rdata : o_ALUresult;
-  MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(64)) u_mux4 (
+  MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(64)) u_mux5 (
     .out(rdata),
     .key(i_MemOP),
     .lut({
