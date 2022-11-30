@@ -60,10 +60,11 @@ module ysyx_22050710_idu (
 
   // RV64M
   wire inst_mulw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b000) & (funct7[6:0] == 7'b0000001);
+  wire inst_divw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b100) & (funct7[6:0] == 7'b0000001);
   wire inst_remw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b110) & (funct7[6:0] == 7'b0000001);
 
   wire inst_type_r = |{inst_add,    inst_sub,   inst_or,    inst_addw,  inst_mulw,
-                       inst_remw
+                       inst_divw,   inst_remw
                        };
   wire inst_type_i = |{inst_jalr,   inst_lh,    inst_lhu,   inst_lw,    inst_lbu,
                        inst_addi,   inst_sltiu, inst_addiw, inst_ld,    inst_slli,
@@ -83,7 +84,7 @@ module ysyx_22050710_idu (
   wire inst_store = |{inst_sb, inst_sh, inst_sw, inst_sd};
 
   // 是否需要对操作数进行32位截断
-  assign o_word_cut = |{inst_addiw, inst_addw, inst_mulw, inst_remw};
+  assign o_word_cut = |{inst_addiw, inst_addw, inst_mulw, inst_divw, inst_remw};
 
   MuxKey #(.NR_KEY(6), .KEY_LEN(6), .DATA_LEN(3)) u_mux0 (
     .out(extop),
@@ -158,23 +159,25 @@ module ysyx_22050710_idu (
   wire alu_or           = |{inst_or};
   wire alu_sll          = |{inst_slli};
   wire alu_singed_mul   = |{inst_mulw};
+  wire alu_singed_div   = |{inst_divw};
   wire alu_singed_rem   = |{inst_remw};
   wire alu_ebreak       = inst_ebreak;
 
-  MuxKeyWithDefault #(.NR_KEY(9), .KEY_LEN(9), .DATA_LEN(4)) u_mux3 (
+  MuxKeyWithDefault #(.NR_KEY(10), .KEY_LEN(10), .DATA_LEN(4)) u_mux3 (
     .out(o_ALUctr),
-    .key({alu_copyimm, alu_plus, alu_sub, alu_sltu, alu_or, alu_sll, alu_singed_mul, alu_singed_rem, alu_ebreak}),
+    .key({alu_copyimm, alu_plus, alu_sub, alu_sltu, alu_or, alu_sll, alu_singed_mul, alu_singed_div, alu_singed_rem, alu_ebreak}),
     .default_out(4'b1111), // invalid
     .lut({
-      9'b100000000, 4'b0011,  // copy imm
-      9'b010000000, 4'b0000,  // add a + b
-      9'b001000000, 4'b1000,  // sub a - b
-      9'b000100000, 4'b1010,  // sltu a <u b
-      9'b000010000, 4'b0110,  // or a | b
-      9'b000001000, 4'b0001,  // sll <<
-      9'b000000100, 4'b1100,  // signed mul *
-      9'b000000010, 4'b1101,  // signed rem %
-      9'b000000001, 4'b1110   // ebreak
+      10'b1000000000, 4'b0011,  // copy imm
+      10'b0100000000, 4'b0000,  // add a + b
+      10'b0010000000, 4'b1000,  // sub a - b
+      10'b0001000000, 4'b1010,  // sltu a <u b
+      10'b0000100000, 4'b0110,  // or a | b
+      10'b0000010000, 4'b0001,  // sll <<
+      10'b0000001000, 4'b1100,  // signed mul *
+      10'b0000000100, 4'b1011,  // signed div /
+      10'b0000000010, 4'b1101,  // signed rem %
+      10'b0000000001, 4'b1110   // ebreak
     })
   );
 
