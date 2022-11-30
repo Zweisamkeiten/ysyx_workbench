@@ -163,21 +163,21 @@ module ysyx_22050710_idu (
   wire alu_singed_rem   = |{inst_remw};
   wire alu_ebreak       = inst_ebreak;
 
-  MuxKeyWithDefault #(.NR_KEY(9), .KEY_LEN(9), .DATA_LEN(4)) u_mux3 (
+  MuxKeyWithDefault #(.NR_KEY(10), .KEY_LEN(10), .DATA_LEN(4)) u_mux3 (
     .out(o_ALUctr),
     .key({alu_copyimm, alu_plus, alu_sub, alu_sltu, alu_or, alu_sll, alu_singed_mul, alu_singed_div, alu_singed_rem, alu_ebreak}),
     .default_out(4'b1111), // invalid
     .lut({
-      9'b1000000000, 4'b0011,  // copy imm
-      9'b0100000000, 4'b0000,  // add a + b
-      9'b0010000000, 4'b1000,  // sub a - b
-      9'b0001000000, 4'b1010,  // sltu a <u b
-      9'b0000100000, 4'b0110,  // or a | b
-      9'b0000010000, 4'b0001,  // sll <<
-      9'b0000001000, 4'b1100,  // signed mul *
-      9'b0000000100, 4'b1011,  // signed div /
-      9'b0000000010, 4'b1101,  // signed rem %
-      9'b0000000001, 4'b1110   // ebreak
+      10'b1000000000, 4'b0011,  // copy imm
+      10'b0100000000, 4'b0000,  // add a + b
+      10'b0010000000, 4'b1000,  // sub a - b
+      10'b0001000000, 4'b1010,  // sltu a <u b
+      10'b0000100000, 4'b0110,  // or a | b
+      10'b0000010000, 4'b0001,  // sll <<
+      10'b0000001000, 4'b1100,  // signed mul *
+      10'b0000000100, 4'b1011,  // signed div /
+      10'b0000000010, 4'b1101,  // signed rem %
+      10'b0000000001, 4'b1110   // ebreak
     })
   );
 
