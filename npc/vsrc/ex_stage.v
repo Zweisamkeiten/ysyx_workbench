@@ -128,7 +128,7 @@ module ysyx_22050710_exu (
       5'b11100, signed_mul_result,
       5'b11011, signed_div_result,
       5'b11010, unsigned_div_result,
-      5'b11101, signed_rem_result
+      5'b11101, signed_rem_result,
       5'b11001, unsigned_rem_result
     })
   );
