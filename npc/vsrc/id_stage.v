@@ -7,6 +7,7 @@ module ysyx_22050710_idu (
   output o_RegWr, o_ALUAsrc,
   output [1:0] o_ALUBsrc,
   output [3:0] o_ALUctr,
+  output o_word_cut,
   output o_MemtoReg, o_MemWr,
   output [2:0] o_MemOP
 );
@@ -69,6 +70,9 @@ module ysyx_22050710_idu (
   wire inst_load = |{inst_lw, inst_ld};
   // Store类指令
   wire inst_store = |{inst_sw, inst_sd};
+
+  // 是否需要对操作数进行32位截断
+  assign o_word_cut = |{inst_addiw, inst_addw, inst_remw}
 
   MuxKey #(.NR_KEY(6), .KEY_LEN(6), .DATA_LEN(3)) u_mux0 (
     .out(extop),

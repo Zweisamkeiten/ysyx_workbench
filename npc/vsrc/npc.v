@@ -49,6 +49,7 @@ module ysyx_22050710_npc (
   wire RegWr, ALUAsrc;
   wire [1:0] ALUBsrc;
   wire [3:0] ALUctr;
+  wire word_cut;
   wire MemtoReg, MemWr;
   wire [2:0] MemOP;
   ysyx_22050710_idu u_idu (
@@ -58,6 +59,7 @@ module ysyx_22050710_npc (
     .o_Branch(Branch),
     .o_RegWr(RegWr),
     .o_ALUAsrc(ALUAsrc), .o_ALUBsrc(ALUBsrc), .o_ALUctr(ALUctr),
+    .o_word_cut(word_cut),
     .o_MemtoReg(MemtoReg), .o_MemWr(MemWr), .o_MemOP(MemOP)
   );
 
@@ -65,6 +67,7 @@ module ysyx_22050710_npc (
     .i_rs1(rs1), .i_rs2(rs2),
     .i_imm(imm), .i_pc(pc),
     .i_ALUAsrc(ALUAsrc), .i_ALUBsrc(ALUBsrc), .i_ALUctr(ALUctr),
+    .i_word_cut(word_cut),
     .i_Branch(Branch),
     .i_MemOP(MemOP),
     .i_MemtoReg(MemtoReg),
