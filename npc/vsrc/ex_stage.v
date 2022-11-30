@@ -102,7 +102,7 @@ module ysyx_22050710_exu (
   wire [63:0] srl_result = src_a >> src_b;
 
   // sra
-  wire signed [63:0] sra_result = $signed(src_a) >> src_b;
+  wire signed [63:0] sra_result = $signed(src_a) >> $signed(src_b);
 
   MuxKey #(.NR_KEY(13), .KEY_LEN(5), .DATA_LEN(64)) u_mux3 (
     .out(aluresult),
