@@ -76,7 +76,7 @@ module ysyx_22050710_exu (
   // copy imm
   wire [63:0] copy_result = i_imm;
 
-  wire signed [63:0] signed_rem_result = $signed(src_a) % $signed(src_b)
+  wire signed [63:0] signed_rem_result = $signed(src_a) % $signed(src_b);
 
   MuxKey #(.NR_KEY(4), .KEY_LEN(4), .DATA_LEN(64)) u_mux3 (
     .out(aluresult),
