@@ -60,14 +60,15 @@ module ysyx_22050710_idu (
   wire inst_slli   = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b001) & (funct7[6:1] == 00000);
   wire inst_addiw  = (opcode[6:0] == 7'b0011011) & (funct3[2:0] == 3'b000);
   wire inst_addw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b000) & (funct7[6:0] == 7'b0000000);
+  wire inst_subw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b000) & (funct7[6:0] == 7'b0100000);
 
   // RV64M
   wire inst_mulw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b000) & (funct7[6:0] == 7'b0000001);
   wire inst_divw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b100) & (funct7[6:0] == 7'b0000001);
   wire inst_remw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b110) & (funct7[6:0] == 7'b0000001);
 
-  wire inst_type_r = |{inst_add,    inst_sub,   inst_or,    inst_addw,  inst_mulw,
-                       inst_divw,   inst_remw
+  wire inst_type_r = |{inst_add,    inst_sub,   inst_or,    inst_addw,  inst_subw,
+                       inst_mulw,   inst_divw,   inst_remw
                        };
   wire inst_type_i = |{inst_jalr,   inst_lh,    inst_lhu,   inst_lw,    inst_lbu,
                        inst_addi,   inst_andi,  inst_sltiu, inst_addiw, inst_ld,
@@ -87,7 +88,7 @@ module ysyx_22050710_idu (
   wire inst_store = |{inst_sb, inst_sh, inst_sw, inst_sd};
 
   // 是否需要对操作数进行32位截断
-  assign o_word_cut = |{inst_addiw, inst_addw, inst_mulw, inst_divw, inst_remw};
+  assign o_word_cut = |{inst_addiw, inst_addw, inst_subw, inst_mulw, inst_divw, inst_remw};
 
   MuxKey #(.NR_KEY(6), .KEY_LEN(6), .DATA_LEN(3)) u_mux0 (
     .out(extop),
@@ -157,7 +158,7 @@ module ysyx_22050710_idu (
   wire alu_plus         = |{inst_auipc, inst_jal,   inst_jalr,  inst_addi, inst_add,
                             inst_load,  inst_store, inst_addiw, inst_addw
                             };
-  wire alu_sub          = |{inst_type_b, inst_sub};
+  wire alu_sub          = |{inst_type_b, inst_sub, inst_subw};
   wire alu_sltu         = |{inst_sltiu};
   wire alu_and          = |{inst_andi};
   wire alu_or           = |{inst_or};
