@@ -3,7 +3,7 @@ BUILD_DIR = ./build
 VERILATOR_OBJ_DIR = $(BUILD_DIR)/obj_dir
 BIN = $(BUILD_DIR)/$(TOPNAME)
 IIMG ?=
-NPC_EXEC := $(BIN) $(IMG) $(ELF) $(REF)
+NPC_EXEC := $(BIN) $(IMG) $(ELF) $(REF) $(IFRUNBATCH)
 
 ifeq ($(VERILATOR_ROOT),)
 VERILATOR = verilator
@@ -78,7 +78,7 @@ run-env: $(BIN)
 sim: run-env
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo "-- Simulation --------"
-	$(NPC_EXEC) $(IFRUNBATCH)
+	$(NPC_EXEC)
 
 gdbbatch: run-env
 	$(call git_commit, "gdb sim RTL")
