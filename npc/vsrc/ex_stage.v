@@ -80,6 +80,9 @@ module ysyx_22050710_exu (
   // signed mul
   wire signed [63:0] signed_mul_result = $signed(src_a) * $signed(src_b);
 
+  // signed mul
+  wire signed [63:0] signed_div_result = $signed(src_a) / $signed(src_b);
+
   // signed rem
   wire signed [63:0] signed_rem_result = $signed(src_a) % $signed(src_b);
 
@@ -89,7 +92,7 @@ module ysyx_22050710_exu (
   // sll
   wire [63:0] sll_result = src_a << src_b;
 
-  MuxKey #(.NR_KEY(8), .KEY_LEN(4), .DATA_LEN(64)) u_mux3 (
+  MuxKey #(.NR_KEY(9), .KEY_LEN(4), .DATA_LEN(64)) u_mux3 (
     .out(aluresult),
     .key(i_ALUctr),
     .lut({
@@ -100,6 +103,7 @@ module ysyx_22050710_exu (
       4'b0110, or_result,
       4'b0001, sll_result,
       4'b1100, signed_mul_result,
+      4'b1011, signed_div_result,
       4'b1101, signed_rem_result
     })
   );
