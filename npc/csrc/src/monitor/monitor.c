@@ -50,7 +50,7 @@ static long load_img(int argc, char ** argv) {
 
 void init_monitor(int argc, char *argv[]) {
 
-  if (argc == 5 && strcmp("1", argv[4])) {
+  if (argc == 5 && strcmp("1", argv[4]) == 0) {
     printf("Running in batchmode\n");
     sdb_set_batch_mode();
   }
