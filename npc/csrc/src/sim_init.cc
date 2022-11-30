@@ -34,7 +34,7 @@ extern "C" void npc_pmem_write(long long waddr, long long wdata, char wmask) {
   switch ((unsigned char)wmask) {
     case 0x1: paddr_write(waddr, 1, wdata); break;
     case 0x3: paddr_write(waddr, 2, wdata); break;
-    case 0x15: paddr_write(waddr, 4, wdata); break;
+    case 0xf: paddr_write(waddr, 4, wdata); break;
     default: paddr_write(waddr, 8, wdata); break;
   }
 }
