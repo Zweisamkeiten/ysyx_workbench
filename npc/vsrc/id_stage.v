@@ -39,6 +39,8 @@ module ysyx_22050710_idu (
   wire inst_bgeu   = (opcode[6:0] == 7'b1100011) & (funct3[2:0] == 3'b100);
   wire inst_lw     = (opcode[6:0] == 7'b0000011) & (funct3[2:0] == 3'b010);
   wire inst_lbu    = (opcode[6:0] == 7'b0000011) & (funct3[2:0] == 3'b100);
+  wire inst_sb     = (opcode[6:0] == 7'b0100011) & (funct3[2:0] == 3'b000);
+  wire inst_sh     = (opcode[6:0] == 7'b0100011) & (funct3[2:0] == 3'b001);
   wire inst_sw     = (opcode[6:0] == 7'b0100011) & (funct3[2:0] == 3'b010);
   wire inst_addi   = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b000);
   wire inst_sltiu  = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b011);
@@ -59,7 +61,7 @@ module ysyx_22050710_idu (
   wire inst_type_r = |{inst_add, inst_sub, inst_addw, inst_remw};
   wire inst_type_i = |{inst_jalr, inst_lw, inst_lbu, inst_addi, inst_sltiu, inst_addiw, inst_ld, inst_slli, inst_ebreak};
   wire inst_type_u = |{inst_lui, inst_auipc};
-  wire inst_type_s = |{inst_sw, inst_sd};
+  wire inst_type_s = |{inst_sb, inst_sh, inst_sw, inst_sd};
   wire inst_type_b = |{inst_beq, inst_bne, inst_bltu, inst_bgeu};
   wire inst_type_j = |{inst_jal};
 
@@ -69,7 +71,7 @@ module ysyx_22050710_idu (
   // Load类指令
   wire inst_load  = |{inst_lw, inst_lbu, inst_ld};
   // Store类指令
-  wire inst_store = |{inst_sw, inst_sd};
+  wire inst_store = |{inst_sb, inst_sh, inst_sw, inst_sd};
 
   // 是否需要对操作数进行32位截断
   assign o_word_cut = |{inst_addiw, inst_addw, inst_remw};
@@ -113,8 +115,9 @@ module ysyx_22050710_idu (
   assign o_MemtoReg = |{inst_lw, inst_lbu, inst_ld};
   assign o_MemWr    = inst_type_s;
 
-  wire signed_byte        = |{1'b0};
-  wire signed_halfword    = |{1'b0};
+  // 写时可以不用注意符号拓展, 都放在带符号中''
+  wire signed_byte        = |{inst_sb};
+  wire signed_halfword    = |{inst_sh};
   wire signed_word        = |{inst_lw, inst_sw};
   wire signed_doubleword  = |{inst_ld, inst_sd};
   wire unsigned_byte      = |{inst_lbu};
