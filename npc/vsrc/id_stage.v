@@ -52,7 +52,10 @@ module ysyx_22050710_idu (
   wire inst_addiw  = (opcode[6:0] == 7'b0011011) & (funct3[2:0] == 3'b000);
   wire inst_addw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b000) & (funct7[6:0] == 7'b0000000);
 
-  wire inst_type_r = |{inst_add, inst_sub, inst_addw};
+  // RV64M
+  wire inst_remw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b110) & (funct7[6:0] == 7'b0000001);
+
+  wire inst_type_r = |{inst_add, inst_sub, inst_addw, inst_remw};
   wire inst_type_i = |{inst_jalr, inst_lw, inst_addi, inst_sltiu, inst_addiw, inst_ld, inst_ebreak};
   wire inst_type_u = |{inst_lui, inst_auipc};
   wire inst_type_s = |{inst_sw, inst_sd};
@@ -61,6 +64,11 @@ module ysyx_22050710_idu (
 
   wire [2:0] extop;
   wire [5:0] inst_type = {inst_type_r, inst_type_i, inst_type_u, inst_type_s, inst_type_b, inst_type_j};
+
+  // Load类指令
+  wire inst_load = |{inst_lw, inst_ld};
+  // Store类指令
+  wire inst_store = |{inst_sw, inst_sd};
 
   MuxKey #(.NR_KEY(6), .KEY_LEN(6), .DATA_LEN(3)) u_mux0 (
     .out(extop),
@@ -128,7 +136,7 @@ module ysyx_22050710_idu (
 
 
   wire alu_copyimm = |{inst_lui};
-  wire alu_plus = |{inst_auipc, inst_jal, inst_jalr, inst_lw, inst_sw, inst_addi, inst_add, inst_ld, inst_sd};
+  wire alu_plus = |{inst_auipc, inst_jal, inst_jalr, inst_addi, inst_add, inst_load, inst_store};
   wire alu_plus_and_signedext = |{inst_addiw, inst_addw};
   wire alu_sub = |{inst_type_b, inst_sub};
   wire alu_sltu = |{inst_sltiu};
