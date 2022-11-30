@@ -42,11 +42,12 @@ extern "C" void npc_pmem_write(long long waddr, long long wdata, char wmask) {
 extern "C" void single_cycle() {
   top->i_clk = 0;
   top->eval();
-  printf("raddr: 0x%016lx\n", top->rootp->ysyx_22050710_npc__DOT__u_datamem__DOT__raddr);
+  printf("down raddr: 0x%016lx\n", top->rootp->ysyx_22050710_npc__DOT__u_datamem__DOT__raddr);
   contextp->timeInc(1);
   tfp->dump(contextp->time());
   top->i_clk = 1;
   top->eval();
+  printf("up raddr: 0x%016lx\n", top->rootp->ysyx_22050710_npc__DOT__u_datamem__DOT__raddr);
   contextp->timeInc(1);
   tfp->dump(contextp->time());
 }
