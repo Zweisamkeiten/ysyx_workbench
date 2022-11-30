@@ -157,6 +157,6 @@ module ysyx_22050710_exu (
   end
 
   always @(*) begin
-    $display(sra_result)
+    $display(sra_result);
   end
 endmodule
