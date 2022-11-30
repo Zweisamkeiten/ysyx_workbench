@@ -140,20 +140,18 @@ module ysyx_22050710_idu (
 
 
   wire alu_copyimm = |{inst_lui};
-  wire alu_plus = |{inst_auipc, inst_jal, inst_jalr, inst_addi, inst_add, inst_load, inst_store};
-  wire alu_plus_and_signedext = |{inst_addiw, inst_addw};
+  wire alu_plus = |{inst_auipc, inst_jal, inst_jalr, inst_addi, inst_add, inst_load, inst_store, inst_addiw, inst_addw};
   wire alu_sub = |{inst_type_b, inst_sub};
   wire alu_sltu = |{inst_sltiu};
   wire alu_ebreak = inst_ebreak;
 
-  MuxKeyWithDefault #(.NR_KEY(6), .KEY_LEN(6), .DATA_LEN(4)) u_mux3 (
+  MuxKeyWithDefault #(.NR_KEY(5), .KEY_LEN(6), .DATA_LEN(4)) u_mux3 (
     .out(o_ALUctr),
-    .key({alu_copyimm, alu_plus, alu_plus_and_signedext, alu_sub, alu_sltu, alu_ebreak}),
+    .key({alu_copyimm, alu_plus, alu_sub, alu_sltu, alu_ebreak}),
     .default_out(4'b1111),
     .lut({
       6'b100000, 4'b0011,
       6'b010000, 4'b0000,
-      6'b001000, 4'b1001,
       6'b000100, 4'b1000,
       6'b000010, 4'b1010,
       6'b000001, 4'b1110
