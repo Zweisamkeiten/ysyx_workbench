@@ -40,11 +40,11 @@ extern "C" void npc_pmem_write(long long waddr, long long wdata, char wmask) {
 }
 
 extern "C" void single_cycle() {
-  top->i_clk = 0;
+  top->i_clk = 1;
   top->eval();
   contextp->timeInc(1);
   tfp->dump(contextp->time());
-  top->i_clk = 1;
+  top->i_clk = 0;
   top->eval();
   contextp->timeInc(1);
   tfp->dump(contextp->time());
