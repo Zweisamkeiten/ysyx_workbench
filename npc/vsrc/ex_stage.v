@@ -58,11 +58,11 @@ module ysyx_22050710_exu (
   wire [63:0] aluresult;
   assign o_ALUresult = i_word_cut ? {{32{aluresult[31]}}, aluresult[31:0]} : aluresult;
 
-  // adder
-  wire [63:0] add_a, add_b;
-  assign add_a = i_ALUAsrc ? i_pc : src1;
+  // ALU
+  wire [63:0] src_a, src_b;
+  assign src_a = i_ALUAsrc ? i_pc : src1;
   MuxKey #(.NR_KEY(3), .KEY_LEN(2), .DATA_LEN(64)) u_mux2 (
-    .out(add_b),
+    .out(src_b),
     .key(i_ALUBsrc),
     .lut({
       2'b00, src2,
@@ -70,20 +70,23 @@ module ysyx_22050710_exu (
       2'b10, 64'd4
     })
   );
-  wire[63:0] adder_result = add_a + add_b;
-  wire[63:0] sub_result   = add_a + (({64{1'b1}}^(add_b)) + 1);
+  wire[63:0] adder_result = src_a + src_b;
+  wire[63:0] sub_result   = src_a + (({64{1'b1}}^(src_b)) + 1);
 
   // copy imm
   wire [63:0] copy_result = i_imm;
 
-  MuxKey #(.NR_KEY(4), .KEY_LEN(4), .DATA_LEN(64)) u_mux3 (
+  wire signed [63:0] signed_rem_result = $signed(src_a) % $signed(src_b);
+
+  MuxKey #(.NR_KEY(5), .KEY_LEN(4), .DATA_LEN(64)) u_mux3 (
     .out(aluresult),
     .key(i_ALUctr),
     .lut({
       4'b0011, copy_result,
       4'b0000, adder_result,
-      4'b1010, sub_result[63] == 1 ? 64'b1 : 64'b0, // branch
-      4'b1000, sub_result
+      4'b1010, sub_result[63] == 1 ? 64'b1 : 64'b0, // sltu
+      4'b1000, sub_result,
+      4'b1101, signed_rem_result
     })
   );
 
