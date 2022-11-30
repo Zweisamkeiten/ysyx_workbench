@@ -48,6 +48,7 @@ module ysyx_22050710_idu (
   wire inst_sltiu  = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b011);
   wire inst_add    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b000) & (funct7[6:0] == 7'b0000000);
   wire inst_sub    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b000) & (funct7[6:0] == 7'b0100000);
+  wire inst_or     = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b110) & (funct7[6:0] == 7'b0000000);
   wire inst_ebreak = (opcode[6:0] == 7'b1110011) & (funct3[2:0] == 3'b000);
 
   // RV64I
@@ -60,7 +61,7 @@ module ysyx_22050710_idu (
   // RV64M
   wire inst_remw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b110) & (funct7[6:0] == 7'b0000001);
 
-  wire inst_type_r = |{inst_add,    inst_sub,   inst_addw,  inst_remw};
+  wire inst_type_r = |{inst_add,    inst_sub,   inst_or,    inst_addw,  inst_remw};
   wire inst_type_i = |{inst_jalr,   inst_lh,    inst_lhu,   inst_lw,    inst_lbu,
                        inst_addi,   inst_sltiu, inst_addiw, inst_ld,    inst_slli,
                        inst_ebreak
@@ -134,13 +135,13 @@ module ysyx_22050710_idu (
     .key({signed_byte, unsigned_byte, signed_halfword, unsigned_halfword, signed_word, unsigned_word, signed_doubleword}),
     .default_out(3'b111),
     .lut({
-      7'b1000000, 3'b000,
-      7'b0100000, 3'b001,
-      7'b0010000, 3'b010,
-      7'b0001000, 3'b011,
-      7'b0000100, 3'b100,
-      7'b0000010, 3'b101,
-      7'b0000001, 3'b110
+      7'b1000000, 3'b000, // signed_byte
+      7'b0100000, 3'b001, // unsigned_byte
+      7'b0010000, 3'b010, // signed_halfword
+      7'b0001000, 3'b011, // unsigned_halfword
+      7'b0000100, 3'b100, // signed_word
+      7'b0000010, 3'b101, // unsigned_word
+      7'b0000001, 3'b110  // signed_doubleword
     })
   );
 
@@ -151,22 +152,24 @@ module ysyx_22050710_idu (
                             };
   wire alu_sub          = |{inst_type_b, inst_sub};
   wire alu_sltu         = |{inst_sltiu};
+  wire alu_or           = |{inst_or};
   wire alu_sll          = |{inst_slli};
   wire alu_singed_rem   = |{inst_remw};
   wire alu_ebreak       = inst_ebreak;
 
-  MuxKeyWithDefault #(.NR_KEY(7), .KEY_LEN(7), .DATA_LEN(4)) u_mux3 (
+  MuxKeyWithDefault #(.NR_KEY(8), .KEY_LEN(8), .DATA_LEN(4)) u_mux3 (
     .out(o_ALUctr),
-    .key({alu_copyimm, alu_plus, alu_sub, alu_sltu, alu_sll, alu_singed_rem, alu_ebreak}),
+    .key({alu_copyimm, alu_plus, alu_sub, alu_sltu, alu_or, alu_sll, alu_singed_rem, alu_ebreak}),
     .default_out(4'b1111), // invalid
     .lut({
-      7'b1000000, 4'b0011,  // copy imm
-      7'b0100000, 4'b0000,  // add a + b
-      7'b0010000, 4'b1000,  // sub a - b
-      7'b0001000, 4'b1010,  // sltu a <u b
-      7'b0000100, 4'b1100,  // sll <<
-      7'b0000010, 4'b1101,  // signed rem %
-      7'b0000001, 4'b1110   // ebreak
+      8'b10000000, 4'b0011,  // copy imm
+      8'b01000000, 4'b0000,  // add a + b
+      8'b00100000, 4'b1000,  // sub a - b
+      8'b00010000, 4'b1010,  // sltu a <u b
+      8'b00001000, 4'b0110,  // or a | b
+      8'b00000100, 4'b0001,  // sll <<
+      8'b00000010, 4'b1101,  // signed rem %
+      8'b00000001, 4'b1110   // ebreak
     })
   );
 
