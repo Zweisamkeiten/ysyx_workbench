@@ -7,7 +7,7 @@ module ysyx_22050710_idu (
   output  [2:0] o_Branch,
   output  o_ALUAsrc, output [1:0] o_ALUBsrc, output [4:0] o_ALUctr,
   output  o_word_cut,
-  output  o_RegWr, o_MemtoReg, o_MemWr, o_MemRd, output [2:0] o_MemOP
+  output  o_RegWr, o_MemtoReg, o_MemWr, output [2:0] o_MemOP
 );
 
   wire [6:0] opcode;
@@ -143,8 +143,7 @@ module ysyx_22050710_idu (
   assign o_ALUBsrc  = {|{inst_jal, inst_jalr}, |inst_type[4:2] & !inst_jalr};
 
   assign o_MemtoReg = |{inst_load};
-  assign o_MemWr    = inst_store;
-  assign o_MemRd    = inst_load;
+  assign o_MemWr    = inst_type_s;
 
   // 写时可以不用注意符号拓展, 都放在带符号中''
   wire signed_byte        = |{inst_sb};
