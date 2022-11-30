@@ -78,7 +78,7 @@ module ysyx_22050710_exu (
   wire [63:0] copy_result;
   assign copy_result = i_imm;
 
-  MuxKey #(.NR_KEY(5), .KEY_LEN(4), .DATA_LEN(64)) u_mux3 (
+  MuxKey #(.NR_KEY(4), .KEY_LEN(4), .DATA_LEN(64)) u_mux3 (
     .out(aluresult),
     .key(i_ALUctr),
     .lut({
