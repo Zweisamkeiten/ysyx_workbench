@@ -5,7 +5,7 @@ module ysyx_22050710_idu (
   output  [63:0] o_imm,
   output  [4:0] o_ra, o_rb, o_rd,
   output  [2:0] o_Branch,
-  output  o_ALUAsrc, output [1:0] o_ALUBsrc, output [3:0] o_ALUctr,
+  output  o_ALUAsrc, output [1:0] o_ALUBsrc, output [4:0] o_ALUctr,
   output  o_word_cut,
   output  o_RegWr, o_MemtoReg, o_MemWr, output [2:0] o_MemOP
 );
@@ -58,8 +58,9 @@ module ysyx_22050710_idu (
   // RV64I
   wire inst_ld     = (opcode[6:0] == 7'b0000011) & (funct3[2:0] == 3'b011);
   wire inst_sd     = (opcode[6:0] == 7'b0100011) & (funct3[2:0] == 3'b011);
-  wire inst_slli   = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b001) & (funct7[6:1] == 00000);
-  wire inst_srli   = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b101) & (funct7[6:1] == 00000);
+  wire inst_slli   = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b001) & (funct7[6:1] == 6'b000000);
+  wire inst_srli   = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b101) & (funct7[6:1] == 6'b000000);
+  wire inst_srai   = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b101) & (funct7[6:1] == 6'b010000);
   wire inst_addiw  = (opcode[6:0] == 7'b0011011) & (funct3[2:0] == 3'b000);
   wire inst_addw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b000) & (funct7[6:0] == 7'b0000000);
   wire inst_subw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b000) & (funct7[6:0] == 7'b0100000);
@@ -78,7 +79,7 @@ module ysyx_22050710_idu (
                        };
   wire inst_type_i = |{inst_jalr,   inst_lh,    inst_lhu,   inst_lw,    inst_lbu,
                        inst_addi,   inst_xori,  inst_andi,  inst_sltiu, inst_addiw,
-                       inst_ld,     inst_slli,  inst_srli,  inst_ebreak
+                       inst_ld,     inst_slli,  inst_srli,  inst_srai,  inst_ebreak
                        };
   wire inst_type_u = |{inst_lui,    inst_auipc};
   wire inst_type_s = |{inst_sb,     inst_sh,    inst_sw,    inst_sd};
@@ -171,32 +172,34 @@ module ysyx_22050710_idu (
   wire alu_or           = |{inst_or};
   wire alu_sll          = |{inst_slli, inst_sllw};
   wire alu_srl          = |{inst_srli};
+  wire alu_sra          = |{inst_srai};
   wire alu_singed_mul   = |{inst_mul, inst_mulw};
   wire alu_singed_div   = |{inst_divw};
   wire alu_singed_rem   = |{inst_remw};
   wire alu_ebreak       = inst_ebreak;
 
-  MuxKeyWithDefault #(.NR_KEY(13), .KEY_LEN(13), .DATA_LEN(4)) u_mux3 (
+  MuxKeyWithDefault #(.NR_KEY(14), .KEY_LEN(14), .DATA_LEN(5)) u_mux3 (
     .out(o_ALUctr),
     .key({alu_copyimm,    alu_plus,       alu_sub,        alu_sltu,
-          alu_xor,        alu_and,        alu_or,         alu_sll,  alu_srl,
+          alu_xor,        alu_and,        alu_or,         alu_sll,  alu_srl,  alu_sra,
           alu_singed_mul, alu_singed_div, alu_singed_rem,
           alu_ebreak}),
-    .default_out(4'b1111), // invalid
+    .default_out(5'b11111), // invalid
     .lut({
-      13'b1000000000000, 4'b0011,  // copy imm
-      13'b0100000000000, 4'b0000,  // add a + b
-      13'b0010000000000, 4'b1000,  // sub a - b
-      13'b0001000000000, 4'b1010,  // sltu a <u b
-      13'b0000100000000, 4'b0100,  // xor a ^ b
-      13'b0000010000000, 4'b0111,  // and a & b
-      13'b0000001000000, 4'b0110,  // or a | b
-      13'b0000000100000, 4'b0001,  // sll <<
-      13'b0000000010000, 4'b0101,  // srl >>
-      13'b0000000001000, 4'b1100,  // signed mul *
-      13'b0000000000100, 4'b1011,  // signed div /
-      13'b0000000000010, 4'b1101,  // signed rem %
-      13'b0000000000001, 4'b1110   // ebreak
+      14'b10000000000000, 5'b00011,  // copy imm
+      14'b01000000000000, 5'b00000,  // add a + b
+      14'b00100000000000, 5'b01000,  // sub a - b
+      14'b00010000000000, 5'b01010,  // sltu a <u b
+      14'b00001000000000, 5'b00100,  // xor a ^ b
+      14'b00000100000000, 5'b00111,  // and a & b
+      14'b00000010000000, 5'b00110,  // or a | b
+      14'b00000001000000, 5'b00001,  // sll <<
+      14'b00000000100000, 5'b00101,  // srl >>
+      14'b00000000010000, 5'b01101,  // sra >>>
+      14'b00000000001000, 5'b11100,  // signed mul *
+      14'b00000000000100, 5'b11011,  // signed div /
+      14'b00000000000010, 5'b11101,  // signed rem %
+      14'b00000000000001, 5'b11110   // ebreak
     })
   );
 
