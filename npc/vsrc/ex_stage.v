@@ -1,24 +1,23 @@
-// ysyx_22050710
+// ysyx_22050710 Execute Unit
+
 import "DPI-C" function void set_state_end();
 import "DPI-C" function void set_state_abort();
+
 module ysyx_22050710_exu (
-  input [63:0] i_rs1, i_rs2,
-  input [63:0] i_imm, i_pc,
-  input i_ALUAsrc,
-  input [1:0] i_ALUBsrc,
-  input [3:0] i_ALUctr,
-  input i_word_cut,
-  input [2:0] i_Branch,
-  input [2:0] i_MemOP,
-  input i_MemtoReg,
-  input [63:0] i_rdata,
-  output [63:0] o_ALUresult,
-  output [63:0] o_nextpc,
-  output [63:0] o_busW
+  input   [63:0] i_rs1, i_rs2,
+  input   [63:0] i_imm, i_pc,
+  input   i_ALUAsrc, input [1:0] i_ALUBsrc, input [3:0] i_ALUctr,
+  input   i_word_cut,
+  input   [2:0] i_Branch,
+  input   [2:0] i_MemOP, input i_MemtoReg,
+  input   [63:0] i_rdata,
+  output  [63:0] o_ALUresult,
+  output  [63:0] o_nextpc,
+  output  [63:0] o_busW
 );
 
-  assign o_nextpc = (PCBsrc ? i_rs1 : i_pc) + (PCAsrc ? i_imm : 64'd4);
   wire PCAsrc, PCBsrc;
+  assign o_nextpc = (PCBsrc ? i_rs1 : i_pc) + (PCAsrc ? i_imm : 64'd4);
   MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(1)) u_mux0 (
     .out(PCAsrc),
     .key(i_Branch),
@@ -59,11 +58,11 @@ module ysyx_22050710_exu (
   wire [63:0] aluresult;
   assign o_ALUresult = i_word_cut ? {{32{aluresult[31]}}, aluresult[31:0]} : aluresult;
 
-  // adder
-  wire [63:0] adder_result, sub_result, add_a, add_b;
-  assign add_a = i_ALUAsrc ? i_pc : src1;
+  // ALU
+  wire [63:0] src_a, src_b;
+  assign src_a = i_ALUAsrc ? i_pc : src1;
   MuxKey #(.NR_KEY(3), .KEY_LEN(2), .DATA_LEN(64)) u_mux2 (
-    .out(add_b),
+    .out(src_b),
     .key(i_ALUBsrc),
     .lut({
       2'b00, src2,
@@ -71,12 +70,13 @@ module ysyx_22050710_exu (
       2'b10, 64'd4
     })
   );
-  assign adder_result = add_a + add_b;
-  assign sub_result = add_a + (({64{1'b1}}^(add_b)) + 1);
+  wire[63:0] adder_result = src_a + src_b;
+  wire[63:0] sub_result   = src_a + (({64{1'b1}}^(src_b)) + 1);
 
   // copy imm
-  wire [63:0] copy_result;
-  assign copy_result = i_imm;
+  wire [63:0] copy_result = i_imm;
+
+  wire signed [63:0] signed_rem_result = $signed(src_a) % $signed(src_b)
 
   MuxKey #(.NR_KEY(4), .KEY_LEN(4), .DATA_LEN(64)) u_mux3 (
     .out(aluresult),
@@ -84,8 +84,9 @@ module ysyx_22050710_exu (
     .lut({
       4'b0011, copy_result,
       4'b0000, adder_result,
-      4'b1010, sub_result[63] == 1 ? 64'b1 : 64'b0, // branch
-      4'b1000, sub_result
+      4'b1010, sub_result[63] == 1 ? 64'b1 : 64'b0, // sltu
+      4'b1000, sub_result,
+      4'b1101, signed_rem_result
     })
   );
 

@@ -1,3 +1,5 @@
+// ysyx_22050710 Program Counter
+
 module ysyx_22050710_pc (
   input i_clk,
   input i_rst,

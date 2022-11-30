@@ -1,24 +1,22 @@
 // ysyx_22050710 Instruction Decode Unit
+
 module ysyx_22050710_idu (
-  input [31:0] i_inst,
-  output [63:0] o_imm,
-  output [4:0] o_ra, o_rb, o_rd,
-  output [2:0] o_Branch,
-  output o_RegWr, o_ALUAsrc,
-  output [1:0] o_ALUBsrc,
-  output [3:0] o_ALUctr,
-  output o_word_cut,
-  output o_MemtoReg, o_MemWr,
-  output [2:0] o_MemOP
+  input   [31:0] i_inst,
+  output  [63:0] o_imm,
+  output  [4:0] o_ra, o_rb, o_rd,
+  output  [2:0] o_Branch,
+  output  o_ALUAsrc, output [1:0] o_ALUBsrc, output [3:0] o_ALUctr,
+  output  o_word_cut,
+  output  o_RegWr, o_MemtoReg, o_MemWr, output [2:0] o_MemOP
 );
 
   wire [6:0] opcode;
   wire [2:0] funct3; wire [6:0] funct7;
 
   assign  opcode  = i_inst[6:0];
-  assign  o_ra = i_inst[19:15];
-  assign  o_rb = i_inst[24:20];
-  assign  o_rd  = i_inst[11:7];
+  assign  o_ra    = i_inst[19:15];
+  assign  o_rb    = i_inst[24:20];
+  assign  o_rd    = i_inst[11:7];
   assign  funct3  = i_inst[14:12];
   assign  funct7  = i_inst[31:25];
 
@@ -67,7 +65,7 @@ module ysyx_22050710_idu (
   wire [5:0] inst_type = {inst_type_r, inst_type_i, inst_type_u, inst_type_s, inst_type_b, inst_type_j};
 
   // Load类指令
-  wire inst_load = |{inst_lw, inst_ld};
+  wire inst_load  = |{inst_lw, inst_ld};
   // Store类指令
   wire inst_store = |{inst_sw, inst_sd};
 
@@ -99,29 +97,27 @@ module ysyx_22050710_idu (
     })
   );
 
-  assign o_RegWr = |{inst_type_r, inst_type_i, inst_type_u, inst_type_j};
+  assign o_RegWr    = |{inst_type_r, inst_type_i, inst_type_u, inst_type_j};
   /* 宽度为1bit,选择ALU输入端A的来源 */
   /* 为0时选择rs1, */
   /* 为1时选择PC */
-  assign o_ALUAsrc = |{inst_type_j, inst_auipc, inst_jalr} == 1 ? 1'b1 : 1'b0; // '1' when inst about pc
+  assign o_ALUAsrc  = |{inst_type_j, inst_auipc, inst_jalr} == 1 ? 1'b1 : 1'b0; // '1' when inst about pc
   /* 宽度为2bit,选择ALU输入端B的来源. */
   /* 为00时选择rs2. */
   /* 为01时选择imm 当是立即数移位指令时，只有低5位有效, */
   /* 为10时选择常数4 用于跳转时计算返回地址PC+4 */
-  assign o_ALUBsrc = {|{inst_jal, inst_jalr}, |inst_type[4:2] & !inst_jalr};
+  assign o_ALUBsrc  = {|{inst_jal, inst_jalr}, |inst_type[4:2] & !inst_jalr};
 
   assign o_MemtoReg = |{inst_lw, inst_ld};
-  assign o_MemWr = inst_type_s;
+  assign o_MemWr    = inst_type_s;
 
-  wire signed_byte, signed_halfword, signed_word, signed_doubleword;
-  wire unsigned_byte, unsigned_halfword, unsigned_word;
-  assign signed_byte = |{1'b0};
-  assign signed_halfword = |{1'b0};
-  assign signed_word = |{inst_lw, inst_sw};
-  assign signed_doubleword = |{inst_ld, inst_sd};
-  assign unsigned_byte = |{1'b0};
-  assign unsigned_halfword = |{1'b0};
-  assign unsigned_word = |{1'b0};
+  wire signed_byte        = |{1'b0};
+  wire signed_halfword    = |{1'b0};
+  wire signed_word        = |{inst_lw, inst_sw};
+  wire signed_doubleword  = |{inst_ld, inst_sd};
+  wire unsigned_byte      = |{1'b0};
+  wire unsigned_halfword  = |{1'b0};
+  wire unsigned_word      = |{1'b0};
  
   MuxKeyWithDefault #(.NR_KEY(7), .KEY_LEN(7), .DATA_LEN(3)) u_mux2 (
     .out(o_MemOP),
@@ -140,21 +136,23 @@ module ysyx_22050710_idu (
 
 
   wire alu_copyimm = |{inst_lui};
-  wire alu_plus = |{inst_auipc, inst_jal, inst_jalr, inst_addi, inst_add, inst_load, inst_store, inst_addiw, inst_addw};
-  wire alu_sub = |{inst_type_b, inst_sub};
-  wire alu_sltu = |{inst_sltiu};
-  wire alu_ebreak = inst_ebreak;
+  wire alu_plus    = |{inst_auipc, inst_jal, inst_jalr, inst_addi, inst_add, inst_load, inst_store, inst_addiw, inst_addw};
+  wire alu_sub     = |{inst_type_b, inst_sub};
+  wire alu_sltu    = |{inst_sltiu};
+  wire alu_singed_rem     = |{inst_remw};
+  wire alu_ebreak  = inst_ebreak;
 
-  MuxKeyWithDefault #(.NR_KEY(5), .KEY_LEN(5), .DATA_LEN(4)) u_mux3 (
+  MuxKeyWithDefault #(.NR_KEY(6), .KEY_LEN(6), .DATA_LEN(4)) u_mux3 (
     .out(o_ALUctr),
-    .key({alu_copyimm, alu_plus, alu_sub, alu_sltu, alu_ebreak}),
+    .key({alu_copyimm, alu_plus, alu_sub, alu_sltu, alu_singed_rem, alu_ebreak}),
     .default_out(4'b1111),
     .lut({
-      5'b10000, 4'b0011,
-      5'b01000, 4'b0000,
-      5'b00100, 4'b1000,
-      5'b00010, 4'b1010,
-      5'b00001, 4'b1110
+      6'b100000, 4'b0011,
+      6'b010000, 4'b0000,
+      6'b001000, 4'b1000,
+      6'b000100, 4'b1010,
+      6'b000010, 4'b1101,
+      6'b000001, 4'b1110
     })
   );
 

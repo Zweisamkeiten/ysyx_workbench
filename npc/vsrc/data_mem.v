@@ -1,23 +1,22 @@
-// ysyx_22050710
+// ysyx_22050710 Data Memory
 
 import "DPI-C" function void npc_pmem_read(input longint raddr, output longint rdata);
 import "DPI-C" function void npc_pmem_write(input longint waddr, input longint wdata, input byte wmask);
 
 module ysyx_22050710_datamem (
-  input i_rst,
-  input [63:0] i_addr,
-  input [63:0] i_data,
-  input [2:0] i_MemOP,
-  input i_WrEn,
-  output [63:0] o_data
+  input   i_rst,
+  input   [63:0] i_addr,
+  input   [63:0] i_data,
+  input   [2:0] i_MemOP,
+  input   i_WrEn,
+  output  [63:0] o_data
 );
 
-  reg [63:0] rdata; wire [63:0] wdata;
-  wire [63:0] raddr, waddr;
+  reg [63:0] rdata;
   assign o_data = rdata;
-  assign wdata = i_data;
-  assign raddr = i_addr;
-  assign waddr = i_addr;
+  wire [63:0] wdata = i_data;
+  wire [63:0] raddr = i_addr;
+  wire [63:0] waddr = i_addr;
   wire [7:0] wmask;
 
   MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(8)) u_mux1 (
