@@ -5,7 +5,7 @@ module ysyx_22050710_idu (
   output  [63:0] o_imm,
   output  [4:0] o_ra, o_rb, o_rd,
   output  [2:0] o_Branch,
-  output  o_ALUAsrc, output [1:0] o_ALUBsrc, output [3:0] o_ALUctr,
+  output  o_ALUAsrc, output [1:0] o_ALUBsrc, output [4:0] o_ALUctr,
   output  o_word_cut,
   output  o_RegWr, o_MemtoReg, o_MemWr, output [2:0] o_MemOP
 );
