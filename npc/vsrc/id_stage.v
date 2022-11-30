@@ -228,9 +228,4 @@ module ysyx_22050710_idu (
     })
   );
 
-  always @(*) begin
-    $display(o_ra);
-    $display(o_rb);
-  end
-
 endmodule
