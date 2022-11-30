@@ -7,6 +7,7 @@ module ysyx_22050710_exu (
   input i_ALUAsrc,
   input [1:0] i_ALUBsrc,
   input [3:0] i_ALUctr,
+  input i_word_cut,
   input [2:0] i_Branch,
   input [2:0] i_MemOP,
   input i_MemtoReg,
@@ -48,15 +49,25 @@ module ysyx_22050710_exu (
   wire Zero = ~(|o_ALUresult);
   wire Less = o_ALUresult[63] == 1 ? 1'b1 : 1'b0;
 
+  // word_cut: cut operand to 32bits and unsigned extend OR dont cut
+  wire [63:0] src1 = i_word_cut ? {{32{1'b0}}, i_rs1[31:0]} : i_rs1;
+  wire [63:0] src2 = i_word_cut ? {{32{1'b0}}, i_rs2[31:0]} : i_rs2;
+  wire [63:0] imm  = i_word_cut ? {{32{1'b0}}, i_imm[31:0]} : i_imm;
+
+  // if operand has been cut, the aluresult need signed extend to 64bits from
+  // [32:0]
+  wire [63:0] aluresult;
+  assign o_ALUresult = i_word_cut ? {{32{aluresult[31]}}, aluresult[31:0]} : aluresult;
+
   // adder
   wire [63:0] adder_result, sub_result, add_a, add_b;
-  assign add_a = i_ALUAsrc ? i_pc : i_rs1;
+  assign add_a = i_ALUAsrc ? i_pc : src1;
   MuxKey #(.NR_KEY(3), .KEY_LEN(2), .DATA_LEN(64)) u_mux2 (
     .out(add_b),
     .key(i_ALUBsrc),
     .lut({
-      2'b00, i_rs2,
-      2'b01, i_imm,
+      2'b00, src2,
+      2'b01, imm,
       2'b10, 64'd4
     })
   );
@@ -67,18 +78,13 @@ module ysyx_22050710_exu (
   wire [63:0] copy_result;
   assign copy_result = i_imm;
 
-  // adder result cut 32bits and_ext
-  wire [63:0] adder_result_cut32_and_ext;
-  assign adder_result_cut32_and_ext = {{32{adder_result[31]}}, adder_result[31:0]};
-
-  MuxKey #(.NR_KEY(5), .KEY_LEN(4), .DATA_LEN(64)) u_mux3 (
-    .out(o_ALUresult),
+  MuxKey #(.NR_KEY(4), .KEY_LEN(4), .DATA_LEN(64)) u_mux3 (
+    .out(aluresult),
     .key(i_ALUctr),
     .lut({
       4'b0011, copy_result,
       4'b0000, adder_result,
-      4'b1001, adder_result_cut32_and_ext,
-      4'b1010, sub_result[63] == 1 ? 64'b1 : 64'b0,
+      4'b1010, sub_result[63] == 1 ? 64'b1 : 64'b0, // branch
       4'b1000, sub_result
     })
   );
