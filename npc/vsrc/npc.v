@@ -45,7 +45,7 @@ module ysyx_22050710_npc (
   wire [63:0] imm;
   wire [4:0] ra, rb, rd;
   wire [2:0] Branch;
-  wire ALUAsrc; wire [1:0] ALUBsrc; wire [3:0] ALUctr;
+  wire ALUAsrc; wire [1:0] ALUBsrc; wire [4:0] ALUctr;
   wire word_cut;
   wire RegWr, MemtoReg, MemWr; wire [2:0] MemOP;
   ysyx_22050710_idu u_idu (
