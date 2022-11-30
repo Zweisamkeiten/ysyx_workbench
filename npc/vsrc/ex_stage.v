@@ -85,7 +85,7 @@ module ysyx_22050710_exu (
   // adder
   wire[63:0] adder_result = src_a + src_b;
   wire [63:0] sub_result; wire cout;
-  wire overflow = ({1'b0, src_a[63]} + {1'b0, src_b[63]})[1] ^ ({1'b0, src_a[62]} + {1'b0, src_b[62]})[1];
+  wire overflow = ({1'b0, src_a[63]} + {1'b0, src_b[63]})[0] ^ ({1'b0, src_a[62]} + {1'b0, src_b[62]})[0];
   assign {cout, sub_result}   = {1'b0, src_a} + {1'b0, (({64{1'b1}}^(src_b)) + 1)};
 
   // copy imm
