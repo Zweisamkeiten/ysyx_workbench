@@ -35,8 +35,10 @@ module ysyx_22050710_idu (
   wire inst_jalr   = (opcode[6:0] == 7'b1100111) & (funct3[2:0] == 3'b000);
   wire inst_beq    = (opcode[6:0] == 7'b1100011) & (funct3[2:0] == 3'b000);
   wire inst_bne    = (opcode[6:0] == 7'b1100011) & (funct3[2:0] == 3'b001);
-  wire inst_bltu   = (opcode[6:0] == 7'b1100011) & (funct3[2:0] == 3'b100);
-  wire inst_bgeu   = (opcode[6:0] == 7'b1100011) & (funct3[2:0] == 3'b100);
+  wire inst_blt    = (opcode[6:0] == 7'b1100011) & (funct3[2:0] == 3'b100);
+  wire inst_bge    = (opcode[6:0] == 7'b1100011) & (funct3[2:0] == 3'b101);
+  wire inst_bltu   = (opcode[6:0] == 7'b1100011) & (funct3[2:0] == 3'b110);
+  wire inst_bgeu   = (opcode[6:0] == 7'b1100011) & (funct3[2:0] == 3'b111);
   wire inst_lh     = (opcode[6:0] == 7'b0000011) & (funct3[2:0] == 3'b001);
   wire inst_lhu    = (opcode[6:0] == 7'b0000011) & (funct3[2:0] == 3'b101);
   wire inst_lw     = (opcode[6:0] == 7'b0000011) & (funct3[2:0] == 3'b010);
@@ -72,7 +74,7 @@ module ysyx_22050710_idu (
                        };
   wire inst_type_u = |{inst_lui,    inst_auipc};
   wire inst_type_s = |{inst_sb,     inst_sh,    inst_sw,    inst_sd};
-  wire inst_type_b = |{inst_beq,    inst_bne,   inst_bltu,  inst_bgeu};
+  wire inst_type_b = |{inst_beq, inst_bne, inst_blt, inst_bge, inst_bltu, inst_bgeu};
   wire inst_type_j = |{inst_jal};
 
   wire [2:0] extop;
@@ -181,17 +183,19 @@ module ysyx_22050710_idu (
     })
   );
 
-  MuxKeyWithDefault #(.NR_KEY(6), .KEY_LEN(6), .DATA_LEN(3)) u_mux4 (
+  MuxKeyWithDefault #(.NR_KEY(8), .KEY_LEN(8), .DATA_LEN(3)) u_mux4 (
     .out(o_Branch),
-    .key({inst_jal, inst_jalr, inst_beq, inst_bne, inst_bltu, inst_bgeu}),
+    .key({inst_jal, inst_jalr, inst_beq, inst_bne, inst_blt, inst_bge, inst_bltu, inst_bgeu}),
     .default_out(3'b000),
     .lut({
-      6'b100000, 3'b001,
-      6'b010000, 3'b010,
-      6'b001000, 3'b100,
-      6'b000100, 3'b101,
-      6'b000010, 3'b110,
-      6'b000001, 3'b111
+      8'b10000000, 3'b001,
+      8'b01000000, 3'b010,
+      8'b00100000, 3'b100,
+      8'b00010000, 3'b101,
+      8'b00001000, 3'b110,
+      8'b00000100, 3'b111,
+      8'b00000010, 3'b110,
+      8'b00000001, 3'b111
     })
   );
 
