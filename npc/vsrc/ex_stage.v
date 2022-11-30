@@ -157,6 +157,7 @@ module ysyx_22050710_exu (
   end
 
   always @(*) begin
-    $display(Less);
+    $display("sub_result: %h", sub_result);
+    $display("Less: %d", Less);
   end
 endmodule
