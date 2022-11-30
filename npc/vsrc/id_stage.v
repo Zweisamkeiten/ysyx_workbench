@@ -62,9 +62,14 @@ module ysyx_22050710_idu (
   wire inst_srli   = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b101) & (funct7[6:1] == 6'b000000);
   wire inst_srai   = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b101) & (funct7[6:1] == 6'b010000);
   wire inst_addiw  = (opcode[6:0] == 7'b0011011) & (funct3[2:0] == 3'b000);
+  wire inst_slliw  = (opcode[6:0] == 7'b0011011) & (funct3[2:0] == 3'b001) & (funct7[6:0] == 7'b0000000);
+  wire inst_srliw  = (opcode[6:0] == 7'b0011011) & (funct3[2:0] == 3'b101) & (funct7[6:0] == 7'b0000000);
+  wire inst_sraiw  = (opcode[6:0] == 7'b0011011) & (funct3[2:0] == 3'b101) & (funct7[6:0] == 7'b0100000);
   wire inst_addw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b000) & (funct7[6:0] == 7'b0000000);
   wire inst_subw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b000) & (funct7[6:0] == 7'b0100000);
   wire inst_sllw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b001) & (funct7[6:0] == 7'b0000000);
+  wire inst_srlw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b101) & (funct7[6:0] == 7'b0000000);
+  wire inst_sraw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b101) & (funct7[6:0] == 7'b0100000);
 
   // RV32M
   wire inst_mul    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b000) & (funct7[6:0] == 7'b0000001);
@@ -75,10 +80,12 @@ module ysyx_22050710_idu (
   wire inst_remw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b110) & (funct7[6:0] == 7'b0000001);
 
   wire inst_type_r = |{inst_add,    inst_sub,   inst_or,    inst_addw,  inst_subw,
-                       inst_mul,    inst_sllw,  inst_mulw,  inst_divw,  inst_remw
+                       inst_mul,    inst_sllw,  inst_srlw,  inst_sraw,  inst_mulw,
+                       inst_divw,   inst_remw
                        };
   wire inst_type_i = |{inst_jalr,   inst_lh,    inst_lhu,   inst_lw,    inst_lbu,
                        inst_addi,   inst_xori,  inst_andi,  inst_sltiu, inst_addiw,
+                       inst_slliw,  inst_srliw, inst_sraiw,
                        inst_ld,     inst_slli,  inst_srli,  inst_srai,  inst_ebreak
                        };
   wire inst_type_u = |{inst_lui,    inst_auipc};
@@ -95,7 +102,9 @@ module ysyx_22050710_idu (
   wire inst_store = |{inst_sb, inst_sh, inst_sw, inst_sd};
 
   // 是否需要对操作数进行32位截断
-  assign o_word_cut = |{inst_addiw, inst_addw, inst_subw, inst_sllw, inst_mulw, inst_divw, inst_remw};
+  assign o_word_cut = |{inst_addiw, inst_slliw, inst_srliw, inst_sraiw, inst_addw, inst_subw,
+                        inst_sllw,  inst_srlw,  inst_sraw,  inst_mulw,  inst_divw, inst_remw
+                        };
 
   MuxKey #(.NR_KEY(6), .KEY_LEN(6), .DATA_LEN(3)) u_mux0 (
     .out(extop),
@@ -170,9 +179,9 @@ module ysyx_22050710_idu (
   wire alu_xor          = |{inst_xori};
   wire alu_and          = |{inst_andi};
   wire alu_or           = |{inst_or};
-  wire alu_sll          = |{inst_slli, inst_sllw};
-  wire alu_srl          = |{inst_srli};
-  wire alu_sra          = |{inst_srai};
+  wire alu_sll          = |{inst_slli, inst_slliw, inst_sllw};
+  wire alu_srl          = |{inst_srli, inst_srliw, inst_srlw};
+  wire alu_sra          = |{inst_srai, inst_sraiw, inst_sraw};
   wire alu_singed_mul   = |{inst_mul, inst_mulw};
   wire alu_singed_div   = |{inst_divw};
   wire alu_singed_rem   = |{inst_remw};
