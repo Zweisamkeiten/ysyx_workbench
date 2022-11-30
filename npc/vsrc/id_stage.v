@@ -48,6 +48,7 @@ module ysyx_22050710_idu (
   // RV64I
   wire inst_ld     = (opcode[6:0] == 7'b0000011) & (funct3[2:0] == 3'b011);
   wire inst_sd     = (opcode[6:0] == 7'b0100011) & (funct3[2:0] == 3'b011);
+  wire inst_slli   = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b001) & (funct7[6:1] == 00000);
   wire inst_addiw  = (opcode[6:0] == 7'b0011011) & (funct3[2:0] == 3'b000);
   wire inst_addw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b000) & (funct7[6:0] == 7'b0000000);
 
@@ -55,7 +56,7 @@ module ysyx_22050710_idu (
   wire inst_remw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b110) & (funct7[6:0] == 7'b0000001);
 
   wire inst_type_r = |{inst_add, inst_sub, inst_addw, inst_remw};
-  wire inst_type_i = |{inst_jalr, inst_lw, inst_addi, inst_sltiu, inst_addiw, inst_ld, inst_ebreak};
+  wire inst_type_i = |{inst_jalr, inst_lw, inst_addi, inst_sltiu, inst_addiw, inst_ld, inst_slli, inst_ebreak};
   wire inst_type_u = |{inst_lui, inst_auipc};
   wire inst_type_s = |{inst_sw, inst_sd};
   wire inst_type_b = |{inst_beq, inst_bne, inst_bltu, inst_bgeu};
@@ -135,24 +136,28 @@ module ysyx_22050710_idu (
   );
 
 
-  wire alu_copyimm = |{inst_lui};
-  wire alu_plus    = |{inst_auipc, inst_jal, inst_jalr, inst_addi, inst_add, inst_load, inst_store, inst_addiw, inst_addw};
-  wire alu_sub     = |{inst_type_b, inst_sub};
-  wire alu_sltu    = |{inst_sltiu};
-  wire alu_singed_rem     = |{inst_remw};
-  wire alu_ebreak  = inst_ebreak;
+  wire alu_copyimm      = |{inst_lui};
+  wire alu_plus         = |{inst_auipc, inst_jal,   inst_jalr,  inst_addi, inst_add,
+                            inst_load,  inst_store, inst_addiw, inst_addw
+                            };
+  wire alu_sub          = |{inst_type_b, inst_sub};
+  wire alu_sltu         = |{inst_sltiu};
+  wire alu_sll          = |{inst_slli};
+  wire alu_singed_rem   = |{inst_remw};
+  wire alu_ebreak       = inst_ebreak;
 
-  MuxKeyWithDefault #(.NR_KEY(6), .KEY_LEN(6), .DATA_LEN(4)) u_mux3 (
+  MuxKeyWithDefault #(.NR_KEY(7), .KEY_LEN(7), .DATA_LEN(4)) u_mux3 (
     .out(o_ALUctr),
-    .key({alu_copyimm, alu_plus, alu_sub, alu_sltu, alu_singed_rem, alu_ebreak}),
+    .key({alu_copyimm, alu_plus, alu_sub, alu_sltu, alu_sll, alu_singed_rem, alu_ebreak}),
     .default_out(4'b1111),
     .lut({
-      6'b100000, 4'b0011,
-      6'b010000, 4'b0000,
-      6'b001000, 4'b1000,
-      6'b000100, 4'b1010,
-      6'b000010, 4'b1101,
-      6'b000001, 4'b1110
+      7'b1000000, 4'b0011,
+      7'b0100000, 4'b0000,
+      7'b0010000, 4'b1000,
+      7'b0001000, 4'b1010,
+      7'b0000100, 4'b1100,
+      7'b0000010, 4'b1101,
+      7'b0000001, 4'b1110
     })
   );
 

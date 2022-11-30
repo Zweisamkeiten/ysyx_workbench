@@ -70,15 +70,20 @@ module ysyx_22050710_exu (
       2'b10, 64'd4
     })
   );
+  // adder
   wire[63:0] adder_result = src_a + src_b;
   wire[63:0] sub_result   = src_a + (({64{1'b1}}^(src_b)) + 1);
 
   // copy imm
   wire [63:0] copy_result = i_imm;
 
+  // signed rem
   wire signed [63:0] signed_rem_result = $signed(src_a) % $signed(src_b);
 
-  MuxKey #(.NR_KEY(5), .KEY_LEN(4), .DATA_LEN(64)) u_mux3 (
+  // sll
+  wire [63:0] sll_result = src_a << src_b;
+
+  MuxKey #(.NR_KEY(6), .KEY_LEN(4), .DATA_LEN(64)) u_mux3 (
     .out(aluresult),
     .key(i_ALUctr),
     .lut({
@@ -86,6 +91,7 @@ module ysyx_22050710_exu (
       4'b0000, adder_result,
       4'b1010, sub_result[63] == 1 ? 64'b1 : 64'b0, // sltu
       4'b1000, sub_result,
+      4'b1100, sll_result,
       4'b1101, signed_rem_result
     })
   );
