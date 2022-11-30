@@ -55,10 +55,10 @@ module ysyx_22050710_exu (
       5'b01010, unsigned_Less
     })
   );
-  wire signed_Less = carry == 0
+  wire signed_Less = overflow == 0
                    ? (sub_result[63] == 1 ? 1'b1 : 1'b0)
                    : (sub_result[63] == 0 ? 1'b1 : 1'b0);
-  wire unsigned_Less = 1'b1 ^ carry;
+  wire unsigned_Less = 1'b1 ^ cout; // CF = cin ^ cout
 
   // word_cut: cut operand to 32bits and unsigned extend OR dont cut
   wire [63:0] src1 = i_word_cut ? {{32{1'b0}}, i_rs1[31:0]} : i_rs1;
@@ -84,8 +84,9 @@ module ysyx_22050710_exu (
   );
   // adder
   wire[63:0] adder_result = src_a + src_b;
-  wire [63:0] sub_result; wire carry;
-  assign {carry, sub_result}   = {1'b0, src_a} + {1'b0, (({64{1'b1}}^(src_b)) + 1)};
+  wire [63:0] sub_result; wire cout;
+  wire overflow = ({1'b0, src_a[63]} + {1'b0, src_b[63]}[1]) ^ ({1'b0, src_a[62]} + {1'b0, src_b[62]}[1])
+  assign {cout, sub_result}   = {1'b0, src_a} + {1'b0, (({64{1'b1}}^(src_b)) + 1)};
 
   // copy imm
   wire [63:0] copy_result = i_imm;
