@@ -140,6 +140,10 @@ module ysyx_22050710_exu (
     })
   );
 
+  always @(*) begin
+    $display(i_ALUctr);
+  end
+
   always @(i_ALUctr) begin
     if (i_ALUctr == 5'b11111) set_state_abort(); // invalid inst
     if (i_ALUctr == 5'b11110) set_state_end(); // ebreak
