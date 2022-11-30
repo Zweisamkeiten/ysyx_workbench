@@ -158,15 +158,15 @@ module ysyx_22050710_idu (
   MuxKeyWithDefault #(.NR_KEY(7), .KEY_LEN(7), .DATA_LEN(4)) u_mux3 (
     .out(o_ALUctr),
     .key({alu_copyimm, alu_plus, alu_sub, alu_sltu, alu_sll, alu_singed_rem, alu_ebreak}),
-    .default_out(4'b1111),
+    .default_out(4'b1111), // invalid
     .lut({
-      7'b1000000, 4'b0011,
-      7'b0100000, 4'b0000,
-      7'b0010000, 4'b1000,
-      7'b0001000, 4'b1010,
-      7'b0000100, 4'b1100,
-      7'b0000010, 4'b1101,
-      7'b0000001, 4'b1110
+      7'b1000000, 4'b0011,  // copy imm
+      7'b0100000, 4'b0000,  // add a + b
+      7'b0010000, 4'b1000,  // sub a - b
+      7'b0001000, 4'b1010,  // sltu a <u b
+      7'b0000100, 4'b1100,  // sll <<
+      7'b0000010, 4'b1101,  // signed rem %
+      7'b0000001, 4'b1110   // ebreak
     })
   );
 
