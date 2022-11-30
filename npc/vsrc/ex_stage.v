@@ -78,7 +78,7 @@ module ysyx_22050710_exu (
 
   wire signed [63:0] signed_rem_result = $signed(src_a) % $signed(src_b);
 
-  MuxKey #(.NR_KEY(4), .KEY_LEN(4), .DATA_LEN(64)) u_mux3 (
+  MuxKey #(.NR_KEY(5), .KEY_LEN(4), .DATA_LEN(64)) u_mux3 (
     .out(aluresult),
     .key(i_ALUctr),
     .lut({
