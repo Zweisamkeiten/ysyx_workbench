@@ -72,7 +72,7 @@ module ysyx_22050710_idu (
   wire inst_store = |{inst_sw, inst_sd};
 
   // 是否需要对操作数进行32位截断
-  assign o_word_cut = |{inst_addiw, inst_addw, inst_remw}
+  assign o_word_cut = |{inst_addiw, inst_addw, inst_remw};
 
   MuxKey #(.NR_KEY(6), .KEY_LEN(6), .DATA_LEN(3)) u_mux0 (
     .out(extop),
