@@ -46,7 +46,11 @@ module ysyx_22050710_exu (
   );
 
   wire Zero = ~(|o_ALUresult);
-  wire Less = o_ALUresult[63] == 1 ? 1'b1 : 1'b0;
+  wire Less = signed_Less | unsigned_Less;
+  wire signed_Less = carry == 0
+                   ? (sub_result[63] == 1 ? 1'b1 : 1'b0)
+                   : (sub_result[63] == 0 ? 1'b1 : 1'b0);
+  wire unsigned_Less = 1'b1 ^ carry;
 
   // word_cut: cut operand to 32bits and unsigned extend OR dont cut
   wire [63:0] src1 = i_word_cut ? {{32{1'b0}}, i_rs1[31:0]} : i_rs1;
@@ -72,7 +76,8 @@ module ysyx_22050710_exu (
   );
   // adder
   wire[63:0] adder_result = src_a + src_b;
-  wire[63:0] sub_result   = src_a + (({64{1'b1}}^(src_b)) + 1);
+  wire [63:0] sub_result; wire carry;
+  assign {carry, sub_result}   = src_a + (({64{1'b1}}^(src_b)) + 1);
 
   // copy imm
   wire [63:0] copy_result = i_imm;
@@ -118,8 +123,8 @@ module ysyx_22050710_exu (
     .lut({
       5'b00011, copy_result,
       5'b00000, adder_result,
-      5'b00010, sub_result[63] == 1 ? 64'b1 : 64'b0, // slt
-      5'b01010, sub_result[63] == 1 ? 64'b1 : 64'b0, // sltu
+      5'b00010, signed_Less == 1 ? 64'b1 : 64'b0, // slt
+      5'b01010, unsigned_Less == 1 ? 64'b1 : 64'b0, // sltu
       5'b01000, sub_result,
       5'b00100, xor_result,
       5'b00111, and_result,
@@ -154,10 +159,5 @@ module ysyx_22050710_exu (
   always @(i_ALUctr) begin
     if (i_ALUctr == 5'b11111) set_state_abort(); // invalid inst
     if (i_ALUctr == 5'b11110) set_state_end(); // ebreak
-  end
-
-  always @(*) begin
-    $display("sub_result: %h", sub_result);
-    $display("Less: %d", Less);
   end
 endmodule
