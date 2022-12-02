@@ -2,7 +2,7 @@ TOPNAME = ysyx_22050710_npc
 BUILD_DIR = ./build
 VERILATOR_OBJ_DIR = $(BUILD_DIR)/obj_dir
 BIN = $(BUILD_DIR)/$(TOPNAME)
-IIMG ?=
+IMG ?=
 NPC_EXEC := $(BIN) $(IMG) $(ELF) $(REF) $(IFRUNBATCH)
 
 ifeq ($(VERILATOR_ROOT),)
