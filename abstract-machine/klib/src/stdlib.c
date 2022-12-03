@@ -35,11 +35,11 @@ void *malloc(size_t size) {
   // Therefore do not call panic() here, else it will yield a dead recursion:
   //   panic() -> putchar() -> (glibc) -> malloc() -> panic()
 #if !(defined(__ISA_NATIVE__) && defined(__NATIVE_USE_KLIB__))
-  addr = (void *)ROUNDUP(heap.start , 8);
+  if (addr == NULL) addr = (void *)ROUNDUP(heap.start , 8);
   // 向上对齐8字节
   size = (size_t)ROUNDUP(size, 8);
-  char *end = addr + size;
-  assert((uintptr_t)heap.start <= (uintptr_t)end && (uintptr_t)end < (uintptr_t)heap.end);
+  addr += size;
+  assert((uintptr_t)heap.start <= (uintptr_t)addr && (uintptr_t)addr < (uintptr_t)heap.end);
   return addr;
 #endif
   return NULL;
