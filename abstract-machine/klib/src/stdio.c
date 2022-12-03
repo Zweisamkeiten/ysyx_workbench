@@ -113,7 +113,7 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
     }
     else if (state == S_LENGTH) {
       switch (ch) {
-        case 'l': lflags = (lflags == L_LONG) ?  L_LLONG : L_LONG;
+        case 'l': lflags = (lflags == L_LONG) ?  L_LLONG : L_LONG; break;
         default: fmt--; state = S_CONV;
       }
     }
