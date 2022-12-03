@@ -38,9 +38,10 @@ void *malloc(size_t size) {
   if (addr == NULL) addr = heap.start;
   // 向上对齐8字节
   size = (size_t)ROUNDUP(size, 8);
+  char *old = addr;
   addr += size;
   assert((uintptr_t)heap.start <= (uintptr_t)addr && (uintptr_t)addr < (uintptr_t)heap.end);
-  return addr;
+  return old;
 #endif
   return NULL;
 }
