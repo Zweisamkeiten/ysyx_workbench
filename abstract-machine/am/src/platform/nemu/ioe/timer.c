@@ -5,9 +5,9 @@
 static uint64_t boot_time = 0;
 
 static uint64_t read_time() {
-  volatile uint64_t lo = inl(RTC_ADDR);
-  volatile uint64_t hi = inl(RTC_ADDR + 4);
-  volatile uint64_t time = (hi << 32) | lo;
+  volatile uint32_t lo = inl(RTC_ADDR);
+  volatile uint32_t hi = inl(RTC_ADDR + 4);
+  volatile uint64_t time = ((uint64_t)hi << 32) | lo;
   // uint64_t time = (((uint64_t)inl(RTC_ADDR + 4)) << 32) | inl(RTC_ADDR);
   return time;
 }
