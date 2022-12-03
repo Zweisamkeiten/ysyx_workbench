@@ -31,7 +31,17 @@ void buf_w(char *buffer, int pos, size_t size, int ch) {
 }
 
 int printf(const char *fmt, ...) {
-  panic("Not implemented");
+  int ret;
+	va_list ap;
+
+	va_start(ap, fmt);
+	ret = vsnprintf(NULL, 0, fmt, ap);
+	va_start(ap, fmt);
+  char serial_buf[ret+1];
+	ret = vsprintf(serial_buf, fmt, ap);
+	va_end(ap);
+  putstr(serial_buf);
+	return (ret);
 }
 
 int vsprintf(char *out, const char *fmt, va_list ap) {
@@ -61,7 +71,7 @@ int snprintf(char *out, size_t n, const char *fmt, ...) {
 int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
   int state = 0;                            // default S_DEFAULT
   int ch;                                   // character from fmt because char undefinedcharactor from fmt, 0-255
-  char *cp;                                 // handy char pointer (for short terms)
+  const char *cp;                                 // handy char pointer (for short terms)
   int /* flags, width, precision, */ lflags = 0;  // flags as above
   int ret = 0;                              // return value accumulator
 
@@ -180,6 +190,11 @@ unsigned_convert:
         }
         case '%': {
           buf_w(out, ret++, n, '%');
+          break;
+        }
+        case 'c': {
+          char ch = va_arg(ap, int);
+          buf_w(out, ret++, n, ch);
           break;
         }
       }
