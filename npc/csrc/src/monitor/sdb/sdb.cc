@@ -10,7 +10,10 @@ extern "C" {
 extern "C" void init_regex();
 extern "C" void init_wp_pool();
 
-static bool is_batch_mode = false;
+extern "C" {
+  static bool is_batch_mode = false;
+}
+
 extern "C" void sdb_set_batch_mode() {
   is_batch_mode = true;
 }
