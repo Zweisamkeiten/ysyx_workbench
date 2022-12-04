@@ -30,6 +30,10 @@ typedef struct {
   io_callback_t callback;
 } IOMap;
 
+static inline void dtrace(IOMap *map, paddr_t addr) {
+  Log("DTrace: access device " ANSI_FMT("(%s)", ANSI_FG_GREEN) " at addr [" ANSI_FMT(FMT_PADDR, ANSI_FG_MAGENTA) "].", map->name,  addr);
+}
+
 static inline bool map_inside(IOMap *map, paddr_t addr) {
   return (addr >= map->low && addr <= map->high);
 }
@@ -38,6 +42,7 @@ static inline int find_mapid_by_addr(IOMap *maps, int size, paddr_t addr) {
   int i;
   for (i = 0; i < size; i ++) {
     if (map_inside(maps + i, addr)) {
+      IFDEF(CONFIG_DTRACE, dtrace(maps + i, addr));
       difftest_skip_ref();
       return i;
     }
