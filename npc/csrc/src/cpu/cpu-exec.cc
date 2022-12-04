@@ -147,7 +147,7 @@ void print_iringbuf() {
   char logbuf[128];
   disassemble_inst_to_buf(logbuf, 128, (uint8_t *)last_inst, cpu.pc, snpc);
   int arrow_len = strlen(" --> ");
-  iringbuf[iringbuf_index] = realloc(iringbuf[iringbuf_index], arrow_len + strlen(logbuf) + 1);
+  iringbuf[iringbuf_index] = (char *)realloc(iringbuf[iringbuf_index], arrow_len + strlen(logbuf) + 1);
   char *p = iringbuf[iringbuf_index];
   memset(p, ' ', arrow_len);
   p += arrow_len;
@@ -171,7 +171,7 @@ static void trace_and_difftest(vaddr_t dnpc) {
 #ifdef CONFIG_IRINGTRACE_COND
   if (IRINGTRACE_COND) {
     int arrow_len = strlen(" --> ");
-    iringbuf[iringbuf_index] = realloc(iringbuf[iringbuf_index], arrow_len + strlen(itrace_logbuf) + 1);
+    iringbuf[iringbuf_index] = (char *)realloc(iringbuf[iringbuf_index], arrow_len + strlen(itrace_logbuf) + 1);
     char *p = iringbuf[iringbuf_index];
     memset(p, ' ', arrow_len);
     p += arrow_len;
@@ -195,7 +195,7 @@ void exec_once() {
   cpu.pc = *npcpc;
   // printf("%lx\n", top->o_pc);
 #ifdef CONFIG_IRINGTRACE
-  last_inst = *(cpu.inst);
+  last_inst = cpu.inst;
 #endif
   snpc = cpu.pc;
   single_cycle();
