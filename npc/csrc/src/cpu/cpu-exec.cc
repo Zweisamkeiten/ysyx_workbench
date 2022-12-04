@@ -5,6 +5,7 @@ extern "C" {
   #include <cpu/difftest.h>
   #include <memory/paddr.h>
 }
+static vaddr_t snpc; // use at IRINGTRACE and difftest
 #ifdef CONFIG_WATCHPOINT
 extern "C" void diff_watchpoint_value();
 #endif
@@ -136,7 +137,6 @@ void disassemble_inst_to_buf(char *logbuf, size_t bufsize, uint8_t * inst_val, v
 #endif
 }
 
-static vaddr_t snpc; // use at IRINGTRACE and difftest
 #ifdef CONFIG_IRINGTRACE
 static int iringbuf_index = 0;
 static char *iringbuf[16] = {NULL};
