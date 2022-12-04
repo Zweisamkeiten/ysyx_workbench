@@ -1,26 +1,3 @@
-#if defined(__GNUC__) && !defined(__clang__)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
-#endif
-
-#include "llvm/MC/MCAsmInfo.h"
-#include "llvm/MC/MCContext.h"
-#include "llvm/MC/MCDisassembler/MCDisassembler.h"
-#include "llvm/MC/MCInstPrinter.h"
-#if LLVM_VERSION_MAJOR >= 14
-#include "llvm/MC/TargetRegistry.h"
-#else
-#include "llvm/Support/TargetRegistry.h"
-#endif
-#include "llvm/Support/TargetSelect.h"
-
-#if defined(__GNUC__) && !defined(__clang__)
-#pragma GCC diagnostic pop
-#endif
-
-#if LLVM_VERSION_MAJOR < 11
-#error Please use LLVM with major version >= 11
-#endif
 #include <cpu/cpu.h>
 extern "C" {
 #include <isa.h>
