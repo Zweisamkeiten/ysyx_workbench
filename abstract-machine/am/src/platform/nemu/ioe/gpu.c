@@ -15,6 +15,7 @@ void __am_gpu_init() {
 
 void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
   uint32_t size = inw(VGACTL_ADDR);
+  printf("%u\n", size);
   printf("%u\n", size >> 16);
   printf("%u\n", size & 0xFFFF);
   *cfg = (AM_GPU_CONFIG_T) {
