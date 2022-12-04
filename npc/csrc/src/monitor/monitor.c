@@ -76,7 +76,7 @@ void init_monitor(int argc, char *argv[]) {
   /* Initialize the simple debugger. */
   init_sdb();
 
-  IFDEF(CONFIG_TRACE, init_disasm("riscv64-pc-linux-gnu"));
+  init_disasm("riscv64-pc-linux-gnu");
 
   /* Display welcome message. */
   welcome();
