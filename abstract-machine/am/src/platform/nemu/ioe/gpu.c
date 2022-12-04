@@ -22,6 +22,10 @@ void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
 }
 
 void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
+  if (ctl->sync) {
+    outl(SYNC_ADDR, 1);
+  }
+
   int w = io_read(AM_GPU_CONFIG).width;
   if (ctl->w == 0 || ctl->h == 0) return;
   uint32_t *fb = (uint32_t *)(uintptr_t)FB_ADDR;
@@ -30,9 +34,6 @@ void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
       fb[row * w + column] = *(uint32_t *)(ctl->pixels);
       ctl->pixels++;
     }
-  }
-  if (ctl->sync) {
-    outl(SYNC_ADDR, 1);
   }
 }
 
