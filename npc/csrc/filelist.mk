@@ -1,2 +1,2 @@
 CPPSRCS += csrc/main.cpp
-CXXFLAGS += -fPIE
+CXXFLAGS += $(shell llvm-config --cxxflags) -fPIE
