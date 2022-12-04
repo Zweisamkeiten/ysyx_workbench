@@ -11,7 +11,6 @@ void init_difftest(char *ref_so_file, long img_size, int port);
 
 static int difftest_port = 1234;
 
-
 static void welcome() {
   printf("Trace: %s", MUXDEF(CONFIG_TRACE, ANSI_FMT("ON\n", ANSI_FG_GREEN), ANSI_FMT("OFF\n", ANSI_FG_RED)));
   IFDEF(CONFIG_TRACE, printf("If trace is enabled, a log file will be generated "
@@ -50,6 +49,7 @@ void init_monitor(int argc, char *argv[]) {
 
   if (argc == 5 && strcmp("1", argv[4]) == 0) {
     printf("Running in batchmode\n");
+    void sdb_set_batch_mode();
     sdb_set_batch_mode();
   }
   /* Set random seed. */
@@ -71,6 +71,7 @@ void init_monitor(int argc, char *argv[]) {
 
   IFDEF(CONFIG_FTRACE, init_elf(argv[2]));
 
+  void init_sdb();
   /* Initialize the simple debugger. */
   init_sdb();
 
