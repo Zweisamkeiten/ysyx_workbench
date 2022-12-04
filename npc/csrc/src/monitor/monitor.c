@@ -4,7 +4,6 @@
 void init_rand();
 void init_mem();
 void init_isa();
-void init_sdb();
 void init_sim();
 void init_disasm(const char *triple);
 void init_elf(const char * elf_file);
@@ -12,7 +11,6 @@ void init_difftest(char *ref_so_file, long img_size, int port);
 
 static int difftest_port = 1234;
 
-void sdb_set_batch_mode();
 
 static void welcome() {
   printf("Trace: %s", MUXDEF(CONFIG_TRACE, ANSI_FMT("ON\n", ANSI_FG_GREEN), ANSI_FMT("OFF\n", ANSI_FG_RED)));
