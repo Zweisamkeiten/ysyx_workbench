@@ -1,3 +1,7 @@
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
 #include <cpu/cpu.h>
 extern "C" {
 #include <isa.h>
