@@ -4,12 +4,15 @@
 void init_rand();
 void init_mem();
 void init_isa();
+void init_sdb();
 void init_sim();
 void init_disasm(const char *triple);
 void init_elf(const char * elf_file);
 void init_difftest(char *ref_so_file, long img_size, int port);
 
 static int difftest_port = 1234;
+
+void sdb_set_batch_mode();
 
 static void welcome() {
   printf("Trace: %s", MUXDEF(CONFIG_TRACE, ANSI_FMT("ON\n", ANSI_FG_GREEN), ANSI_FMT("OFF\n", ANSI_FG_RED)));
@@ -49,7 +52,6 @@ void init_monitor(int argc, char *argv[]) {
 
   if (argc == 5 && strcmp("1", argv[4]) == 0) {
     printf("Running in batchmode\n");
-    void sdb_set_batch_mode();
     sdb_set_batch_mode();
   }
   /* Set random seed. */
@@ -71,7 +73,6 @@ void init_monitor(int argc, char *argv[]) {
 
   IFDEF(CONFIG_FTRACE, init_elf(argv[2]));
 
-  void init_sdb();
   /* Initialize the simple debugger. */
   init_sdb();
 
