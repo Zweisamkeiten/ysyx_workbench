@@ -43,5 +43,6 @@ static void audio_write(uint8_t *buf, int len) {
 
 void __am_audio_play(AM_AUDIO_PLAY_T *ctl) {
   int len = ctl->buf.end - ctl->buf.start;
+  printf("len: %d\n", len);
   audio_write(ctl->buf.start, len);
 }
