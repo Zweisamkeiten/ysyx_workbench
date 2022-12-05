@@ -37,7 +37,6 @@ static SDL_AudioSpec s = {};
 #ifdef CONFIG_HAS_AUDIO
 #ifndef CONFIG_TARGET_AM
 
-int j = 0;
 static void audio_play(void *userdata, uint8_t *stream, int len) {
   int nread = len;
   if (count < len) nread = count;
@@ -45,13 +44,6 @@ static void audio_play(void *userdata, uint8_t *stream, int len) {
   while (b < nread) {
     int size = (count - b < nread) ? count - b : nread;
     if (size > 0) {
-      // printf("read\n");
-      if (j == 0) {
-        for (int i = 0; i < size; i++) {
-          fprintf(stderr, "read: %u\n", *(sbuf + b + i));
-        }
-        j = 1;
-      }
       memcpy(stream, sbuf + b, size);
       b += size;
     }
