@@ -60,6 +60,7 @@ static void init_sound() {
   s.format = AUDIO_S16SYS; // 假设系统中音频数据的格式总是使用16位有符号数来表示
   s.callback = audio_play;
   s.userdata = NULL; // 不使用
+  printf("%d", s.freq);
 
   count = 0;
   int ret = SDL_InitSubSystem(SDL_INIT_AUDIO);
