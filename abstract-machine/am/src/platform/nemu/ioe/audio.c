@@ -25,7 +25,6 @@ void __am_audio_ctrl(AM_AUDIO_CTRL_T *ctrl) {
 
 void __am_audio_status(AM_AUDIO_STATUS_T *stat) {
   stat->count = inl(AUDIO_COUNT_ADDR);
-  printf("count: %d\n", stat->count);
 }
 
 static void audio_write(uint8_t *buf, int len) {
@@ -34,17 +33,17 @@ static void audio_write(uint8_t *buf, int len) {
   while (nwrite < len) {
     int count = inl(AUDIO_COUNT_ADDR);
     int free = sbufsize - count;
-    int size = (free > len) ? len : free - len;
-    // printf("size: %d\n", size);
-    memcpy((void *)(uint64_t)(AUDIO_SBUF_ADDR + count), buf, size);
-    count += size;
-    outl(AUDIO_COUNT_ADDR, count);
-    nwrite += size;
+    // int size = (free > len) ? len : free - len;
+    if (free > len) {
+      memcpy((void *)(uint64_t)(AUDIO_SBUF_ADDR + count), buf, len);
+      count += len;
+      outl(AUDIO_COUNT_ADDR, count);
+      nwrite += len;
+    }
   }
 }
 
 void __am_audio_play(AM_AUDIO_PLAY_T *ctl) {
   int len = ctl->buf.end - ctl->buf.start;
-  // printf("len: %d\n", len);
   audio_write(ctl->buf.start, len);
 }
