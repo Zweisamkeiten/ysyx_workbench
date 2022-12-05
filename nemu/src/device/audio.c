@@ -16,6 +16,7 @@
 #include <common.h>
 #include <device/map.h>
 #include <SDL2/SDL.h>
+#include <unistd.h>
 
 enum {
   reg_freq,
@@ -30,7 +31,67 @@ enum {
 static uint8_t *sbuf = NULL;
 static uint32_t *audio_base = NULL;
 
+static volatile int count = 0;
+static SDL_AudioSpec s = {};
+
+#ifdef CONFIG_HAS_AUDIO
+#ifndef CONFIG_TARGET_AM
+
+static void audio_play(void *userdata, uint8_t *stream, int len) {
+  int nread = len;
+  if (count < len) nread = count;
+  int b = 0;
+  while (b < nread) {
+    int size = (count - b < nread) ? count - b : nread;
+    if (size > 0) {
+      memcpy(stream, sbuf + b, size);
+      b += size;
+    }
+  }
+
+  count -= nread;
+  if (len > nread) {
+    memset(stream + nread, 0, len - nread);
+  }
+}
+
+static void init_sound() {
+  s.format = AUDIO_S16SYS; // 假设系统中音频数据的格式总是使用16位有符号数来表示
+  s.callback = audio_play;
+  s.userdata = NULL; // 不使用
+
+  count = 0;
+  int ret = SDL_InitSubSystem(SDL_INIT_AUDIO);
+  if (ret == 0) {
+    SDL_OpenAudio(&s, NULL);
+    SDL_PauseAudio(0);
+  }
+}
+
+#else
+static void init_sound() {}
+
+#endif
+#endif
+
 static void audio_io_handler(uint32_t offset, int len, bool is_write) {
+  if (is_write) {
+    switch (offset / 4) {
+      case reg_freq: s.freq = audio_base[reg_freq]; break;
+      case reg_channels: s.channels = audio_base[reg_channels]; break;
+      case reg_samples: s.samples = audio_base[reg_samples]; init_sound(); break; // 照顺序写入, samples最后一个写入, 之后初始化音频设备
+      case reg_count: count = audio_base[reg_count]; break;
+      default: panic("offset illegal");
+    }
+  }
+  else  {
+    switch (offset / 4) {
+      case reg_sbuf_size: audio_base[reg_sbuf_size] = CONFIG_SB_SIZE; break;
+      case reg_init: audio_base[reg_init] = true; break;
+      case reg_count: audio_base[reg_count] = count; break;
+      default: panic("offset illegal");
+    }
+  }
 }
 
 void init_audio() {
