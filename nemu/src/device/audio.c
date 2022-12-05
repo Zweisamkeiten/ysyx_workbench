@@ -42,10 +42,10 @@ static void audio_play(void *userdata, uint8_t *stream, int len) {
   if (count < len) nread = count;
   int b = 0;
   while (b < nread) {
-    int size = (count - b < nread) ? count - b : nread;
-    if (size > 0) {
-      memcpy(stream, sbuf + b, size);
-      b += size;
+    // int size = (count - b < nread) ? count - b : nread;
+    if (count > nread) {
+      memcpy(stream, sbuf + b, nread);
+      b += nread;
     }
   }
 
