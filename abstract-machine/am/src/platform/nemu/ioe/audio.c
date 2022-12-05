@@ -29,17 +29,18 @@ void __am_audio_status(AM_AUDIO_STATUS_T *stat) {
 
 static void audio_write(uint8_t *buf, int len) {
   int nwrite = 0;
-  // int sbufsize = inl(AUDIO_SBUF_SIZE_ADDR);
-  int count = inl(AUDIO_COUNT_ADDR);
+  int sbufsize = inl(AUDIO_SBUF_SIZE_ADDR);
   while (nwrite < len) {
-    // int free = sbufsize - count;
+    int count = inl(AUDIO_COUNT_ADDR);
+    int free = sbufsize - count;
     int n = 0;
-    // if (free > len) {
+    if (free > len) {
       for (int i = 0; i < len; i++) {
+        printf("%d\n", *(buf+i));
         outb(AUDIO_SBUF_ADDR + count + i, *(buf + i));
         n += 1;
       }
-    // }
+    }
     count += n;
     outl(AUDIO_COUNT_ADDR, count);
     nwrite += n;
