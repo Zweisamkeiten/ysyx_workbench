@@ -40,7 +40,6 @@ static void audio_play(void *userdata, uint8_t *stream, int len) {
   while (b < nread) {
     int size = (count < nread) ? count : nread;
     if (size > 0) {
-      printf("read: %d\n", size);
       memcpy(stream, sbuf + end - count, size);
       b += size;
     }
@@ -69,7 +68,6 @@ static void audio_write(uint8_t *buf, int len) {
     int free = sbufsize - count;
     int size = (free > len) ? len : free - len;
     if (free > len) {
-      printf("read: %d\n", size);
       memcpy((void *)(sbuf + end), buf, size);
       count += size;
       end += size;
