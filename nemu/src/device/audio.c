@@ -44,7 +44,7 @@ static void audio_play(void *userdata, uint8_t *stream, int len) {
   while (b < nread) {
     int size = (count - b < nread) ? count - b : nread;
     if (size > 0) {
-      memcpy(stream, sbuf + 1024, size);
+      memcpy(stream, sbuf + b, size);
       b += size;
     }
   }
@@ -59,7 +59,9 @@ static void init_sound() {
   s.format = AUDIO_S16SYS; // 假设系统中音频数据的格式总是使用16位有符号数来表示
   s.callback = audio_play;
   s.userdata = NULL; // 不使用
-  fprintf(stderr, "samples: %d", s.samples);
+  printf("freq: %d\n", s.freq);
+  printf("channels: %d\n", s.channels);
+  printf("samples: %d\n", s.samples);
 
   count = 0;
   int ret = SDL_InitSubSystem(SDL_INIT_AUDIO);
