@@ -27,6 +27,7 @@ void __am_audio_status(AM_AUDIO_STATUS_T *stat) {
   stat->count = inl(AUDIO_COUNT_ADDR);
 }
 
+int j = 0;
 static void audio_write(uint8_t *buf, int len) {
   int nwrite = 0;
   int sbufsize = inl(AUDIO_SBUF_SIZE_ADDR);
@@ -34,7 +35,6 @@ static void audio_write(uint8_t *buf, int len) {
     int count = inl(AUDIO_COUNT_ADDR);
     int free = sbufsize - count;
     int n = 0;
-    int j = 0;
     if (free > len) {
       for (int i = 0; i < len; i++) {
         if (j == 0) printf("audio write: %u\n", *(buf + i));
