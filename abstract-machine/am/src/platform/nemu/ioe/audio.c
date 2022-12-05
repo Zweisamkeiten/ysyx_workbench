@@ -9,6 +9,8 @@
 #define AUDIO_INIT_ADDR      (AUDIO_ADDR + 0x10)
 #define AUDIO_COUNT_ADDR     (AUDIO_ADDR + 0x14)
 
+static int write_point = 0; // 读写队列 读的结尾, 写的开头
+
 void __am_audio_init() {
 }
 
@@ -33,12 +35,15 @@ static void audio_write(uint8_t *buf, int len) {
   while (nwrite < len) {
     int count = inl(AUDIO_COUNT_ADDR);
     int free = sbufsize - count;
-    // int size = (free > len) ? len : free - len;
+    int size = (free > len) ? len : free - len;
     if (free > len) {
-      memcpy((void *)(uint64_t)(AUDIO_SBUF_ADDR + count), buf, len);
-      count += len;
+      memcpy((void *)(uint64_t)(AUDIO_SBUF_ADDR + write_point), buf, size);
+      write_point += size;
+      count += size;
       outl(AUDIO_COUNT_ADDR, count);
-      nwrite += len;
+      nwrite += size;
+    } else {
+      write_point = 0;
     }
   }
 }
