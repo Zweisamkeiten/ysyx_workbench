@@ -45,8 +45,8 @@ static void audio_play(void *userdata, uint8_t *stream, int len) {
   while (b < nread) {
     // int size = (count - b < nread) ? count - b : nread;
     // if (size > 0) {
-      memcpy(stream, sbuf, 4096);
-      b += 4096;
+      memcpy(stream, sbuf, 2048);
+      b += 2048;
     // }
   }
 
