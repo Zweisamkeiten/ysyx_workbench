@@ -40,6 +40,7 @@ static SDL_AudioSpec s = {};
 static void audio_play(void *userdata, uint8_t *stream, int len) {
   int nread = len;
   if (count < len) nread = count;
+  printf("nread: %d\n", nread);
   int b = 0;
   while (b < nread) {
     // int size = (count - b < nread) ? count - b : nread;
