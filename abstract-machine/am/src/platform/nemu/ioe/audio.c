@@ -35,7 +35,7 @@ static void audio_write(uint8_t *buf, int len) {
     int n = 0;
     // if (free > len) {
       for (int i = 0; i < len; i++) {
-        outb(AUDIO_SBUF_ADDR + count + i, *(buf + i));
+        outb(AUDIO_SBUF_ADDR + count + i, 123);
         n += 1;
       }
     // }
