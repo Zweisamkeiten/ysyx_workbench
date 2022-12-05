@@ -34,12 +34,14 @@ static void audio_write(uint8_t *buf, int len) {
     int count = inl(AUDIO_COUNT_ADDR);
     int free = sbufsize - count;
     int n = 0;
+    int j = 0;
     if (free > len) {
       for (int i = 0; i < len; i++) {
-        // printf("audio write: %u\n", *(buf + i));
+        if (j == 0) printf("audio write: %u\n", *(buf + i));
         outb(AUDIO_SBUF_ADDR + count + i, *(buf + i));
         n += 1;
       }
+      j = 1;
     }
     count += n;
     outl(AUDIO_COUNT_ADDR, count);
