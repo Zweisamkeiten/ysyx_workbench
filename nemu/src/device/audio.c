@@ -44,7 +44,7 @@ static void audio_play(void *userdata, uint8_t *stream, int len) {
   int b = 0;
   while (b < nread) {
     int size = (count < nread) ? count : nread;
-    printf("read_point: %d\n", read_point);
+    // printf("read_point: %d\n", read_point);
     int read_to_end = CONFIG_SB_SIZE - read_point; // 读入点距离缓冲区末尾的距离
     if (read_to_end > nread) {
       memcpy(stream, sbuf + read_point, size);
