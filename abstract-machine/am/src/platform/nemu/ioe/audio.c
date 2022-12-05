@@ -31,7 +31,7 @@ static void audio_write(uint8_t *buf, int len) {
   int nwrite = 0;
   int sbufsize = inl(AUDIO_SBUF_SIZE_ADDR);
   while (nwrite < len) {
-    printf("write\n");
+    printf("audio write\n");
     int count = inl(AUDIO_COUNT_ADDR);
     int free = sbufsize - count;
     int n = 0;
