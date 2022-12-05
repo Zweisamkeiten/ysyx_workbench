@@ -1,5 +1,6 @@
 #include <am.h>
 #include <nemu.h>
+#include <klib.h>
 
 #define AUDIO_FREQ_ADDR      (AUDIO_ADDR + 0x00)
 #define AUDIO_CHANNELS_ADDR  (AUDIO_ADDR + 0x04)
@@ -35,7 +36,8 @@ static void audio_write(uint8_t *buf, int len) {
     int n = 0;
     // if (free > len) {
       for (int i = 0; i < len; i++) {
-        outb(AUDIO_SBUF_ADDR + count + i, 123);
+        printf("write: %d\n", *(buf+i));
+        outb(AUDIO_SBUF_ADDR + count + i, *(buf + i));
         n += 1;
       }
     // }
