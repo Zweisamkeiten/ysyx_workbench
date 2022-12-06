@@ -39,6 +39,7 @@ module ysyx_22050710_idu (
   wire inst_bge    = (opcode[6:0] == 7'b1100011) & (funct3[2:0] == 3'b101);
   wire inst_bltu   = (opcode[6:0] == 7'b1100011) & (funct3[2:0] == 3'b110);
   wire inst_bgeu   = (opcode[6:0] == 7'b1100011) & (funct3[2:0] == 3'b111);
+  wire inst_lb     = (opcode[6:0] == 7'b0000011) & (funct3[2:0] == 3'b000);
   wire inst_lh     = (opcode[6:0] == 7'b0000011) & (funct3[2:0] == 3'b001);
   wire inst_lhu    = (opcode[6:0] == 7'b0000011) & (funct3[2:0] == 3'b101);
   wire inst_lw     = (opcode[6:0] == 7'b0000011) & (funct3[2:0] == 3'b010);
@@ -55,6 +56,7 @@ module ysyx_22050710_idu (
   wire inst_sll    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b001) & (funct7[6:0] == 7'b0000000);
   wire inst_slt    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b010) & (funct7[6:0] == 7'b0000000);
   wire inst_sltu   = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b011) & (funct7[6:0] == 7'b0000000);
+  wire inst_xor    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b100) & (funct7[6:0] == 7'b0000000);
   wire inst_or     = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b110) & (funct7[6:0] == 7'b0000000);
   wire inst_and    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b111) & (funct7[6:0] == 7'b0000000);
   wire inst_ebreak = (opcode[6:0] == 7'b1110011) & (funct3[2:0] == 3'b000);
@@ -85,17 +87,20 @@ module ysyx_22050710_idu (
   // RV64M
   wire inst_mulw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b000) & (funct7[6:0] == 7'b0000001);
   wire inst_divw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b100) & (funct7[6:0] == 7'b0000001);
+  wire inst_divuw  = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b101) & (funct7[6:0] == 7'b0000001);
   wire inst_remw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b110) & (funct7[6:0] == 7'b0000001);
+  wire inst_remuw  = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b111) & (funct7[6:0] == 7'b0000001);
 
   wire inst_type_r = |{inst_add,    inst_sub,   inst_sll,   inst_slt,   inst_sltu,
-                       inst_or,     inst_and,   inst_addw,  inst_subw,  inst_mul,
-                       inst_div,    inst_divu,  inst_rem,   inst_remu,  inst_sllw,
-                       inst_srlw,   inst_sraw,  inst_mulw,  inst_divw,  inst_remw
+                       inst_xor,    inst_or,    inst_and,   inst_addw,  inst_subw,
+                       inst_mul,    inst_div,   inst_divu,  inst_rem,   inst_remu,
+                       inst_sllw,   inst_srlw,  inst_sraw,  inst_mulw,  inst_divw,
+                       inst_divuw,  inst_remw,  inst_remuw
                        };
-  wire inst_type_i = |{inst_jalr,   inst_lh,    inst_lhu,   inst_lw,    inst_lbu,
-                       inst_addi,   inst_xori,  inst_andi,  inst_sltiu, inst_addiw,
-                       inst_slliw,  inst_srliw, inst_sraiw,
-                       inst_ld,     inst_slli,  inst_srli,  inst_srai,  inst_ebreak
+  wire inst_type_i = |{inst_jalr,   inst_lh,    inst_lhu,   inst_lw,    inst_lb,
+                       inst_lbu,    inst_addi,  inst_xori,  inst_andi,  inst_sltiu,
+                       inst_addiw,  inst_slliw, inst_srliw, inst_sraiw, inst_ld,
+                       inst_slli,  inst_srli,  inst_srai,  inst_ebreak
                        };
   wire inst_type_u = |{inst_lui,    inst_auipc};
   wire inst_type_s = |{inst_sb,     inst_sh,    inst_sw,    inst_sd};
@@ -106,13 +111,14 @@ module ysyx_22050710_idu (
   wire [5:0] inst_type = {inst_type_r, inst_type_i, inst_type_u, inst_type_s, inst_type_b, inst_type_j};
 
   // Load类指令
-  wire inst_load  = |{inst_lh, inst_lhu, inst_lw, inst_lbu, inst_ld};
+  wire inst_load  = |{inst_lb, inst_lh, inst_lhu, inst_lw, inst_lbu, inst_ld};
   // Store类指令
   wire inst_store = |{inst_sb, inst_sh, inst_sw, inst_sd};
 
   // 是否需要对操作数进行32位截断
   assign o_word_cut = |{inst_addiw, inst_slliw, inst_srliw, inst_sraiw, inst_addw, inst_subw,
-                        inst_sllw,  inst_srlw,  inst_sraw,  inst_mulw,  inst_divw, inst_remw
+                        inst_sllw,  inst_srlw,  inst_sraw,  inst_mulw,  inst_divw, inst_divuw,
+                        inst_remw,  inst_remuw
                         };
 
   MuxKey #(.NR_KEY(6), .KEY_LEN(6), .DATA_LEN(3)) u_mux0 (
@@ -155,7 +161,7 @@ module ysyx_22050710_idu (
   assign o_MemWr    = inst_type_s;
 
   // 写时可以不用注意符号拓展, 都放在带符号中''
-  wire signed_byte        = |{inst_sb};
+  wire signed_byte        = |{inst_lb, inst_sb};
   wire signed_halfword    = |{inst_sh, inst_lh};
   wire signed_word        = |{inst_lw, inst_sw};
   wire signed_doubleword  = |{inst_ld, inst_sd};
@@ -186,7 +192,7 @@ module ysyx_22050710_idu (
   wire alu_sub          = |{inst_sub, inst_subw};
   wire alu_signed_less  = |{inst_beq, inst_bne, inst_blt, inst_bge, inst_slt}; // branch set signed Less || slt rs1, rs2
   wire alu_unsinged_less= |{inst_bltu, inst_bgeu, inst_sltiu, inst_sltu}; // branch set unsigned Less || sltu rs1, rs2
-  wire alu_xor          = |{inst_xori};
+  wire alu_xor          = |{inst_xori, inst_xor};
   wire alu_and          = |{inst_andi, inst_and};
   wire alu_or           = |{inst_or};
   wire alu_sll          = |{inst_sll, inst_slli, inst_slliw, inst_sllw};
@@ -194,9 +200,9 @@ module ysyx_22050710_idu (
   wire alu_sra          = |{inst_srai, inst_sraiw, inst_sraw};
   wire alu_singed_mul   = |{inst_mul, inst_mulw};
   wire alu_singed_div   = |{inst_div, inst_divw};
-  wire alu_unsinged_div = |{inst_divu};
+  wire alu_unsinged_div = |{inst_divu, inst_divuw};
   wire alu_singed_rem   = |{inst_rem, inst_remw};
-  wire alu_unsinged_rem = |{inst_remu};
+  wire alu_unsinged_rem = |{inst_remu, inst_remuw};
   wire alu_ebreak       = inst_ebreak;
 
   MuxKeyWithDefault #(.NR_KEY(17), .KEY_LEN(17), .DATA_LEN(5)) u_mux3 (
