@@ -6,7 +6,8 @@
 
 static int rfd = -1, wfd = -1;
 static volatile int count = 0;
-static volatile int end = 0;
+static int write_point = 0;
+static int read_point = 0;
 static uint8_t *sbuf = NULL;
 
 void __am_audio_init() {
@@ -39,10 +40,18 @@ static void audio_play(void *userdata, uint8_t *stream, int len) {
   int b = 0;
   while (b < nread) {
     int size = (count < nread) ? count : nread;
-    if (size > 0) {
-      memcpy(stream, sbuf + end - count, size);
-      b += size;
+    // printf("read_point: %d\n", read_point);
+    int read_to_end = 0x10000 - read_point; // 读入点距离缓冲区末尾的距离
+    if (read_to_end > nread) {
+      memcpy(stream, sbuf + read_point, size);
+      read_point += size;
+    } else {
+      memcpy(stream, sbuf + read_point, read_to_end);
+      read_point = 0;
+      memcpy(stream + read_to_end, sbuf + read_point, size - read_to_end);
+      read_point = size - read_to_end;
     }
+    b += size;
   }
 
   count -= nread;
@@ -66,12 +75,19 @@ static void audio_write(uint8_t *buf, int len) {
   int sbufsize = 0x10000;
   while (nwrite < len) {
     int free = sbufsize - count;
-    int size = (free > len) ? len : free - len;
     if (free > len) {
-      memcpy((void *)(sbuf + end), buf, size);
-      count += size;
-      end += size;
-      nwrite += size;
+      int free_to_end = sbufsize - write_point; // 写入点距离缓冲区末尾的空闲空间
+      if (free_to_end >= len) {
+        memcpy(sbuf + write_point, buf, len);
+        write_point += len;
+      } else {
+        memcpy(sbuf + write_point, buf, free_to_end);
+        write_point = 0;
+        memcpy(sbuf + write_point, buf + free_to_end, len - free_to_end);
+        write_point = len - free_to_end;
+      }
+      count += len;
+      nwrite += len;
     }
   }
 }
