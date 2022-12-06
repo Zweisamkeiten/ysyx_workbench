@@ -55,6 +55,7 @@ module ysyx_22050710_idu (
   wire inst_sll    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b001) & (funct7[6:0] == 7'b0000000);
   wire inst_slt    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b010) & (funct7[6:0] == 7'b0000000);
   wire inst_sltu   = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b011) & (funct7[6:0] == 7'b0000000);
+  wire inst_xor    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b100) & (funct7[6:0] == 7'b0000000);
   wire inst_or     = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b110) & (funct7[6:0] == 7'b0000000);
   wire inst_and    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b111) & (funct7[6:0] == 7'b0000000);
   wire inst_ebreak = (opcode[6:0] == 7'b1110011) & (funct3[2:0] == 3'b000);
@@ -88,9 +89,10 @@ module ysyx_22050710_idu (
   wire inst_remw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b110) & (funct7[6:0] == 7'b0000001);
 
   wire inst_type_r = |{inst_add,    inst_sub,   inst_sll,   inst_slt,   inst_sltu,
-                       inst_or,     inst_and,   inst_addw,  inst_subw,  inst_mul,
-                       inst_div,    inst_divu,  inst_rem,   inst_remu,  inst_sllw,
-                       inst_srlw,   inst_sraw,  inst_mulw,  inst_divw,  inst_remw
+                       inst_xor,    inst_or,    inst_and,   inst_addw,  inst_subw,
+                       inst_mul,    inst_div,   inst_divu,  inst_rem,   inst_remu,
+                       inst_sllw,   inst_srlw,  inst_sraw,  inst_mulw,  inst_divw,
+                       inst_remw
                        };
   wire inst_type_i = |{inst_jalr,   inst_lh,    inst_lhu,   inst_lw,    inst_lbu,
                        inst_addi,   inst_xori,  inst_andi,  inst_sltiu, inst_addiw,
@@ -186,7 +188,7 @@ module ysyx_22050710_idu (
   wire alu_sub          = |{inst_sub, inst_subw};
   wire alu_signed_less  = |{inst_beq, inst_bne, inst_blt, inst_bge, inst_slt}; // branch set signed Less || slt rs1, rs2
   wire alu_unsinged_less= |{inst_bltu, inst_bgeu, inst_sltiu, inst_sltu}; // branch set unsigned Less || sltu rs1, rs2
-  wire alu_xor          = |{inst_xori};
+  wire alu_xor          = |{inst_xori, inst_xor};
   wire alu_and          = |{inst_andi, inst_and};
   wire alu_or           = |{inst_or};
   wire alu_sll          = |{inst_sll, inst_slli, inst_slliw, inst_sllw};
