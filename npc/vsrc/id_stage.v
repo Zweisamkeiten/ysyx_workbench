@@ -86,13 +86,15 @@ module ysyx_22050710_idu (
   // RV64M
   wire inst_mulw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b000) & (funct7[6:0] == 7'b0000001);
   wire inst_divw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b100) & (funct7[6:0] == 7'b0000001);
+  wire inst_divuw  = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b101) & (funct7[6:0] == 7'b0000001);
   wire inst_remw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b110) & (funct7[6:0] == 7'b0000001);
+  wire inst_remuw  = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b111) & (funct7[6:0] == 7'b0000001);
 
   wire inst_type_r = |{inst_add,    inst_sub,   inst_sll,   inst_slt,   inst_sltu,
                        inst_xor,    inst_or,    inst_and,   inst_addw,  inst_subw,
                        inst_mul,    inst_div,   inst_divu,  inst_rem,   inst_remu,
                        inst_sllw,   inst_srlw,  inst_sraw,  inst_mulw,  inst_divw,
-                       inst_remw
+                       inst_divuw,  inst_remw,  inst_remuw
                        };
   wire inst_type_i = |{inst_jalr,   inst_lh,    inst_lhu,   inst_lw,    inst_lbu,
                        inst_addi,   inst_xori,  inst_andi,  inst_sltiu, inst_addiw,
@@ -114,7 +116,8 @@ module ysyx_22050710_idu (
 
   // 是否需要对操作数进行32位截断
   assign o_word_cut = |{inst_addiw, inst_slliw, inst_srliw, inst_sraiw, inst_addw, inst_subw,
-                        inst_sllw,  inst_srlw,  inst_sraw,  inst_mulw,  inst_divw, inst_remw
+                        inst_sllw,  inst_srlw,  inst_sraw,  inst_mulw,  inst_divw, inst_divuw,
+                        inst_remw,  inst_remuw
                         };
 
   MuxKey #(.NR_KEY(6), .KEY_LEN(6), .DATA_LEN(3)) u_mux0 (
@@ -196,9 +199,9 @@ module ysyx_22050710_idu (
   wire alu_sra          = |{inst_srai, inst_sraiw, inst_sraw};
   wire alu_singed_mul   = |{inst_mul, inst_mulw};
   wire alu_singed_div   = |{inst_div, inst_divw};
-  wire alu_unsinged_div = |{inst_divu};
+  wire alu_unsinged_div = |{inst_divu, inst_divuw};
   wire alu_singed_rem   = |{inst_rem, inst_remw};
-  wire alu_unsinged_rem = |{inst_remu};
+  wire alu_unsinged_rem = |{inst_remu, inst_remuw};
   wire alu_ebreak       = inst_ebreak;
 
   MuxKeyWithDefault #(.NR_KEY(17), .KEY_LEN(17), .DATA_LEN(5)) u_mux3 (
