@@ -39,6 +39,7 @@ module ysyx_22050710_idu (
   wire inst_bge    = (opcode[6:0] == 7'b1100011) & (funct3[2:0] == 3'b101);
   wire inst_bltu   = (opcode[6:0] == 7'b1100011) & (funct3[2:0] == 3'b110);
   wire inst_bgeu   = (opcode[6:0] == 7'b1100011) & (funct3[2:0] == 3'b111);
+  wire inst_lb     = (opcode[6:0] == 7'b0000011) & (funct3[2:0] == 3'b000);
   wire inst_lh     = (opcode[6:0] == 7'b0000011) & (funct3[2:0] == 3'b001);
   wire inst_lhu    = (opcode[6:0] == 7'b0000011) & (funct3[2:0] == 3'b101);
   wire inst_lw     = (opcode[6:0] == 7'b0000011) & (funct3[2:0] == 3'b010);
@@ -96,10 +97,10 @@ module ysyx_22050710_idu (
                        inst_sllw,   inst_srlw,  inst_sraw,  inst_mulw,  inst_divw,
                        inst_divuw,  inst_remw,  inst_remuw
                        };
-  wire inst_type_i = |{inst_jalr,   inst_lh,    inst_lhu,   inst_lw,    inst_lbu,
-                       inst_addi,   inst_xori,  inst_andi,  inst_sltiu, inst_addiw,
-                       inst_slliw,  inst_srliw, inst_sraiw,
-                       inst_ld,     inst_slli,  inst_srli,  inst_srai,  inst_ebreak
+  wire inst_type_i = |{inst_jalr,   inst_lh,    inst_lhu,   inst_lw,    inst_lb,
+                       inst_lbu,    inst_addi,  inst_xori,  inst_andi,  inst_sltiu,
+                       inst_addiw,  inst_slliw, inst_srliw, inst_sraiw, inst_ld,
+                       inst_slli,  inst_srli,  inst_srai,  inst_ebreak
                        };
   wire inst_type_u = |{inst_lui,    inst_auipc};
   wire inst_type_s = |{inst_sb,     inst_sh,    inst_sw,    inst_sd};
@@ -110,7 +111,7 @@ module ysyx_22050710_idu (
   wire [5:0] inst_type = {inst_type_r, inst_type_i, inst_type_u, inst_type_s, inst_type_b, inst_type_j};
 
   // Load类指令
-  wire inst_load  = |{inst_lh, inst_lhu, inst_lw, inst_lbu, inst_ld};
+  wire inst_load  = |{inst_lb, inst_lh, inst_lhu, inst_lw, inst_lbu, inst_ld};
   // Store类指令
   wire inst_store = |{inst_sb, inst_sh, inst_sw, inst_sd};
 
@@ -160,7 +161,7 @@ module ysyx_22050710_idu (
   assign o_MemWr    = inst_type_s;
 
   // 写时可以不用注意符号拓展, 都放在带符号中''
-  wire signed_byte        = |{inst_sb};
+  wire signed_byte        = |{inst_lb, inst_sb};
   wire signed_halfword    = |{inst_sh, inst_lh};
   wire signed_word        = |{inst_lw, inst_sw};
   wire signed_doubleword  = |{inst_ld, inst_sd};
