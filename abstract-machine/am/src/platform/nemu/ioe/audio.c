@@ -35,21 +35,20 @@ static void audio_write(uint8_t *buf, int len) {
   while (nwrite < len) {
     int count = inl(AUDIO_COUNT_ADDR);
     int free = sbufsize - count;
-    int size = (free > len) ? len : free - len;
     if (free > len) {
       int free_to_end = sbufsize - write_point; // 写入点距离缓冲区末尾的空闲空间
       if (free_to_end >= len) {
-        memcpy((void *)(uint64_t)(AUDIO_SBUF_ADDR + write_point), buf, size);
-        write_point += size;
+        memcpy((void *)(uint64_t)(AUDIO_SBUF_ADDR + write_point), buf, len);
+        write_point += len;
       } else {
         memcpy((void *)(uint64_t)(AUDIO_SBUF_ADDR + write_point), buf, free_to_end);
         write_point = 0;
         memcpy((void *)(uint64_t)(AUDIO_SBUF_ADDR + write_point), buf + free_to_end, len - free_to_end);
         write_point = len - free_to_end;
       }
-      count += size;
+      count += len;
       outl(AUDIO_COUNT_ADDR, count);
-      nwrite += size;
+      nwrite += len;
     }
   }
 }
