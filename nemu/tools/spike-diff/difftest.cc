@@ -14,9 +14,7 @@
 ***************************************************************************************/
 
 #include "sim.h"
-extern "C" {
 #include "../../include/common.h"
-}
 #include <difftest-def.h>
 
 #ifdef CONFIG_ISA_riscv32

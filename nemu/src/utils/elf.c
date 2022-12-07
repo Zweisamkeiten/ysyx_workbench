@@ -1,4 +1,5 @@
 #include <common.h>
+#include <trace.h>
 
 // load elf file to mem;
 uint8_t * elf_mem_p = NULL;
