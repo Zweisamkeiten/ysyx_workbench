@@ -57,3 +57,5 @@ typedef MUXDEF(CONFIG_ISA64, Elf64_Sym, Elf32_Sym) Elf_Sym;
 #define ELF_ST_TYPE(val) MUXDEF(CONFIG_ISA64, ELF64_ST_TYPE(val), ELF32_ST_TYPE)
 
 #endif
+
+volatile static int dummy;
