@@ -51,7 +51,7 @@ static void rtc_io_handler(uint32_t offset, int len, bool is_write) {
 
 extern "C" void npc_pmem_read(long long raddr, long long *rdata) {
   switch (raddr) {
-  case 0xa0000048: printf("123\n"); rtc_io_handler(0, 1, false); *rdata = rtc_port_base[0]; break;
+  case 0xa0000048: rtc_io_handler(0, 1, false); *rdata = rtc_port_base[0]; break;
   case 0xa000004c: rtc_io_handler(4, 1, false); *rdata = rtc_port_base[1]; break;
   default: *rdata = paddr_read(raddr, 8); break;
   }
@@ -64,7 +64,6 @@ static uint8_t serial_base[2];
 
 extern "C" void npc_pmem_write(long long waddr, long long wdata, char wmask) {
   if (waddr == 0xa00003f8) {
-    printf("Hello\n");
     serial_base[0] = wdata;
     putc(serial_base[0], stdout);
     return;
