@@ -56,7 +56,7 @@ static uint8_t serial_base[2];
 
 extern "C" void npc_pmem_write(long long waddr, long long wdata, char wmask) {
   if (waddr == 0xa00003f8) {
-    host_write((void *)waddr, 1, wdata);
+    serial_base[0] = wdata;
     putc(serial_base[0], stderr);
     return;
   }
