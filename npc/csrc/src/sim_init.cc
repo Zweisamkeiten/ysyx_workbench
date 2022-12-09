@@ -40,11 +40,19 @@ uint64_t get_time() {
 }
 
 static uint32_t rtc_port_base[2];
+static void rtc_io_handler(uint32_t offset, int len, bool is_write) {
+  assert(offset == 0 || offset == 4);
+  if (!is_write && offset == 0) {
+    uint64_t us = get_time();
+    rtc_port_base[0] = (uint32_t)us;
+    rtc_port_base[1] = us >> 32;
+  }
+}
 
 extern "C" void npc_pmem_read(long long raddr, long long *rdata) {
   switch (raddr) {
-  case 0xa0000048: *rdata = rtc_port_base[0]; break;
-  case 0xa000004c: *rdata = rtc_port_base[1]; break;
+  case 0xa0000048: printf("123\n"); rtc_io_handler(0, 1, false); *rdata = rtc_port_base[0]; break;
+  case 0xa000004c: rtc_io_handler(4, 1, false); *rdata = rtc_port_base[1]; break;
   default: *rdata = paddr_read(raddr, 8); break;
   }
   return;
