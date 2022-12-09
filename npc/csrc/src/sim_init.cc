@@ -57,7 +57,7 @@ static uint8_t serial_base[2];
 extern "C" void npc_pmem_write(long long waddr, long long wdata, char wmask) {
   if (waddr == 0xa00003f8) {
     serial_base[0] = wdata;
-    putc(serial_base[0], stderr);
+    putc(serial_base[0], stdout);
     return;
   }
   // 总是往地址为`waddr & ~0x7ull`的8字节按写掩码`wmask`写入`wdata`
