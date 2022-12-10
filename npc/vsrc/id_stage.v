@@ -64,6 +64,7 @@ module ysyx_22050710_idu (
   wire inst_ebreak = (opcode[6:0] == 7'b1110011) & (funct3[2:0] == 3'b000);
 
   // RV64I
+  wire inst_lwu    = (opcode[6:0] == 7'b0000011) & (funct3[2:0] == 3'b110);
   wire inst_ld     = (opcode[6:0] == 7'b0000011) & (funct3[2:0] == 3'b011);
   wire inst_sd     = (opcode[6:0] == 7'b0100011) & (funct3[2:0] == 3'b011);
   wire inst_slli   = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b001) & (funct7[6:1] == 6'b000000);
@@ -102,7 +103,8 @@ module ysyx_22050710_idu (
   wire inst_type_i = |{inst_jalr,   inst_lh,    inst_lhu,   inst_lw,    inst_lb,
                        inst_lbu,    inst_addi,  inst_xori,  inst_ori,   inst_andi,
                        inst_sltiu,  inst_addiw, inst_slliw, inst_srliw, inst_sraiw,
-                       inst_ld,     inst_slli,  inst_srli,  inst_srai,  inst_ebreak
+                       inst_lwu,    inst_ld,    inst_slli,  inst_srli,  inst_srai,
+                       inst_ebreak
                        };
   wire inst_type_u = |{inst_lui,    inst_auipc};
   wire inst_type_s = |{inst_sb,     inst_sh,    inst_sw,    inst_sd};
@@ -113,7 +115,7 @@ module ysyx_22050710_idu (
   wire [5:0] inst_type = {inst_type_r, inst_type_i, inst_type_u, inst_type_s, inst_type_b, inst_type_j};
 
   // Load类指令
-  wire inst_load  = |{inst_lb, inst_lh, inst_lhu, inst_lw, inst_lbu, inst_ld};
+  wire inst_load  = |{inst_lb, inst_lh, inst_lhu, inst_lw, inst_lbu, inst_lwu, inst_ld};
   // Store类指令
   wire inst_store = |{inst_sb, inst_sh, inst_sw, inst_sd};
 
@@ -169,7 +171,7 @@ module ysyx_22050710_idu (
   wire signed_doubleword  = |{inst_ld, inst_sd};
   wire unsigned_byte      = |{inst_lbu};
   wire unsigned_halfword  = |{inst_lhu};
-  wire unsigned_word      = |{1'b0};
+  wire unsigned_word      = |{inst_lwu};
  
   MuxKeyWithDefault #(.NR_KEY(7), .KEY_LEN(7), .DATA_LEN(3)) u_mux2 (
     .out(o_MemOP),
