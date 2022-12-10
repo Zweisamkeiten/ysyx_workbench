@@ -7,8 +7,10 @@ extern "C" {
 }
 
 Vtop *top;
+#ifdef CONFIG_VCD_TRACE
 VerilatedContext *contextp = NULL;
 VerilatedVcdC *tfp = NULL;
+#endif
 uint64_t * npcpc;
 
 void set_state_end() {
@@ -81,12 +83,16 @@ extern "C" void npc_pmem_write(long long waddr, long long wdata, char wmask) {
 extern "C" void single_cycle() {
   top->i_clk = 0;
   top->eval();
+#ifdef CONFIG_VCD_TRACE
   contextp->timeInc(1);
   tfp->dump(contextp->time());
+#endif
   top->i_clk = 1;
   top->eval();
+#ifdef CONFIG_VCD_TRACE
   contextp->timeInc(1);
   tfp->dump(contextp->time());
+#endif
 }
 
 static void reset(int n) {
