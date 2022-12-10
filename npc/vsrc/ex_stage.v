@@ -122,9 +122,9 @@ module ysyx_22050710_exu (
   wire [63:0] srl_result = src_a >> src_b;
 
   // sra
-  wire signed [63:0] sra_result = i_word_cut
+  wire [63:0] sra_result = i_word_cut
                                   ? {{32{src_a[31]}}, $signed(src_a[31:0]) >>> $signed(src_b[5:0])}
-                                  : $signed(src_a[62:0]) >>> src_b[5:0];
+                                  : $signed(src_a[63:0]) >>> src_b[5:0];
 
   MuxKey #(.NR_KEY(16), .KEY_LEN(5), .DATA_LEN(64)) u_mux4 (
     .out(aluresult),
