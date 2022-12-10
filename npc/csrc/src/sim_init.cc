@@ -104,13 +104,17 @@ static void reset(int n) {
 }
 
 extern "C" void init_sim() {
+#ifdef CONFIG_VCD_TRACE
   contextp = new VerilatedContext;
   tfp = new VerilatedVcdC;
+#endif
   top = new Vtop;
 
+#ifdef CONFIG_VCD_TRACE
   contextp->traceEverOn(true);
   top->trace(tfp, 0);
   tfp->open("dump.vcd");
+#endif
 
   reset(10);
 
@@ -124,5 +128,7 @@ extern "C" void init_sim() {
 extern "C" void end_sim() {
   top->final();
   delete top;
+#ifdef CONFIG_VCD_TRACE
   tfp->close();
+#endif
 }
