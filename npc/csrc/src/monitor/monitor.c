@@ -9,6 +9,7 @@ void init_sim();
 void init_disasm(const char *triple);
 void init_elf(const char * elf_file);
 void init_difftest(char *ref_so_file, long img_size, int port);
+void init_device();
 
 static int difftest_port = 1234;
 
@@ -61,6 +62,9 @@ void init_monitor(int argc, char *argv[]) {
   init_mem();
 
   init_sim();
+
+  /* Initialize devices. */
+  IFDEF(CONFIG_DEVICE, init_device());
 
   /* Perform ISA dependent initialization. */
   init_isa();
