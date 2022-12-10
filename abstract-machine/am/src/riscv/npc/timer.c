@@ -1,7 +1,7 @@
-#include ISA_H
 #include <am.h>
+#include <npc.h>
+#include <klib.h>
 
-#define RTC_ADDR        (0xa0000000 + 0x0000048)
 static uint64_t boot_time = 0;
 
 static uint64_t read_time() {
