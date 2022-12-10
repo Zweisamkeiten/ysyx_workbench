@@ -13,38 +13,25 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
-#ifndef __COMMON_H__
-#define __COMMON_H__
+#include <common.h>
+#include <time.h>
 
-#include <stdint.h>
-#include <inttypes.h>
-#include <stdbool.h>
-#include <string.h>
-#include <macro.h>
-#include <conf.h>
-#include <generated/autoconf.h>
+IFDEF(CONFIG_TIMER_CLOCK_GETTIME,
+    static_assert(CLOCKS_PER_SEC == 1000000, "CLOCKS_PER_SEC != 1000000"));
+IFDEF(CONFIG_TIMER_CLOCK_GETTIME,
+    static_assert(sizeof(clock_t) == 8, "sizeof(clock_t) != 8"));
 
-#include <assert.h>
-#include <stdlib.h>
-typedef uint64_t word_t;
-typedef int64_t  sword_t;
-#define FMT_WORD "0x%016lx"
+static uint64_t boot_time = 0;
 
-typedef word_t vaddr_t;
-typedef uint64_t paddr_t;
-#define FMT_PADDR "0x%016lx"
-typedef uint16_t ioaddr_t;
+static uint64_t get_time_internal() {
+  struct timespec now;
+  clock_gettime(CLOCK_MONOTONIC_COARSE, &now);
+  uint64_t us = now.tv_sec * 1000000 + now.tv_nsec / 1000;
+  return us;
+}
 
-#include <debug.h>
-
-#ifdef CONFIG_FTRACE
-#include <elf.h>
-typedef Elf64_Ehdr Elf_Ehdr;
-typedef Elf64_Shdr Elf_Shdr;
-typedef Elf64_Addr Elf_Addr;
-typedef Elf64_Sym Elf_Sym;
-#define ELF_ST_TYPE(val) ELF64_ST_TYPE(val)
-
-#endif
-
-#endif
+uint64_t get_time() {
+  if (boot_time == 0) boot_time = get_time_internal();
+  uint64_t now = get_time_internal();
+  return now - boot_time;
+}
