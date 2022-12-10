@@ -1,7 +1,7 @@
-#include ISA_H
 #include <am.h>
+#include <npc.h>
+#include <klib.h>
 
-#define RTC_ADDR        (0xa0000000 + 0x0000048)
 static uint64_t boot_time = 0;
 
 static uint64_t read_time() {
@@ -10,6 +10,7 @@ static uint64_t read_time() {
   uint64_t time = ((uint64_t)hi << 32) | lo;
   // nemu框架中timer offset bug修复前, 如下行可以正确得到结果, 而上述lo, hi的获得顺序不行, 必须调换
   // uint64_t time = (((uint64_t)inl(RTC_ADDR + 4)) << 32) | inl(RTC_ADDR + 0);
+  printf("%ld\n", time);
   return time;
 }
 
