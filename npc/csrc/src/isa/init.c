@@ -5,9 +5,6 @@
 // but it is ok since we do not access the array directly
 static const uint32_t img [] = {
   // bug load inst write to itself
-  0x98765cb7,
-  0x432c8c9b,
-  0x405cd513,
   0x00009117,  // auipc sp, 0x9
   0x00812103, // lw sp, 8(sp)
   //
