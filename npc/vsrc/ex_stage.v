@@ -116,15 +116,15 @@ module ysyx_22050710_exu (
   wire [63:0] or_result = src_a | src_b;
 
   // sll
-  wire [63:0] sll_result = src_a << (i_word_cut ? src_b[4:0] : src_b[5:0]);
+  wire [63:0] sll_result = src_a << (i_word_cut ? {1'b0, src_b[4:0]} : src_b[5:0]);
 
   // srl
-  wire [63:0] srl_result = src_a >> (i_word_cut ? src_b[4:0] : src_b[5:0]);
+  wire [63:0] srl_result = src_a >> (i_word_cut ? {1'b0, src_b[4:0]} : src_b[5:0]);
 
   // sra
   wire signed [63:0] sra_result = i_word_cut
-                                  ? $signed({{32{src_a[31]}}, $signed(src_a[31:0]) >>> $signed((i_word_cut ? src_b[4:0] : src_b[5:0]))})
-                                  : $signed(src_a) >>> $signed((i_word_cut ? src_b[4:0] : src_b[5:0]));
+                                  ? $signed({{32{src_a[31]}}, $signed(src_a[31:0]) >>> $signed((i_word_cut ? {1'b0, src_b[4:0]} : src_b[5:0]))})
+                                  : $signed(src_a) >>> $signed((i_word_cut ? {1'b0, src_b[4:0]} : src_b[5:0]));
 
   MuxKey #(.NR_KEY(16), .KEY_LEN(5), .DATA_LEN(64)) u_mux4 (
     .out(aluresult),
