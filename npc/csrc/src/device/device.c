@@ -44,9 +44,9 @@ void device_update() {
         break;
       }
       default: break;
+#endif
     }
   }
-#endif
 }
 
 void sdl_clear_event_queue() {
