@@ -2,7 +2,6 @@
 #include <common.h>
 #include <isa.h>
 #include <memory/host.h>
-#include <stdio.h>
 extern "C" {
   #include <memory/paddr.h>
 }
