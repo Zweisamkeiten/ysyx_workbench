@@ -13,38 +13,12 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
-#ifndef __COMMON_H__
-#define __COMMON_H__
+#ifndef __DEVICE_MMIO_H__
+#define __DEVICE_MMIO_H__
 
-#include <stdint.h>
-#include <inttypes.h>
-#include <stdbool.h>
-#include <string.h>
-#include <macro.h>
-#include <conf.h>
-#include <generated/autoconf.h>
+#include <common.h>
 
-#include <assert.h>
-#include <stdlib.h>
-typedef uint64_t word_t;
-typedef int64_t  sword_t;
-#define FMT_WORD "0x%016lx"
-
-typedef word_t vaddr_t;
-typedef uint64_t paddr_t;
-#define FMT_PADDR "0x%016lx"
-typedef uint16_t ioaddr_t;
-
-#include <debug.h>
-
-#ifdef CONFIG_FTRACE
-#include <elf.h>
-typedef Elf64_Ehdr Elf_Ehdr;
-typedef Elf64_Shdr Elf_Shdr;
-typedef Elf64_Addr Elf_Addr;
-typedef Elf64_Sym Elf_Sym;
-#define ELF_ST_TYPE(val) ELF64_ST_TYPE(val)
-
-#endif
+word_t mmio_read(paddr_t addr, int len);
+void mmio_write(paddr_t addr, int len, word_t data);
 
 #endif
