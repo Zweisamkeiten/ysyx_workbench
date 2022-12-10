@@ -76,7 +76,7 @@ $(BIN): $(VALL) $(VERILATOR_OBJ) $(OBJS) # $(NVBOARD_ARCHIVE)
 
 run-env: $(BIN)
 
-$(info $CXXSRCS)
+$(info $(CXXSRCS))
 sim: run-env
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo "-- Simulation --------"
