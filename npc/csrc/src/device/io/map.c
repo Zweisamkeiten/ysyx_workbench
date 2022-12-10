@@ -58,7 +58,7 @@ void init_map() {
 word_t map_read(paddr_t addr, int len, IOMap *map) {
   assert(len >= 1 && len <= 8);
   if (check_bound(map, addr) == false) {
-    printf("123\n");
+    printf("%ld\n", addr);
     return 0;
   }
   paddr_t offset = addr - map->low;
