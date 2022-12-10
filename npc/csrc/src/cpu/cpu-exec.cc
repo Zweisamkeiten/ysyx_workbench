@@ -167,6 +167,8 @@ void print_iringbuf() {
 #endif
 #endif
 
+extern "C" void device_update();
+
 static void trace_and_difftest(vaddr_t dnpc) {
 #ifdef CONFIG_IRINGTRACE_COND
   if (IRINGTRACE_COND) {
@@ -211,6 +213,7 @@ static void execute(uint64_t n) {
     exec_once();
     g_nr_guest_inst ++;
     if (npc_state.state != NPC_RUNNING) break;
+    IFDEF(CONFIG_DEVICE, device_update());
   }
 }
 
