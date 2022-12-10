@@ -93,7 +93,7 @@ module ysyx_22050710_idu (
   wire inst_remuw  = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b111) & (funct7[6:0] == 7'b0000001);
 
   wire inst_type_r = |{inst_add,    inst_sub,   inst_sll,   inst_slt,   inst_sltu,
-                       inst_xor,    inst_srl,   inst_or,    inst_and,   inst_addw,
+                       inst_xor,       inst_or,    inst_and,   inst_addw,
                        inst_subw,   inst_mul,   inst_div,   inst_divu,  inst_rem,
                        inst_remu,   inst_sllw,  inst_srlw,  inst_sraw,  inst_mulw,
                        inst_divw,   inst_divuw, inst_remw,  inst_remuw
