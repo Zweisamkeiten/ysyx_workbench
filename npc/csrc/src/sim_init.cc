@@ -25,50 +25,12 @@ extern "C" void set_gpr_ptr(const svOpenArrayHandle r) {
   cpu.gpr = (uint64_t *)(((VerilatedDpiOpenVar*)r)->datap());
 }
 
-static uint64_t boot_time = 0;
-
-static uint64_t get_time_internal() {
-  struct timespec now;
-  clock_gettime(CLOCK_MONOTONIC_COARSE, &now);
-  uint64_t us = now.tv_sec * 1000000 + now.tv_nsec / 1000;
-  return us;
-}
-
-uint64_t get_time() {
-  if (boot_time == 0) boot_time = get_time_internal();
-  uint64_t now = get_time_internal();
-  return now - boot_time;
-}
-
-static uint32_t rtc_port_base[2];
-static void rtc_io_handler(uint32_t offset, int len, bool is_write) {
-  assert(offset == 0 || offset == 4);
-  if (!is_write && offset == 0) {
-    uint64_t us = get_time();
-    rtc_port_base[0] = (uint32_t)us;
-    rtc_port_base[1] = us >> 32;
-  }
-}
-
 extern "C" void npc_pmem_read(long long raddr, long long *rdata) {
-  switch (raddr) {
-  case 0xa0000048: rtc_io_handler(0, 1, false); *rdata = rtc_port_base[0]; break;
-  case 0xa000004c: rtc_io_handler(4, 1, false); *rdata = rtc_port_base[1]; break;
-  default: *rdata = paddr_read(raddr, 8); break;
-  }
-  return;
   // 总是读取地址为`raddr & ~0x7ull`的8字节返回给`rdata`
   *rdata = paddr_read(raddr, 8);
 }
 
-static uint8_t serial_base[2];
-
 extern "C" void npc_pmem_write(long long waddr, long long wdata, char wmask) {
-  if (waddr == 0xa00003f8) {
-    serial_base[0] = wdata;
-    putc(serial_base[0], stdout);
-    return;
-  }
   // 总是往地址为`waddr & ~0x7ull`的8字节按写掩码`wmask`写入`wdata`
   // `wmask`中每比特表示`wdata`中1个字节的掩码,
   // 如`wmask = 0x3`代表只写入最低2个字节, 内存中的其它字节保持不变
