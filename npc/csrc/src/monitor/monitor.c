@@ -69,9 +69,9 @@ void init_monitor(int argc, char *argv[]) {
   long img_size = load_img(argc, argv);
 
   /* Initialize differential testing. */
-  if (argc > 4) init_difftest(argv[3], img_size, difftest_port);
+  if (argc > 2) init_difftest(argv[3], img_size, difftest_port);
 
-  if (argc > 4) {
+  if (argc > 2) {
     IFDEF(CONFIG_FTRACE, init_elf(argv[2]));
   }
 
