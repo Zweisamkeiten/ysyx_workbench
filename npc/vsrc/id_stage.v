@@ -58,7 +58,6 @@ module ysyx_22050710_idu (
   wire inst_slt    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b010) & (funct7[6:0] == 7'b0000000);
   wire inst_sltu   = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b011) & (funct7[6:0] == 7'b0000000);
   wire inst_xor    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b100) & (funct7[6:0] == 7'b0000000);
-  wire inst_srl    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b101) & (funct7[6:0] == 7'b0000000);
   wire inst_or     = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b110) & (funct7[6:0] == 7'b0000000);
   wire inst_and    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b111) & (funct7[6:0] == 7'b0000000);
   wire inst_ebreak = (opcode[6:0] == 7'b1110011) & (funct3[2:0] == 3'b000);
@@ -198,7 +197,7 @@ module ysyx_22050710_idu (
   wire alu_and          = |{inst_andi, inst_and};
   wire alu_or           = |{inst_ori,  inst_or};
   wire alu_sll          = |{inst_sll, inst_slli, inst_slliw, inst_sllw};
-  wire alu_srl          = |{inst_srl, inst_srli, inst_srliw, inst_srlw};
+  wire alu_srl          = |{inst_srli, inst_srliw, inst_srlw};
   wire alu_sra          = |{inst_srai, inst_sraiw, inst_sraw};
   wire alu_singed_mul   = |{inst_mul, inst_mulw};
   wire alu_singed_div   = |{inst_div, inst_divw};
