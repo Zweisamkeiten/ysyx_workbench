@@ -19,7 +19,8 @@
 #include <common.h>
 
 static inline int check_reg_idx(int idx) {
-  IFDEF(CONFIG_RT_CHECK, assert(idx >= 0 && idx < NR_REGS));
+  extern int nr_regs;
+  IFDEF(CONFIG_RT_CHECK, assert(idx >= 0 && idx < nr_regs));
   return idx;
 }
 

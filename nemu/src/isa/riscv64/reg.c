@@ -27,6 +27,7 @@ const char *regs[] = {
 };
 
 #define NR_REGS ARRLEN(regs)
+int nr_regs = NR_REGS;
 
 void isa_reg_display() {
   printf(ANSI_FMT("GPRS:\n", ANSI_FG_BLUE));
