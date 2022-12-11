@@ -37,7 +37,7 @@ void isa_reg_display() {
   }
   printf(ANSI_FMT("CSRS:\n", ANSI_FG_MAGENTA));
   for (int i = 32; i < NR_REGS; i++) {
-    printf(ANSI_FMT("%-10s:", ANSI_FG_BLUE) ANSI_FMT(FMT_WORD "\n", ANSI_FG_GREEN), reg_name(i, 64), csr(i));
+    printf(ANSI_FMT("%-8s:", ANSI_FG_BLUE) ANSI_FMT(FMT_WORD "\n", ANSI_FG_GREEN), reg_name(i, 64), csr(i));
   }
 }
 
