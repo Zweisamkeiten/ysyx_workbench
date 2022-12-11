@@ -25,7 +25,7 @@ static inline int check_reg_idx(int idx) {
 }
 
 #define gpr(idx) (cpu.gpr[check_reg_idx(idx)])
-#define csr(idx) (cpu.csr[check_reg_idx(idx) - NR_REGS]) // csr idx bigger than 32;
+#define csr(idx) (cpu.csr[check_reg_idx(idx) - NR_REGS - 1]) // csr idx bigger than 32;
 
 enum {
   MSTATUS,
