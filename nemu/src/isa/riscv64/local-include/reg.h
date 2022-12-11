@@ -38,7 +38,7 @@ enum {
 static inline int get_csr_idx(int csr_addr) {
   extern const int csrs_addr[];
   for (int i = 0; i < NR_CSRS; i++) {
-    if (csr_addr == csrs_addr[i]) return i + 32;
+    if (csr_addr == csrs_addr[i]) printf("idx: %d\n", i); return i;
   }
 
   panic("unknown csr addr;\n");
