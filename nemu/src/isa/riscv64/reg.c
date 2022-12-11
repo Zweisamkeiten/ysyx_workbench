@@ -16,6 +16,13 @@
 #include <isa.h>
 #include "local-include/reg.h"
 
+const int csrs_addr[] = {
+  [MSTATUS] = 0x300,
+  [MTVEC]   = 0x301,
+  [MEPC]    = 0x341,
+  [MCAUSE]  = 0x342,
+};
+
 const char *regs[] = {
   // gprs
   "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
@@ -23,7 +30,7 @@ const char *regs[] = {
   "a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
   "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6",
   // csrs
-  "mepc", "mstatus", "mcause"
+  "mstatus", "mtvec", "mepc", "mcause"
 };
 
 #define NR_REGS ARRLEN(regs)
