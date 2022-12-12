@@ -166,12 +166,14 @@ unsigned_convert:
           }
 
           int write_flag = 0;
+          int shift_pos = 0;
           do {
             unsigned int num = (unsigned_num >> 60) & 0xf;
             unsigned_num = unsigned_num << 4;
+            shift_pos += 4;
             if (write_flag == 0 && num != 0) write_flag = 1;
             if (write_flag == 1) buf_w(out, ret++, n, (num > 9) ? num - 10 + 'a' : num + '0');
-          } while (unsigned_num != 0);
+          } while (shift_pos != 64);
 
           if (write_flag == 0) buf_w(out, ret++, n, '0');
 
