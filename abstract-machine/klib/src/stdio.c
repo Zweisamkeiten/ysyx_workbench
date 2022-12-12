@@ -165,21 +165,13 @@ unsigned_convert:
             default: unsigned_num = va_arg(ap, unsigned int); break;
           }
 
-          int ret_temp = ret;
-          unsigned long long int div = 1;
-          unsigned long long int unsigned_num_tmp = unsigned_num;
+          int write_flag = 0;
           do {
-            unsigned_num_tmp = unsigned_num_tmp/base;
-            ret++;
-            div *= base;
-          } while (unsigned_num_tmp != 0);
-
-          // reverse
-          while (ret_temp != ret)
-          {
-            int num = (unsigned_num / (div /= base)) % base;
-            buf_w(out, ret_temp++, n, (num > 9) ? num - 10 + 'a' : num + '0');
-          }
+            unsigned int num = (unsigned_num >> 60) & 0xf;
+            unsigned_num = unsigned_num << 4;
+            if (write_flag == 0 && num != 0) write_flag = 1;
+            if (write_flag == 1) buf_w(out, ret++, n, (num > 9) ? num - 10 + 'a' : num + '0');
+          } while (unsigned_num != 0);
 
           break;
         }
