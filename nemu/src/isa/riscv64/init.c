@@ -15,6 +15,7 @@
 
 #include <isa.h>
 #include <memory/paddr.h>
+#include "local-include/reg.h"
 
 // this is not consistent with uint8_t
 // but it is ok since we do not access the array directly
@@ -38,6 +39,9 @@ static void restart() {
 
   /* The zero register is always 0. */
   cpu.gpr[0] = 0;
+
+  // riscv64 mstatus initial 0xa00001800;
+  cpu.csr[MSTATUS] = 0xa00001800;
 }
 
 void init_isa() {
