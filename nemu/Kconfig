@@ -177,7 +177,7 @@ config FTRACE
 config FTRACE_COND
   depends on FTRACE
   string "Only trace function when the condition is true"
-  default "false"
+  default "true"
 
 config DTRACE
   depends on TRACE && TARGET_NATIVE_ELF && ENGINE_INTERPRETER && DEVICE
