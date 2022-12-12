@@ -160,8 +160,8 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
         case 'u': {
 unsigned_convert:
           switch (lflags) {
-            case L_LONG: unsigned_num = va_arg(ap, unsigned long); break;
-            case L_LLONG: unsigned_num = va_arg(ap, unsigned long long); break;
+            case L_LONG: unsigned_num = va_arg(ap, unsigned long int); break;
+            case L_LLONG: unsigned_num = va_arg(ap, unsigned long long int); break;
             default: unsigned_num = va_arg(ap, unsigned int); break;
           }
 
