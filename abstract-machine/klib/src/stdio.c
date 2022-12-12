@@ -119,7 +119,6 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
     }
     else if (state == S_CONV) {
       signed long long int signed_num;
-      unsigned long long int unsigned_num;
       int base = 10;
       switch (ch) {
         case 'i':
@@ -158,6 +157,7 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
         case 'x':
         case 'X': base = 16; goto unsigned_convert;
         case 'u': {
+          unsigned long long int unsigned_num;
 unsigned_convert:
           switch (lflags) {
             case L_LONG: unsigned_num = va_arg(ap, unsigned long int); break;
