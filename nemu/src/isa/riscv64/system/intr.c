@@ -29,7 +29,7 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
                              ANSI_FMT(FMT_WORD , ANSI_FG_RED)
                              ANSI_FMT("] Exception code: ", ANSI_FG_CYAN)
                              ANSI_FMT("%lu ", ANSI_FG_RED)
-                             ANSI_FMT("and pc trap into [", ANSI_FG_CYAN)
+                             ANSI_FMT(" and pc trap into [", ANSI_FG_CYAN)
                              ANSI_FMT(FMT_WORD, ANSI_FG_RED)
                              ANSI_FMT("]", ANSI_FG_CYAN)
                              , epc, NO, cpu.csr[MTVEC]);
@@ -39,7 +39,8 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
          ANSI_FMT("%lu", ANSI_FG_RED)
          ANSI_FMT("and pc trap into [", ANSI_FG_CYAN)
          ANSI_FMT(FMT_WORD, ANSI_FG_RED)
-         ANSI_FMT("]\n", ANSI_FG_CYAN)
+         ANSI_FMT("]", ANSI_FG_CYAN)
+         "\n"
          , epc, NO, cpu.csr[MTVEC]);
 #endif
 
