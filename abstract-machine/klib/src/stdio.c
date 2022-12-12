@@ -166,7 +166,7 @@ unsigned_convert:
           }
 
           int ret_temp = ret;
-          unsigned long long div = 1;
+          unsigned long long int div = 1;
           unsigned long long int unsigned_num_tmp = unsigned_num;
           do {
             unsigned_num_tmp = unsigned_num_tmp/base;
