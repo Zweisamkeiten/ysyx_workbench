@@ -5,10 +5,6 @@
 static Context* (*user_handler)(Event, Context*) = NULL;
 
 Context* __am_irq_handle(Context *c) {
-  int i = 0;
-  for (uintptr_t *p = (uintptr_t *)c; i < 35; i++, p++) {
-    printf("%d: %lx\n", i, *p);
-  }
   if (user_handler) {
     Event ev = {0};
     switch (c->mcause) {
