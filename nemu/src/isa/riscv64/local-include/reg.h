@@ -25,7 +25,26 @@ static inline int check_reg_idx(int idx) {
 }
 
 #define gpr(idx) (cpu.gpr[check_reg_idx(idx)])
-#define csr(idx) (cpu.csr[check_reg_idx(idx) - NR_REGS]) // csr idx bigger than 32;
+#define csr(idx) (cpu.csr[check_reg_idx(idx) - 32]) // csr idx bigger than 32;
+
+enum {
+  MSTATUS,
+  MTVEC,
+  MEPC,
+  MCAUSE,
+  NR_CSRS
+};
+
+static inline int get_csr_idx(int csr_addr) {
+  extern const int csrs_addr[];
+  for (int i = 0; i < NR_CSRS; i++) {
+    if (csr_addr == csrs_addr[i]) {
+      return i;
+    }
+  }
+
+  panic("unknown csr addr;\n");
+}
 
 static inline const char* reg_name(int idx, int width) {
   extern const char* regs[];
