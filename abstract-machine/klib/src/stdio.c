@@ -173,6 +173,8 @@ unsigned_convert:
             if (write_flag == 1) buf_w(out, ret++, n, (num > 9) ? num - 10 + 'a' : num + '0');
           } while (unsigned_num != 0);
 
+          if (write_flag == 0) buf_w(out, ret++, n, '0');
+
           break;
         }
         case 's': {
