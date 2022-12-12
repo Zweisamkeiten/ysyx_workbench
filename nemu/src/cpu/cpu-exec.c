@@ -138,7 +138,7 @@ void disassemble_inst_to_buf(char *logbuf, size_t bufsize, uint8_t * inst_val, v
       inst_state = INST_RET;
     }
   }
-  else if (strncmp(p, "jal ", 3) == 0) {
+  else if (strncmp(p, "call ", 3) == 0) {
     char *func_str = NULL;
     if((func_str = check_is_func_call(cpu.pc)) != NULL) {
       q += snprintf(q, 128, FMT_WORD ":", pc);
