@@ -6,7 +6,7 @@ static Context* (*user_handler)(Event, Context*) = NULL;
 
 Context* __am_irq_handle(Context *c) {
   int i = 0;
-  for (uintptr_t *p = (uintptr_t *)c; i < 36; i++, p++) {
+  for (uintptr_t *p = (uintptr_t *)c; i < 34; i++, p++) {
     printf("%d: %x\n", i, *p);
   }
   if (user_handler) {
