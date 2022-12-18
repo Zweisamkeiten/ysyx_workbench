@@ -130,7 +130,7 @@ module ysyx_22050710_exu (
   // Control and Status Register Read and Write
   wire [63:0] csrrw_result = src_a;
 
-  MuxKey #(.NR_KEY(16), .KEY_LEN(5), .DATA_LEN(64)) u_mux4 (
+  MuxKey #(.NR_KEY(17), .KEY_LEN(5), .DATA_LEN(64)) u_mux4 (
     .out(aluresult),
     .key(i_ALUctr),
     .lut({
