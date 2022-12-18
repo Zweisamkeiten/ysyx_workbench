@@ -24,7 +24,7 @@ module ysyx_22050710_npc (
   );
 
   wire [63:0] rcsr;
-  ysyx_22050710_csr #(.ADDR_WIDTH(12), .DATA_WIDTH(64)) u_gprs (
+  ysyx_22050710_csr #(.ADDR_WIDTH(12), .DATA_WIDTH(64)) u_csrs (
     .i_clk(i_clk),
     .i_raddr(imm), .i_waddr(imm), .i_wdata(ALUresult),
     .i_ren(1), .i_wen(1),
