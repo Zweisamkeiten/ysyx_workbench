@@ -8,6 +8,9 @@ void init_fs(void);
 void init_proc(void);
 
 int main() {
+#ifdef HAS_CTE
+  init_irq();
+#endif
   extern const char logo[];
   printf("%s", logo);
   Log("'Hello World!' from Nanos-lite");
