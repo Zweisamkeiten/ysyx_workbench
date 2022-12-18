@@ -1,6 +1,5 @@
 // ysyx_22050710 CSR regs
 
-`define NR_CSR 4
 module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
   input   i_clk,
   input   [ADDR_WIDTH-1:0] i_raddr, i_waddr,
@@ -9,7 +8,7 @@ module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
   output  [DATA_WIDTH-1:0] o_bus
 );
 
-  reg [DATA_WIDTH-1:0] rf [`NR_CSR-1:0];
+  reg [DATA_WIDTH-1:0] rf [4096-1:0];
 
   wire [11:0] rcsr_idx;
   MuxKey #(.NR_KEY(4), .KEY_LEN(12), .DATA_LEN(12)) u_mux0 (
