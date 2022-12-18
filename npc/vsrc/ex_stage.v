@@ -11,6 +11,7 @@ module ysyx_22050710_exu (
   input   [2:0] i_Branch,
   input   [2:0] i_MemOP, input i_MemtoReg,
   input   [63:0] i_rdata,
+  input   i_sel_csr,
   output  [63:0] o_ALUresult,
   output  [63:0] o_nextpc,
   output  [63:0] o_busW
@@ -52,7 +53,7 @@ module ysyx_22050710_exu (
     .key(i_ALUctr),
     .lut({
       5'b00010, signed_Less,
-      5'b01010, unsigned_Less
+      5'b00011, unsigned_Less
     })
   );
   wire signed_Less = overflow == 0
@@ -126,31 +127,35 @@ module ysyx_22050710_exu (
                                   ? $signed({{32{src_a[31]}}, $signed(src_a[31:0]) >>> $signed((i_word_cut ? {1'b0, src_b[4:0]} : src_b[5:0]))})
                                   : $signed(src_a) >>> $signed((i_word_cut ? {1'b0, src_b[4:0]} : src_b[5:0]));
 
-  MuxKey #(.NR_KEY(16), .KEY_LEN(5), .DATA_LEN(64)) u_mux4 (
+  // Control and Status Register Read and Write
+  wire [63:0] csrrw_result = src_a;
+
+  MuxKey #(.NR_KEY(17), .KEY_LEN(5), .DATA_LEN(64)) u_mux4 (
     .out(aluresult),
     .key(i_ALUctr),
     .lut({
-      5'b00011, copy_result,
+      5'b01111, copy_result,
       5'b00000, adder_result,
+      5'b00001, sub_result,
       5'b00010, signed_Less == 1 ? 64'b1 : 64'b0, // slt
-      5'b01010, unsigned_Less == 1 ? 64'b1 : 64'b0, // sltu
-      5'b01000, sub_result,
+      5'b00011, unsigned_Less == 1 ? 64'b1 : 64'b0, // sltu
       5'b00100, xor_result,
-      5'b00111, and_result,
+      5'b00101, and_result,
       5'b00110, or_result,
-      5'b00001, sll_result,
-      5'b00101, srl_result,
-      5'b01101, sra_result,
-      5'b11100, signed_mul_result,
-      5'b11011, signed_div_result,
-      5'b11010, unsigned_div_result,
-      5'b11101, signed_rem_result,
-      5'b11001, unsigned_rem_result
+      5'b00111, sll_result,
+      5'b01000, srl_result,
+      5'b01001, sra_result,
+      5'b01010, signed_mul_result,
+      5'b01011, signed_div_result,
+      5'b01100, unsigned_div_result,
+      5'b01101, signed_rem_result,
+      5'b01110, unsigned_rem_result,
+      5'b10000, csrrw_result
     })
   );
 
   wire [63:0] rdata;
-  assign o_busW = i_MemtoReg ? rdata : o_ALUresult;
+  assign o_busW = i_MemtoReg ? rdata : (i_sel_csr ? i_rs2 : o_ALUresult);
   MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(64)) u_mux5 (
     .out(rdata),
     .key(i_MemOP),
