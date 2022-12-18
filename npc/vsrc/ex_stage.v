@@ -128,10 +128,7 @@ module ysyx_22050710_exu (
                                   ? $signed({{32{src_a[31]}}, $signed(src_a[31:0]) >>> $signed((i_word_cut ? {1'b0, src_b[4:0]} : src_b[5:0]))})
                                   : $signed(src_a) >>> $signed((i_word_cut ? {1'b0, src_b[4:0]} : src_b[5:0]));
 
-  // Control and Status Register Read and Write
-  wire [63:0] csrrw_result = src_a;
-
-  MuxKey #(.NR_KEY(17), .KEY_LEN(5), .DATA_LEN(64)) u_mux4 (
+  MuxKey #(.NR_KEY(16), .KEY_LEN(5), .DATA_LEN(64)) u_mux4 (
     .out(aluresult),
     .key(i_ALUctr),
     .lut({
@@ -150,8 +147,7 @@ module ysyx_22050710_exu (
       5'b01011, signed_div_result,
       5'b01100, unsigned_div_result,
       5'b01101, signed_rem_result,
-      5'b01110, unsigned_rem_result,
-      5'b10000, csrrw_result
+      5'b01110, unsigned_rem_result
     })
   );
 
