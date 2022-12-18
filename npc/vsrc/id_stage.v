@@ -104,7 +104,7 @@ module ysyx_22050710_idu (
                        // RV64I
                        inst_addw,   inst_subw,  inst_sllw,  inst_srlw,  inst_sraw,
                        // RV32M
-                       inst_mul,    inst_div,   inst_divu,  inst_rem,   inst_remu,   
+                       inst_mul,    inst_div,   inst_divu,  inst_rem,   inst_remu,
                        // RV64M
                        inst_mulw,   inst_divw,  inst_divuw, inst_remw,  inst_remuw
                        };
