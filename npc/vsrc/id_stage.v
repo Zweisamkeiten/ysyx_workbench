@@ -115,7 +115,7 @@ module ysyx_22050710_idu (
                        inst_lwu,    inst_ld,    inst_addiw, inst_slliw, inst_srliw,
                        inst_sraiw
                        // RV32/RV64 Zicsr
-                       inst_csrrw,
+                       inst_csrrw
                        };
   wire inst_type_u = |{inst_lui,    inst_auipc};
   wire inst_type_s = |{inst_sb,     inst_sh,    inst_sw,    inst_sd};
