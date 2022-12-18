@@ -113,7 +113,7 @@ module ysyx_22050710_idu (
                        inst_andi,   inst_slli,  inst_srli,  inst_srai,  inst_ebreak,
                        // RV64I
                        inst_lwu,    inst_ld,    inst_addiw, inst_slliw, inst_srliw,
-                       inst_sraiw
+                       inst_sraiw,
                        // RV32/RV64 Zicsr
                        inst_csrrw
                        };
