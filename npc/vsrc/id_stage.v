@@ -8,7 +8,7 @@ module ysyx_22050710_idu (
   output  o_ALUAsrc, output [1:0] o_ALUBsrc, output [4:0] o_ALUctr,
   output  o_word_cut,
   output  o_RegWr, o_MemtoReg, o_MemWr, output [2:0] o_MemOP,
-  output  o_sel_csr, o_sel_csr_imm
+  output  o_sel_csr, o_sel_csr_imm, o_CsrW, o_CsrR
 );
 
   wire [6:0] opcode;
@@ -202,6 +202,8 @@ module ysyx_22050710_idu (
 
   assign o_sel_csr      = |{inst_csrrw};
   assign o_sel_csr_imm  = |{1'b0};
+  assign o_CsrW         = o_sel_csr ? (|{1'b0} == 1 ? (|o_ra == 0 ? 0 : 1) : 1) : 0;
+  assign o_CsrR         = o_sel_csr ? (|{inst_csrrw} == 1 ? (|o_rd == 0 ? 0 : 1) : 1) : 0;
 
   wire alu_copyimm      = |{inst_lui};
   wire alu_plus         = |{inst_auipc, inst_jal,   inst_jalr,  inst_addi,  inst_add,

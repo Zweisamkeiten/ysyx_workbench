@@ -6,7 +6,7 @@ module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
   input   i_clk,
   input   [ADDR_WIDTH-1:0] i_raddr, i_waddr,
   input   [DATA_WIDTH-1:0] i_wdata,
-  input   i_wen,
+  input   i_ren, i_wen,
   output  [DATA_WIDTH-1:0] o_bus
 );
   initial set_csr_ptr(rf);
@@ -37,7 +37,7 @@ module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
     })
   );
 
-  assign o_bus = rf[rcsr_idx];
+  assign o_bus = i_ren ? rf[rcsr_idx] : 64'b0;
 
   always @(posedge i_clk) begin
     if (i_wen) rf[wcsr_idx] <= i_wdata;
