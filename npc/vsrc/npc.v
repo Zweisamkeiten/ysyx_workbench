@@ -27,7 +27,7 @@ module ysyx_22050710_npc (
   ysyx_22050710_csr #(.ADDR_WIDTH(12), .DATA_WIDTH(64)) u_csrs (
     .i_clk(i_clk),
     .i_raddr(imm[11:0]), .i_waddr(imm[11:0]), .i_wdata(ALUresult),
-    .i_ren(1), .i_wen(1),
+    .i_wen(1),
     .o_bus(rcsr)
   );
 
