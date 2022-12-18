@@ -62,7 +62,7 @@ module ysyx_22050710_idu (
   wire inst_srl    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b101) & (funct7[6:0] == 7'b0000000);
   wire inst_or     = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b110) & (funct7[6:0] == 7'b0000000);
   wire inst_and    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b111) & (funct7[6:0] == 7'b0000000);
-  wire inst_ebreak = (opcode[6:0] == 7'b1110011) & (funct3[2:0] == 3'b000) & (i_inst[31:20] == 12'b000000000000);
+  wire inst_ebreak = (opcode[6:0] == 7'b1110011) & (funct3[2:0] == 3'b000) & (i_inst[31:20] == 12'b000000000001);
 
   // RV64I
   wire inst_lwu    = (opcode[6:0] == 7'b0000011) & (funct3[2:0] == 3'b110);
