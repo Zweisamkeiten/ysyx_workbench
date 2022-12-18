@@ -70,7 +70,7 @@ module ysyx_22050710_npc (
   );
 
   ysyx_22050710_exu u_exu (
-    .i_rs1(sel_csr_imm ? {59{1'b0}, ra} : rs1), .i_rs2(sel_csr ? rcsr : rs2),
+    .i_rs1(sel_csr_imm ? {{59{1'b0}}, ra} : rs1), .i_rs2(sel_csr ? rcsr : rs2),
     .i_imm(imm), .i_pc(pc),
     .i_ALUAsrc(ALUAsrc), .i_ALUBsrc(ALUBsrc), .i_ALUctr(ALUctr),
     .i_word_cut(word_cut),
