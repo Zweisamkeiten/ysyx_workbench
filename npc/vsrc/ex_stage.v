@@ -53,7 +53,7 @@ module ysyx_22050710_exu (
     .key(i_ALUctr),
     .lut({
       5'b00010, signed_Less,
-      5'b01010, unsigned_Less
+      5'b00011, unsigned_Less
     })
   );
   wire signed_Less = overflow == 0
