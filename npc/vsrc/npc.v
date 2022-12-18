@@ -66,7 +66,7 @@ module ysyx_22050710_npc (
     .o_ALUAsrc(ALUAsrc), .o_ALUBsrc(ALUBsrc), .o_ALUctr(ALUctr),
     .o_word_cut(word_cut),
     .o_RegWr(RegWr), .o_MemtoReg(MemtoReg), .o_MemWr(MemWr), .o_MemOP(MemOP),
-    .o_selcsr(sel_csr), .o_sel_csr_imm(sel_csr_imm)
+    .o_sel_csr(sel_csr), .o_sel_csr_imm(sel_csr_imm)
   );
 
   ysyx_22050710_exu u_exu (
