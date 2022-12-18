@@ -7,7 +7,8 @@ module ysyx_22050710_idu (
   output  [2:0] o_Branch,
   output  o_ALUAsrc, output [1:0] o_ALUBsrc, output [4:0] o_ALUctr,
   output  o_word_cut,
-  output  o_RegWr, o_MemtoReg, o_MemWr, output [2:0] o_MemOP
+  output  o_RegWr, o_MemtoReg, o_MemWr, output [2:0] o_MemOP,
+  output  o_sel_csr, o_sel_csr_imm
 );
 
   wire [6:0] opcode;
@@ -199,6 +200,8 @@ module ysyx_22050710_idu (
     })
   );
 
+  assign o_sel_csr      = |{inst_csrrw};
+  assign o_sel_csr_imm  = |{1'b0};
 
   wire alu_copyimm      = |{inst_lui};
   wire alu_plus         = |{inst_auipc, inst_jal,   inst_jalr,  inst_addi,  inst_add,
@@ -219,32 +222,35 @@ module ysyx_22050710_idu (
   wire alu_singed_rem   = |{inst_rem,   inst_remw};
   wire alu_unsinged_rem = |{inst_remu,  inst_remuw};
   wire alu_ebreak       = inst_ebreak;
+  wire alu_cssrw        = |{inst_csrrw};
 
-  MuxKeyWithDefault #(.NR_KEY(17), .KEY_LEN(17), .DATA_LEN(5)) u_mux3 (
+  MuxKeyWithDefault #(.NR_KEY(18), .KEY_LEN(18), .DATA_LEN(5)) u_mux3 (
     .out(o_ALUctr),
     .key({alu_copyimm,    alu_plus,       alu_sub,          alu_signed_less,alu_unsinged_less,
           alu_xor,        alu_and,        alu_or,           alu_sll,        alu_srl,  alu_sra,
           alu_singed_mul, alu_singed_div, alu_unsinged_div, alu_singed_rem, alu_unsinged_rem,
-          alu_ebreak}),
+          alu_ebreak,     alu_cssrw
+          }),
     .default_out(5'b11111), // invalid
     .lut({
-      17'b10000000000000000, 5'b01111,  // copy imm
-      17'b01000000000000000, 5'b00000,  // add a + b
-      17'b00100000000000000, 5'b00001,  // sub a - b
-      17'b00010000000000000, 5'b00010,  // branch set signed Less || slt  a <s b
-      17'b00001000000000000, 5'b00011,  // branch set unsigned Less || sltu a <u b
-      17'b00000100000000000, 5'b00100,  // xor a ^ b
-      17'b00000010000000000, 5'b00101,  // and a & b
-      17'b00000001000000000, 5'b00110,  // or a | b
-      17'b00000000100000000, 5'b00111,  // sll <<
-      17'b00000000010000000, 5'b01000,  // srl >>
-      17'b00000000001000000, 5'b01001,  // sra >>>
-      17'b00000000000100000, 5'b01010,  // signed mul *
-      17'b00000000000010000, 5'b01011,  // signed   div /
-      17'b00000000000001000, 5'b01100,  // unsigned div /
-      17'b00000000000000100, 5'b01101,  // signed   rem %
-      17'b00000000000000010, 5'b01110,  // unsigned rem %
-      17'b00000000000000001, 5'b11110   // ebreak
+      18'b100000000000000000, 5'b01111,  // copy imm
+      18'b010000000000000000, 5'b00000,  // add a + b
+      18'b001000000000000000, 5'b00001,  // sub a - b
+      18'b000100000000000000, 5'b00010,  // branch set signed Less || slt  a <s b
+      18'b000010000000000000, 5'b00011,  // branch set unsigned Less || sltu a <u b
+      18'b000001000000000000, 5'b00100,  // xor a ^ b
+      18'b000000100000000000, 5'b00101,  // and a & b
+      18'b000000010000000000, 5'b00110,  // or a | b
+      18'b000000001000000000, 5'b00111,  // sll <<
+      18'b000000000100000000, 5'b01000,  // srl >>
+      18'b000000000010000000, 5'b01001,  // sra >>>
+      18'b000000000001000000, 5'b01010,  // signed mul *
+      18'b000000000000100000, 5'b01011,  // signed   div /
+      18'b000000000000010000, 5'b01100,  // unsigned div /
+      18'b000000000000001000, 5'b01101,  // signed   rem %
+      18'b000000000000000100, 5'b01110,  // unsigned rem %
+      18'b000000000000000010, 5'b11110,  // ebreak
+      18'b000000000000000001, 5'b10000   // Control and Status Register Read and Write
     })
   );
 

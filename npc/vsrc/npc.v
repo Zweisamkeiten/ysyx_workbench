@@ -23,6 +23,14 @@ module ysyx_22050710_npc (
     .o_busA(rs1), .o_busB(rs2)
   );
 
+  wire [63:0] rcsr;
+  ysyx_22050710_csr #(.ADDR_WIDTH(12), .DATA_WIDTH(64)) u_gprs (
+    .i_clk(i_clk),
+    .i_raddr(imm), .i_waddr(imm), .i_wdata(ALUresult),
+    .i_ren(1), .i_wen(1),
+    .o_bus(rcsr)
+  );
+
   wire [63:0] rdata;
   ysyx_22050710_datamem u_datamem (
     .i_clk(i_clk),
@@ -49,6 +57,7 @@ module ysyx_22050710_npc (
   wire ALUAsrc; wire [1:0] ALUBsrc; wire [4:0] ALUctr;
   wire word_cut;
   wire RegWr, MemtoReg, MemWr; wire [2:0] MemOP;
+  wire sel_csr, sel_csr_imm;
   ysyx_22050710_idu u_idu (
     .i_inst(inst),
     .o_imm(imm),
@@ -56,16 +65,18 @@ module ysyx_22050710_npc (
     .o_Branch(Branch),
     .o_ALUAsrc(ALUAsrc), .o_ALUBsrc(ALUBsrc), .o_ALUctr(ALUctr),
     .o_word_cut(word_cut),
-    .o_RegWr(RegWr), .o_MemtoReg(MemtoReg), .o_MemWr(MemWr), .o_MemOP(MemOP)
+    .o_RegWr(RegWr), .o_MemtoReg(MemtoReg), .o_MemWr(MemWr), .o_MemOP(MemOP),
+    .o_selcsr(sel_csr), .o_sel_csr_imm(sel_csr_imm)
   );
 
   ysyx_22050710_exu u_exu (
-    .i_rs1(rs1), .i_rs2(rs2),
+    .i_rs1(sel_csr_imm ? {59{1'b0}, ra} : rs1), .i_rs2(sel_csr ? rcsr : rs2),
     .i_imm(imm), .i_pc(pc),
     .i_ALUAsrc(ALUAsrc), .i_ALUBsrc(ALUBsrc), .i_ALUctr(ALUctr),
     .i_word_cut(word_cut),
     .i_Branch(Branch),
     .i_MemOP(MemOP), .i_MemtoReg(MemtoReg), .i_rdata(rdata),
+    .i_sel_csr(sel_csr),
     .o_ALUresult(ALUresult),
     .o_nextpc(nextpc),
     .o_busW(busW)

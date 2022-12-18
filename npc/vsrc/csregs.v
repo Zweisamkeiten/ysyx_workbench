@@ -5,7 +5,7 @@ module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
   input   i_clk,
   input   [ADDR_WIDTH-1:0] i_raddr, i_waddr,
   input   [DATA_WIDTH-1:0] i_wdata,
-  input   i_wen,
+  input   i_ren, i_wen,
   output  [DATA_WIDTH-1:0] o_bus
 );
 
