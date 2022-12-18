@@ -130,22 +130,22 @@ module ysyx_22050710_exu (
     .out(aluresult),
     .key(i_ALUctr),
     .lut({
-      5'b00011, copy_result,
+      5'b01111, copy_result,
       5'b00000, adder_result,
+      5'b00001, sub_result,
       5'b00010, signed_Less == 1 ? 64'b1 : 64'b0, // slt
-      5'b01010, unsigned_Less == 1 ? 64'b1 : 64'b0, // sltu
-      5'b01000, sub_result,
+      5'b00011, unsigned_Less == 1 ? 64'b1 : 64'b0, // sltu
       5'b00100, xor_result,
-      5'b00111, and_result,
+      5'b00101, and_result,
       5'b00110, or_result,
-      5'b00001, sll_result,
-      5'b00101, srl_result,
-      5'b01101, sra_result,
-      5'b11100, signed_mul_result,
-      5'b11011, signed_div_result,
-      5'b11010, unsigned_div_result,
-      5'b11101, signed_rem_result,
-      5'b11001, unsigned_rem_result
+      5'b00111, sll_result,
+      5'b01000, srl_result,
+      5'b01001, sra_result,
+      5'b01010, signed_mul_result,
+      5'b01011, signed_div_result,
+      5'b01100, unsigned_div_result,
+      5'b01101, signed_rem_result,
+      5'b01110, unsigned_rem_result
     })
   );
 
