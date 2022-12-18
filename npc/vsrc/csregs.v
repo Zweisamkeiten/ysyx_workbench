@@ -1,5 +1,7 @@
 // ysyx_22050710 CSR regs
 
+import "DPI-C" function void set_csr_ptr(input logic [63:0] a[]);
+
 module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
   input   i_clk,
   input   [ADDR_WIDTH-1:0] i_raddr, i_waddr,
@@ -7,6 +9,7 @@ module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
   input   i_wen,
   output  [DATA_WIDTH-1:0] o_bus
 );
+  initial set_csr_ptr(rf);
 
   reg [DATA_WIDTH-1:0] rf [4096-1:0];
 

@@ -35,6 +35,10 @@ extern "C" void set_gpr_ptr(const svOpenArrayHandle r) {
   cpu.gpr = (uint64_t *)(((VerilatedDpiOpenVar*)r)->datap());
 }
 
+extern "C" void set_csr_ptr(const svOpenArrayHandle r) {
+  cpu.csr = (uint64_t *)(((VerilatedDpiOpenVar*)r)->datap());
+}
+
 extern "C" void npc_pmem_read(long long raddr, long long *rdata) {
   // 总是读取地址为`raddr & ~0x7ull`的8字节返回给`rdata`
   *rdata = paddr_read(raddr, 8);
