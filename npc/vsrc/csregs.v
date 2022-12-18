@@ -24,7 +24,7 @@ module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
   );
 
   wire [11:0] wcsr_idx;
-  MuxKey #(.NR_KEY(4), .KEY_LEN(12), .DATA_LEN(12)) u_mux0 (
+  MuxKey #(.NR_KEY(4), .KEY_LEN(12), .DATA_LEN(12)) u_mux1 (
     .out(wcsr_idx),
     .key(i_waddr),
     .lut({
