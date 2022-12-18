@@ -11,6 +11,7 @@ module ysyx_22050710_exu (
   input   [2:0] i_Branch,
   input   [2:0] i_MemOP, input i_MemtoReg,
   input   [63:0] i_rdata,
+  input   [3:0] i_EXctr,
   input   i_sel_csr,
   output  [63:0] o_ALUresult,
   output  [63:0] o_nextpc,
@@ -170,8 +171,10 @@ module ysyx_22050710_exu (
     })
   );
 
-  always @(i_ALUctr) begin
-    if (i_ALUctr == 5'b11111) set_state_abort(); // invalid inst
-    if (i_ALUctr == 5'b11110) set_state_end(); // ebreak
+  always @(i_EXctr) begin
+    case (i_EXctr) begin
+      4'b1110: set_state_end(); // ebreak
+      4'b1111: set_state_abort(); // invalid inst
+    endcase
   end
 endmodule
