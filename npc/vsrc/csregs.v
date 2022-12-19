@@ -20,7 +20,7 @@ module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
 
   reg [DATA_WIDTH-1:0] rf [4096-1:0];
 
-  initial rf[`MSTATUS] <= 64'ha00001800;
+  initial rf[`MSTATUS] = 64'ha00001800;
 
   assign o_bus = i_ren ? rf[i_raddr] : 64'b0;
 
