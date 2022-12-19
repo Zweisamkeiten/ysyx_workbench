@@ -28,7 +28,6 @@ remove_quote = $(patsubst "%",%,$(1))
 GUEST_ISA ?= $(call remove_quote,$(CONFIG_ISA))
 ENGINE ?= $(call remove_quote,$(CONFIG_ENGINE))
 NAME    = $(GUEST_ISA)-nemu-$(ENGINE)
-MAKEFLAGS += -j $(shell nproc)
 
 # Include all filelist.mk to merge file lists
 FILELIST_MK = $(shell find ./src -name "filelist.mk")
