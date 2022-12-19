@@ -11,6 +11,8 @@ module alu (a, b, opt, out, of, cf, zf, sf);
   assign sf = tmp[3];
   assign zf = |tmp ? 1'b0 : 1'b1;
 
+  wire [3:0] t_no_Cin;
+  assign t_no_Cin = {4{1'b1}}^b + 1;
   wire of_add, of_sub;
   assign of_add = (a[3] == b[3]) && (tmp[3] != a[3]);
   assign of_sub = (a[3] == t_no_Cin[3]) && (tmp[3] != a[3]);
