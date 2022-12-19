@@ -11,6 +11,7 @@ module ysyx_22050710_exu (
   input   [2:0] i_Branch,
   input   [2:0] i_MemOP, input i_MemtoReg,
   input   [63:0] i_rdata,
+  input   [3:0] i_EXctr,
   input   i_sel_csr,
   output  [63:0] o_ALUresult,
   output  [63:0] o_nextpc,
@@ -127,10 +128,7 @@ module ysyx_22050710_exu (
                                   ? $signed({{32{src_a[31]}}, $signed(src_a[31:0]) >>> $signed((i_word_cut ? {1'b0, src_b[4:0]} : src_b[5:0]))})
                                   : $signed(src_a) >>> $signed((i_word_cut ? {1'b0, src_b[4:0]} : src_b[5:0]));
 
-  // Control and Status Register Read and Write
-  wire [63:0] csrrw_result = src_a;
-
-  MuxKey #(.NR_KEY(17), .KEY_LEN(5), .DATA_LEN(64)) u_mux4 (
+  MuxKey #(.NR_KEY(16), .KEY_LEN(5), .DATA_LEN(64)) u_mux4 (
     .out(aluresult),
     .key(i_ALUctr),
     .lut({
@@ -149,8 +147,7 @@ module ysyx_22050710_exu (
       5'b01011, signed_div_result,
       5'b01100, unsigned_div_result,
       5'b01101, signed_rem_result,
-      5'b01110, unsigned_rem_result,
-      5'b10000, csrrw_result
+      5'b01110, unsigned_rem_result
     })
   );
 
@@ -170,8 +167,10 @@ module ysyx_22050710_exu (
     })
   );
 
-  always @(i_ALUctr) begin
-    if (i_ALUctr == 5'b11111) set_state_abort(); // invalid inst
-    if (i_ALUctr == 5'b11110) set_state_end(); // ebreak
+  always @(i_EXctr) begin
+    case (i_EXctr)
+      4'b1110: set_state_end(); // ebreak
+      default: set_state_abort(); // invalid inst
+    endcase
   end
 endmodule
