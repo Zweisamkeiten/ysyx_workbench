@@ -170,7 +170,8 @@ module ysyx_22050710_exu (
   always @(i_EXctr) begin
     case (i_EXctr)
       4'b1110: set_state_end(); // ebreak
-      default: set_state_abort(); // invalid inst
+      4'b1111: set_state_abort(); // invalid inst
+      default:;
     endcase
   end
 endmodule
