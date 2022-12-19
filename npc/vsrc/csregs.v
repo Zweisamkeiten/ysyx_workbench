@@ -31,6 +31,7 @@ module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
     if (i_wen) begin
       case (i_Exctr)
         4'b1101: begin // Environment call from M-mode Expection Code: 11
+        $display(`MEPC);
                   rf[`MEPC] <= i_epc;
                   rf[`MCAUSE] <= 64'd11;
                   o_nextpc <= rf[`MTVEC];
