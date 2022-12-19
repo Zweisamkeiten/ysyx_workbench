@@ -8,7 +8,6 @@ module ysyx_22050710_idu (
   output  o_ALUAsrc, output [1:0] o_ALUBsrc, output [4:0] o_ALUctr,
   output  o_word_cut,
   output  o_RegWr, o_MemtoReg, o_MemWr, output [2:0] o_MemOP,
-  output  [3:0] o_EXctr,
   output  o_sel_csr, o_sel_csr_imm, o_CsrW, o_CsrR
 );
 
@@ -64,7 +63,6 @@ module ysyx_22050710_idu (
   wire inst_or     = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b110) & (funct7[6:0] == 7'b0000000);
   wire inst_and    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b111) & (funct7[6:0] == 7'b0000000);
   wire inst_ebreak = (opcode[6:0] == 7'b1110011) & (funct3[2:0] == 3'b000) & (i_inst[31:20] == 12'b000000000001);
-  wire inst_ecall  = (opcode[6:0] == 7'b1110011) & (funct3[2:0] == 3'b000) & (i_inst[31:20] == 12'b000000000000);
 
   // RV64I
   wire inst_lwu    = (opcode[6:0] == 7'b0000011) & (funct3[2:0] == 3'b110);
@@ -202,6 +200,11 @@ module ysyx_22050710_idu (
     })
   );
 
+  assign o_sel_csr      = |{inst_csrrw};
+  assign o_sel_csr_imm  = |{1'b0};
+  assign o_CsrW         = o_sel_csr ? (|{1'b0} == 1 ? (|o_ra == 0 ? 0 : 1) : 1) : 0;
+  assign o_CsrR         = o_sel_csr ? (|{inst_csrrw} == 1 ? (|o_rd == 0 ? 0 : 1) : 1) : 0;
+
   wire alu_copyimm      = |{inst_lui};
   wire alu_plus         = |{inst_auipc, inst_jal,   inst_jalr,  inst_addi,  inst_add,
                             inst_load,  inst_store, inst_addiw, inst_addw
@@ -220,31 +223,36 @@ module ysyx_22050710_idu (
   wire alu_unsinged_div = |{inst_divu,  inst_divuw};
   wire alu_singed_rem   = |{inst_rem,   inst_remw};
   wire alu_unsinged_rem = |{inst_remu,  inst_remuw};
+  wire alu_ebreak       = inst_ebreak;
+  wire alu_cssrw        = |{inst_csrrw};
 
-  MuxKeyWithDefault #(.NR_KEY(16), .KEY_LEN(16), .DATA_LEN(5)) u_mux3 (
+  MuxKeyWithDefault #(.NR_KEY(18), .KEY_LEN(18), .DATA_LEN(5)) u_mux3 (
     .out(o_ALUctr),
     .key({alu_copyimm,    alu_plus,       alu_sub,          alu_signed_less,alu_unsinged_less,
           alu_xor,        alu_and,        alu_or,           alu_sll,        alu_srl,  alu_sra,
-          alu_singed_mul, alu_singed_div, alu_unsinged_div, alu_singed_rem, alu_unsinged_rem
+          alu_singed_mul, alu_singed_div, alu_unsinged_div, alu_singed_rem, alu_unsinged_rem,
+          alu_ebreak,     alu_cssrw
           }),
     .default_out(5'b11111), // invalid
     .lut({
-      16'b1000000000000000, 5'b01111,  // copy imm
-      16'b0100000000000000, 5'b00000,  // add a + b
-      16'b0010000000000000, 5'b00001,  // sub a - b
-      16'b0001000000000000, 5'b00010,  // branch set signed Less || slt  a <s b
-      16'b0000100000000000, 5'b00011,  // branch set unsigned Less || sltu a <u b
-      16'b0000010000000000, 5'b00100,  // xor a ^ b
-      16'b0000001000000000, 5'b00101,  // and a & b
-      16'b0000000100000000, 5'b00110,  // or a | b
-      16'b0000000010000000, 5'b00111,  // sll <<
-      16'b0000000001000000, 5'b01000,  // srl >>
-      16'b0000000000100000, 5'b01001,  // sra >>>
-      16'b0000000000010000, 5'b01010,  // signed mul *
-      16'b0000000000001000, 5'b01011,  // signed   div /
-      16'b0000000000000100, 5'b01100,  // unsigned div /
-      16'b0000000000000010, 5'b01101,  // signed   rem %
-      16'b0000000000000001, 5'b01110   // unsigned rem %
+      18'b100000000000000000, 5'b01111,  // copy imm
+      18'b010000000000000000, 5'b00000,  // add a + b
+      18'b001000000000000000, 5'b00001,  // sub a - b
+      18'b000100000000000000, 5'b00010,  // branch set signed Less || slt  a <s b
+      18'b000010000000000000, 5'b00011,  // branch set unsigned Less || sltu a <u b
+      18'b000001000000000000, 5'b00100,  // xor a ^ b
+      18'b000000100000000000, 5'b00101,  // and a & b
+      18'b000000010000000000, 5'b00110,  // or a | b
+      18'b000000001000000000, 5'b00111,  // sll <<
+      18'b000000000100000000, 5'b01000,  // srl >>
+      18'b000000000010000000, 5'b01001,  // sra >>>
+      18'b000000000001000000, 5'b01010,  // signed mul *
+      18'b000000000000100000, 5'b01011,  // signed   div /
+      18'b000000000000010000, 5'b01100,  // unsigned div /
+      18'b000000000000001000, 5'b01101,  // signed   rem %
+      18'b000000000000000100, 5'b01110,  // unsigned rem %
+      18'b000000000000000010, 5'b11110,  // ebreak
+      18'b000000000000000001, 5'b10000   // Control and Status Register Read and Write
     })
   );
 
@@ -261,22 +269,6 @@ module ysyx_22050710_idu (
       8'b00000100, 3'b111,
       8'b00000010, 3'b110,
       8'b00000001, 3'b111
-    })
-  );
-
-  assign o_sel_csr      = |{inst_csrrw};
-  assign o_sel_csr_imm  = |{1'b0};
-  assign o_CsrW         = o_sel_csr ? (|{1'b0} == 1 ? (|o_ra == 0 ? 0 : 1) : 1) : 0;
-  assign o_CsrR         = o_sel_csr ? (|{inst_csrrw} == 1 ? (|o_rd == 0 ? 0 : 1) : 1) : 0;
-
-  MuxKeyWithDefault #(.NR_KEY(3), .KEY_LEN(4), .DATA_LEN(4)) u_mux5 (
-    .out(o_EXctr),
-    .key({|(o_ALUctr & 5'b11111), inst_ebreak, inst_ecall, |{inst_csrrw}}),
-    .default_out(4'b1111),
-    .lut({
-      4'b1100, 4'b1110,   // ebreak
-      4'b1010, 4'b1101,   // ecall
-      4'b1001, 4'b0000    // control and status register read and write
     })
   );
 
