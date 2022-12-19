@@ -27,7 +27,6 @@ module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
   always @(posedge i_clk) begin
     o_nextpc <= 64'b0;
     o_sys_change_pc <= 1'b0;
-    $display(i_wen);
     if (i_wen) begin
       case (i_Exctr)
         4'b1101: begin // Environment call from M-mode Expection Code: 11
