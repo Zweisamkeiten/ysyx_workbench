@@ -10,7 +10,7 @@ module ysyx_22050710_npc (
     .i_clk(i_clk),
     .i_rst(i_rst),
     .i_load(1'b1),
-    .i_in(nextpc),
+    .i_in(sys_change_pc ? sysctr_pc : nextpc),
     .o_pc(pc)
   );
 
@@ -25,11 +25,14 @@ module ysyx_22050710_npc (
 
   wire [63:0] rcsr;
   wire [63:0] CSRbusW;
+  wire [63:0] sysctr_pc; wire is_change_pc;
   ysyx_22050710_csr #(.ADDR_WIDTH(12), .DATA_WIDTH(64)) u_csrs (
     .i_clk(i_clk),
     .i_raddr(imm[11:0]), .i_waddr(imm[11:0]), .i_wdata(CSRbusW),
+    .i_Exctr(EXctr), .i_epc(pc),
     .i_ren(CsrR), .i_wen(CsrW),
-    .o_bus(rcsr)
+    .o_bus(rcsr),
+    .o_nextpc(sysctr_pc), .o_is_change_pc(sys_change_pc)
   );
 
   wire [63:0] rdata;
