@@ -12,6 +12,7 @@ module ysyx_22050710_exu (
   input   [2:0] i_MemOP, input i_MemtoReg,
   input   [63:0] i_rdata,
   input   [3:0] i_EXctr,
+  input   i_is_invalid_inst,
   input   i_sel_csr,
   output  [63:0] o_ALUresult,
   output  [63:0] o_nextpc,
@@ -168,11 +169,13 @@ module ysyx_22050710_exu (
   );
 
   always @(i_EXctr) begin
-    $display(i_EXctr);
     case (i_EXctr)
       4'b1110: set_state_end(); // ebreak
-      4'b1111: set_state_abort(); // invalid inst
       default:;
     endcase
+  end
+
+  always @(i_is_invalid_inst) begin
+      if (i_is_invalid_inst) set_state_abort(); // invalid inst
   end
 endmodule

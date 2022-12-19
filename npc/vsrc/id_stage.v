@@ -9,6 +9,7 @@ module ysyx_22050710_idu (
   output  o_word_cut,
   output  o_RegWr, o_MemtoReg, o_MemWr, output [2:0] o_MemOP,
   output  [3:0] o_EXctr,
+  output  o_is_invalid_inst,
   output  o_sel_csr, o_sel_csr_imm, o_CsrW, o_CsrR
 );
 
@@ -279,5 +280,7 @@ module ysyx_22050710_idu (
       4'b1001, 4'b0000    // control and status register read and write
     })
   );
+
+  assign o_is_invalid_inst = (o_ALUctr == 5'b11111) && (o_EXctr == 4'b1111);
 
 endmodule

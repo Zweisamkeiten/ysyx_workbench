@@ -58,6 +58,7 @@ module ysyx_22050710_npc (
   wire word_cut;
   wire RegWr, MemtoReg, MemWr; wire [2:0] MemOP;
   wire [3:0] EXctr;
+  wire is_invalid_inst;
   wire sel_csr, sel_csr_imm, CsrW, CsrR;
   ysyx_22050710_idu u_idu (
     .i_inst(inst),
@@ -68,6 +69,7 @@ module ysyx_22050710_npc (
     .o_word_cut(word_cut),
     .o_RegWr(RegWr), .o_MemtoReg(MemtoReg), .o_MemWr(MemWr), .o_MemOP(MemOP),
     .o_EXctr(EXctr),
+    .o_invalid_inst(is_invalid_inst);
     .o_sel_csr(sel_csr), .o_sel_csr_imm(sel_csr_imm), .o_CsrW(CsrW), .o_CsrR(CsrR)
   );
 
@@ -79,6 +81,7 @@ module ysyx_22050710_npc (
     .i_Branch(Branch),
     .i_MemOP(MemOP), .i_MemtoReg(MemtoReg), .i_rdata(rdata),
     .i_EXctr(EXctr),
+    .i_is_invalid_inst(is_invalid_inst),
     .i_sel_csr(sel_csr),
     .o_ALUresult(ALUresult),
     .o_nextpc(nextpc),
