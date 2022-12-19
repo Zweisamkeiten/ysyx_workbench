@@ -28,13 +28,8 @@ const char *regs[] = {
   "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
   "s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
   "a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
-  "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6",
-  // csrs
-  "mstatus", "mtvec", "mepc", "mcause"
+  "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
 };
-
-#define NR_REGS ARRLEN(regs)
-int nr_regs = NR_REGS;
 
 void isa_reg_display() {
   printf(ANSI_FMT("GPRS:\n", ANSI_FG_MAGENTA));
@@ -43,8 +38,8 @@ void isa_reg_display() {
     printf(ANSI_FMT("%s:", ANSI_FG_BLUE) ANSI_FMT("\t" FMT_WORD "\t", ANSI_FG_GREEN) ANSI_FMT("%020lu\n", ANSI_FG_MAGENTA), reg_name(2 * i + 1, 64), gpr(2 * i + 1), gpr(2 * i + 1));
   }
   printf(ANSI_FMT("CSRS:\n", ANSI_FG_MAGENTA));
-  for (int i = 32; i < NR_REGS; i++) {
-    printf(ANSI_FMT("%-7s:", ANSI_FG_BLUE) ANSI_FMT(FMT_WORD "\n", ANSI_FG_GREEN), reg_name(i, 64), csr(i));
+  for (int i = 0; i < NR_CSREGS; i++) {
+    printf(ANSI_FMT("%-7s:", ANSI_FG_BLUE) ANSI_FMT(FMT_WORD "\n", ANSI_FG_GREEN), csr_table[i].name, csr(csr_table[i].addr));
   }
 }
 

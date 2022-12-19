@@ -19,32 +19,36 @@
 #include <common.h>
 
 static inline int check_reg_idx(int idx) {
-  extern int nr_regs;
-  IFDEF(CONFIG_RT_CHECK, assert(idx >= 0 && idx < nr_regs));
+  IFDEF(CONFIG_RT_CHECK, assert(idx >= 0 && idx < 32));
   return idx;
 }
 
-#define gpr(idx) (cpu.gpr[check_reg_idx(idx)])
-#define csr(idx) (cpu.csr[check_reg_idx(idx) - 32]) // csr idx bigger than 32;
+static inline int check_csr_addr(int addr) {
+  IFDEF(CONFIG_RT_CHECK, assert(addr >= 0 && addr < 4096));
+  return addr;
+}
 
-enum {
-  MSTATUS,
-  MTVEC,
-  MEPC,
-  MCAUSE,
-  NR_CSRS
+#define gpr(idx) (cpu.gpr[check_reg_idx(idx)])
+#define csr(addr) (cpu.csr[check_csr_addr(addr)])
+
+typedef enum {
+  MSTATUS = 0x300,
+  MTVEC = 0x305,
+  MEPC = 0x341,
+  MCAUSE = 0x342
+} csr_addr;
+
+struct {
+  const char *name;
+  const int addr;
+} csr_table[] = {
+  {"mstatus", MSTATUS},
+  {"mtvec", MTVEC},
+  {"mepc", MEPC},
+  {"mcause", MCAUSE},
 };
 
-static inline int get_csr_idx(int csr_addr) {
-  extern const int csrs_addr[];
-  for (int i = 0; i < NR_CSRS; i++) {
-    if (csr_addr == csrs_addr[i]) {
-      return i;
-    }
-  }
-
-  panic("unknown csr addr;\n");
-}
+#define NR_CSREGS ARRLEN(csr_table)
 
 static inline const char* reg_name(int idx, int width) {
   extern const char* regs[];
