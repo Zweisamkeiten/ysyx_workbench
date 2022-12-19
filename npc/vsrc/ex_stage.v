@@ -172,6 +172,7 @@ module ysyx_22050710_exu (
   reg [63:0] CSRbusW;
   assign o_CSRbusW = CSRbusW;
   always @(i_EXctr) begin
+    $display(i_EXctr);
     CSRbusW <= 64'b0;
     case (i_EXctr)
       4'b1110: set_state_end(); // ebreak
