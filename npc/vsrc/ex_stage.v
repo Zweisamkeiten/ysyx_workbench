@@ -173,7 +173,10 @@ module ysyx_22050710_exu (
   assign o_CSRbusW = CSRbusW;
   always @(i_EXctr) begin
     CSRbusW = 64'b0;
-    if (i_EXctr == 4'b0000) CSRbusW = src_a;
+    case (i_EXctr)
+      4'b0000: CSRbusW = src_a;
+      default:;
+    endcase
   end
 
   always @(i_is_invalid_inst) begin
