@@ -102,6 +102,9 @@ module ysyx_22050710_idu (
   wire inst_remw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b110) & (funct7[6:0] == 7'b0000001);
   wire inst_remuw  = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b111) & (funct7[6:0] == 7'b0000001);
 
+  // mret
+  wire inst_mret   = i_inst == 32'b00110000001000000000000001110011;
+
   wire inst_type_r = |{ // RV32I
                        inst_add,    inst_sub,   inst_sll,   inst_slt,   inst_sltu,
                        inst_xor,    inst_srl,   inst_or,    inst_and,
@@ -266,20 +269,21 @@ module ysyx_22050710_idu (
     })
   );
 
-  assign o_sel_csr      = |{inst_csrrw, inst_csrrs, inst_ecall};
+  assign o_sel_csr      = |{inst_csrrw, inst_csrrs, inst_ecall, inst_mret};
   assign o_sel_csr_imm  = |{1'b0};
   assign o_CsrW         = o_sel_csr ? (|{inst_csrrs} == 1 ? (|o_ra == 0 ? 0 : 1) : 1) : 0;
   assign o_CsrR         = o_sel_csr ? (|{inst_csrrw} == 1 ? (|o_rd == 0 ? 0 : 1) : 1) : 0;
 
-  MuxKeyWithDefault #(.NR_KEY(4), .KEY_LEN(5), .DATA_LEN(4)) u_mux5 (
+  MuxKeyWithDefault #(.NR_KEY(5), .KEY_LEN(6), .DATA_LEN(4)) u_mux5 (
     .out(o_EXctr),
-    .key({|(o_ALUctr & 5'b11111), inst_ebreak, inst_ecall, |{inst_csrrw}, |{inst_csrrs}}),
+    .key({|(o_ALUctr & 5'b11111), inst_ebreak, inst_ecall, inst_mret, |{inst_csrrw}, |{inst_csrrs}}),
     .default_out(4'b1111),
     .lut({
-      5'b11000, 4'b1110,   // ebreak
-      5'b10100, 4'b1101,   // ecall
-      5'b10010, 4'b0000,   // control and status register read and write
-      5'b10001, 4'b0001    // control and status register read and set
+      6'b110000, 4'b1110,   // ebreak
+      6'b101000, 4'b1101,   // ecall
+      6'b100100, 4'b1100,   // mret
+      6'b100010, 4'b0000,   // control and status register read and write
+      6'b100001, 4'b0001    // control and status register read and set
     })
   );
 
