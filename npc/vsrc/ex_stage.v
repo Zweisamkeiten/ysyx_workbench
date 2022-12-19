@@ -171,8 +171,7 @@ module ysyx_22050710_exu (
     $display(i_EXctr);
     case (i_EXctr)
       4'b1110: set_state_end(); // ebreak
-      4'b1111: set_state_abort(); // invalid inst
-      default:;
+      default: set_state_abort(); // invalid inst
     endcase
   end
 endmodule
