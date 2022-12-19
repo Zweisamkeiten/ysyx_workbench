@@ -90,9 +90,7 @@ finish:
 #define INSTPAT(pattern, ...) do { \
   uint64_t key, mask, shift; \
   pattern_decode(pattern, STRLEN(pattern), &key, &mask, &shift); \
-  if (((INSTPAT_INST(s) >> shift) & mask) == key) { \
-  printf("inst = %x\nkey=%lx\nmask=%lx\nshift=%lu\n", INSTPAT_INST(s), key, mask, shift); \
-  printf("inst>>shift = %x\n", ((((s)->isa.inst.val) >> shift) & mask) == key); \
+  if ((((uint64_t)INSTPAT_INST(s) >> shift) & mask) == key) { \
     INSTPAT_MATCH(s, ##__VA_ARGS__); \
     goto *(__instpat_end); \
   } \
