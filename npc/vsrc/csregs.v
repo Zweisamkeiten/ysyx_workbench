@@ -2,10 +2,10 @@
 
 import "DPI-C" function void set_csr_ptr(input logic [63:0] a[]);
 
-`define MSTATUS   0x300
-`define MTVEC     0x305
-`define MEPC      0x341
-`define MCAUSE    0x342
+`define MSTATUS   12'h300
+`define MTVEC     12'h305
+`define MEPC      12'h341
+`define MCAUSE    12'h342
 
 module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
   input   i_clk,
