@@ -265,7 +265,7 @@ module ysyx_22050710_idu (
     })
   );
 
-  assign o_sel_csr      = |{inst_csrrw};
+  assign o_sel_csr      = |{inst_csrrw, inst_ecall};
   assign o_sel_csr_imm  = |{1'b0};
   assign o_CsrW         = o_sel_csr ? (|{1'b0} == 1 ? (|o_ra == 0 ? 0 : 1) : 1) : 0;
   assign o_CsrR         = o_sel_csr ? (|{inst_csrrw} == 1 ? (|o_rd == 0 ? 0 : 1) : 1) : 0;
