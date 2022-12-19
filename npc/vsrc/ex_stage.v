@@ -172,10 +172,10 @@ module ysyx_22050710_exu (
   reg [63:0] CSRbusW;
   assign o_CSRbusW = CSRbusW;
   always @(i_EXctr) begin
-    CSRbusW = 64'b0;
+    CSRbusW <= 64'b0;
     case (i_EXctr)
       4'b1110: set_state_end(); // ebreak
-      4'b0000: CSRbusW = src_a;
+      4'b0000: CSRbusW <= src_a;
       default:;
     endcase
   end
