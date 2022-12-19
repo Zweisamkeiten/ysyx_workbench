@@ -276,10 +276,10 @@ module ysyx_22050710_idu (
     .key({|(o_ALUctr & 5'b11111), inst_ebreak, inst_ecall, |{inst_csrrw}, |{inst_csrrs}}),
     .default_out(4'b1111),
     .lut({
-      4'b11000, 4'b1110,   // ebreak
-      4'b10100, 4'b1101,   // ecall
-      4'b10010, 4'b0000,   // control and status register read and write
-      4'b10001, 4'b0001    // control and status register read and set
+      5'b11000, 4'b1110,   // ebreak
+      5'b10100, 4'b1101,   // ecall
+      5'b10010, 4'b0000,   // control and status register read and write
+      5'b10001, 4'b0001    // control and status register read and set
     })
   );
 
