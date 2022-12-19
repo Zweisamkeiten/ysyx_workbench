@@ -171,7 +171,7 @@ module ysyx_22050710_exu (
 
   reg [63:0] CSRbusW;
   assign o_CSRbusW = CSRbusW;
-  always @(i_EXctr) begin
+  always @(*) begin
     CSRbusW = 64'b0;
     case (i_EXctr)
       4'b0000: CSRbusW = src_a;

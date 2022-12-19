@@ -11,19 +11,19 @@ module alu (a, b, opt, out, of, cf, zf, sf);
   assign sf = tmp[3];
   assign zf = |tmp ? 1'b0 : 1'b1;
 
-  /* wire [3:0] t_no_Cin; */
-  /* assign t_no_Cin = {4{1'b1}}^b + 1; */
-  /* wire of_add, of_sub; */
-  /* assign of_add = (a[3] == b[3]) && (tmp[3] != a[3]); */
-  /* assign of_sub = (a[3] == t_no_Cin[3]) && (tmp[3] != a[3]); */
-  /* MuxKey #(2, 3, 1) i0 ( */
-  /*   .out (of), */
-  /*   .key (opt), */
-  /*   .lut ({ */
-  /*       3'b000, of_add, */
-  /*       3'b001, of_sub */
-  /*   }) */
-  /* ); */
+  wire [3:0] t_no_Cin;
+  assign t_no_Cin = {4{1'b1}}^b + 1;
+  wire of_add, of_sub;
+  assign of_add = (a[3] == b[3]) && (tmp[3] != a[3]);
+  assign of_sub = (a[3] == t_no_Cin[3]) && (tmp[3] != a[3]);
+  MuxKey #(2, 3, 1) i0 (
+    .out (of),
+    .key (opt),
+    .lut ({
+        3'b000, of_add,
+        3'b001, of_sub
+    })
+  );
 
   always @ (a or b or opt) begin
     cf = 0;

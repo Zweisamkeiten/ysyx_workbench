@@ -1,4 +1,4 @@
-TOPNAME = alu
+TOPNAME = top
 NXDC_FILES = constr/top.nxdc
 BUILD_DIR = ./build
 OBJ_DIR = $(BUILD_DIR)/obj_dir
@@ -11,7 +11,7 @@ else
 export VERILATOR_ROOT
 VERILATOR = $(VERILATOR_ROOT)/bin/verilator
 endif
-VERILATOR_CFLAGS += --build -cc --exe -j 8 -Wall -Wno-DECLFILENAME
+VERILATOR_CFLAGS += --build -cc --exe -j 8
 
 default: $(BIN)
 
