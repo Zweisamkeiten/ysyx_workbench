@@ -16,7 +16,6 @@ module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
   assign o_bus = i_ren ? rf[i_raddr] : 64'b0;
 
   always @(posedge i_clk) begin
-    $display(i_wen, i_waddr);
     if (i_wen) rf[i_waddr] <= i_wdata;
   end
 endmodule
