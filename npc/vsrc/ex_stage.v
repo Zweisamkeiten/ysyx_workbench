@@ -16,7 +16,8 @@ module ysyx_22050710_exu (
   input   i_sel_csr,
   output  [63:0] o_ALUresult,
   output  [63:0] o_nextpc,
-  output  [63:0] o_busW
+  output  [63:0] o_GPRbusW,
+  output  [63:0] o_CSRbusW
 );
 
   wire PCAsrc, PCBsrc;
@@ -153,7 +154,7 @@ module ysyx_22050710_exu (
   );
 
   wire [63:0] rdata;
-  assign o_busW = i_MemtoReg ? rdata : (i_sel_csr ? i_rs2 : o_ALUresult);
+  assign o_GPRbusW = i_MemtoReg ? rdata : (i_sel_csr ? i_rs2 : o_ALUresult);
   MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(64)) u_mux5 (
     .out(rdata),
     .key(i_MemOP),
@@ -168,9 +169,13 @@ module ysyx_22050710_exu (
     })
   );
 
+  reg [63:0] CSRbusW;
+  assign o_CSRbusW = CSRbusW;
   always @(i_EXctr) begin
+    t = 64'b0;
     case (i_EXctr)
       4'b1110: set_state_end(); // ebreak
+      4'b0000: CSRbusW = src_a;
       default:;
     endcase
   end

@@ -15,18 +15,19 @@ module ysyx_22050710_npc (
   );
 
   wire [63:0] rs1, rs2, ALUresult;
-  wire [63:0] busW;
+  wire [63:0] GPRbusW;
   ysyx_22050710_gpr #(.ADDR_WIDTH(5), .DATA_WIDTH(64)) u_gprs (
     .i_clk(i_clk),
     .i_ra(ra), .i_rb(rb), .i_waddr(rd),
-    .i_wdata(busW), .i_wen(RegWr),
+    .i_wdata(GPRbusW), .i_wen(RegWr),
     .o_busA(rs1), .o_busB(rs2)
   );
 
   wire [63:0] rcsr;
+  wire [63:0] CSRbusW;
   ysyx_22050710_csr #(.ADDR_WIDTH(12), .DATA_WIDTH(64)) u_csrs (
     .i_clk(i_clk),
-    .i_raddr(imm[11:0]), .i_waddr(imm[11:0]), .i_wdata(ALUresult),
+    .i_raddr(imm[11:0]), .i_waddr(imm[11:0]), .i_wdata(CSRbusW),
     .i_ren(CsrR), .i_wen(CsrW),
     .o_bus(rcsr)
   );
@@ -85,7 +86,8 @@ module ysyx_22050710_npc (
     .i_sel_csr(sel_csr),
     .o_ALUresult(ALUresult),
     .o_nextpc(nextpc),
-    .o_busW(busW)
+    .o_GPRbusW(GPRbusW),
+    .o_CSRbusW(CSRbusW)
   );
 
 endmodule
