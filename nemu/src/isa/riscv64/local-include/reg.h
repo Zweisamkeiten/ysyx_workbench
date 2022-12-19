@@ -38,18 +38,6 @@ typedef enum {
   MCAUSE = 0x342
 } csr_addr;
 
-struct {
-  const char *name;
-  const int addr;
-} csr_table[] = {
-  {"mstatus", MSTATUS},
-  {"mtvec", MTVEC},
-  {"mepc", MEPC},
-  {"mcause", MCAUSE},
-};
-
-#define NR_CSREGS ARRLEN(csr_table)
-
 static inline const char* reg_name(int idx, int width) {
   extern const char* regs[];
   return regs[check_reg_idx(idx)];
