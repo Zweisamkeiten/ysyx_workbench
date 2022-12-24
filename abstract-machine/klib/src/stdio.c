@@ -31,17 +31,7 @@ void buf_w(char *buffer, int pos, size_t size, int ch) {
 }
 
 int printf(const char *fmt, ...) {
-  int ret;
-	va_list ap;
-
-	va_start(ap, fmt);
-	ret = vsnprintf(NULL, 0, fmt, ap);
-	va_start(ap, fmt);
-  char serial_buf[ret+1];
-	ret = vsprintf(serial_buf, fmt, ap);
-	va_end(ap);
-  putstr(serial_buf);
-	return (ret);
+  panic("Not implemented");
 }
 
 int vsprintf(char *out, const char *fmt, va_list ap) {
@@ -71,7 +61,7 @@ int snprintf(char *out, size_t n, const char *fmt, ...) {
 int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
   int state = 0;                            // default S_DEFAULT
   int ch;                                   // character from fmt because char undefinedcharactor from fmt, 0-255
-  const char *cp;                                 // handy char pointer (for short terms)
+  char *cp;                                 // handy char pointer (for short terms)
   int /* flags, width, precision, */ lflags = 0;  // flags as above
   int ret = 0;                              // return value accumulator
 
@@ -112,13 +102,12 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
       state = S_LENGTH;
     }
     else if (state == S_LENGTH) {
-      switch (ch) {
-        case 'l': lflags = (lflags == L_LONG) ?  L_LLONG : L_LONG; break;
-        default: fmt--; state = S_CONV;
-      }
+      fmt--;
+      state = S_CONV;
     }
     else if (state == S_CONV) {
       signed long long int signed_num;
+      unsigned long long int unsigned_num;
       int base = 10;
       switch (ch) {
         case 'i':
@@ -157,25 +146,28 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
         case 'x':
         case 'X': base = 16; goto unsigned_convert;
         case 'u': {
-          unsigned long long int unsigned_num;
 unsigned_convert:
           switch (lflags) {
-            case L_LONG: unsigned_num = va_arg(ap, unsigned long int); break;
-            case L_LLONG: unsigned_num = va_arg(ap, unsigned long long int); break;
+            case L_LONG: unsigned_num = va_arg(ap, unsigned long); break;
+            case L_LLONG: unsigned_num = va_arg(ap, unsigned long long); break;
             default: unsigned_num = va_arg(ap, unsigned int); break;
           }
 
-          int write_flag = 0;
-          int shift_pos = 0;
+          int ret_temp = ret;
+          unsigned long long div = 1;
+          unsigned long long int unsigned_num_tmp = unsigned_num;
           do {
-            unsigned int num = (unsigned_num >> 60) & 0xf;
-            unsigned_num = unsigned_num << 4;
-            shift_pos += 4;
-            if (write_flag == 0 && num != 0) write_flag = 1;
-            if (write_flag == 1) buf_w(out, ret++, n, (num > 9) ? num - 10 + 'a' : num + '0');
-          } while (shift_pos != 64);
+            unsigned_num_tmp = unsigned_num_tmp/base;
+            ret++;
+            div *= base;
+          } while (unsigned_num_tmp != 0);
 
-          if (write_flag == 0) buf_w(out, ret++, n, '0');
+          // reverse
+          while (ret_temp != ret)
+          {
+            int num = (unsigned_num / (div /= base)) % base;
+            buf_w(out, ret_temp++, n, (num > 9) ? num - 10 + 'a' : num + '0');
+          }
 
           break;
         }
@@ -188,11 +180,6 @@ unsigned_convert:
         }
         case '%': {
           buf_w(out, ret++, n, '%');
-          break;
-        }
-        case 'c': {
-          char ch = va_arg(ap, int);
-          buf_w(out, ret++, n, ch);
           break;
         }
       }

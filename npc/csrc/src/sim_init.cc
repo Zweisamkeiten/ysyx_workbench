@@ -1,16 +1,13 @@
 #include <sim.hpp>
 #include <common.h>
 #include <isa.h>
-#include <memory/host.h>
 extern "C" {
   #include <memory/paddr.h>
 }
 
 Vtop *top;
-#ifdef CONFIG_VCD_TRACE
 VerilatedContext *contextp = NULL;
 VerilatedVcdC *tfp = NULL;
-#endif
 uint64_t * npcpc;
 
 void set_state_end() {
@@ -18,27 +15,11 @@ void set_state_end() {
 }
 
 void set_state_abort() {
-  if (npc_state.state != NPC_STOP) {
-    printf("There are two cases which will trigger this unexpected exception:\n"
-        "1. The instruction at PC = " FMT_WORD " is not implemented.\n"
-        "2. Something is implemented incorrectly.\n", cpu.pc);
-    printf("Find this PC(" FMT_WORD ") in the disassembling result to distinguish which case it is.\n\n", cpu.pc);
-    printf(ANSI_FMT("If it is the first case, see\n%s\nfor more details.\n\n"
-          "If it is the second case, remember:\n"
-          "* The machine is always right!\n"
-          "* Every line of untested code is always wrong!\n\n", ANSI_FG_RED), isa_logo);
-  }
   npc_state.state = NPC_ABORT;
-  // npc_state.halt_pc = cpu.pc;
-  // npc_state.halt_ret = -1;
 }
 
 extern "C" void set_gpr_ptr(const svOpenArrayHandle r) {
   cpu.gpr = (uint64_t *)(((VerilatedDpiOpenVar*)r)->datap());
-}
-
-extern "C" void set_csr_ptr(const svOpenArrayHandle r) {
-  cpu.csr = (uint64_t *)(((VerilatedDpiOpenVar*)r)->datap());
 }
 
 extern "C" void npc_pmem_read(long long raddr, long long *rdata) {
@@ -53,7 +34,7 @@ extern "C" void npc_pmem_write(long long waddr, long long wdata, char wmask) {
   switch ((unsigned char)wmask) {
     case 0x1: paddr_write(waddr, 1, wdata); break;
     case 0x3: paddr_write(waddr, 2, wdata); break;
-    case 0xf: paddr_write(waddr, 4, wdata); break;
+    case 0x15: paddr_write(waddr, 4, wdata); break;
     default: paddr_write(waddr, 8, wdata); break;
   }
 }
@@ -61,16 +42,12 @@ extern "C" void npc_pmem_write(long long waddr, long long wdata, char wmask) {
 extern "C" void single_cycle() {
   top->i_clk = 0;
   top->eval();
-#ifdef CONFIG_VCD_TRACE
   contextp->timeInc(1);
   tfp->dump(contextp->time());
-#endif
   top->i_clk = 1;
   top->eval();
-#ifdef CONFIG_VCD_TRACE
   contextp->timeInc(1);
   tfp->dump(contextp->time());
-#endif
 }
 
 static void reset(int n) {
@@ -82,17 +59,13 @@ static void reset(int n) {
 }
 
 extern "C" void init_sim() {
-#ifdef CONFIG_VCD_TRACE
   contextp = new VerilatedContext;
   tfp = new VerilatedVcdC;
-#endif
   top = new Vtop;
 
-#ifdef CONFIG_VCD_TRACE
   contextp->traceEverOn(true);
   top->trace(tfp, 0);
   tfp->open("dump.vcd");
-#endif
 
   reset(10);
 
@@ -106,7 +79,5 @@ extern "C" void init_sim() {
 extern "C" void end_sim() {
   top->final();
   delete top;
-#ifdef CONFIG_VCD_TRACE
   tfp->close();
-#endif
 }

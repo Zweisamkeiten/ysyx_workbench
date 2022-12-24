@@ -45,8 +45,6 @@ void device_update() {
 
 #ifndef CONFIG_TARGET_AM
   SDL_Event event;
-  // SDL_PollEvent 轮询当前未决事件
-  // return 1 if there is a pending event or 0 if there are no available
   while (SDL_PollEvent(&event)) {
     switch (event.type) {
       case SDL_QUIT:

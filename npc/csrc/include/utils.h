@@ -30,10 +30,6 @@ typedef struct {
 
 extern NPCState npc_state;
 
-// ----------- timer -----------
-
-uint64_t get_time();
-
 // ----------- log -----------
 
 #define ANSI_FG_BLACK   "\33[1;30m"
