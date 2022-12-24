@@ -9,8 +9,11 @@ void init_sim();
 void init_disasm(const char *triple);
 void init_elf(const char * elf_file);
 void init_difftest(char *ref_so_file, long img_size, int port);
+void init_device();
 
 static int difftest_port = 1234;
+
+void sdb_set_batch_mode();
 
 static void welcome() {
   printf("Trace: %s", MUXDEF(CONFIG_TRACE, ANSI_FMT("ON\n", ANSI_FG_GREEN), ANSI_FMT("OFF\n", ANSI_FG_RED)));
@@ -47,6 +50,11 @@ static long load_img(int argc, char ** argv) {
 }
 
 void init_monitor(int argc, char *argv[]) {
+
+  if (argc == 5 && strcmp("1", argv[4]) == 0) {
+    printf("Running in batchmode\n");
+    sdb_set_batch_mode();
+  }
   /* Set random seed. */
   init_rand();
 
@@ -55,6 +63,9 @@ void init_monitor(int argc, char *argv[]) {
 
   init_sim();
 
+  /* Initialize devices. */
+  IFDEF(CONFIG_DEVICE, init_device());
+
   /* Perform ISA dependent initialization. */
   init_isa();
 
@@ -62,14 +73,16 @@ void init_monitor(int argc, char *argv[]) {
   long img_size = load_img(argc, argv);
 
   /* Initialize differential testing. */
-  init_difftest(argv[3], img_size, difftest_port);
+  if (argc > 2) init_difftest(argv[3], img_size, difftest_port);
 
-  IFDEF(CONFIG_FTRACE, init_elf(argv[2]));
+  if (argc > 2) {
+    IFDEF(CONFIG_FTRACE, init_elf(argv[2]));
+  }
 
   /* Initialize the simple debugger. */
   init_sdb();
 
-  init_disasm("riscv64-pc-linux-gnu");
+  IFDEF(CONFIG_TRACE, init_disasm("riscv64-pc-linux-gnu"));
 
   /* Display welcome message. */
   welcome();

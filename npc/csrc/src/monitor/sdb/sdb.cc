@@ -10,6 +10,11 @@ extern "C" {
 extern "C" void init_regex();
 extern "C" void init_wp_pool();
 
+static bool is_batch_mode = false;
+extern "C" void sdb_set_batch_mode() {
+  is_batch_mode = true;
+}
+
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char* rl_gets() {
   static char *line_read = NULL;
@@ -131,6 +136,25 @@ static int cmd_w(char *args) {
   return 0;
 }
 
+static int cmd_p(char *args) {
+  char *e= args;
+
+  if (e != NULL) {
+    // assume the expr is valid
+    bool success = true;
+    word_t result = expr(e, &success);
+    if (success == true) {
+      printf(ANSI_FMT("$expr = ", ANSI_FG_CYAN) ANSI_FMT("0x%016lx\t", ANSI_FG_GREEN) ANSI_FMT("%020lu\n", ANSI_FG_GREEN), result, result);
+    } else {
+      printf(ANSI_FMT("A syntax error in expression.\n", ANSI_FG_RED));
+    }
+    return 0;
+  }
+
+  printf(ANSI_FMT("ERROR: p <EXPR>\n", ANSI_FG_RED));
+  return 0;
+}
+
 static int cmd_d(char *args) {
   char *n_str = strtok(args, " ");
 
@@ -163,6 +187,7 @@ static struct {
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NPC", cmd_q },
   { "si", "single step", cmd_si },
+  { "p", "eval the expression", cmd_p },
   { "info", "print the program state", cmd_info },
   { "x", "scan memory", cmd_x },
   { "w", "set a new watchpoint", cmd_w },
@@ -195,6 +220,11 @@ static int cmd_help(char *args) {
 }
 
 extern "C" void sdb_mainloop() {
+  if (is_batch_mode) {
+    cmd_c(NULL);
+    return;
+  }
+
   for (char *str; (str = rl_gets()) != NULL; ) {
     char *str_end = str + strlen(str);
 

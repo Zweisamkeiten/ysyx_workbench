@@ -33,6 +33,7 @@ typedef int64_t  sword_t;
 typedef word_t vaddr_t;
 typedef uint64_t paddr_t;
 #define FMT_PADDR "0x%016lx"
+typedef uint16_t ioaddr_t;
 
 #include <debug.h>
 
