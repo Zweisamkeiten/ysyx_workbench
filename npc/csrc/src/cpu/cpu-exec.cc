@@ -5,9 +5,8 @@ extern "C" {
   #include <cpu/difftest.h>
   #include <memory/paddr.h>
 }
-static vaddr_t snpc; // use at IRINGTRACE and difftest
 #ifdef CONFIG_WATCHPOINT
-extern "C" void diff_watchpoint_value();
+extern void diff_watchpoint_value();
 #endif
 
 NPC_CPU_state cpu = {};
@@ -124,12 +123,12 @@ void disassemble_inst_to_buf(char *logbuf, size_t bufsize, uint8_t * inst_val, v
   }
   else if (strncmp(p, "jal", 3) == 0) {
     char *func_str = NULL;
-    if((func_str = check_is_func_call(*npcpc)) != NULL) {
+    if((func_str = check_is_func_call(top->o_pc)) != NULL) {
       q += snprintf(q, 128, FMT_WORD ":", pc);
       for (size_t i = 0; i < stack_depth; i++) {
         q += snprintf(q, 128, "  ");
       }
-      q += snprintf(q, 128, "call [%s@" FMT_WORD "]", func_str, *npcpc);
+      q += snprintf(q, 128, "call [%s@" FMT_WORD "]", func_str, top->o_pc);
       stack_depth++;
       inst_state = INST_CALL;
     }
@@ -141,13 +140,14 @@ void disassemble_inst_to_buf(char *logbuf, size_t bufsize, uint8_t * inst_val, v
 static int iringbuf_index = 0;
 static char *iringbuf[16] = {NULL};
 static uint32_t *last_inst;
+static vaddr_t *snpc;
 
 void print_iringbuf() {
   printf(ANSI_FMT("INSTRUCTIONS RING STRACE:\n", ANSI_FG_RED));
   char logbuf[128];
-  disassemble_inst_to_buf(logbuf, 128, (uint8_t *)last_inst, cpu.pc, snpc);
+  disassemble_inst_to_buf(logbuf, 128, (uint8_t *)last_inst, cpu.pc, *snpc);
   int arrow_len = strlen(" --> ");
-  iringbuf[iringbuf_index] = (char *)realloc(iringbuf[iringbuf_index], arrow_len + strlen(logbuf) + 1);
+  iringbuf[iringbuf_index] = realloc(iringbuf[iringbuf_index], arrow_len + strlen(logbuf) + 1);
   char *p = iringbuf[iringbuf_index];
   memset(p, ' ', arrow_len);
   p += arrow_len;
@@ -167,13 +167,11 @@ void print_iringbuf() {
 #endif
 #endif
 
-extern "C" void device_update();
-
 static void trace_and_difftest(vaddr_t dnpc) {
 #ifdef CONFIG_IRINGTRACE_COND
   if (IRINGTRACE_COND) {
     int arrow_len = strlen(" --> ");
-    iringbuf[iringbuf_index] = (char *)realloc(iringbuf[iringbuf_index], arrow_len + strlen(itrace_logbuf) + 1);
+    iringbuf[iringbuf_index] = realloc(iringbuf[iringbuf_index], arrow_len + strlen(itrace_logbuf) + 1);
     char *p = iringbuf[iringbuf_index];
     memset(p, ' ', arrow_len);
     p += arrow_len;
@@ -189,22 +187,23 @@ static void trace_and_difftest(vaddr_t dnpc) {
   }
 #endif
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(itrace_logbuf)); }
-  IFDEF(CONFIG_DIFFTEST, difftest_step(snpc, dnpc));
+  IFDEF(CONFIG_DIFFTEST, difftest_step(cpu.pc, dnpc));
   IFDEF(CONFIG_WATCHPOINT, diff_watchpoint_value());
 }
 
 void exec_once() {
-  cpu.pc = *npcpc;
+  top->i_inst = paddr_read(top->o_pc, 4);
+  cpu.pc = top->o_pc;
   // printf("%lx\n", top->o_pc);
 #ifdef CONFIG_IRINGTRACE
-  last_inst = cpu.inst;
-#endif
+  last_inst = *(cpu.inst);
   snpc = cpu.pc;
+#endif
   single_cycle();
 #ifdef CONFIG_ITRACE
   disassemble_inst_to_buf(itrace_logbuf, 128, (uint8_t *)cpu.inst, cpu.pc, cpu.pc + 4);
 #endif
-  cpu.pc = *npcpc;
+  cpu.pc = top->o_pc;
   trace_and_difftest(cpu.pc);
 }
 
@@ -213,7 +212,6 @@ static void execute(uint64_t n) {
     exec_once();
     g_nr_guest_inst ++;
     if (npc_state.state != NPC_RUNNING) break;
-    IFDEF(CONFIG_DEVICE, device_update());
   }
 }
 
@@ -261,7 +259,7 @@ void cpu_exec(uint64_t n) {
              : (npc_state.halt_ret == 0
                     ? ANSI_FMT("HIT GOOD TRAP", ANSI_FG_GREEN)
                     : ANSI_FMT("HIT BAD TRAP", ANSI_FG_RED))),
-        snpc);
+        cpu.pc);
     // fall through
   case NPC_QUIT: break;
   }

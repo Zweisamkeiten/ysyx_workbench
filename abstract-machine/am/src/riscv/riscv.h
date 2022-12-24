@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 
-// 此处的 volatile 貌似没有特殊作用
 static inline uint8_t  inb(uintptr_t addr) { return *(volatile uint8_t  *)addr; }
 static inline uint16_t inw(uintptr_t addr) { return *(volatile uint16_t *)addr; }
 static inline uint32_t inl(uintptr_t addr) { return *(volatile uint32_t *)addr; }
@@ -21,9 +20,6 @@ static inline void outl(uintptr_t addr, uint32_t data) { *(volatile uint32_t *)a
 #define PTE_D 0x80
 
 enum { MODE_U, MODE_S, MODE_M = 3 };
-
-enum { Ex_ECALL_FROM_M_MODE = 11 };
-
 #define MSTATUS_MXR  (1 << 19)
 #define MSTATUS_SUM  (1 << 18)
 

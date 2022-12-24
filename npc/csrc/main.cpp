@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <common.h>
 #include <isa.h>
+#include <memory/paddr.h>
 
 NPCState npc_state = {.state = NPC_STOP};
 

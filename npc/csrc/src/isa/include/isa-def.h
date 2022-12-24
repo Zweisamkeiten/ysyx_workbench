@@ -22,7 +22,6 @@ typedef struct {
   uint64_t *gpr;
   uint32_t *inst;
   vaddr_t pc;
-  uint64_t *csr;
 } NPC_CPU_state;
 
 // decode

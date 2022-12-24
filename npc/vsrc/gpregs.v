@@ -1,13 +1,11 @@
-// ysyx_22050710 GPR regs
-
 import "DPI-C" function void set_gpr_ptr(input logic [63:0] a[]);
 
 module ysyx_22050710_gpr #(ADDR_WIDTH = 5, DATA_WIDTH = 64) (
-  input   i_clk,
-  input   [ADDR_WIDTH-1:0] i_ra, i_rb, i_waddr,
-  input   [DATA_WIDTH-1:0] i_wdata,
-  input   i_wen,
-  output  [DATA_WIDTH-1:0] o_busA, o_busB
+  input i_clk,
+  input [ADDR_WIDTH-1:0] i_ra, i_rb, i_waddr,
+  input [DATA_WIDTH-1:0] i_wdata,
+  input i_wen,
+  output [DATA_WIDTH-1:0] o_busA, o_busB
 );
   initial set_gpr_ptr(rf);
 

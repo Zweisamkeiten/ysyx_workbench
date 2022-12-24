@@ -1,27 +1,23 @@
 // ysyx_22050710 Instruction Decode Unit
-
 module ysyx_22050710_idu (
-  input   [31:0] i_inst,
-  output  [63:0] o_imm,
-  output  [4:0] o_ra, o_rb, o_rd,
-  output  [2:0] o_Branch,
-  output  o_ALUAsrc, output [1:0] o_ALUBsrc, output [4:0] o_ALUctr,
-  output  o_word_cut,
-  output  o_RegWr, o_MemtoReg, o_MemWr, output [2:0] o_MemOP,
-  output  [3:0] o_EXctr,
-  output  o_is_invalid_inst,
-  output  o_sel_csr, o_sel_csr_imm, o_CsrW, o_CsrR
+  input [31:0] i_inst,
+  output [63:0] o_imm,
+  output [4:0] o_ra, o_rb, o_rd,
+  output o_RegWr, o_ALUAsrc,
+  output [1:0] o_ALUBsrc,
+  output [3:0] o_ALUctr,
+  output o_PCAsrc, o_PCBsrc
 );
 
   wire [6:0] opcode;
-  wire [2:0] funct3; wire [6:0] funct7;
+  wire [2:0] funct3; /* wire [6:0] funct7; */
 
   assign  opcode  = i_inst[6:0];
-  assign  o_ra    = i_inst[19:15];
-  assign  o_rb    = i_inst[24:20];
-  assign  o_rd    = i_inst[11:7];
+  assign  o_ra = i_inst[19:15];
+  assign  o_rb = i_inst[24:20];
+  assign  o_rd  = i_inst[11:7];
   assign  funct3  = i_inst[14:12];
-  assign  funct7  = i_inst[31:25];
+  /* assign  funct7  = i_inst[31:25]; */
 
   // imm gen
   wire [63:0] immI, immU, immS, immB, immJ;
@@ -36,113 +32,21 @@ module ysyx_22050710_idu (
   wire inst_auipc  = (opcode[6:0] == 7'b0010111);
   wire inst_jal    = (opcode[6:0] == 7'b1101111);
   wire inst_jalr   = (opcode[6:0] == 7'b1100111) & (funct3[2:0] == 3'b000);
-  wire inst_beq    = (opcode[6:0] == 7'b1100011) & (funct3[2:0] == 3'b000);
-  wire inst_bne    = (opcode[6:0] == 7'b1100011) & (funct3[2:0] == 3'b001);
-  wire inst_blt    = (opcode[6:0] == 7'b1100011) & (funct3[2:0] == 3'b100);
-  wire inst_bge    = (opcode[6:0] == 7'b1100011) & (funct3[2:0] == 3'b101);
-  wire inst_bltu   = (opcode[6:0] == 7'b1100011) & (funct3[2:0] == 3'b110);
-  wire inst_bgeu   = (opcode[6:0] == 7'b1100011) & (funct3[2:0] == 3'b111);
-  wire inst_lb     = (opcode[6:0] == 7'b0000011) & (funct3[2:0] == 3'b000);
-  wire inst_lh     = (opcode[6:0] == 7'b0000011) & (funct3[2:0] == 3'b001);
-  wire inst_lw     = (opcode[6:0] == 7'b0000011) & (funct3[2:0] == 3'b010);
-  wire inst_lbu    = (opcode[6:0] == 7'b0000011) & (funct3[2:0] == 3'b100);
-  wire inst_lhu    = (opcode[6:0] == 7'b0000011) & (funct3[2:0] == 3'b101);
-  wire inst_sb     = (opcode[6:0] == 7'b0100011) & (funct3[2:0] == 3'b000);
-  wire inst_sh     = (opcode[6:0] == 7'b0100011) & (funct3[2:0] == 3'b001);
-  wire inst_sw     = (opcode[6:0] == 7'b0100011) & (funct3[2:0] == 3'b010);
   wire inst_addi   = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b000);
-  wire inst_sltiu  = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b011);
-  wire inst_xori   = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b100);
-  wire inst_ori    = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b110);
-  wire inst_andi   = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b111);
-  wire inst_add    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b000) & (funct7[6:0] == 7'b0000000);
-  wire inst_sub    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b000) & (funct7[6:0] == 7'b0100000);
-  wire inst_sll    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b001) & (funct7[6:0] == 7'b0000000);
-  wire inst_slt    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b010) & (funct7[6:0] == 7'b0000000);
-  wire inst_sltu   = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b011) & (funct7[6:0] == 7'b0000000);
-  wire inst_xor    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b100) & (funct7[6:0] == 7'b0000000);
-  wire inst_srl    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b101) & (funct7[6:0] == 7'b0000000);
-  wire inst_or     = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b110) & (funct7[6:0] == 7'b0000000);
-  wire inst_and    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b111) & (funct7[6:0] == 7'b0000000);
-  wire inst_ebreak = (opcode[6:0] == 7'b1110011) & (funct3[2:0] == 3'b000) & (i_inst[31:20] == 12'b000000000001);
-  wire inst_ecall  = (opcode[6:0] == 7'b1110011) & (funct3[2:0] == 3'b000) & (i_inst[31:20] == 12'b000000000000);
+  wire inst_ebreak = (opcode[6:0] == 7'b1110011) & (funct3[2:0] == 3'b000);
 
   // RV64I
-  wire inst_lwu    = (opcode[6:0] == 7'b0000011) & (funct3[2:0] == 3'b110);
-  wire inst_ld     = (opcode[6:0] == 7'b0000011) & (funct3[2:0] == 3'b011);
   wire inst_sd     = (opcode[6:0] == 7'b0100011) & (funct3[2:0] == 3'b011);
-  wire inst_slli   = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b001) & (funct7[6:1] == 6'b000000);
-  wire inst_srli   = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b101) & (funct7[6:1] == 6'b000000);
-  wire inst_srai   = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b101) & (funct7[6:1] == 6'b010000);
-  wire inst_addiw  = (opcode[6:0] == 7'b0011011) & (funct3[2:0] == 3'b000);
-  wire inst_slliw  = (opcode[6:0] == 7'b0011011) & (funct3[2:0] == 3'b001) & (funct7[6:0] == 7'b0000000);
-  wire inst_srliw  = (opcode[6:0] == 7'b0011011) & (funct3[2:0] == 3'b101) & (funct7[6:0] == 7'b0000000);
-  wire inst_sraiw  = (opcode[6:0] == 7'b0011011) & (funct3[2:0] == 3'b101) & (funct7[6:0] == 7'b0100000);
-  wire inst_addw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b000) & (funct7[6:0] == 7'b0000000);
-  wire inst_subw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b000) & (funct7[6:0] == 7'b0100000);
-  wire inst_sllw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b001) & (funct7[6:0] == 7'b0000000);
-  wire inst_srlw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b101) & (funct7[6:0] == 7'b0000000);
-  wire inst_sraw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b101) & (funct7[6:0] == 7'b0100000);
 
-  // RV32/RV64 Zicsr
-  wire inst_csrrw  = (opcode[6:0] == 7'b1110011) & (funct3[2:0] == 3'b001);
-  wire inst_csrrs  = (opcode[6:0] == 7'b1110011) & (funct3[2:0] == 3'b010);
-
-  // RV32M
-  wire inst_mul    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b000) & (funct7[6:0] == 7'b0000001);
-  wire inst_div    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b100) & (funct7[6:0] == 7'b0000001);
-  wire inst_divu   = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b101) & (funct7[6:0] == 7'b0000001);
-  wire inst_rem    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b110) & (funct7[6:0] == 7'b0000001);
-  wire inst_remu   = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b111) & (funct7[6:0] == 7'b0000001);
-
-  // RV64M
-  wire inst_mulw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b000) & (funct7[6:0] == 7'b0000001);
-  wire inst_divw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b100) & (funct7[6:0] == 7'b0000001);
-  wire inst_divuw  = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b101) & (funct7[6:0] == 7'b0000001);
-  wire inst_remw   = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b110) & (funct7[6:0] == 7'b0000001);
-  wire inst_remuw  = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b111) & (funct7[6:0] == 7'b0000001);
-
-  // mret
-  wire inst_mret   = i_inst == 32'b00110000001000000000000001110011;
-
-  wire inst_type_r = |{ // RV32I
-                       inst_add,    inst_sub,   inst_sll,   inst_slt,   inst_sltu,
-                       inst_xor,    inst_srl,   inst_or,    inst_and,
-                       // RV64I
-                       inst_addw,   inst_subw,  inst_sllw,  inst_srlw,  inst_sraw,
-                       // RV32M
-                       inst_mul,    inst_div,   inst_divu,  inst_rem,   inst_remu,
-                       // RV64M
-                       inst_mulw,   inst_divw,  inst_divuw, inst_remw,  inst_remuw
-                       };
-  wire inst_type_i = |{ // RV32I
-                       inst_jalr,   inst_lb,    inst_lh,    inst_lw,    inst_lbu,
-                       inst_lhu,    inst_addi,  inst_sltiu, inst_xori,  inst_ori,
-                       inst_andi,   inst_slli,  inst_srli,  inst_srai,  inst_ebreak,
-                       // RV64I
-                       inst_lwu,    inst_ld,    inst_addiw, inst_slliw, inst_srliw,
-                       inst_sraiw,
-                       // RV32/RV64 Zicsr
-                       inst_csrrw,  inst_csrrs
-                       };
-  wire inst_type_u = |{inst_lui,    inst_auipc};
-  wire inst_type_s = |{inst_sb,     inst_sh,    inst_sw,    inst_sd};
-  wire inst_type_b = |{inst_beq, inst_bne, inst_blt, inst_bge, inst_bltu, inst_bgeu};
+  wire inst_type_r = 1'b0;
+  wire inst_type_i = |{inst_addi, inst_ebreak, inst_jalr};
+  wire inst_type_u = |{inst_lui, inst_auipc};
+  wire inst_type_s = |{inst_sd};
+  wire inst_type_b = 1'b0;
   wire inst_type_j = |{inst_jal};
 
   wire [2:0] extop;
   wire [5:0] inst_type = {inst_type_r, inst_type_i, inst_type_u, inst_type_s, inst_type_b, inst_type_j};
-
-  // Load类指令
-  wire inst_load  = |{inst_lb, inst_lh, inst_lhu, inst_lw, inst_lbu, inst_lwu, inst_ld};
-  // Store类指令
-  wire inst_store = |{inst_sb, inst_sh, inst_sw, inst_sd};
-
-  // 是否需要对操作数进行32位截断
-  assign o_word_cut = |{inst_addiw, inst_slliw, inst_srliw, inst_sraiw, inst_addw, inst_subw,
-                        inst_sllw,  inst_srlw,  inst_sraw,  inst_mulw,  inst_divw, inst_divuw,
-                        inst_remw,  inst_remuw
-                        };
 
   MuxKey #(.NR_KEY(6), .KEY_LEN(6), .DATA_LEN(3)) u_mux0 (
     .out(extop),
@@ -169,124 +73,26 @@ module ysyx_22050710_idu (
     })
   );
 
-  assign o_RegWr    = |{inst_type_r, inst_type_i, inst_type_u, inst_type_j};
-  /* 宽度为1bit,选择ALU输入端A的来源 */
-  /* 为0时选择rs1, */
-  /* 为1时选择PC */
-  assign o_ALUAsrc  = |{inst_type_j, inst_auipc, inst_jalr} == 1 ? 1'b1 : 1'b0; // '1' when inst about pc
-  /* 宽度为2bit,选择ALU输入端B的来源. */
-  /* 为00时选择rs2. */
-  /* 为01时选择imm 当是立即数移位指令时，只有低5位有效, */
-  /* 为10时选择常数4 用于跳转时计算返回地址PC+4 */
-  assign o_ALUBsrc  = {|{inst_jal, inst_jalr}, |inst_type[4:2] & !inst_jalr};
+  assign o_RegWr = |{inst_type_r, inst_type_i, inst_type_u, inst_type_j};
+  assign o_ALUAsrc = |{inst_type_j, inst_auipc, inst_jalr} == 1 ? 1'b1 : 1'b0; // '1' when inst about pc
+  assign o_ALUBsrc = {|{inst_jal, inst_jalr}, |inst_type[4:1] & !inst_jalr};
 
-  assign o_MemtoReg = |{inst_load};
-  assign o_MemWr    = inst_type_s;
+  assign o_PCAsrc = |{inst_jal, inst_jalr};
+  assign o_PCBsrc = inst_jalr;
 
-  // 写时可以不用注意符号拓展, 都放在带符号中''
-  wire signed_byte        = |{inst_lb, inst_sb};
-  wire signed_halfword    = |{inst_sh, inst_lh};
-  wire signed_word        = |{inst_lw, inst_sw};
-  wire signed_doubleword  = |{inst_ld, inst_sd};
-  wire unsigned_byte      = |{inst_lbu};
-  wire unsigned_halfword  = |{inst_lhu};
-  wire unsigned_word      = |{inst_lwu};
- 
-  MuxKeyWithDefault #(.NR_KEY(7), .KEY_LEN(7), .DATA_LEN(3)) u_mux2 (
-    .out(o_MemOP),
-    .key({signed_byte, unsigned_byte, signed_halfword, unsigned_halfword, signed_word, unsigned_word, signed_doubleword}),
-    .default_out(3'b111),
-    .lut({
-      7'b1000000, 3'b000, // signed_byte
-      7'b0100000, 3'b001, // unsigned_byte
-      7'b0010000, 3'b010, // signed_halfword
-      7'b0001000, 3'b011, // unsigned_halfword
-      7'b0000100, 3'b100, // signed_word
-      7'b0000010, 3'b101, // unsigned_word
-      7'b0000001, 3'b110  // signed_doubleword
-    })
-  );
+  wire alu_copyimm, alu_plus, alu_ebreak;
+  assign alu_copyimm = |{inst_lui};
+  assign alu_plus = |{inst_auipc, inst_jal, inst_jalr, inst_addi, inst_sd};
+  assign alu_ebreak = inst_ebreak;
 
-  wire alu_copyimm      = |{inst_lui};
-  wire alu_plus         = |{inst_auipc, inst_jal,   inst_jalr,  inst_addi,  inst_add,
-                            inst_load,  inst_store, inst_addiw, inst_addw
-                            };
-  wire alu_sub          = |{inst_sub,   inst_subw};
-  wire alu_signed_less  = |{inst_beq,   inst_bne,   inst_blt,   inst_bge,   inst_slt}; // branch set signed Less || slt rs1, rs2
-  wire alu_unsinged_less= |{inst_bltu,  inst_bgeu,  inst_sltiu, inst_sltu}; // branch set unsigned Less || sltu rs1, rs2
-  wire alu_xor          = |{inst_xori,  inst_xor};
-  wire alu_and          = |{inst_andi,  inst_and};
-  wire alu_or           = |{inst_ori,   inst_or};
-  wire alu_sll          = |{inst_sll,   inst_slli,  inst_slliw, inst_sllw};
-  wire alu_srl          = |{inst_srl,   inst_srli,  inst_srliw, inst_srlw};
-  wire alu_sra          = |{inst_srai,  inst_sraiw, inst_sraw};
-  wire alu_singed_mul   = |{inst_mul,   inst_mulw};
-  wire alu_singed_div   = |{inst_div,   inst_divw};
-  wire alu_unsinged_div = |{inst_divu,  inst_divuw};
-  wire alu_singed_rem   = |{inst_rem,   inst_remw};
-  wire alu_unsinged_rem = |{inst_remu,  inst_remuw};
-
-  MuxKeyWithDefault #(.NR_KEY(16), .KEY_LEN(16), .DATA_LEN(5)) u_mux3 (
+  MuxKeyWithDefault #(.NR_KEY(3), .KEY_LEN(3), .DATA_LEN(4)) u_mux2 (
     .out(o_ALUctr),
-    .key({alu_copyimm,    alu_plus,       alu_sub,          alu_signed_less,alu_unsinged_less,
-          alu_xor,        alu_and,        alu_or,           alu_sll,        alu_srl,  alu_sra,
-          alu_singed_mul, alu_singed_div, alu_unsinged_div, alu_singed_rem, alu_unsinged_rem
-          }),
-    .default_out(5'b11111), // invalid
-    .lut({
-      16'b1000000000000000, 5'b01111,  // copy imm
-      16'b0100000000000000, 5'b00000,  // add a + b
-      16'b0010000000000000, 5'b00001,  // sub a - b
-      16'b0001000000000000, 5'b00010,  // branch set signed Less || slt  a <s b
-      16'b0000100000000000, 5'b00011,  // branch set unsigned Less || sltu a <u b
-      16'b0000010000000000, 5'b00100,  // xor a ^ b
-      16'b0000001000000000, 5'b00101,  // and a & b
-      16'b0000000100000000, 5'b00110,  // or a | b
-      16'b0000000010000000, 5'b00111,  // sll <<
-      16'b0000000001000000, 5'b01000,  // srl >>
-      16'b0000000000100000, 5'b01001,  // sra >>>
-      16'b0000000000010000, 5'b01010,  // signed mul *
-      16'b0000000000001000, 5'b01011,  // signed   div /
-      16'b0000000000000100, 5'b01100,  // unsigned div /
-      16'b0000000000000010, 5'b01101,  // signed   rem %
-      16'b0000000000000001, 5'b01110   // unsigned rem %
-    })
-  );
-
-  MuxKeyWithDefault #(.NR_KEY(8), .KEY_LEN(8), .DATA_LEN(3)) u_mux4 (
-    .out(o_Branch),
-    .key({inst_jal, inst_jalr, inst_beq, inst_bne, inst_blt, inst_bge, inst_bltu, inst_bgeu}),
-    .default_out(3'b000),
-    .lut({
-      8'b10000000, 3'b001,
-      8'b01000000, 3'b010,
-      8'b00100000, 3'b100,
-      8'b00010000, 3'b101,
-      8'b00001000, 3'b110,
-      8'b00000100, 3'b111,
-      8'b00000010, 3'b110,
-      8'b00000001, 3'b111
-    })
-  );
-
-  assign o_sel_csr      = |{inst_csrrw, inst_csrrs, inst_ecall, inst_mret};
-  assign o_sel_csr_imm  = |{1'b0};
-  assign o_CsrW         = o_sel_csr ? (|{inst_csrrs} == 1 ? (|o_ra == 0 ? 0 : 1) : 1) : 0;
-  assign o_CsrR         = o_sel_csr ? (|{inst_csrrw} == 1 ? (|o_rd == 0 ? 0 : 1) : 1) : 0;
-
-  MuxKeyWithDefault #(.NR_KEY(5), .KEY_LEN(6), .DATA_LEN(4)) u_mux5 (
-    .out(o_EXctr),
-    .key({|(o_ALUctr & 5'b11111), inst_ebreak, inst_ecall, inst_mret, |{inst_csrrw}, |{inst_csrrs}}),
+    .key({alu_copyimm, alu_plus, alu_ebreak}),
     .default_out(4'b1111),
     .lut({
-      6'b110000, 4'b1110,   // ebreak
-      6'b101000, 4'b1101,   // ecall
-      6'b100100, 4'b1100,   // mret
-      6'b100010, 4'b0000,   // control and status register read and write
-      6'b100001, 4'b0001    // control and status register read and set
+      3'b100, 4'b0011,
+      3'b010, 4'b0000,
+      3'b001, 4'b1110
     })
   );
-
-  assign o_is_invalid_inst = (o_ALUctr == 5'b11111) && (o_EXctr == 4'b1111);
-
 endmodule
