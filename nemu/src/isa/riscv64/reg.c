@@ -17,10 +17,10 @@
 #include "local-include/reg.h"
 
 const int csrs_addr[] = {
-  [MSTATUS] = 0x300,
-  [MTVEC]   = 0x305,
-  [MEPC]    = 0x341,
-  [MCAUSE]  = 0x342,
+  [MSTATUS] = MSTATUS,
+  [MTVEC]   = MTVEC,
+  [MEPC]    = MEPC,
+  [MCAUSE]  = MCAUSE,
 };
 
 const char *regs[] = {
