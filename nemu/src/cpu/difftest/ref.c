@@ -53,7 +53,6 @@ void difftest_init(int port) {
 
   /* Initialize memory. */
   init_mem();
-
   /* Perform ISA dependent initialization. */
   init_isa();
 }
