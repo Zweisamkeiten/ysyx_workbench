@@ -10,7 +10,7 @@ module ysyx_22050710_npc (
     .i_clk(i_clk),
     .i_rst(i_rst),
     .i_load(1'b1),
-    .i_in(sys_change_pc ? sysctr_pc : nextpc),
+    .i_in(nextpc),
     .o_pc(pc)
   );
 
