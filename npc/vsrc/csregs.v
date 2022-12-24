@@ -24,23 +24,32 @@ module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
 
   assign o_bus = i_ren ? rf[i_raddr] : 64'b0;
 
+  always @(*) begin
+    o_nextpc = 64'b0;
+    o_sys_change_pc = 1'b0;
+    if (i_ren) begin
+      case (i_Exctr)
+        4'b1101: begin // Environment call from M-mode Expection Code: 11
+                  o_nextpc = rf[`MTVEC];
+                  o_sys_change_pc = 1'b1;
+                 end
+        4'b1100: begin // mret
+                  o_nextpc = rf[`MEPC];
+                  o_sys_change_pc = 1'b1;
+                 end
+      endcase
+    end
+  end
+
   always @(posedge i_clk) begin
-    o_nextpc <= 64'b0;
-    o_sys_change_pc <= 1'b0;
     if (i_wen) begin
       case (i_Exctr)
         4'b1101: begin // Environment call from M-mode Expection Code: 11
                   rf[`MEPC] <= i_epc;
                   rf[`MCAUSE] <= 64'd11;
-                  o_nextpc <= rf[`MTVEC];
-                  o_sys_change_pc <= 1'b1;
                  end
-        4'b1100: begin // mret
-                  o_nextpc <= rf[`MEPC];
-                  o_sys_change_pc <= 1'b1;
-                 end
-        4'b1001: rf[i_waddr] <= rf[i_waddr] | i_wdata;
-        default: rf[i_waddr] <= i_wdata;
+        4'b1001: rf[i_waddr] <= rf[i_waddr] | i_wdata; // csrrs
+        default: rf[i_waddr] <= i_wdata; // csrrw
       endcase
     end
   end
