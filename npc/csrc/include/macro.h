@@ -76,6 +76,16 @@
 // keep the code if a boolean macro is defined to 0
 #define IFZERO(macro, ...) MUXZERO(macro, __KEEP, __IGNORE)(__VA_ARGS__)
 
+// functional-programming-like macro (X-macro)
+// apply the function `f` to each element in the container `c`
+// NOTE1: `c` should be defined as a list like:
+//   f(a0) f(a1) f(a2) ...
+// NOTE2: each element in the container can be a tuple
+#define MAP(c, f) c(f)
+
+#define ROUNDUP(a, sz)   ((((uintptr_t)a) + (sz) - 1) & ~((sz) - 1))
+#define ROUNDDOWN(a, sz) ((((uintptr_t)a)) & ~((sz) - 1))
+
 #define PG_ALIGN __attribute((aligned(4096)))
 
 #if !defined(likely)

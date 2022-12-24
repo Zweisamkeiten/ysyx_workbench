@@ -25,6 +25,7 @@ module ysyx_22050710_npc (
 
   wire [63:0] rdata;
   ysyx_22050710_datamem u_datamem (
+    .i_clk(i_clk),
     .i_rst(i_rst),
     .i_addr(ALUresult),
     .i_data(rs2),
@@ -45,7 +46,7 @@ module ysyx_22050710_npc (
   wire [63:0] imm;
   wire [4:0] ra, rb, rd;
   wire [2:0] Branch;
-  wire ALUAsrc; wire [1:0] ALUBsrc; wire [3:0] ALUctr;
+  wire ALUAsrc; wire [1:0] ALUBsrc; wire [4:0] ALUctr;
   wire word_cut;
   wire RegWr, MemtoReg, MemWr; wire [2:0] MemOP;
   ysyx_22050710_idu u_idu (

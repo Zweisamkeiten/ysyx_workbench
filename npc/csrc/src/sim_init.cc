@@ -1,13 +1,16 @@
 #include <sim.hpp>
 #include <common.h>
 #include <isa.h>
+#include <memory/host.h>
 extern "C" {
   #include <memory/paddr.h>
 }
 
 Vtop *top;
+#ifdef CONFIG_VCD_TRACE
 VerilatedContext *contextp = NULL;
 VerilatedVcdC *tfp = NULL;
+#endif
 uint64_t * npcpc;
 
 void set_state_end() {
@@ -34,7 +37,7 @@ extern "C" void npc_pmem_write(long long waddr, long long wdata, char wmask) {
   switch ((unsigned char)wmask) {
     case 0x1: paddr_write(waddr, 1, wdata); break;
     case 0x3: paddr_write(waddr, 2, wdata); break;
-    case 0x15: paddr_write(waddr, 4, wdata); break;
+    case 0xf: paddr_write(waddr, 4, wdata); break;
     default: paddr_write(waddr, 8, wdata); break;
   }
 }
@@ -42,12 +45,16 @@ extern "C" void npc_pmem_write(long long waddr, long long wdata, char wmask) {
 extern "C" void single_cycle() {
   top->i_clk = 0;
   top->eval();
+#ifdef CONFIG_VCD_TRACE
   contextp->timeInc(1);
   tfp->dump(contextp->time());
+#endif
   top->i_clk = 1;
   top->eval();
+#ifdef CONFIG_VCD_TRACE
   contextp->timeInc(1);
   tfp->dump(contextp->time());
+#endif
 }
 
 static void reset(int n) {
@@ -59,13 +66,17 @@ static void reset(int n) {
 }
 
 extern "C" void init_sim() {
+#ifdef CONFIG_VCD_TRACE
   contextp = new VerilatedContext;
   tfp = new VerilatedVcdC;
+#endif
   top = new Vtop;
 
+#ifdef CONFIG_VCD_TRACE
   contextp->traceEverOn(true);
   top->trace(tfp, 0);
   tfp->open("dump.vcd");
+#endif
 
   reset(10);
 
@@ -79,5 +90,7 @@ extern "C" void init_sim() {
 extern "C" void end_sim() {
   top->final();
   delete top;
+#ifdef CONFIG_VCD_TRACE
   tfp->close();
+#endif
 }
