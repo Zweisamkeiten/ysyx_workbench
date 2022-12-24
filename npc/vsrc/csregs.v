@@ -37,6 +37,7 @@ module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
                   o_nextpc = rf[`MEPC];
                   o_sys_change_pc = 1'b1;
                  end
+        default: ;
       endcase
     end
   end
