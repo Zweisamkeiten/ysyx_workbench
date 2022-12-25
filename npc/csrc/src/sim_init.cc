@@ -29,6 +29,8 @@ void set_state_abort() {
           "* Every line of untested code is always wrong!\n\n", ANSI_FG_RED), isa_logo);
   }
   npc_state.state = NPC_ABORT;
+  npc_state.halt_pc = cpu.pc;
+  npc_state.halt_ret = -1;
 }
 
 extern "C" void set_gpr_ptr(const svOpenArrayHandle r) {
