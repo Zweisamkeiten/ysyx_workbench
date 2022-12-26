@@ -14,9 +14,8 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
   extern uint8_t ramdisk_start;
   Elf_Ehdr *elf = (Elf_Ehdr *)&ramdisk_start;
 
-  printf("e_ident: %x\n", *(uint32_t *)elf->e_ident);
   // check the magic number.
-  assert(*(uint32_t *)elf->e_ident == 0x7f454c46);
+  assert(*(uint32_t *)elf->e_ident == 0x464c457f);
 
   Elf_Phdr *phdr = (Elf_Phdr *)(&ramdisk_start + elf->e_phoff);
   printf("\nProgram header list\n\n");
