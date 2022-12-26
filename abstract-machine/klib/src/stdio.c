@@ -201,6 +201,21 @@ unsigned_convert:
 
           break;
         }
+        case 'p': {
+          base = 16;
+          unsigned long long int unsigned_num = (unsigned long long int)va_arg(ap, void *);
+          int write_flag = 0;
+          int shift_pos = 0;
+          do {
+            unsigned int num = (unsigned_num >> 60) & 0xf;
+            unsigned_num = unsigned_num << 4;
+            shift_pos += 4;
+            if (write_flag == 0 && num != 0) write_flag = 1;
+            if (write_flag == 1) buf_w(out, ret++, n, (num > 9) ? num - 10 + 'a' : num + '0');
+          } while (shift_pos < 64);
+          if (write_flag == 0) buf_w(out, ret++, n, '0');
+          break;
+        }
         case 's': {
           cp = va_arg(ap, char *);
           while (*cp != '\0') {
