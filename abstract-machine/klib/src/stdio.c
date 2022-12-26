@@ -129,26 +129,23 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
             default: signed_num = va_arg(ap, int); break;
           }
 
-          int ret_temp = ret;
-          unsigned long long int div = 1;
-          signed long long int signed_num_tmp = signed_num;
+          char nbuf[64];
+          int bufidx = 0;
           if (signed_num < 0) {
             buf_w(out, ret++, n, '-');
-            ret_temp++;
-            signed_num_tmp = -signed_num;
             signed_num = -signed_num;
           }
           do {
-            signed_num_tmp = signed_num_tmp/base;
+            nbuf[bufidx++] = signed_num % 10 + '0';
+            signed_num= signed_num/base;
             ret++;
-            div *= base;
-          } while (signed_num_tmp != 0);
+          } while (signed_num!= 0);
 
           // reverse
-          while (ret_temp != ret)
+          while (bufidx != 0)
           {
-            int num = (signed_num / (div /= base)) % base;
-            buf_w(out, ret_temp++, n, num + '0');
+            buf_w(out, ret-bufidx, n, nbuf[bufidx-1]);
+            bufidx--;
           }
 
           break;
@@ -167,15 +164,40 @@ unsigned_convert:
 
           int write_flag = 0;
           int shift_pos = 0;
-          do {
-            unsigned int num = (unsigned_num >> 60) & 0xf;
-            unsigned_num = unsigned_num << 4;
-            shift_pos += 4;
-            if (write_flag == 0 && num != 0) write_flag = 1;
-            if (write_flag == 1) buf_w(out, ret++, n, (num > 9) ? num - 10 + 'a' : num + '0');
-          } while (shift_pos != 64);
+          if (base == 16) {
+            do {
+              unsigned int num = (unsigned_num >> 60) & 0xf;
+              unsigned_num = unsigned_num << 4;
+              shift_pos += 4;
+              if (write_flag == 0 && num != 0) write_flag = 1;
+              if (write_flag == 1) buf_w(out, ret++, n, (num > 9) ? num - 10 + 'a' : num + '0');
+            } while (shift_pos < 64);
+            if (write_flag == 0) buf_w(out, ret++, n, '0');
+          } else if (base == 8) {
+            do {
+              unsigned int num = (unsigned_num >> 61) & 0x7;
+              unsigned_num = unsigned_num << 3;
+              shift_pos += 3;
+              if (write_flag == 0 && num != 0) write_flag = 1;
+              if (write_flag == 1) buf_w(out, ret++, n, (num > 9) ? num - 10 + 'a' : num + '0');
+            } while (shift_pos < 64);
+            if (write_flag == 0) buf_w(out, ret++, n, '0');
+          } else if (base == 10) {
+            char nbuf[64];
+            int bufidx = 0;
+            do {
+              nbuf[bufidx++] = unsigned_num % 10 + '0';
+              unsigned_num= unsigned_num/base;
+              ret++;
+            } while (unsigned_num!= 0);
 
-          if (write_flag == 0) buf_w(out, ret++, n, '0');
+            // reverse
+            while (bufidx != 0)
+              {
+                buf_w(out, ret-bufidx, n, nbuf[bufidx-1]);
+                bufidx--;
+              }
+          }
 
           break;
         }
