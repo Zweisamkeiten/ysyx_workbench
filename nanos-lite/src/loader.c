@@ -18,15 +18,15 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
   assert(*(uint32_t *)elf->e_ident == 0x464c457f);
 
   Elf_Phdr *phdr = (Elf_Phdr *)(&ramdisk_start + elf->e_phoff);
-  printf("\nProgram header list\n\n");
+  printf("Debug: Program header list\n");
   for (int i = 0; i < elf->e_phnum; i++) {
-       switch(phdr[i].p_type) {
-         case PT_LOAD:
-           /* * We know that text segment starts * at offset 0.
-            * And only one other *
-            * possible loadable segment exists *
-            * which is the data segment. */
-           if (phdr[i].p_offset == 0) printf("Text segment: 0x%x\n", phdr[i].p_vaddr);
+    switch(phdr[i].p_type) {
+      case PT_LOAD: {
+        printf("Debug: Offset: 0x%x\n", phdr[i].p_offset);
+        printf("Debug: Text segment: 0x%x\n", phdr[i].p_vaddr);
+        printf("Debug: FileSiz: 0x%x\n", phdr[i].p_filesz);
+        printf("Debug: Memsz: 0x%x\n", phdr[i].p_memsz);
+      }
     }
   }
 
