@@ -183,7 +183,20 @@ unsigned_convert:
             } while (shift_pos < 64);
             if (write_flag == 0) buf_w(out, ret++, n, '0');
           } else if (base == 10) {
+            char nbuf[64];
+            int bufidx = 0;
+            do {
+              nbuf[bufidx++] = unsigned_num % 10 + '0';
+              unsigned_num= unsigned_num/base;
+              ret++;
+            } while (unsigned_num!= 0);
 
+            // reverse
+            while (bufidx != 0)
+              {
+                buf_w(out, ret-bufidx, n, nbuf[bufidx-1]);
+                bufidx--;
+              }
           }
 
           break;
