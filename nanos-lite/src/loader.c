@@ -18,9 +18,11 @@
 #if defined(__ISA_NATIVE__)
 # define EXPECT_TYPE EM_X86_64
 #elif defined(__ISA_X86__)
-# define EXPECT_TYPE EM_X86_64
+# define EXPECT_TYPE EM_386 // Intel 80386 X86
 #elif defined(__ISA_MIPS32__)
+# define EXPECT_TYPE EM_MIPS_RS3_LE	 // MIPS R3000 little-endian
 #elif defined(__ISA_RISCV32__) || defined(__ISA_RISCV64__)
+# define EXPECT_TYPE EM_RISCV
 #elif
 # error unsupported ISA __ISA__
 #endif
@@ -31,7 +33,10 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
 
   // check the magic number.
   assert(*(uint32_t *)elf->e_ident == 0x464c457f);
+
+  // check the ELF ISA type
   printf("Debug: Machine: %d\n", elf->e_machine);
+  assert(elf->e_machine == EXPECT_TYPE);
 
   size_t ramdisk_read(void *buf, size_t offset, size_t len);
   Elf_Phdr *phdr = (Elf_Phdr *)(&ramdisk_start + elf->e_phoff);
