@@ -11,6 +11,7 @@ Context* __am_irq_handle(Context *c) {
       case Ex_ECALL_FROM_M_MODE: {
         switch (c->GPR1) {
           case -1: ev.event = EVENT_YIELD; c->mepc += 4; break;
+          default: ev.event = EVENT_ERROR; break;
         }
         break;
       }
