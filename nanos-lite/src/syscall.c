@@ -1,5 +1,10 @@
 #include <common.h>
 #include "syscall.h"
+
+#ifdef CONFIG_STRACE
+static inline void strace() {
+  printf("\033[93m" "STACE: %s(%)"\33[0m\n")
+}
 void do_syscall(Context *c) {
   uintptr_t a[4];
   a[0] = c->GPR1;
