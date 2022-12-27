@@ -14,3 +14,8 @@ int sys_yield(void) {
   yield();
   return 0;
 }
+
+// int sys_exit(int state) {
+//   halt(state);
+//   return 0;
+// }
