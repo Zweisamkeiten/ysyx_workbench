@@ -3,8 +3,9 @@
 
 #ifdef CONFIG_STRACE
 static inline void strace() {
-  printf("\033[93m" "STACE: %s(%)"\33[0m\n")
+  printf("\033[93m" "STACE: %s()\n" "\33[0m\n", __func__);
 }
+#endif
 void do_syscall(Context *c) {
   uintptr_t a[4];
   a[0] = c->GPR1;
@@ -18,6 +19,7 @@ void do_syscall(Context *c) {
 }
 
 int sys_yield(void) {
+
   yield();
   return 0;
 }
