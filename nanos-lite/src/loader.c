@@ -15,7 +15,7 @@
 # define word_t   uint32_t
 #endif
 
-#if defined(__ISA_NATIVE__)
+#if defined(__ISA_AM_NATIVE__)
 # define EXPECT_TYPE EM_X86_64
 #elif defined(__ISA_X86__)
 # define EXPECT_TYPE EM_386 // Intel 80386 X86
