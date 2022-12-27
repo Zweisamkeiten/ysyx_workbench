@@ -10,9 +10,11 @@ Context* __am_irq_handle(Context *c) {
     switch (c->mcause) {
       case Ex_ECALL_FROM_M_MODE: {
         switch (c->GPR1) {
-          case -1: ev.event = EVENT_YIELD; c->mepc += 4; break;
+          case  1: ev.event = EVENT_SYSCALL; break; // syscall
+          case -1: ev.event = EVENT_YIELD; break; // yield
           default: ev.event = EVENT_ERROR; break;
         }
+        c->mepc += 4;
         break;
       }
       default: ev.event = EVENT_ERROR; break;
