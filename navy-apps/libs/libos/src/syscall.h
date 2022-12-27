@@ -22,11 +22,8 @@ enum {
   SYS_unlink,
   SYS_wait,
   SYS_times,
-  SYS_gettimeofday
+  SYS_gettimeofday,
+  NR_SYSCALLS
 };
-
-// syscall functions
-long sys_yield(void);
-long sys_exit(int state);
 
 #endif
