@@ -26,7 +26,7 @@ enum {
 };
 
 // syscall functions
-int sys_yield(void);
-int sys_exit(int state);
+long sys_yield(void);
+long sys_exit(int state);
 
 #endif
