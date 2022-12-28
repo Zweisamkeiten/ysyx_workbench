@@ -1,5 +1,6 @@
 #include <proc.h>
 #include <elf.h>
+#include <fs.h>
 
 #ifdef __LP64__
 # define Elf_Ehdr Elf64_Ehdr
@@ -28,20 +29,23 @@
 #endif
 
 static uintptr_t loader(PCB *pcb, const char *filename) {
-  extern uint8_t ramdisk_start;
-  Elf_Ehdr *elf = (Elf_Ehdr *)&ramdisk_start;
+  int fd = fs_open(filename, 0, 0);
+  Elf_Ehdr elf;
+  fs_read(fd, &elf, sizeof(Elf64_Ehdr));
 
   // check the magic number.
-  assert(*(uint32_t *)elf->e_ident == 0x464c457f);
+  assert(*(uint32_t *)elf.e_ident == 0x464c457f);
 
   // check the ELF ISA type
-  printf("Debug: Machine: %d\n", elf->e_machine);
-  assert(elf->e_machine == EXPECT_TYPE);
+  printf("Debug: Machine: %d\n", elf.e_machine);
+  assert(elf.e_machine == EXPECT_TYPE);
 
-  size_t ramdisk_read(void *buf, size_t offset, size_t len);
-  Elf_Phdr *phdr = (Elf_Phdr *)(&ramdisk_start + elf->e_phoff);
+  Elf_Phdr *phdr = malloc(elf.e_phnum * sizeof(Elf_Phdr));
+  fs_lseek(fd, elf.e_phoff, SEEK_SET);
+  fs_read(fd, &phdr, elf.e_phnum * sizeof(Elf_Phdr));
+
   printf("Debug: Program header list\n");
-  for (int i = 0; i < elf->e_phnum; i++) {
+  for (int i = 0; i < elf.e_phnum; i++) {
     switch(phdr[i].p_type) {
       case PT_LOAD: {
         printf("Debug: Offset: 0x%x\n", phdr[i].p_offset);
@@ -53,13 +57,14 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
         Elf_Off offset = phdr[i].p_offset;
         word_t filesz = phdr[i].p_filesz;
         word_t memsz = phdr[i].p_memsz;
-        ramdisk_read((void *)vaddr, offset, filesz);
+        fs_lseek(fd, offset, SEEK_SET);
+        fs_read(fd, (void *)vaddr, filesz);
         memset((void *)vaddr + filesz, 0, memsz-filesz);
       }
     }
   }
 
-  return elf->e_entry;
+  return elf.e_entry;
 }
 
 void naive_uload(PCB *pcb, const char *filename) {
