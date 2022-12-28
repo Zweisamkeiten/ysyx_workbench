@@ -31,7 +31,6 @@
 static uintptr_t loader(PCB *pcb, const char *filename) {
   int fd = fs_open(filename, 0, 0);
   Elf_Ehdr elf;
-  printf("%d\n", sizeof(Elf_Ehdr));
   fs_read(fd, &elf, sizeof(Elf_Ehdr));
 
   // check the magic number.
@@ -64,6 +63,8 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
       }
     }
   }
+
+  free(phdr);
 
   return elf.e_entry;
 }
