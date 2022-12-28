@@ -118,7 +118,7 @@ uint64_t sys_write(void) {
   size_t count = a[3];
   if (fd == 1 || fd == 2) {
     uint64_t written = 0;
-    while (written <= count) {
+    while (written < count) {
       putch(*((char *)(buf) + written));
       written++;
     }
