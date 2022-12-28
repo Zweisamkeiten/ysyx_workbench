@@ -31,7 +31,8 @@
 static uintptr_t loader(PCB *pcb, const char *filename) {
   int fd = fs_open(filename, 0, 0);
   Elf_Ehdr elf;
-  fs_read(fd, &elf, sizeof(Elf64_Ehdr));
+  printf("%d\n", sizeof(Elf_Ehdr));
+  fs_read(fd, &elf, sizeof(Elf_Ehdr));
 
   // check the magic number.
   assert(*(uint32_t *)elf.e_ident == 0x464c457f);
