@@ -145,7 +145,7 @@ uint64_t sys_lseek(void) {
 }
 
 uint64_t sys_brk(void) {
-  TODO();
+  return 0;
 }
 
 uint64_t sys_fstat(void) {
