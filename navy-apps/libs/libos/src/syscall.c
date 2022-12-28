@@ -1,4 +1,5 @@
 #include <unistd.h>
+#include <stdint.h>
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <assert.h>
@@ -41,6 +42,9 @@
 #error _syscall_ is not implemented
 #endif
 
+extern uint8_t _end;
+void *program_break = &_end;
+
 intptr_t _syscall_(intptr_t type, intptr_t a0, intptr_t a1, intptr_t a2) {
   register intptr_t _gpr1 asm (GPR1) = type;
   register intptr_t _gpr2 asm (GPR2) = a0;
@@ -66,6 +70,14 @@ int _write(int fd, void *buf, size_t count) {
 }
 
 void *_sbrk(intptr_t increment) {
+  void *old_program_break = program_break;
+  void *new_program_break = program_break + increment;
+
+  if (_syscall_(SYS_brk, (intptr_t)new_program_break, 0, 0) == 0) {
+    program_break = new_program_break;
+    return old_program_break;
+  }
+
   return (void *)-1;
 }
 
