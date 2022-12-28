@@ -116,8 +116,8 @@ uint64_t sys_write(void) {
   int fd = a[1];
   const void *buf = (void *)a[2];
   size_t count = a[3];
-  if (fd == 1 || fd == 2) {
   uint64_t written = 0;
+  if (fd == 1 || fd == 2) {
     while (written <= count) {
       putch(*((char *)(buf) + written));
       written++;
