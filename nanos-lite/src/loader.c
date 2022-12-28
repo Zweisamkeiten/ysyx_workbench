@@ -40,9 +40,9 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
   printf("Debug: Machine: %d\n", elf.e_machine);
   assert(elf.e_machine == EXPECT_TYPE);
 
-  Elf_Phdr *phdr = (Elf_Phdr *)malloc(elf.e_phnum * sizeof(Elf_Phdr));
+  Elf_Phdr *phdr = malloc(elf.e_phnum * sizeof(Elf_Phdr));
   fs_lseek(fd, elf.e_phoff, SEEK_SET);
-  fs_read(fd, &phdr, elf.e_phnum * sizeof(Elf_Phdr));
+  fs_read(fd, phdr, elf.e_phnum * sizeof(Elf_Phdr));
 
   printf("Debug: Program header list\n");
   for (int i = 0; i < elf.e_phnum; i++) {
