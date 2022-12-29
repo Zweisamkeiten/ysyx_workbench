@@ -83,6 +83,7 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
 
     if (state == S_DEFAULT) {
       if (ch == '%') {
+        fmt--;
         state = S_FLAGS;
         // flags = 0;
       }
