@@ -92,7 +92,7 @@ void do_syscall(Context *c) {
   }
 
   #ifdef CONFIG_STRACE
-  printf("\033[93m" "STACE: " "\33[0m\n");
+  printf("\033[93m" "STACE: " "\33[0m");
   switch (num) {
     case SYS_exit: printf("\033[93m%s(status: %d)" "\33[0m", syscall_name_table[num], a[1]); break;
     case SYS_open: printf("\033[93m%s(pathname: %s, flags: %d, mode: %d)" "\33[0m", syscall_name_table[num], (const char *)a[1], a[2], a[3]); break;
