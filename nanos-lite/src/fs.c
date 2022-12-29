@@ -127,3 +127,9 @@ int fs_close(int fd) {
   // sfs has not file close state, return 0 as close success.
   return 0;
 }
+
+#ifdef CONFIG_STRACE
+char * trans_fd_to_filename(int fd) {
+  return file_table[fd].name;
+}
+#endif
