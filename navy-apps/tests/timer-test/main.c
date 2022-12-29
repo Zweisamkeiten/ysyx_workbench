@@ -7,7 +7,6 @@ int main() {
   int halfsec = 1;
   while (1) {
     while (NDL_GetTicks() / 500 < halfsec);
-    // printf("time: %d\n", NDL_GetTicks());
     printf("time pass 0.5s\n");
     halfsec++;
   }
