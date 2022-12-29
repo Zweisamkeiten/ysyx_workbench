@@ -35,8 +35,7 @@ size_t events_read(void *buf, size_t offset, size_t len) {
     read_n += snprintf(buf, 3, "ku "); // keyup
   }
 
-  read_n += sprintf(buf + read_n, "123\n");
-  // read_n += sprintf(buf + read_n, "%s\n", keyname[ev.keycode]);
+  read_n += sprintf(buf + read_n, "%s\n", keyname[ev.keycode]);
 
   return read_n;
 }
