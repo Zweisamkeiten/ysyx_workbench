@@ -70,13 +70,14 @@ int snprintf(char *out, size_t n, const char *fmt, ...) {
 
 int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
   int state = 0;                            // default S_DEFAULT
-  int ch = *fmt;                                   // character from fmt because char undefinedcharactor from fmt, 0-255
+  int ch;                                   // character from fmt because char undefinedcharactor from fmt, 0-255
   const char *cp;                                 // handy char pointer (for short terms)
   int /* flags, width, precision, */ lflags = 0;  // flags as above
   int ret = 0;                              // return value accumulator
 
   for (;;) {
     ch = *fmt++;
+
     if (ch == '\0')
       break;
 
