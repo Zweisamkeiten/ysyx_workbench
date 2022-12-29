@@ -72,6 +72,7 @@ size_t fs_read(int fd, void *buf, size_t len) {
 size_t fs_write(int fd, const void *buf, size_t len) {
   assert(0 <= fd && fd < NR_FILES);
 
+  // stdout stderr size == 0
   if (file_table[fd].size != 0 && file_table[fd].open_offset + len > file_table[fd].size) {
     len = file_table[fd].size - file_table[fd].open_offset;
   }
@@ -82,6 +83,7 @@ size_t fs_write(int fd, const void *buf, size_t len) {
 
     return written_n;
   } else {
+    // vfs api
     return file_table[fd].write(buf, file_table[fd].disk_offset + file_table[fd].open_offset, len);
   }
 }

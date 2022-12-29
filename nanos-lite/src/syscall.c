@@ -2,6 +2,7 @@
 #include "fs.h"
 #include "syscall.h"
 #include <sys/stat.h>
+#include <sys/time.h>
 
 #ifdef CONFIG_STRACE
 static char *syscall_name_table[] = {
@@ -202,6 +203,17 @@ uint64_t sys_times(void) {
 }
 
 uint64_t sys_gettimeofday(void) {
-  TODO();
+  struct timeval *tv = (struct timeval *)a[1];
+  struct timezone *tz = (struct timezone *)a[2];
+
+  // The use of the timezone structure is obsolete; the tz argument should normally be specified as NULL.
+  assert(tz == NULL);
+
+  uint64_t us = io_read(AM_TIMER_UPTIME).us;
+  tv->tv_sec = us / 1000000;
+  tv->tv_usec = us - tv->tv_sec * 1000000;
+
+  if (tv->tv_sec < 0 || (tv->tv_usec < 0 || tv->tv_usec > 999999)) return -1;
+  return 0;
 }
 
