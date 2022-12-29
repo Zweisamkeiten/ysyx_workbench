@@ -72,7 +72,7 @@ size_t fs_write(int fd, const void *buf, size_t len) {
   if (fd <= 2) {
     if (fd == 1 || fd == 2) {
       uint64_t written = 0;
-      while (written <= len) {
+      while (written < len) {
         putch(*((char *)(buf) + written));
         written++;
       }
