@@ -29,14 +29,14 @@ size_t events_read(void *buf, size_t offset, size_t len) {
   if (ev.keycode == AM_KEY_NONE) return 0;
 
   size_t read_n = 0;
-  printf("%s\n", keyname[ev.keycode]);
   if (ev.keydown) {
     read_n += snprintf(buf, 3, "kd "); // keydown
   } else {
     read_n += snprintf(buf, 3, "ku "); // keyup
   }
 
-  read_n += sprintf(buf + read_n, "%s\n", keyname[ev.keycode]);
+  read_n += sprintf(buf + 3, "123\n");
+  // read_n += sprintf(buf + read_n, "%s\n", keyname[ev.keycode]);
 
   return read_n;
 }
