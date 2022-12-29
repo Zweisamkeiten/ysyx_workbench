@@ -23,6 +23,7 @@ int NDL_PollEvent(char *buf, int len) {
   // 读出一条事件信息, 将其写入`buf`中, 最长写入`len`字节
   // 若读出了有效的事件, 函数返回1, 否则返回0
   if (fread(buf, 1, len, events) != 0) {
+    printf("123\n");
     return 1;
   }
   return 0;
@@ -70,9 +71,10 @@ int NDL_Init(uint32_t flags) {
     evtdev = 3;
   }
 
+  boot_time = NDL_GetTicks();
+
   events = fopen("/dev/events", "r");
 
-  boot_time = NDL_GetTicks();
   return 0;
 }
 
