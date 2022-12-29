@@ -1,5 +1,7 @@
 #include <common.h>
+#include "fs.h"
 #include "syscall.h"
+#include <sys/stat.h>
 
 #ifdef CONFIG_STRACE
 static char *syscall_name_table[] = {
@@ -83,7 +85,7 @@ void do_syscall(Context *c) {
 
   int num = a[0]; // syscall num
 
-  if (num > 0 && num < NR_SYSCALLS && syscalls[num]) {
+  if (num >= 0 && num < NR_SYSCALLS && syscalls[num]) {
     c->GPRx = syscalls[num](); // return value
   } else {
     panic("Unhandled syscall ID = %d", num);
@@ -105,27 +107,27 @@ uint64_t sys_exit(void) {
 }
 
 uint64_t sys_open(void) {
-  TODO();
+  const char *pathname = (const char *)a[1];
+  int flags = a[2];
+  mode_t mode = a[3];
+
+  return fs_open(pathname, flags, mode);
 }
 
 uint64_t sys_read(void) {
-  TODO();
+  int fd = a[1];
+  void *buf = (void *)a[2];
+  size_t len = a[3];
+
+  return fs_read(fd, buf, len);
 }
 
 uint64_t sys_write(void) {
   int fd = a[1];
-  const void *buf = (void *)a[2];
+  const void *buf = (const void *)a[2];
   size_t count = a[3];
-  if (fd == 1 || fd == 2) {
-    uint64_t written = 0;
-    while (written < count) {
-      putch(*((char *)(buf) + written));
-      written++;
-    }
-    return written;
-  } else {
-    return -1;
-  }
+
+  return fs_write(fd, buf, count);
 }
 
 uint64_t sys_kill(void) {
@@ -137,11 +139,16 @@ uint64_t sys_getpid(void) {
 }
 
 uint64_t sys_close(void) {
-  TODO();
+  int fd = a[1];
+  return fs_close(fd);
 }
 
 uint64_t sys_lseek(void) {
-  TODO();
+  int fd = a[1];
+  off_t offset = a[2];
+  int whence = a[3];
+
+  return fs_lseek(fd, offset, whence);
 }
 
 uint64_t sys_brk(void) {
