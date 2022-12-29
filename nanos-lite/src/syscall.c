@@ -92,7 +92,17 @@ void do_syscall(Context *c) {
   }
 
   #ifdef CONFIG_STRACE
-  printf("\033[93m" "STACE: %s() = %ld" "\33[0m\n", syscall_name_table[num], c->GPRx);
+  printf("\033[93m" "STACE: " "\33[0m\n");
+  switch (num) {
+    case SYS_exit: printf("\033[93m%s(status: %d)" "\33[0m", syscall_name_table[num], a[1]); break;
+    case SYS_open: printf("\033[93m%s(pathname: %s, flags: %d, mode: %d)" "\33[0m", syscall_name_table[num], (const char *)a[1], a[2], a[3]); break;
+    case SYS_read: printf("\033[93m%s(fd: %d\33[0m" "\033[34m(filename: %s)\33[0m", "\033[93mbuf: %p, count: %d)\33[0m", syscall_name_table[num], a[1], trans_fd_to_filename(a[1]), (void *)a[2], a[3]); break;
+    case SYS_write: printf("\033[93m%s(fd: %d\33[0m" "\033[34m(filename: %s)\33[0m", "\033[93mbuf: %p, count: %d)\33[0m", syscall_name_table[num], a[1], trans_fd_to_filename(a[1]), (void *)a[2], a[3]); break;
+    case SYS_close: printf("\033[93m%s(fd: %d\33[0m" "\033[34m(filename: %s)\33[0m", "\033[93m)\33[0m", syscall_name_table[num], a[1], trans_fd_to_filename(a[1])); break;
+    case SYS_lseek: printf("\033[93m%s(fd: %d\33[0m" "\033[34m(filename: %s)\33[0m", "\033[93moffset: %d, whence: %d)\33[0m", syscall_name_table[num], a[1], trans_fd_to_filename(a[1]), a[2], a[3]); break;
+    default: printf("\033[93m" "%s()" "\33[0m\n", syscall_name_table[num]); break;
+  }
+  printf("\033[93m" "= %ld" "\33[0m\n", c->GPRx); // return value
   #endif
 }
 
@@ -117,9 +127,9 @@ uint64_t sys_open(void) {
 uint64_t sys_read(void) {
   int fd = a[1];
   void *buf = (void *)a[2];
-  size_t len = a[3];
+  size_t count = a[3];
 
-  return fs_read(fd, buf, len);
+  return fs_read(fd, buf, count);
 }
 
 uint64_t sys_write(void) {

@@ -61,7 +61,7 @@ size_t fs_read(int fd, void *buf, size_t len) {
     len = file_table[fd].size - file_table[fd].open_offset;
   }
 
-  size_t read_n = ramdisk_read(buf, file_table[fd].disk_offset + file_table[fd].open_offset, len); 
+  size_t read_n = ramdisk_read(buf, file_table[fd].disk_offset + file_table[fd].open_offset, len);
   file_table[fd].open_offset += read_n;
 
   return read_n;
@@ -127,3 +127,9 @@ int fs_close(int fd) {
   // sfs has not file close state, return 0 as close success.
   return 0;
 }
+
+#ifdef CONFIG_STRACE
+char * trans_fd_to_filename(int fd) {
+  return file_table[fd].name;
+}
+#endif
