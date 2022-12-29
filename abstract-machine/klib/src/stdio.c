@@ -76,15 +76,13 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
   int ret = 0;                              // return value accumulator
 
   for (;;) {
-    ch = *fmt;
-    fmt++;
+    ch = *fmt++;
 
     if (ch == '\0')
       break;
 
     if (state == S_DEFAULT) {
       if (ch == '%') {
-        fmt--;
         state = S_FLAGS;
         // flags = 0;
       }
