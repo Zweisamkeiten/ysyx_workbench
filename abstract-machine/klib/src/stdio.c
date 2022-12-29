@@ -85,6 +85,7 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
       }
       else {
         putch(ret+'0');
+        putch('\n');
         buf_w(out, ret++, n, ch);
       }
     } 
