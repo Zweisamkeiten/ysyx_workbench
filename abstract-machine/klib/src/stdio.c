@@ -237,7 +237,7 @@ unsigned_convert:
         }
       }
       state = S_DEFAULT;
-      buf_w(out, n - 1, n, '\0');
+      buf_w(out, ret, n, '\0');
     }
   }
   return ret;
