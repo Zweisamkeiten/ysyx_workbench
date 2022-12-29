@@ -84,7 +84,6 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
         // flags = 0;
       }
       else {
-        putch('0');
         buf_w(out, ret++, n, ch);
       }
     } 
@@ -237,7 +236,7 @@ unsigned_convert:
       state = S_DEFAULT;
       buf_w(out, n - 1, n, '\0');
     }
-    if (ch == '\0')
+    if (*fmt == '\0')
       break;
   }
   return ret;
