@@ -76,7 +76,8 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
   int ret = 0;                              // return value accumulator
 
   for (;;) {
-    ch = *fmt++;
+    ch = *fmt;
+    fmt++;
 
     if (ch == '\0')
       break;
