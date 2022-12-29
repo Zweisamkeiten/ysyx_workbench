@@ -78,6 +78,9 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
   for (;;) {
     ch = *fmt++;
 
+    if (ch == '\0')
+      break;
+
     if (state == S_DEFAULT) {
       if (ch == '%') {
         state = S_FLAGS;
@@ -234,11 +237,9 @@ unsigned_convert:
         }
       }
       state = S_DEFAULT;
-      buf_w(out, n - 1, n, '\0');
     }
-    if (ch == '\0')
-      break;
   }
+  buf_w(out, ret, n, '\0');
   return ret;
 }
 
