@@ -85,7 +85,7 @@ void do_syscall(Context *c) {
 
   int num = a[0]; // syscall num
 
-  if (num > 0 && num < NR_SYSCALLS && syscalls[num]) {
+  if (num >= 0 && num < NR_SYSCALLS && syscalls[num]) {
     c->GPRx = syscalls[num](); // return value
   } else {
     panic("Unhandled syscall ID = %d", num);
