@@ -5,12 +5,15 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/time.h>
+#include <assert.h>
 
 static int evtdev = -1;
 static int fbdev = -1;
 static int screen_w = 0, screen_h = 0;
+static int canvas_w = 0, canvas_h = 0;
 static uint32_t boot_time = 0;
 static int eventsdev = -1;
+static int dispdev = -1;
 
 uint32_t NDL_GetTicks() {
   struct timeval now;
@@ -21,6 +24,7 @@ uint32_t NDL_GetTicks() {
 }
 
 int NDL_PollEvent(char *buf, int len) {
+  assert(eventsdev != -1);
   // 读出一条事件信息, 将其写入`buf`中, 最长写入`len`字节
   // 若读出了有效的事件, 函数返回1, 否则返回0
   if (read(eventsdev, buf, len) != 0) {
@@ -47,6 +51,17 @@ void NDL_OpenCanvas(int *w, int *h) {
     }
     close(fbctl);
   }
+
+  assert(*w > 0 && *h > 0);
+  assert(*w <= screen_w && *h <= screen_h);
+
+  if (*w == 0 && *h == 0) {
+    *w = screen_w;
+    *h = screen_h;
+  }
+
+  canvas_w = *w;
+  canvas_h = *h;
 }
 
 void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
@@ -74,6 +89,14 @@ int NDL_Init(uint32_t flags) {
   boot_time = NDL_GetTicks();
 
   eventsdev = open("/dev/events", 0, 0);
+
+  dispdev = open("/proc/dispinfo", 0, 0);
+  if (dispdev != -1) {
+    char buf[32];
+    int nread = read(dispdev, buf, sizeof(buf));
+    sscanf(buf, "WIDTH : %d\nHEIGHT : %d\n", &screen_w, &screen_h);
+    printf("\033[32mNDL_INIT: WIDTH: %d, HEIGHT: %d\n\33[0m", screen_w, screen_h);
+  }
 
   return 0;
 }
