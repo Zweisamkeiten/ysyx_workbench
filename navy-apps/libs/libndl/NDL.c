@@ -48,11 +48,10 @@ void NDL_OpenCanvas(int *w, int *h) {
     }
     close(fbctl);
   }
-  
+
   if (*w == 0 && *h == 0) {
-    char buf[32];
-    int nread = read(dispdev, buf, sizeof(buf));
-    sscanf(buf, "WIDTH : %d\nHEIGHT : %d\n", w, h);
+    *w = screen_w;
+    *h = screen_h;
   }
 }
 
@@ -81,7 +80,14 @@ int NDL_Init(uint32_t flags) {
   boot_time = NDL_GetTicks();
 
   eventsdev = open("/dev/events", 0, 0);
+
   dispdev = open("/proc/dispinfo", 0, 0);
+  if (dispdev != -1) {
+    char buf[32];
+    int nread = read(dispdev, buf, sizeof(buf));
+    sscanf(buf, "WIDTH : %d\nHEIGHT : %d\n", &screen_w, &screen_h);
+    printf("\033[32mNDL_INIT: WIDTH: %d, HEIGHT: %d\n\33[0m", screen_w, screen_h);
+  }
 
   return 0;
 }
