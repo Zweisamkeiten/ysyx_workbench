@@ -54,6 +54,9 @@ void NDL_OpenCanvas(int *w, int *h) {
     int nread = read(dispdev, buf, sizeof(buf));
     sscanf(buf, "%d %d", w, h);
   }
+  char buf[32];
+  int nread = read(dispdev, buf, sizeof(buf));
+  sscanf(buf, "%d %d", w, h);
 }
 
 void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
