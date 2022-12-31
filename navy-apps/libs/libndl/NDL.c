@@ -107,6 +107,8 @@ int NDL_Init(uint32_t flags) {
     int nread = read(dispdev, buf, sizeof(buf));
     sscanf(buf, "WIDTH : %d\nHEIGHT : %d\n", &screen_w, &screen_h);
     printf("\033[32mNDL_INIT: WIDTH: %d, HEIGHT: %d\n\33[0m", screen_w, screen_h);
+    canvas_w = screen_w;
+    canvas_h = screen_h;
   }
 
   fbdev = open("/dev/fb", 0, 0);
