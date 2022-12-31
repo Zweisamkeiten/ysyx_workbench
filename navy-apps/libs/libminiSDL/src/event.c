@@ -31,7 +31,6 @@ int SDL_PollEvent(SDL_Event *ev) {
     *end = '\0';
     for (int i = 0; i < SDLK_NR; i++) {
       if (strcmp(blank + 1, keyname[i]) == 0) {
-        printf("%d\n", i);
         ev->key.keysym.sym = i;
       }
     }
