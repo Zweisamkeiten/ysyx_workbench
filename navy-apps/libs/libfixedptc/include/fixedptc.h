@@ -125,6 +125,10 @@ typedef	__uint128_t fixedptud;
  * Putting them only in macros will effectively make them optional. */
 #define fixedpt_tofloat(T) ((float) ((T)*((float)(1)/(float)(1L << FIXEDPT_FBITS))))
 
+static inline fixedpt fixedpt_fromfloat(void *p) {
+  return (fixedpt)(*(float *)p * FIXEDPT_ONE);
+}
+
 /* Multiplies a fixedpt number with an integer, returns the result. */
 static inline fixedpt fixedpt_muli(fixedpt A, int B) {
   return ((fixedptd)A * B);
