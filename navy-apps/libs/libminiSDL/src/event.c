@@ -14,6 +14,30 @@ int SDL_PushEvent(SDL_Event *ev) {
 }
 
 int SDL_PollEvent(SDL_Event *ev) {
+  char buf[64];
+  ev->key.keysym.sym = SDLK_NONE;
+
+  if (NDL_PollEvent(buf, sizeof(buf))) {
+    if (strncmp(buf, "ku", 2) == 0) {
+      ev->type = SDL_KEYUP;
+      ev->key.type = SDL_KEYUP;
+    } else if (strncmp(buf, "kd", 2) == 0) {
+      ev->type = SDL_KEYDOWN;
+      ev->key.type = SDL_KEYDOWN;
+    }
+
+    char *blank = strchr(buf, ' ');
+    char *end = strchr(blank + 1, '\n');
+    *end = '\0';
+    for (int i = 0; i < SDLK_NR; i++) {
+      if (strcmp(blank + 1, keyname[i]) == 0) {
+        ev->key.keysym.sym = i;
+      }
+    }
+
+    // return 1 on success
+    return 1;
+  }
   return 0;
 }
 
