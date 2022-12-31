@@ -33,8 +33,9 @@ int SDL_WaitEvent(SDL_Event *event) {
 
   char *blank = strchr(buf, ' ');
   char *end = strchr(blank + 1, '\n');
+  *end = '\0';
   for (int i = 0; i < SDLK_NR; i++) {
-    if (strncmp(blank + 1, keyname[i], end - blank - 1) == 0) {
+    if (strcmp(blank + 1, keyname[i]) == 0) {
       event->key.keysym.sym = i;
     }
   }
