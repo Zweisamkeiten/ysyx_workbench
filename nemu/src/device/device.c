@@ -48,7 +48,6 @@ void device_update() {
   // SDL_PollEvent 轮询当前未决事件
   // return 1 if there is a pending event or 0 if there are no available
   while (SDL_PollEvent(&event)) {
-    printf("event.type: %d\n", event.type);
     switch (event.type) {
       case SDL_QUIT:
         nemu_state.state = NEMU_QUIT;

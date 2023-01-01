@@ -18,20 +18,19 @@ int SDL_PollEvent(SDL_Event *ev) {
   ev->key.keysym.sym = SDLK_NONE;
 
   if (NDL_PollEvent(buf, sizeof(buf))) {
-    printf("%s", buf);
-    if (strncmp(buf, "ku", 2) == 0) {
+    char *event_type = strtok(buf, " ");
+    if (strcmp(event_type, "ku") == 0) {
       ev->type = SDL_KEYUP;
       ev->key.type = SDL_KEYUP;
-    } else if (strncmp(buf, "kd", 2) == 0) {
+    } else if (strcmp(event_type, "kd") == 0) {
       ev->type = SDL_KEYDOWN;
       ev->key.type = SDL_KEYDOWN;
     }
 
-    char *blank = strchr(buf, ' ');
-    char *end = strchr(blank + 1, '\n');
-    *end = '\0';
+    char *key_code = event_type + strlen(event_type) + 1;
+    key_code[strlen(key_code) - 1] = '\0';
     for (int i = 0; i < SDLK_NR; i++) {
-      if (strcmp(blank + 1, keyname[i]) == 0) {
+      if (strcmp(key_code, keyname[i]) == 0) {
         ev->key.keysym.sym = i;
       }
     }
@@ -48,19 +47,19 @@ int SDL_WaitEvent(SDL_Event *event) {
 
   while (NDL_PollEvent(buf, sizeof(buf)) == 0);
 
-  if (strncmp(buf, "ku", 2) == 0) {
+  char *event_type = strtok(buf, " ");
+  if (strcmp(event_type, "ku") == 0) {
     event->type = SDL_KEYUP;
     event->key.type = SDL_KEYUP;
-  } else if (strncmp(buf, "kd", 2) == 0) {
+  } else if (strcmp(buf, "kd") == 0) {
     event->type = SDL_KEYDOWN;
     event->key.type = SDL_KEYDOWN;
   }
 
-  char *blank = strchr(buf, ' ');
-  char *end = strchr(blank + 1, '\n');
-  *end = '\0';
+  char *key_code = event_type + strlen(event_type) + 1;
+  key_code[strlen(key_code) - 1] = '\0';
   for (int i = 0; i < SDLK_NR; i++) {
-    if (strcmp(blank + 1, keyname[i]) == 0) {
+    if (strcmp(key_code, keyname[i]) == 0) {
       event->key.keysym.sym = i;
     }
   }
