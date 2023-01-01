@@ -9,11 +9,8 @@ void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_
   assert(dst && src);
   assert(dst->format->BitsPerPixel == src->format->BitsPerPixel);
 
-  uint32_t *src_pixels = (uint32_t *)src->pixels;
-  uint32_t *dst_pixels = (uint32_t *)dst->pixels;
   int src_w = src->w;
   int src_h = src->h;
-  int dst_w = dst->w;
 
   int srcrect_x, srcrect_y;
   int srcrect_w, srcrect_h;
@@ -27,15 +24,16 @@ void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_
   }
 
   if (dstrect == NULL) {
-    dstrect_x = 0, dstrect = 0;
+    dstrect_x = 0, dstrect_y = 0;
   } else {
     dstrect_x = dstrect->x, dstrect_y = dstrect->y;
   }
 
-  for (int row = dstrect_y, src_row = srcrect_y; src_row < srcrect_y + srcrect_h; src_row++, row++) {
-    for (int column = dstrect_x, src_column = srcrect_x; src_column < srcrect_x + srcrect_w; src_column++, column++) {
-      dst_pixels[row*dst_w + column] = src_pixels[src_row*src_w + src_column];
-    }
+  int rows; // has copid rows
+  for (rows = 0; rows < srcrect_h; rows++) {
+    memcpy(dst->pixels + (rows + dstrect_y) * dst->pitch + dstrect_x * dst->format->BytesPerPixel, // pointer to dst rect current coping row first pixel
+           src->pixels + (rows + srcrect_y) * src->pitch + srcrect_x * src->format->BytesPerPixel, // pointer to src rect current coping row first pixel
+           srcrect_w * src->format->BytesPerPixel); // size
   }
 }
 
