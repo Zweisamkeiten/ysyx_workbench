@@ -2,6 +2,7 @@
 #include <stdarg.h>
 #include <unistd.h>
 #include <SDL.h>
+#include <string.h>
 
 char handle_key(SDL_Event *ev);
 
@@ -22,13 +23,13 @@ static void sh_prompt() {
   sh_printf("sh> ");
 }
 
-static int cmd_help(const char *args);
-static int cmd_echo(const char *args);
+static int cmd_help(char *args);
+static int cmd_echo(char *args);
 
 typedef struct cmd_t {
   const char *command;
   const char *description;
-  int (*handler) (const char *);
+  int (*handler) (char *);
 } cmd;
 
 static cmd cmd_table [] = {
@@ -39,48 +40,56 @@ static cmd cmd_table [] = {
 #define ARRLEN(arr) (int)(sizeof(arr) / sizeof(arr[0]))
 #define NR_CMD ARRLEN(cmd_table)
 
-static int cmd_help(const char *args) {
+static int cmd_help(char *args) {
   /* extract the first argument */
-  char *arg = strtok(NULL, " ");
   int i;
 
-  if (arg == NULL) {
+  if (args == NULL) {
     /* no argument given */
     for (i = 0; i < NR_CMD; i ++) {
       sh_printf("%s - %s\n", cmd_table[i].command, cmd_table[i].description);
     }
   }
   else {
+    char *end = strchr(args, '\n');
     for (i = 0; i < NR_CMD; i ++) {
-      if (strcmp(arg, cmd_table[i].command) == 0) {
+      if (strncmp(args, cmd_table[i].command, end - args) == 0) {
         sh_printf("%s - %s\n", cmd_table[i].command, cmd_table[i].description);
         return 0;
       }
     }
-    sh_printf("Unknown command '%s'\n", arg);
+    sh_printf("Unknown command %s", args);
   }
   return 0;
 }
 
-static int cmd_echo(const char *args) {
-  char *arg = strtok(NULL, " ");
-  sh_printf("%s\n", *arg);
+static int cmd_echo(char *args) {
+  sh_printf("%s", args);
   return 0;
 }
 
 
 static void sh_handle_cmd(const char *cmd) {
-  char *cmd_c = strtok((char *)cmd, "\n");
-  if (cmd_c == NULL) { return; }
+  if (cmd[0] == '\n') return;
+  const char *args = strchrnul(cmd, ' ') + 1;
   int i;
-  for (i = 0; i < NR_CMD; i ++) {
-    if (strcmp(cmd_c, cmd_table[i].command) == 0) {
-      if (cmd_table[i].handler(cmd_c) < 0) { return; }
-      break;
+  if (*(args - 2) == '\n') {
+    for (i = 0; i < NR_CMD; i ++) {
+      if (strncmp(cmd, cmd_table[i].command, args - 2 - cmd) == 0) {
+        if (cmd_table[i].handler(NULL) < 0) { return; }
+        break;
+      }
+    }
+  } else {
+    for (i = 0; i < NR_CMD; i ++) {
+      if (strncmp(cmd, cmd_table[i].command, args - cmd - 1) == 0) {
+        if (cmd_table[i].handler((char *)args) < 0) { return; }
+        break;
+      }
     }
   }
 
-  if (i == NR_CMD) { sh_printf("Unknown command '%s'", cmd_c); }
+  if (i == NR_CMD) { sh_printf("sh: command not found: %s", cmd); }
 }
 
 void builtin_sh_run() {

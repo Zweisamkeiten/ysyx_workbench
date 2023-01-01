@@ -247,7 +247,6 @@ void sdb_mainloop() {
 
     /* extract the first token as the command */
     char *cmd = strtok(str, " ");
-    printf("%s\n", cmd);
     if (cmd == NULL) { continue; }
 
     /* treat the remaining string as the arguments,

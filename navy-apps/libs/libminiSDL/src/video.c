@@ -32,10 +32,11 @@ void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_
     dstrect_x = dstrect->x, dstrect_y = dstrect->y;
   }
 
-  for (int row = dstrect_y, src_row = srcrect_y; src_row < srcrect_y + srcrect_h; src_row++, row++) {
-    for (int column = dstrect_x, src_column = srcrect_x; src_column < srcrect_x + srcrect_w; src_column++, column++) {
-      dst_pixels[row*dst_w + column] = src_pixels[src_row*src_w + src_column];
-    }
+  int rows; // has copid rows
+  for (rows = 0; rows < srcrect_h; rows++) {
+    memcpy(dst->pixels + (rows + dstrect_y) * dst->pitch + dstrect_x * dst->format->BytesPerPixel, // pointer to dst rect current coping row first pixel
+           src->pixels + (rows + srcrect_y) * src->pitch + srcrect_x * src->format->BytesPerPixel, // pointer to src rect current coping row first pixel
+           srcrect_w * src->format->BytesPerPixel); // size
   }
 }
 

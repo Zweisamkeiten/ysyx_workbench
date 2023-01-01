@@ -84,7 +84,7 @@ INCFLAGS += $(addprefix -I, $(INC_PATH))
 
 CFLAGS   += -O2 -MMD $(INCFLAGS) -static -D__NAVY__ \
             -D__ISA__=\"$(ISA)\" -D__ISA_$(shell echo $(ISA) | tr a-z A-Z)__ \
-            -fno-asynchronous-unwind-tables -fno-builtin -fno-stack-protector
+            -fno-asynchronous-unwind-tables -fno-builtin -fno-stack-protector -g -ggdb3
 CXXFLAGS +=  $(CFLAGS) -ffreestanding -fno-rtti -fno-exceptions
 ASFLAGS  +=  $(CFLAGS)
 
@@ -122,7 +122,7 @@ libs:
 ### Rule (link): objects (`*.o`) and libraries (`*.a`) -> `$(APP)`, the final ELF binary to be packed into application (ld)
 $(APP): $(OBJS) libs
 	@echo + LD "->" $(shell realpath $@ --relative-to .)
-	@$(LD) $(LDFLAGS) -o $@ $(WL)--start-group $(LINKAGE) $(WL)--end-group
+	@$(LD) -g -Og $(LDFLAGS) -o $@ $(WL)--start-group $(LINKAGE) $(WL)--end-group
 
 ### Rule (archive): objects (`*.o`) -> `ARCHIVE.a` (ar)
 $(ARCHIVE): $(OBJS) libs
@@ -166,7 +166,7 @@ $(CLEAN_ALL):
 .PHONY: clean-all $(CLEAN_ALL)
 
 ### Build fsimg and ramdisk for Nanos-lite
-APPS = nslider menu nterm
+APPS = nslider menu nterm bird
 TESTS = dummy hello file-test timer-test event-test bmp-test fixedptc-test
 
 fsimg: $(addprefix apps/, $(APPS)) $(addprefix tests/, $(TESTS))
