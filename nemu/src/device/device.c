@@ -48,6 +48,7 @@ void device_update() {
   // SDL_PollEvent 轮询当前未决事件
   // return 1 if there is a pending event or 0 if there are no available
   while (SDL_PollEvent(&event)) {
+    printf("event.type: %d\n", event.type);
     switch (event.type) {
       case SDL_QUIT:
         nemu_state.state = NEMU_QUIT;
@@ -57,7 +58,6 @@ void device_update() {
       case SDL_KEYDOWN:
       case SDL_KEYUP: {
         uint8_t k = event.key.keysym.scancode;
-        printf("%d\n", k);
         bool is_keydown = (event.key.type == SDL_KEYDOWN);
         send_key(k, is_keydown);
         break;
