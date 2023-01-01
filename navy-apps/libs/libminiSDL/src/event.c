@@ -18,6 +18,7 @@ int SDL_PollEvent(SDL_Event *ev) {
   ev->key.keysym.sym = SDLK_NONE;
 
   if (NDL_PollEvent(buf, sizeof(buf))) {
+    printf("%s", buf);
     if (strncmp(buf, "ku", 2) == 0) {
       ev->type = SDL_KEYUP;
       ev->key.type = SDL_KEYUP;
