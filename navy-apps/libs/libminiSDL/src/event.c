@@ -4,6 +4,8 @@
 
 #define keyname(k) #k,
 
+static uint8_t keyboardState[SDLK_NR] = {};
+
 static const char *keyname[] = {
   "NONE",
   _KEYS(keyname)
@@ -33,6 +35,7 @@ int SDL_PollEvent(SDL_Event *ev) {
     for (int i = 0; i < SDLK_NR; i++) {
       if (strcmp(key_code, keyname[i]) == 0) {
         ev->key.keysym.sym = i;
+        keyboardState[i] = ev->key.type == SDL_KEYDOWN ? 1 : 0;
       }
     }
 
@@ -75,6 +78,6 @@ int SDL_PeepEvents(SDL_Event *ev, int numevents, int action, uint32_t mask) {
 }
 
 uint8_t* SDL_GetKeyState(int *numkeys) {
-  TODO();
-  return NULL;
+  if (numkeys != NULL) *numkeys = SDLK_NR;
+  return keyboardState;
 }
