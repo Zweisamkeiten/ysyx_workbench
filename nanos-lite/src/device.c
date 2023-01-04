@@ -14,56 +14,23 @@ static const char *keyname[256] __attribute__((used)) = {
   AM_KEYS(NAME)
 };
 
-static int screen_w = 0;
-static int screen_h = 0;
-
 size_t serial_write(const void *buf, size_t offset, size_t len) {
-  size_t written = 0;
-  while (written < len) {
-    putch(*((char *)(buf) + written));
-    written++;
-  }
-  return written;
+  return 0;
 }
 
 size_t events_read(void *buf, size_t offset, size_t len) {
-  AM_INPUT_KEYBRD_T ev = io_read(AM_INPUT_KEYBRD);
-
-  if (ev.keycode == AM_KEY_NONE) return 0;
-
-  size_t read_n = 0;
-  if (ev.keydown) {
-    read_n += snprintf(buf, 3, "kd "); // keydown
-  } else {
-    read_n += snprintf(buf, 3, "ku "); // keyup
-  }
-
-  read_n += sprintf(buf + read_n, "%s\n", keyname[ev.keycode]);
-
-  return read_n;
+  return 0;
 }
 
-/* 合法的 `/proc/dispinfo`文件例子如下:
-   WIDTH : 640
-   HEIGHT: 480
-*/
 size_t dispinfo_read(void *buf, size_t offset, size_t len) {
-  return sprintf(buf, "WIDTH: %d\nHEIGHT: %d\n", screen_w, screen_h);
+  return 0;
 }
 
 size_t fb_write(const void *buf, size_t offset, size_t len) {
-  size_t pixel_offset = offset / 4; // 00RRGGBB 4 byte
-  int x = pixel_offset % screen_w;
-  int y = pixel_offset / screen_w;
-  io_write(AM_GPU_FBDRAW, x, y, (void *)buf, len / 4, 1, true);
-  return len;
+  return 0;
 }
 
 void init_device() {
   Log("Initializing devices...");
   ioe_init();
-
-  screen_w = io_read(AM_GPU_CONFIG).width;
-  screen_h = io_read(AM_GPU_CONFIG).height;
-  printf("width = %d, height = %d\n", screen_w, screen_h);
 }

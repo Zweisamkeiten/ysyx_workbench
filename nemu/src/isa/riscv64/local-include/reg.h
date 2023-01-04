@@ -19,24 +19,32 @@
 #include <common.h>
 
 static inline int check_reg_idx(int idx) {
-  IFDEF(CONFIG_RT_CHECK, assert(idx >= 0 && idx < 32));
+  extern int nr_regs;
+  IFDEF(CONFIG_RT_CHECK, assert(idx >= 0 && idx < nr_regs));
   return idx;
 }
 
-static inline int check_csr_addr(int addr) {
-  IFDEF(CONFIG_RT_CHECK, assert(addr >= 0 && addr < 4096));
-  return addr;
-}
-
 #define gpr(idx) (cpu.gpr[check_reg_idx(idx)])
-#define csr(addr) (cpu.csr[check_csr_addr(addr)])
+#define csr(idx) (cpu.csr[check_reg_idx(idx) - 32]) // csr idx bigger than 32;
 
-typedef enum {
-  MSTATUS = 0x300,
-  MTVEC = 0x305,
-  MEPC = 0x341,
-  MCAUSE = 0x342
-} csr_addr;
+enum {
+  MSTATUS,
+  MTVEC,
+  MEPC,
+  MCAUSE,
+  NR_CSRS
+};
+
+static inline int get_csr_idx(int csr_addr) {
+  extern const int csrs_addr[];
+  for (int i = 0; i < NR_CSRS; i++) {
+    if (csr_addr == csrs_addr[i]) {
+      return i;
+    }
+  }
+
+  panic("unknown csr addr;\n");
+}
 
 static inline const char* reg_name(int idx, int width) {
   extern const char* regs[];

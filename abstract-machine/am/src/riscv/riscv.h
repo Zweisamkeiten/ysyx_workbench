@@ -21,9 +21,6 @@ static inline void outl(uintptr_t addr, uint32_t data) { *(volatile uint32_t *)a
 #define PTE_D 0x80
 
 enum { MODE_U, MODE_S, MODE_M = 3 };
-
-enum { Ex_ECALL_FROM_M_MODE = 11 };
-
 #define MSTATUS_MXR  (1 << 19)
 #define MSTATUS_SUM  (1 << 18)
 
