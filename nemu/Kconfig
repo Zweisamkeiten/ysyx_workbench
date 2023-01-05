@@ -177,7 +177,7 @@ config FTRACE
 config FTRACE_COND
   depends on FTRACE
   string "Only trace function when the condition is true"
-  default "false"
+  default "true"
 
 config DTRACE
   depends on TRACE && TARGET_NATIVE_ELF && ENGINE_INTERPRETER && DEVICE
@@ -187,6 +187,16 @@ config DTRACE
 config DTRACE_COND
   depends on DTRACE
   string "Only trace device when the condition is true"
+  default "true"
+
+config ETRACE
+  depends on TRACE && TARGET_NATIVE_ELF && ENGINE_INTERPRETER && DEVICE
+  bool "Enable expection tracer"
+  default y
+
+config ETRACE_COND
+  depends on ETRACE
+  string "Only trace expection when the condition is true"
   default "true"
 
 config DIFFTEST

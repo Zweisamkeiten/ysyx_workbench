@@ -1,5 +1,10 @@
-#HAS_NAVY = 1
+HAS_NAVY = 1
 RAMDISK_FILE = build/ramdisk.img
+# CONFIG_STRACE = 1
+
+ifeq ($(CONFIG_STRACE), 1)
+CFLAGS += -DCONFIG_STRACE
+endif
 
 NAME = nanos-lite
 SRCS = $(shell find -L ./src/ -name "*.c" -o -name "*.cpp" -o -name "*.S")

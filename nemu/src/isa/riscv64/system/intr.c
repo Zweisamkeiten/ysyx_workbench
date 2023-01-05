@@ -24,6 +24,26 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   cpu.csr[MEPC] = epc;
   cpu.csr[MCAUSE] = NO;
 
+#ifdef CONFIG_ETRACE
+  if (ETRACE_COND) log_write(ANSI_FMT("[ETRACE] Exception occurs at pc [", ANSI_FG_CYAN)
+                             ANSI_FMT(FMT_WORD , ANSI_FG_RED)
+                             ANSI_FMT("] Exception code: ", ANSI_FG_CYAN)
+                             ANSI_FMT("%lu\t", ANSI_FG_RED)
+                             ANSI_FMT("and pc trap into [", ANSI_FG_CYAN)
+                             ANSI_FMT(FMT_WORD, ANSI_FG_RED)
+                             ANSI_FMT("]", ANSI_FG_CYAN)
+                             , epc, NO, cpu.csr[MTVEC]);
+  printf(ANSI_FMT("[ETRACE] Exception occurs at pc [", ANSI_FG_CYAN)
+         ANSI_FMT(FMT_WORD , ANSI_FG_RED)
+         ANSI_FMT("] Exception code: ", ANSI_FG_CYAN)
+         ANSI_FMT("%lu\t", ANSI_FG_RED)
+         ANSI_FMT("and pc trap into [", ANSI_FG_CYAN)
+         ANSI_FMT(FMT_WORD, ANSI_FG_RED)
+         ANSI_FMT("]", ANSI_FG_CYAN)
+         "\n"
+         , epc, NO, cpu.csr[MTVEC]);
+#endif
+
   return cpu.csr[MTVEC];
 }
 

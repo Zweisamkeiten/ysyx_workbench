@@ -40,6 +40,8 @@ static void restart() {
   /* The zero register is always 0. */
   cpu.gpr[0] = 0;
 
+  // riscv64 mstatus initial 0xa00001800;
+  cpu.csr[MSTATUS] = 0xa00001800;
 }
 
 void init_isa() {

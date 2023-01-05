@@ -11,9 +11,13 @@ module ysyx_22050710_exu (
   input   [2:0] i_Branch,
   input   [2:0] i_MemOP, input i_MemtoReg,
   input   [63:0] i_rdata,
+  input   [3:0] i_EXctr,
+  input   i_is_invalid_inst,
+  input   i_sel_csr,
   output  [63:0] o_ALUresult,
   output  [63:0] o_nextpc,
-  output  [63:0] o_busW
+  output  [63:0] o_GPRbusW,
+  output  [63:0] o_CSRbusW
 );
 
   wire PCAsrc, PCBsrc;
@@ -52,7 +56,7 @@ module ysyx_22050710_exu (
     .key(i_ALUctr),
     .lut({
       5'b00010, signed_Less,
-      5'b01010, unsigned_Less
+      5'b00011, unsigned_Less
     })
   );
   wire signed_Less = overflow == 0
@@ -130,27 +134,27 @@ module ysyx_22050710_exu (
     .out(aluresult),
     .key(i_ALUctr),
     .lut({
-      5'b00011, copy_result,
+      5'b01111, copy_result,
       5'b00000, adder_result,
+      5'b00001, sub_result,
       5'b00010, signed_Less == 1 ? 64'b1 : 64'b0, // slt
-      5'b01010, unsigned_Less == 1 ? 64'b1 : 64'b0, // sltu
-      5'b01000, sub_result,
+      5'b00011, unsigned_Less == 1 ? 64'b1 : 64'b0, // sltu
       5'b00100, xor_result,
-      5'b00111, and_result,
+      5'b00101, and_result,
       5'b00110, or_result,
-      5'b00001, sll_result,
-      5'b00101, srl_result,
-      5'b01101, sra_result,
-      5'b11100, signed_mul_result,
-      5'b11011, signed_div_result,
-      5'b11010, unsigned_div_result,
-      5'b11101, signed_rem_result,
-      5'b11001, unsigned_rem_result
+      5'b00111, sll_result,
+      5'b01000, srl_result,
+      5'b01001, sra_result,
+      5'b01010, signed_mul_result,
+      5'b01011, signed_div_result,
+      5'b01100, unsigned_div_result,
+      5'b01101, signed_rem_result,
+      5'b01110, unsigned_rem_result
     })
   );
 
   wire [63:0] rdata;
-  assign o_busW = i_MemtoReg ? rdata : o_ALUresult;
+  assign o_GPRbusW = i_MemtoReg ? rdata : (i_sel_csr ? i_rs2 : o_ALUresult);
   MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(64)) u_mux5 (
     .out(rdata),
     .key(i_MemOP),
@@ -165,8 +169,18 @@ module ysyx_22050710_exu (
     })
   );
 
-  always @(i_ALUctr) begin
-    if (i_ALUctr == 5'b11111) set_state_abort(); // invalid inst
-    if (i_ALUctr == 5'b11110) set_state_end(); // ebreak
+  reg [63:0] CSRbusW;
+  assign o_CSRbusW = CSRbusW;
+  always @(*) begin
+    CSRbusW = 64'b0;
+    case (i_EXctr)
+      4'b1110: set_state_end(); // ebreak
+      4'b0000: CSRbusW = src_a;
+      default:;
+    endcase
+  end
+
+  always @(i_is_invalid_inst) begin
+      if (i_is_invalid_inst) set_state_abort(); // invalid inst
   end
 endmodule

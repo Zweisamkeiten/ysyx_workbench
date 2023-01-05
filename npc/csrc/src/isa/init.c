@@ -4,6 +4,8 @@
 // this is not consistent with uint8_t
 // but it is ok since we do not access the array directly
 static const uint32_t img [] = {
+  0x02000793,
+  0x30579073,
   // bug load inst write to itself
   0x00009117,  // auipc sp, 0x9
   0x00812103, // lw sp, 8(sp)
