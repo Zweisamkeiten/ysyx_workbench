@@ -13,13 +13,14 @@ static const char *keyname[] = {
 void __am_input_keybrd(AM_INPUT_KEYBRD_T *kbd) {
   char buf[64];
   kbd->keycode = AM_KEY_NONE;
+  kbd->keydown = 0;
 
   if (NDL_PollEvent(buf, sizeof(buf))) {
     char *event_type = strtok(buf, " ");
-    if (strcmp(event_type, "ku") == 0) {
-      kbd->keydown = 0;
-    } else if (strcmp(event_type, "kd") == 0) {
+    if (strcmp(event_type, "kd") == 0) {
       kbd->keydown = 1;
+    } else {
+      kbd->keydown = 0;
     }
 
     char *key_code = event_type + strlen(event_type) + 1;
