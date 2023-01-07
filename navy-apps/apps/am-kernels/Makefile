@@ -3,7 +3,7 @@ ifeq ($(wildcard $(AM_KERNELS_PATH)/tests/am-tests/src),)
   $(error Please set $$AM_KERNELS_PATH in the Makefile to a valid path of an am-kernels repo)
 endif
 
-BENCHMARKS = coremark dhrystone
+BENCHMARKS = coremark dhrystone microbench
 KERNELS    = typing-game
 APP_PATH   = $(AM_KERNELS_PATH)/$(if $(findstring $(1), $(BENCHMARKS)),benchmarks,kernels)/$(1)
 
@@ -18,6 +18,6 @@ libam: ;
 endif
 
 default $(MAKECMDGOALS): libam
-	-for f in $(ALL_PATH); do AM_HOME=$(NAVY_HOME) LIBS=libam $(MAKE) -C $$f $(MAKECMDGOALS); done
+	-for f in $(ALL_PATH); do AM_HOME=$(NAVY_HOME) LIBS=libam $(MAKE) -C $$f mainargs=$(mainargs) $(MAKECMDGOALS); done
 
 .PHONY: libam default $(MAKECMDGOALS)

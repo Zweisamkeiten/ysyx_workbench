@@ -16,6 +16,8 @@ static const char *keyname[256] __attribute__((used)) = {
 
 static int screen_w = 0;
 static int screen_h = 0;
+static bool audio_present = false;
+static int audio_bufsize = 0;
 
 size_t serial_write(const void *buf, size_t offset, size_t len) {
   size_t written = 0;
@@ -59,11 +61,38 @@ size_t fb_write(const void *buf, size_t offset, size_t len) {
   return len;
 }
 
+size_t sb_write(const void *buf, size_t offset, size_t len) {
+
+}
+
+size_t sbctl_read(void *buf, size_t offset, size_t len) {
+  assert(len == 1 * 4);
+
+  assert(offset == 0);
+}
+
+size_t sbctl_write(const void *buf, size_t offset, size_t len) {
+  assert(len == 3 * 4);
+
+  assert(offset == 0);
+
+  int * write_data = (int *)buf;
+
+  io_write(AM_AUDIO_CTRL, write_data[0], write_data[1], write_data[2]);
+
+  return len;
+}
+
 void init_device() {
   Log("Initializing devices...");
   ioe_init();
 
-  screen_w = io_read(AM_GPU_CONFIG).width;
-  screen_h = io_read(AM_GPU_CONFIG).height;
+  AM_GPU_CONFIG_T gpu_info = io_read(AM_GPU_CONFIG);
+  screen_w = gpu_info.width;
+  screen_h = gpu_info.height;
   printf("width = %d, height = %d\n", screen_w, screen_h);
+
+  AM_AUDIO_CONFIG_T audio_info = io_read(AM_AUDIO_CONFIG);
+  audio_present = audio_info.present;
+  audio_bufsize = audio_info.bufsize;
 }
