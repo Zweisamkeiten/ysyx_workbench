@@ -109,6 +109,7 @@ int NDL_Init(uint32_t flags) {
     printf("\033[32mNDL_INIT: WIDTH: %d, HEIGHT: %d" "\33[0m\n", screen_w, screen_h);
     canvas_w = screen_w;
     canvas_h = screen_h;
+    close(dispdev);
   }
 
   fbdev = open("/dev/fb", 0, 0);
