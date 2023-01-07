@@ -65,6 +65,7 @@ void NDL_OpenCanvas(int *w, int *h) {
 }
 
 void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
+
   assert(canvas_w != 0 && canvas_h != 0);
 
   assert(fbdev != -1);
