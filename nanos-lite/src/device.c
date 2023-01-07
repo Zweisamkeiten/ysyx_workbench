@@ -50,7 +50,8 @@ size_t events_read(void *buf, size_t offset, size_t len) {
    HEIGHT: 480
 */
 size_t dispinfo_read(void *buf, size_t offset, size_t len) {
-  return sprintf(buf, "WIDTH: %d\nHEIGHT: %d\n", screen_w, screen_h);
+  sprintf(buf, "WIDTH: %d\nHEIGHT: %d\n", screen_w, screen_h);
+  return 0; // open_offset always == 0
 }
 
 size_t fb_write(const void *buf, size_t offset, size_t len) {
@@ -63,12 +64,15 @@ size_t fb_write(const void *buf, size_t offset, size_t len) {
 
 size_t sb_write(const void *buf, size_t offset, size_t len) {
 
+  return 0; // open_offset always == 0
 }
 
 size_t sbctl_read(void *buf, size_t offset, size_t len) {
   assert(len == 1 * 4);
 
   assert(offset == 0);
+
+  return 0; // open_offset always == 0
 }
 
 size_t sbctl_write(const void *buf, size_t offset, size_t len) {
@@ -80,7 +84,7 @@ size_t sbctl_write(const void *buf, size_t offset, size_t len) {
 
   io_write(AM_AUDIO_CTRL, write_data[0], write_data[1], write_data[2]);
 
-  return len;
+  return 0; // open_offset always == 0
 }
 
 void init_device() {
