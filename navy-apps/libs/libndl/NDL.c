@@ -65,7 +65,6 @@ void NDL_OpenCanvas(int *w, int *h) {
 }
 
 void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
-
   assert(canvas_w != 0 && canvas_h != 0);
 
   assert(fbdev != -1);
@@ -110,7 +109,6 @@ int NDL_Init(uint32_t flags) {
     printf("\033[32mNDL_INIT: WIDTH: %d, HEIGHT: %d" "\33[0m\n", screen_w, screen_h);
     canvas_w = screen_w;
     canvas_h = screen_h;
-    close(dispdev);
   }
 
   fbdev = open("/dev/fb", 0, 0);

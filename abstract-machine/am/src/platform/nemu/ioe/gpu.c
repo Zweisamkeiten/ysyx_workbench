@@ -3,8 +3,6 @@
 
 #define SYNC_ADDR (VGACTL_ADDR + 4)
 
-static int w;
-
 void __am_gpu_init() {
   // int i;
   // int w = io_read(AM_GPU_CONFIG).width;  // TODO: get the correct width
@@ -12,7 +10,6 @@ void __am_gpu_init() {
   // uint32_t *fb = (uint32_t *)(uintptr_t)FB_ADDR;
   // for (i = 0; i < w * h; i ++) fb[i] = i;
   // outl(SYNC_ADDR, 1);
-  w = io_read(AM_GPU_CONFIG).width;
 }
 
 void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
@@ -25,6 +22,7 @@ void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
 }
 
 void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
+  int w = io_read(AM_GPU_CONFIG).width;
   uint32_t *fb = (uint32_t *)(uintptr_t)FB_ADDR;
   uint32_t *pixels = ctl->pixels;
   for (int row = ctl->y; row < ctl->y + ctl->h; row++) {
