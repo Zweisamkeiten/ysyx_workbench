@@ -12,7 +12,7 @@ typedef struct {
   size_t open_offset;
 } Finfo;
 
-enum {FD_STDIN, FD_STDOUT, FD_STDERR, FD_FB, FD_SB, FD_SBCTL};
+enum {FD_STDIN, FD_STDOUT, FD_STDERR, FD_FB};
 
 size_t invalid_read(void *buf, size_t offset, size_t len) {
   panic("should not reach here");
@@ -28,9 +28,6 @@ extern size_t serial_write(const void *buf, size_t offset, size_t len);
 extern size_t events_read(void *buf, size_t offset, size_t len);
 extern size_t dispinfo_read(void *buf, size_t offset, size_t len);
 extern size_t fb_write(const void *buf, size_t offset, size_t len);
-extern size_t sb_write(const void *buf, size_t offset, size_t len);
-extern size_t sbctl_read(void *buf, size_t offset, size_t len);
-extern size_t sbctl_write(const void *buf, size_t offset, size_t len);
 
 /* This is the information about all files in disk. */
 static Finfo file_table[] __attribute__((used)) = {
@@ -38,8 +35,6 @@ static Finfo file_table[] __attribute__((used)) = {
   [FD_STDOUT] = {"stdout", 0, 0, invalid_read, serial_write},
   [FD_STDERR] = {"stderr", 0, 0, invalid_read, serial_write},
   [FD_FB]     = {"/dev/fb", 0, 0, invalid_read, fb_write},
-  [FD_SB]     = {"/dev/sb", 0, 0, invalid_read, sb_write},
-  [FD_SBCTL]  = {"/dev/sbctl", 0, 0, sbctl_read, sbctl_write},
 
   {"/dev/events", 0, 0, events_read, invalid_write},
   {"/proc/dispinfo", 0, 0, dispinfo_read, invalid_write},
@@ -115,7 +110,7 @@ size_t fs_write(int fd, const void *buf, size_t len) {
 size_t fs_lseek(int fd, size_t offset, int whence) {
   assert(0 <= fd && fd < NR_FILES);
 
-  if (fd <= 2 || fd == FD_SB || fd == FD_SBCTL) {
+  if (fd <= 2) {
     return -1;
   }
 

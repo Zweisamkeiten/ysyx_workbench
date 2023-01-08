@@ -1,7 +1,6 @@
 #include <am.h>
 #include <sys/time.h>
 #include <time.h>
-#include <stdio.h>
 
 static struct timeval boot_time = {};
 

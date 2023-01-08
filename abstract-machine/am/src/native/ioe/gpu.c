@@ -1,7 +1,6 @@
 #include <am.h>
 #include <SDL2/SDL.h>
 #include <fenv.h>
-#include <assert.h>
 
 //#define MODE_800x600
 #ifdef MODE_800x600
@@ -21,21 +20,11 @@
 
 static SDL_Window *window = NULL;
 static SDL_Surface *surface = NULL;
-// static SDL_Surface *screen = NULL;
 
 static Uint32 texture_sync(Uint32 interval, void *param) {
-  // SDL_BlitScaled(surface, NULL, screen, NULL);
-  // printf("%p\n", window);
-  // SDL_UpdateWindowSurface(window);
-  // printf("123\n");
-  // SDL_GetWindowSurface(window);
-  // printf("123\n");
-  // assert(window);
-  printf("123\n");
   SDL_BlitScaled(surface, NULL, SDL_GetWindowSurface(window), NULL);
   SDL_UpdateWindowSurface(window);
-  printf("123\n");
-  return 1000;
+  return interval;
 }
 
 void __am_gpu_init() {
@@ -47,9 +36,7 @@ void __am_gpu_init() {
 #else
       W * 2, H * 2,
 #endif
-      SDL_WINDOW_SHOWN);
-  // screen = SDL_GetWindowSurface(window);
-  // SDL_UpdateWindowSurface(window);
+      SDL_WINDOW_OPENGL);
   surface = SDL_CreateRGBSurface(SDL_SWSURFACE, W, H, 32,
       RMASK, GMASK, BMASK, AMASK);
   SDL_AddTimer(1000 / FPS, texture_sync, NULL);
@@ -76,5 +63,4 @@ void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
   SDL_Rect rect = { .x = x, .y = y };
   SDL_BlitSurface(s, NULL, surface, &rect);
   SDL_FreeSurface(s);
-  SDL_UpdateWindowSurface(window);
 }

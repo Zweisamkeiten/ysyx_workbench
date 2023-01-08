@@ -10,16 +10,13 @@
 #define AUDIO_COUNT_ADDR     (AUDIO_ADDR + 0x14)
 
 static int write_point = 0; // 读写队列 读的结尾, 写的开头
-static int sbufsize = 0;
 
 void __am_audio_init() {
-  sbufsize = inl(AUDIO_SBUF_SIZE_ADDR);
 }
 
 void __am_audio_config(AM_AUDIO_CONFIG_T *cfg) {
   cfg->present = inl(AUDIO_INIT_ADDR);
   cfg->bufsize = inl(AUDIO_SBUF_SIZE_ADDR);
-  sbufsize = cfg->bufsize;
 }
 
 void __am_audio_ctrl(AM_AUDIO_CTRL_T *ctrl) {
@@ -34,6 +31,7 @@ void __am_audio_status(AM_AUDIO_STATUS_T *stat) {
 
 static void audio_write(uint8_t *buf, int len) {
   int nwrite = 0;
+  int sbufsize = inl(AUDIO_SBUF_SIZE_ADDR);
   while (nwrite < len) {
     int count = inl(AUDIO_COUNT_ADDR);
     int free = sbufsize - count;

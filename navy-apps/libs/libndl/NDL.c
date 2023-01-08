@@ -14,8 +14,6 @@ static int canvas_w = 0, canvas_h = 0;
 static uint32_t boot_time = 0;
 static int eventsdev = -1;
 static int dispdev = -1;
-static int sbdev = -1;
-static int sbctldev = -1;
 
 uint32_t NDL_GetTicks() {
   struct timeval now;
@@ -81,30 +79,17 @@ void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
 }
 
 void NDL_OpenAudio(int freq, int channels, int samples) {
-  assert(sbctldev != -1);
-
-  int buf[3] = {freq, channels, samples};
-  write(sbctldev, buf, sizeof(buf));
 }
 
 void NDL_CloseAudio() {
-  close(sbdev);
-  close(sbctldev);
 }
 
 int NDL_PlayAudio(void *buf, int len) {
-  assert(sbdev != -1);
-
-  write(sbdev, buf, len);
-  return len;
+  return 0;
 }
 
 int NDL_QueryAudio() {
-  assert(sbctldev != -1);
-
-  int free_size = 0;
-  read(sbctldev, &free_size, sizeof(free_size));
-  return free_size;
+  return 0;
 }
 
 int NDL_Init(uint32_t flags) {
@@ -128,10 +113,6 @@ int NDL_Init(uint32_t flags) {
   }
 
   fbdev = open("/dev/fb", 0, 0);
-
-  sbdev = open("/dev/sb", 0, 0);
-
-  sbctldev = open("/dev/sbctl", 0, 0);
 
   return 0;
 }

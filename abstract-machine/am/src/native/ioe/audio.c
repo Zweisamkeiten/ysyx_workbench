@@ -6,8 +6,8 @@
 
 static int rfd = -1, wfd = -1;
 static volatile int count = 0;
-// static int write_point = 0;
-// static int read_point = 0;
+static int write_point = 0;
+static int read_point = 0;
 static uint8_t *sbuf = NULL;
 
 void __am_audio_init() {
@@ -19,38 +19,14 @@ void __am_audio_init() {
   sbuf = (uint8_t *)malloc(0x10000);
 }
 
-static void audio_play(void *userdata, uint8_t *stream, int len) {
-  int nread = len;
-  if (count < len) nread = count;
-  int b = 0;
-  while (b < nread) {
-    int n = read(rfd, stream, nread);
-    if (n > 0) b += n;
-  }
-
-  count -= nread;
-  if (len > nread) {
-    memset(stream + nread, 0, len - nread);
-  }
-}
 // static void audio_play(void *userdata, uint8_t *stream, int len) {
 //   int nread = len;
 //   if (count < len) nread = count;
 //   int b = 0;
 //   while (b < nread) {
-//     int size = (count < nread) ? count : nread;
-//     // printf("read_point: %d\n", read_point);
-//     int read_to_end = 0x10000 - read_point; // 读入点距离缓冲区末尾的距离
-//     if (read_to_end > nread) {
-//       memcpy(stream, sbuf + read_point, size);
-//       read_point += size;
-//     } else {
-//       memcpy(stream, sbuf + read_point, read_to_end);
-//       read_point = 0;
-//       memcpy(stream + read_to_end, sbuf + read_point, size - read_to_end);
-//       read_point = size - read_to_end;
-//     }
-//     b += size;
+//     int n = read(rfd, stream, nread);
+//     printf("read: %d\n", n);
+//     if (n > 0) b += n;
 //   }
 
 //   count -= nread;
@@ -58,37 +34,63 @@ static void audio_play(void *userdata, uint8_t *stream, int len) {
 //     memset(stream + nread, 0, len - nread);
 //   }
 // }
+static void audio_play(void *userdata, uint8_t *stream, int len) {
+  int nread = len;
+  if (count < len) nread = count;
+  int b = 0;
+  while (b < nread) {
+    int size = (count < nread) ? count : nread;
+    // printf("read_point: %d\n", read_point);
+    int read_to_end = 0x10000 - read_point; // 读入点距离缓冲区末尾的距离
+    if (read_to_end > nread) {
+      memcpy(stream, sbuf + read_point, size);
+      read_point += size;
+    } else {
+      memcpy(stream, sbuf + read_point, read_to_end);
+      read_point = 0;
+      memcpy(stream + read_to_end, sbuf + read_point, size - read_to_end);
+      read_point = size - read_to_end;
+    }
+    b += size;
+  }
 
-static void audio_write(uint8_t *buf, int len) {
-  int nwrite = 0;
-  while (nwrite < len) {
-    int n = write(wfd, buf, len);
-    if (n == -1) n = 0;
-    count += n;
-    nwrite += n;
+  count -= nread;
+  if (len > nread) {
+    memset(stream + nread, 0, len - nread);
   }
 }
+
 // static void audio_write(uint8_t *buf, int len) {
 //   int nwrite = 0;
-//   int sbufsize = 0x10000;
 //   while (nwrite < len) {
-//     int free = sbufsize - count;
-//     if (free > len) {
-//       int free_to_end = sbufsize - write_point; // 写入点距离缓冲区末尾的空闲空间
-//       if (free_to_end >= len) {
-//         memcpy(sbuf + write_point, buf, len);
-//         write_point += len;
-//       } else {
-//         memcpy(sbuf + write_point, buf, free_to_end);
-//         write_point = 0;
-//         memcpy(sbuf + write_point, buf + free_to_end, len - free_to_end);
-//         write_point = len - free_to_end;
-//       }
-//       count += len;
-//       nwrite += len;
-//     }
+//     int n = write(wfd, buf, len);
+//     printf("write: %d\n", n);
+//     if (n == -1) n = 0;
+//     count += n;
+//     nwrite += n;
 //   }
 // }
+static void audio_write(uint8_t *buf, int len) {
+  int nwrite = 0;
+  int sbufsize = 0x10000;
+  while (nwrite < len) {
+    int free = sbufsize - count;
+    if (free > len) {
+      int free_to_end = sbufsize - write_point; // 写入点距离缓冲区末尾的空闲空间
+      if (free_to_end >= len) {
+        memcpy(sbuf + write_point, buf, len);
+        write_point += len;
+      } else {
+        memcpy(sbuf + write_point, buf, free_to_end);
+        write_point = 0;
+        memcpy(sbuf + write_point, buf + free_to_end, len - free_to_end);
+        write_point = len - free_to_end;
+      }
+      count += len;
+      nwrite += len;
+    }
+  }
+}
 
 void __am_audio_ctrl(AM_AUDIO_CTRL_T *ctrl) {
   SDL_AudioSpec s = {};
