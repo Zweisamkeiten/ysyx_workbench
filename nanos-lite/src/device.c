@@ -18,8 +18,10 @@ static int screen_w = 0;
 static int screen_h = 0;
 static bool audio_present = false;
 static int audio_bufsize = 0;
+static void * audio_sbuf = NULL;
 
 size_t serial_write(const void *buf, size_t offset, size_t len) {
+  assert(buf != NULL);
   size_t written = 0;
   while (written < len) {
     putch(*((char *)(buf) + written));
@@ -29,6 +31,7 @@ size_t serial_write(const void *buf, size_t offset, size_t len) {
 }
 
 size_t events_read(void *buf, size_t offset, size_t len) {
+  assert(buf != NULL);
   AM_INPUT_KEYBRD_T ev = io_read(AM_INPUT_KEYBRD);
 
   if (ev.keycode == AM_KEY_NONE) return 0;
@@ -50,11 +53,14 @@ size_t events_read(void *buf, size_t offset, size_t len) {
    HEIGHT: 480
 */
 size_t dispinfo_read(void *buf, size_t offset, size_t len) {
+  assert(buf != NULL);
   sprintf(buf, "WIDTH: %d\nHEIGHT: %d\n", screen_w, screen_h);
+
   return 0; // open_offset always == 0
 }
 
 size_t fb_write(const void *buf, size_t offset, size_t len) {
+  assert(buf != NULL);
   size_t pixel_offset = offset / 4; // 00RRGGBB 4 byte
   int x = pixel_offset % screen_w;
   int y = pixel_offset / screen_w;
@@ -63,19 +69,28 @@ size_t fb_write(const void *buf, size_t offset, size_t len) {
 }
 
 size_t sb_write(const void *buf, size_t offset, size_t len) {
+  io_write(AM_AUDIO_PLAY, (void *)buf);
 
   return 0; // open_offset always == 0
 }
 
 size_t sbctl_read(void *buf, size_t offset, size_t len) {
+  assert(buf != NULL);
+
   assert(len == 1 * 4);
 
   assert(offset == 0);
+
+  AM_AUDIO_STATUS_T audio_status = io_read(AM_AUDIO_STATUS);
+
+  *(int *)buf = audio_status.count;
 
   return 0; // open_offset always == 0
 }
 
 size_t sbctl_write(const void *buf, size_t offset, size_t len) {
+  assert(buf != NULL);
+
   assert(len == 3 * 4);
 
   assert(offset == 0);
