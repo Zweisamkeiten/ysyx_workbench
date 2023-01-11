@@ -108,6 +108,7 @@ size_t fs_write(int fd, const void *buf, size_t len) {
     return written_n;
   } else {
     // vfs api
+    printf("%d\n", fd);
     size_t nwrite = file_table[fd].write(buf, file_table[fd].disk_offset + file_table[fd].open_offset, len);
     file_table[fd].open_offset += nwrite;
     return nwrite;
