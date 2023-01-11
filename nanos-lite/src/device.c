@@ -71,9 +71,6 @@ size_t sb_write(const void *buf, size_t offset, size_t len) {
   assert(buf != NULL);
   Area sbuf = {.start = (void *)buf, .end = (void *)buf + len};
 
-  assert(0);
-  printf("%d\n", len);
-
   io_write(AM_AUDIO_PLAY, sbuf);
 
   return 0; // open_offset always == 0
