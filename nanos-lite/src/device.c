@@ -68,7 +68,8 @@ size_t fb_write(const void *buf, size_t offset, size_t len) {
 }
 
 size_t sb_write(const void *buf, size_t offset, size_t len) {
-  io_write(AM_AUDIO_PLAY, (void *)buf);
+  // void * sbuf = (void *)buf;
+  // io_write(AM_AUDIO_PLAY, sbuf);
 
   return 0; // open_offset always == 0
 }
@@ -82,7 +83,7 @@ size_t sbctl_read(void *buf, size_t offset, size_t len) {
 
   AM_AUDIO_STATUS_T audio_status = io_read(AM_AUDIO_STATUS);
 
-  *(int *)buf = audio_status.count;
+  snprintf((char *)buf, len, "%d", audio_status.count);
 
   return 0; // open_offset always == 0
 }
