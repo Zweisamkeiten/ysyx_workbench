@@ -16,7 +16,6 @@ void CallbackHelper() {
   if (now - last_time > interval) {
     int len = device.format / 8 * device.samples;
     int query = NDL_QueryAudio();
-    printf("%d\n", query);
     if (query > len) {
       uint8_t * stream = (uint8_t *)malloc(len);
       device.callback(device.userdata, stream, len);
