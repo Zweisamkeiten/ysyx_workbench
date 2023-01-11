@@ -22,6 +22,7 @@ void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
     .width = size >> 16, .height = size & 0xFFFF,
     .vmemsz = 0
   };
+  w = cfg->width;
 }
 
 void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
