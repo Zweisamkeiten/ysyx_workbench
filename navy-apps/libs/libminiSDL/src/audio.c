@@ -11,6 +11,7 @@ void CallbackHelper() {
 
   static uint32_t last_time = 0;
   static uint32_t now = 0;
+  printf("123\n");
 
   now = SDL_GetTicks();
   if (now - last_time > interval) {
