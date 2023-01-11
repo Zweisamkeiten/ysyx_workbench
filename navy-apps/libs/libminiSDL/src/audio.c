@@ -14,6 +14,7 @@ void CallbackHelper() {
 
   now = SDL_GetTicks();
   if (now - last_time > interval) {
+    printf("123\n");
     int len = device.format / 8 * device.samples;
     int query = NDL_QueryAudio();
     if (query > len) {
