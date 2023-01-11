@@ -79,8 +79,6 @@ size_t sb_write(const void *buf, size_t offset, size_t len) {
 size_t sbctl_read(void *buf, size_t offset, size_t len) {
   assert(buf != NULL);
 
-  assert(len == 1 * 4);
-
   assert(offset == 0);
 
   AM_AUDIO_STATUS_T audio_status = io_read(AM_AUDIO_STATUS);
