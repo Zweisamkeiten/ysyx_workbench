@@ -82,9 +82,10 @@ size_t sbctl_read(void *buf, size_t offset, size_t len) {
   assert(offset == 0);
 
   AM_AUDIO_STATUS_T audio_status = io_read(AM_AUDIO_STATUS);
-  printf("%d\n", audio_status.count);
 
-  snprintf((char *)buf, len, "%d", audio_status.count);
+  int free = audio_bufsize - audio_status.count;
+
+  snprintf((char *)buf, len, "%d", free);
 
   return 0; // open_offset always == 0
 }
