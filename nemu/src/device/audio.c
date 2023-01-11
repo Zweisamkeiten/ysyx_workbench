@@ -42,6 +42,7 @@ static void audio_play(void *userdata, uint8_t *stream, int len) {
   int nread = len;
   if (count < len) nread = count;
   int b = 0;
+  printf("len: %d\n", len);
   while (b < nread) {
     int size = (count < nread) ? count : nread;
     // printf("read_point: %d\n", read_point);
