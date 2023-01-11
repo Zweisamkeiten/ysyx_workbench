@@ -95,6 +95,7 @@ void NDL_CloseAudio() {
 int NDL_PlayAudio(void *buf, int len) {
   assert(sbdev != -1);
 
+  printf("123\n");
   write(sbdev, buf, len);
   return len;
 }
