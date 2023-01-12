@@ -13,5 +13,6 @@ endif
 NAME = libam
 SRCS = $(shell find ./src -name "*.c" -o -name "*.cpp")
 LIB_DEP = libndl
+CFLAGS += -DMAINARGS=\"$(mainargs)\"
 .PHONY: $(NAVY_HOME)/libs/libam/src/trm.cpp
 include $(NAVY_HOME)/Makefile

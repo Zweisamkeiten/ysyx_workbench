@@ -24,6 +24,7 @@ void halt(int code) {
   // while(1); // for the kernel/hello an unfinished loop
 }
 
+#ifdef __ISA_NATIVE__
 void _trm_init() __attribute__((constructor));
 void _trm_init() {
   // set up the AM heap
@@ -34,3 +35,4 @@ void _trm_init() {
   int ret = main(mainargs);
   halt(ret);
 }
+#endif

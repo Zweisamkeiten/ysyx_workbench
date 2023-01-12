@@ -5,5 +5,3 @@ CFLAGS  += -fno-pic -march=mips32 -EL \
 					 -mno-llsc -mno-imadd -mno-mad
 CFLAGS  += -D_LDBL_EQ_DBL
 LDFLAGS += -e_start -EL -Ttext-segment $(LNK_ADDR)
-
-CFLAGS += -DMAINARGS=\"$(mainargs)\"
