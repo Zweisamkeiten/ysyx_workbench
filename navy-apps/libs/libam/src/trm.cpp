@@ -27,6 +27,7 @@ void halt(int code) {
 void _trm_init() __attribute__((constructor));
 void _trm_init() {
   // set up the AM heap
+  printf("hhhhhhhhhhhhhhhhhhhhhhhh\n");
   _heap_start = malloc(PMEM_SIZE);
   heap = RANGE(_heap_start, (uint8_t *)_heap_start + PMEM_SIZE);
 
