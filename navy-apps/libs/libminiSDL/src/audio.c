@@ -9,8 +9,11 @@ static SDL_AudioSpec device;
 void CallbackHelper() {
   if (is_locked == false) return;
 
+  static bool reenter_flag = false;
   static uint32_t last_time = 0;
   static uint32_t now = 0;
+
+  if (reenter_flag) return;
 
   now = SDL_GetTicks();
   if (now - last_time > interval) {
@@ -19,7 +22,9 @@ void CallbackHelper() {
     int query = NDL_QueryAudio();
     if (query > len) {
       uint8_t * stream = (uint8_t *)malloc(len);
+      reenter_flag = !reenter_flag;
       device.callback(device.userdata, stream, len);
+      reenter_flag = !reenter_flag;
       NDL_PlayAudio(stream, len);
       free(stream);
     }
