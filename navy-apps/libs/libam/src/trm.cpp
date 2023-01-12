@@ -5,11 +5,9 @@
 
 int main(const char *args);
 Area heap;
-
-#define PMEM_START (void *)0x1000000  // for nanos-lite with vme disabled
-#define PMEM_SIZE (128 * 1024 * 1024) // 128MB
-static int pmem_fd = 0;
-static void *pmem = NULL;
+extern uint8_t _end;
+void *_heap_start = &_end;
+#define PMEM_SIZE (128 * 1024 * 1024)
 
 #ifndef MAINARGS
 #define MAINARGS ""
@@ -28,16 +26,8 @@ void halt(int code) {
 
 void _trm_init() __attribute__((constructor));
 void _trm_init() {
-  pmem_fd = memfd_create("pmem", 0);
-  assert(pmem_fd != -1);
-  assert(0 == ftruncate(pmem_fd, PMEM_SIZE));
-
-  pmem = mmap(PMEM_START, PMEM_SIZE, PROT_READ | PROT_WRITE | PROT_EXEC,
-      MAP_SHARED | MAP_FIXED, pmem_fd, 0);
-  assert(pmem != (void *)-1);
-
   // set up the AM heap
-  heap = RANGE(pmem, (uint8_t *)pmem + PMEM_SIZE);
+  heap = RANGE(_heap_start, (uint8_t *)_heap_start + PMEM_SIZE);
 
   int ret = main(mainargs);
   halt(ret);

@@ -19,10 +19,10 @@ void CallbackHelper() {
     if (query > len) {
       uint8_t * stream = (uint8_t *)malloc(len);
       device.callback(device.userdata, stream, len);
-      last_time = now;
       NDL_PlayAudio(stream, len);
       free(stream);
     }
+    last_time = now;
   }
 }
 
