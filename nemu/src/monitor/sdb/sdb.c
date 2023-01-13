@@ -204,6 +204,7 @@ static struct {
   { "p", "eval the expression", cmd_p },
   { "w", "set a new watchpoint", cmd_w },
   { "d", "delete a watchpoint", cmd_d },
+  { "b", "delete a watchpoint", cmd_d },
 
 };
 

@@ -1,7 +1,6 @@
 #include <NDL.h>
 #include <SDL.h>
 #include <stdlib.h>
-#include <string.h>
 #include <SDL_wave.h>
 
 static uint32_t interval = 0;
@@ -19,6 +18,7 @@ void CallbackHelper() {
 
   now = SDL_GetTicks();
   if (now - last_time > interval) {
+    // 空间 = 一个采样点的大小 * 采样点数量 = 样本格式((format & 0xff) / 8) * 通道数 * 采样点数量
     int len = (device.format & 0xff) / 8 * device.samples * device.channels;
     int query = NDL_QueryAudio();
     if (query > len) {
@@ -34,7 +34,6 @@ void CallbackHelper() {
 }
 
 int SDL_OpenAudio(SDL_AudioSpec *desired, SDL_AudioSpec *obtained) {
-  printf("%d\n", desired->channels);
   NDL_OpenAudio(desired->freq, desired->channels, desired->samples);
 
   interval = desired->samples / desired->freq; // freq = 每秒采样个数, samples = 用户每次需要采样数量
@@ -60,9 +59,9 @@ void SDL_PauseAudio(int pause_on) {
 void SDL_MixAudio(uint8_t *dst, uint8_t *src, uint32_t len, int volume) {
   int multiple = SDL_MIX_MAXVOLUME / volume;
 
-  uint32_t format_len = len / (device.format & 0xff);
+  uint32_t samples_len = len / ((device.format & 0xff) / 8);
 
-  for (int i = 0; i < format_len; i++) {
+  for (int i = 0; i < samples_len; i++) {
     switch (device.format) {
       case AUDIO_U8: {
         uint8_t * dstp = (uint8_t *)dst + i;
@@ -92,7 +91,6 @@ void SDL_MixAudio(uint8_t *dst, uint8_t *src, uint32_t len, int volume) {
         int16_t * srcp = (int16_t *)src + i;
         int32_t data = ((int32_t)*srcp / multiple + (int32_t)*dstp);
 
-        assert(data < 32767 && data > -32767);
         data = data > 32767 ? 32767 : data;
         data = data < -32767 ? -32767 : data;
         *dstp = (int16_t)data;

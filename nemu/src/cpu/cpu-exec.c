@@ -65,7 +65,11 @@ void add_pair_to_table(sym_str_table * table, sym_str_pair pair) {
   table->n_pairs = table->n_pairs + 1;
 }
 
+static bool is_ftrace_inited = false;
+
 void init_func_sym_str_table() {
+  if (is_ftrace_inited == true) return;
+
   Elf_Shdr *shdr = (Elf_Shdr *)&elf_mem_p[ehdr->e_shoff];
 
   // the first section header is null
@@ -90,6 +94,8 @@ void init_func_sym_str_table() {
       break;
     }
   }
+
+  is_ftrace_inited = true;
 }
 
 char * check_is_func_call(word_t pc) {
