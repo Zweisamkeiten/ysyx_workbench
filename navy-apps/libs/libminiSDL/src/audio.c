@@ -19,7 +19,7 @@ void CallbackHelper() {
 
   now = SDL_GetTicks();
   if (now - last_time > interval) {
-    int len = device.format / 8 * device.samples;
+    int len = (device.format & 0xff) / 8 * device.samples * device.channels;
     int query = NDL_QueryAudio();
     if (query > len) {
       uint8_t * stream = (uint8_t *)malloc(len);
@@ -34,6 +34,7 @@ void CallbackHelper() {
 }
 
 int SDL_OpenAudio(SDL_AudioSpec *desired, SDL_AudioSpec *obtained) {
+  printf("%d\n", desired->channels);
   NDL_OpenAudio(desired->freq, desired->channels, desired->samples);
 
   interval = desired->samples / desired->freq; // freq = 每秒采样个数, samples = 用户每次需要采样数量
@@ -57,14 +58,57 @@ void SDL_PauseAudio(int pause_on) {
 }
 
 void SDL_MixAudio(uint8_t *dst, uint8_t *src, uint32_t len, int volume) {
-  int multiple = volume / SDL_MIX_MAXVOLUME;
+  int multiple = SDL_MIX_MAXVOLUME / volume;
 
-  for (int i = 0; i < len; i++) {
+  uint32_t format_len = len / (device.format & 0xff);
+
+  for (int i = 0; i < format_len; i++) {
     switch (device.format) {
-      case AUDIO_U8:
-        dst = (uint8_t)(((uint8_t *)src) * volume);
-      case AUDIO_S8:
-        (uint8_t *)dst = (uint8_t *)src * volume;
+      case AUDIO_U8: {
+        uint8_t * dstp = (uint8_t *)dst + i;
+        uint8_t * srcp = (uint8_t *)src + i;
+        uint8_t data = (*srcp / multiple + *dstp);
+        *dstp = data;
+        break;
+      }
+      case AUDIO_S8: {
+        int8_t * dstp = (int8_t *)dst + i;
+        int8_t * srcp = (int8_t *)src + i;
+        int16_t data = ((int16_t)*srcp / multiple + (int16_t)*dstp);
+        data = data > 127 ? 127 : data;
+        data = data < -127 ? -127 : data;
+        *dstp = (int8_t)data;
+        break;
+      }
+      case AUDIO_U16: {
+        uint16_t * dstp = (uint16_t *)dst + i;
+        uint16_t * srcp = (uint16_t *)src + i;
+        uint16_t data = (*srcp / multiple + *dstp);
+        *dstp = data;
+        break;
+      }
+      case AUDIO_S16: {
+        int16_t * dstp = (int16_t *)dst + i;
+        int16_t * srcp = (int16_t *)src + i;
+        int32_t data = ((int32_t)*srcp / multiple + (int32_t)*dstp);
+
+        assert(data < 32767 && data > -32767);
+        data = data > 32767 ? 32767 : data;
+        data = data < -32767 ? -32767 : data;
+        *dstp = (int16_t)data;
+        break;
+      }
+      case AUDIO_S32: {
+        int32_t * dstp = (int32_t *)dst + i;
+        int32_t * srcp = (int32_t *)src + i;
+        int64_t data = ((int64_t)*srcp / multiple + (int64_t)*dstp);
+        data = data > 2147483647 ? 2147483647 : data;
+        data = data < -2147483647 ? -2147483647 : data;
+        *dstp = (int32_t)data;
+        break;
+      }
+      default:
+        fprintf(stderr, "Unexpected %u-bit PCM data format", (unsigned int)(device.format));
     }
   }
 }
@@ -101,7 +145,9 @@ SDL_AudioSpec *SDL_LoadWAV(const char *file, SDL_AudioSpec *spec, uint8_t **audi
 
   spec->size = wavefile.data.subchunk2Size;
   *audio_buf = malloc(spec->size);
-  memcpy(*audio_buf, wavefile.data.data, spec->size);
+  assert(*audio_buf);
+  fread(*audio_buf, spec->size, 1, fp);
+  fclose(fp);
 
   *audio_len = spec->size;
 

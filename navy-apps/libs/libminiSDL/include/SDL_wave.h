@@ -24,7 +24,6 @@ typedef struct WaveData {
   char subchunk2ID[4];  /* Contains the letters "data" (0x64617461 big-endian
                            form). */
   Uint32 subchunk2Size; /* == NumSamples * NumChannels * BitsPerSample/8  */
-  void *data;           /* The actual sound data. */
 } WaveData;
 
 typedef struct WaveFile {
