@@ -1,6 +1,7 @@
 #include <NDL.h>
 #include <SDL.h>
 #include <stdlib.h>
+#include <SDL_wave.h>
 
 static uint32_t interval = 0;
 static bool is_locked = 0;
@@ -56,16 +57,103 @@ void SDL_PauseAudio(int pause_on) {
 }
 
 void SDL_MixAudio(uint8_t *dst, uint8_t *src, uint32_t len, int volume) {
-  TODO();
+  int multiple = SDL_MIX_MAXVOLUME / volume;
+
+  uint32_t samples_len = len / ((device.format & 0xff) / 8);
+
+  for (int i = 0; i < samples_len; i++) {
+    switch (device.format) {
+      case AUDIO_U8: {
+        uint8_t * dstp = (uint8_t *)dst + i;
+        uint8_t * srcp = (uint8_t *)src + i;
+        uint8_t data = (*srcp / multiple + *dstp);
+        *dstp = data;
+        break;
+      }
+      case AUDIO_S8: {
+        int8_t * dstp = (int8_t *)dst + i;
+        int8_t * srcp = (int8_t *)src + i;
+        int16_t data = ((int16_t)*srcp / multiple + (int16_t)*dstp);
+        data = data > 127 ? 127 : data;
+        data = data < -127 ? -127 : data;
+        *dstp = (int8_t)data;
+        break;
+      }
+      case AUDIO_U16: {
+        uint16_t * dstp = (uint16_t *)dst + i;
+        uint16_t * srcp = (uint16_t *)src + i;
+        uint16_t data = (*srcp / multiple + *dstp);
+        *dstp = data;
+        break;
+      }
+      case AUDIO_S16: {
+        int16_t * dstp = (int16_t *)dst + i;
+        int16_t * srcp = (int16_t *)src + i;
+        int32_t data = ((int32_t)*srcp / multiple + (int32_t)*dstp);
+
+        data = data > 32767 ? 32767 : data;
+        data = data < -32767 ? -32767 : data;
+        *dstp = (int16_t)data;
+        break;
+      }
+      case AUDIO_S32: {
+        int32_t * dstp = (int32_t *)dst + i;
+        int32_t * srcp = (int32_t *)src + i;
+        int64_t data = ((int64_t)*srcp / multiple + (int64_t)*dstp);
+        data = data > 2147483647 ? 2147483647 : data;
+        data = data < -2147483647 ? -2147483647 : data;
+        *dstp = (int32_t)data;
+        break;
+      }
+      default:
+        fprintf(stderr, "Unexpected %u-bit PCM data format", (unsigned int)(device.format));
+    }
+  }
 }
 
 SDL_AudioSpec *SDL_LoadWAV(const char *file, SDL_AudioSpec *spec, uint8_t **audio_buf, uint32_t *audio_len) {
-  TODO();
-  return NULL;
+  FILE * fp = fopen(file, "rb");
+  WaveFile wavefile;
+  fread(&wavefile, sizeof(WaveFile), 1, fp);
+
+  spec->freq = wavefile.format.sampleRate;
+  spec->channels = wavefile.format.numChannels;
+  spec->samples = 4096;       /* Good default buffer size */
+
+  switch (wavefile.format.audioFormat) {
+    case PCM_CODE:
+      switch (wavefile.format.bitsPerSample) {
+        case 8:
+          spec->format = AUDIO_U8;
+          break;
+        case 16:
+          spec->format = AUDIO_S16;
+          break;
+        case 24: /* Has been shifted to 32 bits. */
+        case 32:
+          spec->format = AUDIO_S32LSB;
+          break;
+        default:
+          /* Just in case something unexpected happened in the checks. */
+          fprintf(stderr, "Unexpected %u-bit PCM data format", (unsigned int)(wavefile.format.bitsPerSample));
+          return NULL;
+      }
+      break;
+  }
+
+  spec->size = wavefile.data.subchunk2Size;
+  *audio_buf = malloc(spec->size);
+  assert(*audio_buf);
+  fread(*audio_buf, spec->size, 1, fp);
+  fclose(fp);
+
+  *audio_len = spec->size;
+
+  return spec;
 }
 
 void SDL_FreeWAV(uint8_t *audio_buf) {
-  TODO();
+  free(audio_buf);
 }
 
 void SDL_LockAudio() {
