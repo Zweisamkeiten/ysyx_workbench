@@ -1,6 +1,8 @@
 #include <NDL.h>
 #include <SDL.h>
 #include <stdlib.h>
+#include <string.h>
+#include <SDL_wave.h>
 
 static uint32_t interval = 0;
 static bool is_locked = 0;
@@ -55,16 +57,59 @@ void SDL_PauseAudio(int pause_on) {
 }
 
 void SDL_MixAudio(uint8_t *dst, uint8_t *src, uint32_t len, int volume) {
-  TODO();
+  int multiple = volume / SDL_MIX_MAXVOLUME;
+
+  for (int i = 0; i < len; i++) {
+    switch (device.format) {
+      case AUDIO_U8:
+        dst = (uint8_t)(((uint8_t *)src) * volume);
+      case AUDIO_S8:
+        (uint8_t *)dst = (uint8_t *)src * volume;
+    }
+  }
 }
 
 SDL_AudioSpec *SDL_LoadWAV(const char *file, SDL_AudioSpec *spec, uint8_t **audio_buf, uint32_t *audio_len) {
-  TODO();
-  return NULL;
+  FILE * fp = fopen(file, "rb");
+  WaveFile wavefile;
+  fread(&wavefile, sizeof(WaveFile), 1, fp);
+
+  spec->freq = wavefile.format.sampleRate;
+  spec->channels = wavefile.format.numChannels;
+  spec->samples = 4096;       /* Good default buffer size */
+
+  switch (wavefile.format.audioFormat) {
+    case PCM_CODE:
+      switch (wavefile.format.bitsPerSample) {
+        case 8:
+          spec->format = AUDIO_U8;
+          break;
+        case 16:
+          spec->format = AUDIO_S16;
+          break;
+        case 24: /* Has been shifted to 32 bits. */
+        case 32:
+          spec->format = AUDIO_S32LSB;
+          break;
+        default:
+          /* Just in case something unexpected happened in the checks. */
+          fprintf(stderr, "Unexpected %u-bit PCM data format", (unsigned int)(wavefile.format.bitsPerSample));
+          return NULL;
+      }
+      break;
+  }
+
+  spec->size = wavefile.data.subchunk2Size;
+  *audio_buf = malloc(spec->size);
+  memcpy(*audio_buf, wavefile.data.data, spec->size);
+
+  *audio_len = spec->size;
+
+  return spec;
 }
 
 void SDL_FreeWAV(uint8_t *audio_buf) {
-  TODO();
+  free(audio_buf);
 }
 
 void SDL_LockAudio() {
