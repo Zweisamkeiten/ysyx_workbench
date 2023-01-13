@@ -19,6 +19,7 @@
 #include <readline/history.h>
 #include "memory/paddr.h"
 #include "sdb.h"
+#include <cpu/difftest.h>
 
 static int is_batch_mode = false;
 
@@ -186,6 +187,18 @@ static int cmd_d(char *args) {
   return 0;
 }
 
+static int cmd_detach(char *args) {
+  difftest_detach();
+  Log(ANSI_FMT("Difftest mode exited.", ANSI_FG_GREEN));
+  return 0;
+}
+
+static int cmd_attach(char *args) {
+  difftest_attach();
+  Log(ANSI_FMT("Difftest mode entered.", ANSI_FG_GREEN));
+  return 0;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -204,6 +217,8 @@ static struct {
   { "p", "eval the expression", cmd_p },
   { "w", "set a new watchpoint", cmd_w },
   { "d", "delete a watchpoint", cmd_d },
+  { "detach", "exit difftest mode", cmd_detach },
+  { "attach", "enter difftest mode", cmd_attach },
 
 };
 
