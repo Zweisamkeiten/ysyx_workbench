@@ -189,11 +189,13 @@ static int cmd_d(char *args) {
 
 static int cmd_detach(char *args) {
   difftest_detach();
+  Log(ANSI_FMT("Difftest mode exited.", ANSI_FG_GREEN));
   return 0;
 }
 
 static int cmd_attach(char *args) {
   difftest_attach();
+  Log(ANSI_FMT("Difftest mode entered.", ANSI_FG_GREEN));
   return 0;
 }
 
