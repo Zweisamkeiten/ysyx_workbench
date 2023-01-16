@@ -93,7 +93,6 @@ static int cmd_si(char *args) {
     *invalid = NULL;
     uint64_t steps = strtoull(steps_str, invalid, 10);
     if (*steps_str != '\0' && **invalid == '\0') {
-      printf("%ld\n", steps);
       cpu_exec(steps);
       free(invalid);
       return 0;
