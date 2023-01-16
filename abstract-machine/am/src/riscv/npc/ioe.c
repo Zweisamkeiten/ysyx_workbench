@@ -30,10 +30,8 @@ static void *lut[128] = {
 static void fail(void *buf) { panic("access nonexist register"); }
 
 bool ioe_init() {
-  for (int i = 0; i < LENGTH(lut); i++) {
-    putch(42);
+  for (int i = 0; i < LENGTH(lut); i++)
     if (!lut[i]) lut[i] = fail;
-  }
   __am_gpu_init();
   __am_timer_init();
   return true;
