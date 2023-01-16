@@ -5,7 +5,6 @@
 #include <assert.h>
 #include <time.h>
 #include "syscall.h"
-#include <stdio.h>
 
 // helper macros
 #define _concat(x, y) x ## y
@@ -57,9 +56,7 @@ intptr_t _syscall_(intptr_t type, intptr_t a0, intptr_t a1, intptr_t a2) {
 }
 
 void _exit(int status) {
-  printf("123\n");
   _syscall_(SYS_execve, (intptr_t)"/bin/menu", NULL, NULL);
-  printf("465\n");
   _syscall_(SYS_exit, status, 0, 0);
   while (1);
 }
