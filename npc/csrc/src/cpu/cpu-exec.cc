@@ -261,7 +261,7 @@ void cpu_exec(uint64_t n) {
              : (npc_state.halt_ret == 0
                     ? ANSI_FMT("HIT GOOD TRAP", ANSI_FG_GREEN)
                     : ANSI_FMT("HIT BAD TRAP", ANSI_FG_RED))),
-        snpc);
+        npc_state.halt_pc);
     // fall through
   case NPC_QUIT: break;
   }
