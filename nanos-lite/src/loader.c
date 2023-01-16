@@ -29,8 +29,9 @@
 #endif
 
 static uintptr_t loader(PCB *pcb, const char *filename) {
-  printf("%s\n", filename);
   int fd = fs_open(filename, 0, 0);
+  printf("%s\n", filename);
+  printf("%d\n", fd);
   Elf_Ehdr elf;
   fs_read(fd, &elf, sizeof(Elf_Ehdr));
 
@@ -66,6 +67,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
   }
 
   free(phdr);
+  fs_close(fd);
 
   return elf.e_entry;
 }
