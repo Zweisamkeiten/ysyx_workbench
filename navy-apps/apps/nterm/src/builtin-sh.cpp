@@ -80,6 +80,8 @@ static void sh_handle_cmd(const char *cmd) {
         break;
       }
     }
+    printf("cmd: %s\n", cmd);
+    execve(cmd, NULL, NULL);
   } else {
     for (i = 0; i < NR_CMD; i ++) {
       if (strncmp(cmd, cmd_table[i].command, args - cmd - 1) == 0) {

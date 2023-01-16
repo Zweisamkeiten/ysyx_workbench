@@ -236,6 +236,7 @@ ssize_t write(int fd, const void *buf, size_t count) {
 
 int execve(const char *filename, char *const argv[], char *const envp[]) {
   char newpath[512];
+  printf("%s\n", redirect_path(newpath, filename));
   glibc_execve(redirect_path(newpath, filename), argv, envp);
   return -1;
 }
