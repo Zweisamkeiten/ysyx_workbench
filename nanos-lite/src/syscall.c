@@ -1,5 +1,6 @@
 #include <common.h>
 #include "fs.h"
+#include "proc.h"
 #include "syscall.h"
 #include <sys/stat.h>
 #include <sys/time.h>
@@ -179,7 +180,13 @@ uint64_t sys_signal(void) {
 }
 
 uint64_t sys_execve(void) {
-  TODO();
+  const char * fname = (const char *)a[1];
+
+  extern void naive_uload(PCB *pcb, const char *filename);
+  naive_uload(NULL, fname);
+
+  // on success, execve() does not return, on error -1 is returned.
+  return -1;
 }
 
 uint64_t sys_fork(void) {
