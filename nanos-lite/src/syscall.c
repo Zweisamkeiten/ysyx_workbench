@@ -97,12 +97,25 @@ void do_syscall(Context *c) {
   printf("\033[93m" "STACE: " "\33[0m");
   switch (num) {
     case SYS_exit: printf("\033[93m%s(status: %d)" "\33[0m", syscall_name_table[num], a[1]); break;
+    case SYS_yield: printf("\033[93m%s()" "\33[0m", syscall_name_table[num]); break;
     case SYS_open: printf("\033[93m%s(pathname: %s, flags: %d, mode: %d)" "\33[0m", syscall_name_table[num], (const char *)a[1], a[2], a[3]); break;
     case SYS_read: printf("\033[93m%s(fd: %d\33[0m" "\033[34m(filename: %s)\33[0m" "\033[93m, buf: %p, count: %d)\33[0m", syscall_name_table[num], a[1], trans_fd_to_filename(a[1]), (void *)a[2], a[3]); break;
     case SYS_write: printf("\033[93m%s(fd: %d\33[0m" "\033[34m(filename: %s)\33[0m" "\033[93m, buf: %p, count: %d)\33[0m", syscall_name_table[num], a[1], trans_fd_to_filename(a[1]), (void *)a[2], a[3]); break;
+    case SYS_kill: printf("\033[93m%s()" "not implemented" "\33[0m", syscall_name_table[num]); break;
+    case SYS_getpid: printf("\033[93m%s()" "not implemented" "\33[0m", syscall_name_table[num]); break;
     case SYS_close: printf("\033[93m%s(fd: %d\33[0m" "\033[34m(filename: %s)\33[0m" "\033[93m)\33[0m", syscall_name_table[num], a[1], trans_fd_to_filename(a[1])); break;
     case SYS_lseek: printf("\033[93m%s(fd: %d\33[0m" "\033[34m(filename: %s)\33[0m" "\033[93m, offset: %d, whence: %d)\33[0m", syscall_name_table[num], a[1], trans_fd_to_filename(a[1]), a[2], a[3]); break;
-    default: printf("\033[93m" "%s()" "\33[0m", syscall_name_table[num]); break;
+    case SYS_brk: printf("\033[93m%s()" "\33[0m", syscall_name_table[num]); break;
+    case SYS_fstat: printf("\033[93m%s()" "not implemented" "\33[0m", syscall_name_table[num]); break;
+    case SYS_time: printf("\033[93m%s()" "not implemented" "\33[0m", syscall_name_table[num]); break;
+    case SYS_signal: printf("\033[93m%s()" "not implemented" "\33[0m", syscall_name_table[num]); break;
+    case SYS_execve: printf("\033[93m%s(\33[0m" "\033[34m(fname: %s)\33[0m" "\033[93m, argv: %p, env: %p)\33[0m", syscall_name_table[num], a[1], a[2], a[3]); break;
+    case SYS_fork: printf("\033[93m%s()" "not implemented" "\33[0m", syscall_name_table[num]); break;
+    case SYS_link: printf("\033[93m%s()" "not implemented" "\33[0m", syscall_name_table[num]); break;
+    case SYS_unlink: printf("\033[93m%s()" "not implemented" "\33[0m", syscall_name_table[num]); break;
+    case SYS_wait: printf("\033[93m%s()" "not implemented" "\33[0m", syscall_name_table[num]); break;
+    case SYS_times: printf("\033[93m%s()" "not implemented" "\33[0m", syscall_name_table[num]); break;
+    case SYS_gettimeofday: printf("\033[93m%s(timeval: %p, timezone: %p)" "\33[0m", syscall_name_table[num], a[1], a[2]); break;
   }
   printf("\033[93m" " = %ld" "\33[0m\n", c->GPRx); // return value
   #endif
