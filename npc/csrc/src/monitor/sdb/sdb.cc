@@ -89,11 +89,11 @@ static int cmd_si(char *args) {
   char *steps_str = strtok(args, " ");
 
   if (steps_str != NULL) {
-    printf("%s\n", steps_str);
     char **invalid = (char **)malloc(sizeof(char *));
     *invalid = NULL;
     uint64_t steps = strtoull(steps_str, invalid, 10);
     if (*steps_str != '\0' && **invalid == '\0') {
+      printf("%ld\n", steps);
       cpu_exec(steps);
       free(invalid);
       return 0;
