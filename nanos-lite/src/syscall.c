@@ -224,10 +224,10 @@ uint64_t sys_times(void) {
 
 uint64_t sys_gettimeofday(void) {
   struct timeval *tv = (struct timeval *)a[1];
-  // struct timezone *tz = (struct timezone *)a[2];
+  struct timezone *tz = (struct timezone *)a[2];
 
   // The use of the timezone structure is obsolete; the tz argument should normally be specified as NULL.
-  // assert(tz == NULL);
+  assert(tz == NULL);
 
   uint64_t us = io_read(AM_TIMER_UPTIME).us;
   tv->tv_sec = us / 1000000;
