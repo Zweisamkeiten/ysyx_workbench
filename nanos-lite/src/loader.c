@@ -65,6 +65,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
   }
 
   free(phdr);
+  fs_close(fd);
 
   return elf.e_entry;
 }
