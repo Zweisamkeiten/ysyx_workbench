@@ -89,6 +89,7 @@ static int cmd_si(char *args) {
   char *steps_str = strtok(args, " ");
 
   if (steps_str != NULL) {
+    printf("%s\n", steps_str);
     char **invalid = (char **)malloc(sizeof(char *));
     *invalid = NULL;
     uint64_t steps = strtoull(steps_str, invalid, 10);
