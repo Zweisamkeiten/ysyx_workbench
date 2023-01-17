@@ -45,19 +45,20 @@ extern "C" void set_csr_ptr(const svOpenArrayHandle r) {
 
 extern "C" void npc_pmem_read(long long raddr, long long *rdata) {
   // 总是读取地址为`raddr & ~0x7ull`的8字节返回给`rdata`
-  *rdata = paddr_read(raddr & ~0x7ull, 8);
-  // printf("%llx\n", *rdata);
+  word_t addr = raddr & ~0x7ull;
+  *rdata = paddr_read(addr, 8);
 }
 
 extern "C" void npc_pmem_write(long long waddr, long long wdata, char wmask) {
   // 总是往地址为`waddr & ~0x7ull`的8字节按写掩码`wmask`写入`wdata`
   // `wmask`中每比特表示`wdata`中1个字节的掩码,
   // 如`wmask = 0x3`代表只写入最低2个字节, 内存中的其它字节保持不变
-  switch ((unsigned char)wmask) {
-    case 0x1: paddr_write(waddr & ~0x7ull, 1, wdata); break;
-    case 0x3: paddr_write(waddr & ~0x7ull, 2, wdata); break;
-    case 0xf: paddr_write(waddr & ~0x7ull, 4, wdata); break;
-    default: paddr_write(waddr & ~0x7ull, 8, wdata); break;
+  word_t addr = waddr & ~0x7ull;
+  for (int i = 8; i > 0; i--) {
+    if (((wmask >> i) & 0x1) == 0x1) {
+      paddr_write(addr + i, 1, wdata & 0xff);
+      wdata = wdata >> 8;
+    }
   }
 }
 
