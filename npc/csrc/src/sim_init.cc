@@ -47,6 +47,8 @@ extern "C" void npc_pmem_read(long long raddr, long long *rdata) {
   // 总是读取地址为`raddr & ~0x7ull`的8字节返回给`rdata`
   word_t addr = raddr & ~0x7ull;
   *rdata = paddr_read(addr, 8);
+  printf("%lx\n", addr);
+  printf("%llx\n", *rdata);
 }
 
 extern "C" void npc_pmem_write(long long waddr, long long wdata, char wmask) {
@@ -57,7 +59,6 @@ extern "C" void npc_pmem_write(long long waddr, long long wdata, char wmask) {
   for (int i = 7; i >= 0; i--, addr += 1) {
     if (((wmask >> i) & 0x1) == 0x1) {
       paddr_write(addr, 1, wdata & 0xff);
-    printf("%llx\n", wdata & 0xff);
       wdata = wdata >> 8;
     }
   }
