@@ -5,6 +5,7 @@
 #include <string.h>
 
 char handle_key(SDL_Event *ev);
+static char ** builtin_envp = NULL;
 
 static void sh_printf(const char *format, ...) {
   static char buf[256] = {};
@@ -73,6 +74,7 @@ static void sh_handle_cmd(const char *cmd) {
   if (cmd[0] == '\n') return;
   const char *args = strchrnul(cmd, ' ') + 1;
   int i;
+
   if (*(args - 2) == '\n') {
     for (i = 0; i < NR_CMD; i ++) {
       if (strncmp(cmd, cmd_table[i].command, args - 2 - cmd) == 0) {
@@ -80,8 +82,6 @@ static void sh_handle_cmd(const char *cmd) {
         break;
       }
     }
-    printf("cmd: %s\n", cmd);
-    execve(cmd, NULL, NULL);
   } else {
     for (i = 0; i < NR_CMD; i ++) {
       if (strncmp(cmd, cmd_table[i].command, args - cmd - 1) == 0) {
@@ -91,12 +91,27 @@ static void sh_handle_cmd(const char *cmd) {
     }
   }
 
-  if (i == NR_CMD) { sh_printf("sh: command not found: %s", cmd); }
+  const char *exec_argv[3];
+  exec_argv[0] = NULL;
+  exec_argv[1] = NULL;
+  exec_argv[2] = NULL;
+
+  int n = 0;
+  for (char *str = (char *)cmd; n < 3; str = NULL, n++) {
+    exec_argv[n] = strtok(str, " \n");
+    if (exec_argv[n] == NULL) break;
+  }
+
+  execve(exec_argv[0], (char**)exec_argv, (char**)builtin_envp);
+
+  if (i == NR_CMD) { sh_printf("sh: command not found: %s\n", cmd); }
 }
 
-void builtin_sh_run() {
+void builtin_sh_run(char *envp[]) {
   sh_banner();
   sh_prompt();
+
+  builtin_envp = envp;
 
   while (1) {
     SDL_Event ev;
