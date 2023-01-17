@@ -13,6 +13,7 @@ module ysyx_22050710_ifu (
 
   always @(posedge i_clk) begin
     if (!i_rst) begin
+      $display(i_pc)
       npc_pmem_read(i_pc, rdata);
     end
   end
