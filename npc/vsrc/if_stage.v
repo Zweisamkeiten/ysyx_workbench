@@ -8,7 +8,7 @@ module ysyx_22050710_ifu (
 );
 
   wire [63:0] rdata;
-  assign o_inst = (rdata >> {i_pc[2], {31{1'b0}}})[31:0];
+  assign o_inst = {rdata >> {i_pc[2], {31{1'b0}}}}[31:0];
   /* assign o_inst = rdata[31:0]; */
   /* assign o_unused = rdata[63:32]; */
 
