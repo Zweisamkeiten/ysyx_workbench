@@ -64,7 +64,9 @@ int fs_open(const char *pathname, int flags, int mode) {
     }
   }
 
-  panic("cant find the pathname");
+  printf("cant find the pathname\n");
+  return 1;
+  // panic("cant find the pathname");
 }
 
 extern size_t ramdisk_read(void *buf, size_t offset, size_t len);
