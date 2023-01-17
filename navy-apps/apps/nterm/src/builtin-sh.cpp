@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <SDL.h>
 #include <string.h>
+#include <stdlib.h>
 
 char handle_key(SDL_Event *ev);
 static char ** builtin_envp = NULL;
