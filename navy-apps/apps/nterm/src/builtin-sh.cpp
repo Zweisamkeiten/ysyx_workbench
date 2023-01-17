@@ -103,8 +103,11 @@ static void sh_handle_cmd(const char *cmd) {
     if (exec_argv[n] == NULL) break;
   }
 
+#ifndef __ISA_NATIVE__
   execvp(exec_argv[0], (char**)exec_argv);
-  // execvpe(exec_argv[0], (char**)exec_argv, (char**)builtin_envp);
+#else
+  execvpe(exec_argv[0], (char**)exec_argv, (char**)builtin_envp);
+#endif
   execve(exec_argv[0], (char**)exec_argv, (char**)builtin_envp);
 
   if (i == NR_CMD) { sh_printf("sh: command not found: %s\n", cmd); }
