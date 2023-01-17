@@ -51,6 +51,7 @@ module ysyx_22050710_idu (
   wire inst_sh     = (opcode[6:0] == 7'b0100011) & (funct3[2:0] == 3'b001);
   wire inst_sw     = (opcode[6:0] == 7'b0100011) & (funct3[2:0] == 3'b010);
   wire inst_addi   = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b000);
+  wire inst_slti   = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b010);
   wire inst_sltiu  = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b011);
   wire inst_xori   = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b100);
   wire inst_ori    = (opcode[6:0] == 7'b0010011) & (funct3[2:0] == 3'b110);
@@ -117,8 +118,9 @@ module ysyx_22050710_idu (
                        };
   wire inst_type_i = |{ // RV32I
                        inst_jalr,   inst_lb,    inst_lh,    inst_lw,    inst_lbu,
-                       inst_lhu,    inst_addi,  inst_sltiu, inst_xori,  inst_ori,
-                       inst_andi,   inst_slli,  inst_srli,  inst_srai,  inst_ebreak,
+                       inst_lhu,    inst_addi,  inst_slti,  inst_sltiu, inst_xori,
+                       inst_ori,    inst_andi,  inst_slli,  inst_srli,  inst_srai,
+                       inst_ebreak,
                        // RV64I
                        inst_lwu,    inst_ld,    inst_addiw, inst_slliw, inst_srliw,
                        inst_sraiw,
@@ -212,7 +214,7 @@ module ysyx_22050710_idu (
                             inst_load,  inst_store, inst_addiw, inst_addw
                             };
   wire alu_sub          = |{inst_sub,   inst_subw};
-  wire alu_signed_less  = |{inst_beq,   inst_bne,   inst_blt,   inst_bge,   inst_slt}; // branch set signed Less || slt rs1, rs2
+  wire alu_signed_less  = |{inst_beq,   inst_bne,   inst_blt,   inst_bge,   inst_slt, inst_slti}; // branch set signed Less || slt rs1, rs2
   wire alu_unsinged_less= |{inst_bltu,  inst_bgeu,  inst_sltiu, inst_sltu}; // branch set unsigned Less || sltu rs1, rs2
   wire alu_xor          = |{inst_xori,  inst_xor};
   wire alu_and          = |{inst_andi,  inst_and};
