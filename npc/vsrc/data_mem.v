@@ -43,7 +43,6 @@ module ysyx_22050710_datamem (
       raddr[3:0] & 4'h3, {rdata[40:0], {24{1'b0}}},
       raddr[3:0] & 4'h4, {rdata[32:0], {32{1'b0}}},
       raddr[3:0] & 4'h5, {rdata[24:0], {40{1'b0}}},
-      raddr[3:0] & 4'h6, {rdata[16:0], {48{1'b0}}},
       raddr[3:0] & 4'h7, {rdata[8:0], {56{1'b0}}}
     })
   );
