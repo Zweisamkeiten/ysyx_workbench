@@ -196,14 +196,15 @@ static void trace_and_difftest(vaddr_t dnpc) {
 void exec_once() {
   cpu.pc = *npcpc;
   // printf("%lx\n", top->o_pc);
+#ifdef CONFIG_ITRACE
+  word_t inst = (cpu.pc & 0xf) == 4 ? *(cpu.inst) >> 32 : (uint32_t)(*(cpu.inst));
+  disassemble_inst_to_buf(itrace_logbuf, 128, (uint8_t *)&inst, cpu.pc, cpu.pc + 4);
+#endif
 #ifdef CONFIG_IRINGTRACE
   last_inst = cpu.inst;
 #endif
   snpc = cpu.pc;
   single_cycle();
-#ifdef CONFIG_ITRACE
-  disassemble_inst_to_buf(itrace_logbuf, 128, (uint8_t *)cpu.inst, cpu.pc, cpu.pc + 4);
-#endif
   cpu.pc = *npcpc;
   trace_and_difftest(cpu.pc);
 }
