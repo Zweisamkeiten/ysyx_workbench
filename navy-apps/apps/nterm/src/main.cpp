@@ -1,11 +1,36 @@
 #include <nterm.h>
 #include <SDL.h>
 #include <SDL_bdf.h>
+#include <vorbis.h>
+
+#define MUSIC_PATH "/share/music/boot.ogg"
+#define SAMPLES 4096
+#define MAX_VOLUME 128
+
+stb_vorbis *v = NULL;
+stb_vorbis_info info = {};
+int is_end = 0;
+int16_t *stream_save = NULL;
+int volume = MAX_VOLUME;
 
 static const char *font_fname = "/share/fonts/Courier-7.bdf";
 static BDF_Font *font = NULL;
 static SDL_Surface *screen = NULL;
 Terminal *term = NULL;
+
+void FillAudio(void *userdata, uint8_t *stream, int len) {
+  int nbyte = 0;
+  int samples_per_channel = stb_vorbis_get_samples_short_interleaved(v,
+      info.channels, (int16_t *)stream, len / sizeof(int16_t));
+  if (samples_per_channel != 0) {
+    int samples = samples_per_channel * info.channels;
+    nbyte = samples * sizeof(int16_t);
+  } else {
+    is_end = 1;
+  }
+  if (nbyte < len) memset(stream + nbyte, 0, len - nbyte);
+  memcpy(stream_save, stream, len);
+}
 
 void builtin_sh_run(char *envp[]);
 void extern_app_run(const char *app_path);
@@ -19,10 +44,45 @@ int main(int argc, char *argv[], char *envp[]) {
   int win_h = font->h * H;
   screen = SDL_SetVideoMode(win_w, win_h, 32, SDL_HWSURFACE);
 
+  FILE *fp = fopen(MUSIC_PATH, "r");
+  assert(fp);
+  fseek(fp, 0, SEEK_END);
+  size_t size = ftell(fp);
+  void *buf = malloc(size);
+  assert(size);
+  fseek(fp, 0, SEEK_SET);
+  int ret = fread(buf, size, 1, fp);
+  assert(ret == 1);
+  fclose(fp);
+
+  int error;
+  v = stb_vorbis_open_memory((const unsigned char *)buf, size, &error, NULL);
+  assert(v);
+  info = stb_vorbis_get_info(v);
+
+  SDL_AudioSpec spec;
+  spec.freq = info.sample_rate;
+  spec.channels = info.channels;
+  spec.samples = SAMPLES;
+  spec.format = AUDIO_S16SYS;
+  spec.userdata = NULL;
+  spec.callback = FillAudio;
+  SDL_OpenAudio(&spec, NULL);
+
+  stream_save = (int16_t *)malloc(SAMPLES * info.channels * sizeof(*stream_save));
+  assert(stream_save);
+  printf("Playing %s(freq = %d, channels = %d)...\n", MUSIC_PATH, info.sample_rate, info.channels);
+  SDL_PauseAudio(0);
+
   term = new Terminal(W, H);
 
   if (argc < 2) { builtin_sh_run(envp); }
   else { extern_app_run(argv[1]); }
+
+  SDL_CloseAudio();
+  stb_vorbis_close(v);
+  free(stream_save);
+  free(buf);
 
   // should not reach here
   assert(0);
