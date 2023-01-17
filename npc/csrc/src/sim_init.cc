@@ -46,6 +46,7 @@ extern "C" void set_csr_ptr(const svOpenArrayHandle r) {
 extern "C" void npc_pmem_read(long long raddr, long long *rdata) {
   // 总是读取地址为`raddr & ~0x7ull`的8字节返回给`rdata`
   word_t addr = raddr & ~0x7ull;
+  printf("%llx, %lx\n", raddr, addr);
   // word_t addr = raddr;
   *rdata = paddr_read(addr, 8);
 }
