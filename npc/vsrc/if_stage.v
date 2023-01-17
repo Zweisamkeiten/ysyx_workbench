@@ -3,7 +3,7 @@
 module ysyx_22050710_ifu (
   input   i_clk, i_rst,
   input   [63:0] i_pc,
-  output  [31:0] o_inst,
+  output  [31:0] o_inst
   /* output  [31:0] o_unused */
 );
 
