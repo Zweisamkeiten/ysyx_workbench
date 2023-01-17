@@ -13,7 +13,7 @@ module ysyx_22050710_datamem (
 );
 
   reg [63:0] rdata;
-  assign o_data = raddr[2] == 1'b0 ? rdata : {{32{1'b0}}, rdata[63:0]};
+  assign o_data = rdata;
   wire [63:0] wdata = i_data;
   wire [63:0] raddr = i_addr;
   wire [63:0] waddr = i_addr;
