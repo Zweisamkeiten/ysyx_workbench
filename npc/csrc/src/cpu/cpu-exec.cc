@@ -197,11 +197,11 @@ void exec_once() {
   cpu.pc = *npcpc;
   // printf("%lx\n", top->o_pc);
 #ifdef CONFIG_ITRACE
-  uint32_t inst = paddr_read(cpu.pc, 4);
-  disassemble_inst_to_buf(itrace_logbuf, 128, (uint8_t *)&inst, cpu.pc, cpu.pc + 4);
+  cpu.inst = paddr_read(cpu.pc, 4);
+  disassemble_inst_to_buf(itrace_logbuf, 128, (uint8_t *)&(cpu.inst), cpu.pc, cpu.pc + 4);
 #endif
 #ifdef CONFIG_IRINGTRACE
-  last_inst = inst;
+  last_inst = cpu.inst;
 #endif
   snpc = cpu.pc;
   single_cycle();

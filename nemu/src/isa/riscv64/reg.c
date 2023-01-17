@@ -73,7 +73,7 @@ word_t isa_reg_str2val(const char *s, bool *success) {
 
 typedef struct {
   uint64_t *gpr;
-  uint32_t *inst;
+  uint32_t inst;
   vaddr_t pc;
 } Dut_CPU_state;
 
