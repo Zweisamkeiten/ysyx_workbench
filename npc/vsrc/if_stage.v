@@ -15,6 +15,7 @@ module ysyx_22050710_ifu (
     if (!i_rst) begin
       $display("%x", i_pc[2] == 1'b0);
       npc_pmem_read(i_pc, rdata);
+      $display("%x", rdata);
     end
   end
 endmodule
