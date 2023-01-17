@@ -37,7 +37,7 @@ module ysyx_22050710_datamem (
     .out(o_data),
     .key(raddr[3:0]),
     .lut({
-      raddr[3:0] & 4'h0, rdata,
+      raddr[3:0] & 4'h0, rdata[63:0],
       raddr[3:0] & 4'h1, {rdata[56:0], {8{1'b0}}},
       raddr[3:0] & 4'h2, {rdata[48:0], {16{1'b0}}},
       raddr[3:0] & 4'h3, {rdata[40:0], {24{1'b0}}},
