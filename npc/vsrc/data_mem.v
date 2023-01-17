@@ -51,6 +51,7 @@ module ysyx_22050710_datamem (
   always @(*) begin
     if (!i_rst & i_MemOP != 3'b111) npc_pmem_read(raddr, rdata);
     else rdata = 64'b0;
+    $display("%x", rdata);
   end
 
   always @(posedge i_clk) begin
