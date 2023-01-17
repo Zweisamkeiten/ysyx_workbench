@@ -140,7 +140,7 @@ void disassemble_inst_to_buf(char *logbuf, size_t bufsize, uint8_t * inst_val, v
 #ifdef CONFIG_IRINGTRACE
 static int iringbuf_index = 0;
 static char *iringbuf[16] = {NULL};
-static uint32_t last_inst;
+static uint32_t *last_inst;
 
 void print_iringbuf() {
   printf(ANSI_FMT("INSTRUCTIONS RING STRACE:\n", ANSI_FG_RED));
@@ -197,13 +197,12 @@ void exec_once() {
   cpu.pc = *npcpc;
   // printf("%lx\n", top->o_pc);
 #ifdef CONFIG_IRINGTRACE
-  last_inst = paddr_read(cpu.pc, 4);
+  last_inst = cpu.inst;
 #endif
   snpc = cpu.pc;
   single_cycle();
 #ifdef CONFIG_ITRACE
-  uint32_t inst = paddr_read(cpu.pc, 4);
-  disassemble_inst_to_buf(itrace_logbuf, 128, (uint8_t *)&inst, cpu.pc, cpu.pc + 4);
+  disassemble_inst_to_buf(itrace_logbuf, 128, (uint8_t *)cpu.inst, cpu.pc, cpu.pc + 4);
 #endif
   cpu.pc = *npcpc;
   trace_and_difftest(cpu.pc);

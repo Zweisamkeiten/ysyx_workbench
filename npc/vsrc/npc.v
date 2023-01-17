@@ -46,14 +46,13 @@ module ysyx_22050710_npc (
     .o_data(rdata)
   );
 
-  wire [31:0] inst; wire [63:0] pc;
-  /* wire [31:0] unused; */
+  wire [31:0] inst; wire [63:0] pc; wire [31:0] unused;
   ysyx_22050710_ifu u_ifu (
     .i_clk(i_clk),
     .i_rst(i_rst),
     .i_pc(pc),
-    .o_inst(inst)
-    /* .o_unused(unused) */
+    .o_inst(inst),
+    .o_unused(unused)
   );
 
   wire [63:0] imm;
