@@ -105,7 +105,6 @@ extern "C" void init_sim() {
   npc_state.state = NPC_RUNNING;
 
   npcpc = &(top->rootp->ysyx_22050710_npc__DOT__pc);
-  cpu.inst = &(top->rootp->ysyx_22050710_npc__DOT__u_ifu__DOT__rdata);
   cpu.pc = *npcpc;
 }
 
