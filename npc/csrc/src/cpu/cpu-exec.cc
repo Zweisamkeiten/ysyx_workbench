@@ -202,7 +202,7 @@ void exec_once() {
   snpc = cpu.pc;
   single_cycle();
 #ifdef CONFIG_ITRACE
-  word_t inst = paddr_read(cpu.pc, 4);
+  uint32_t inst = paddr_read(cpu.pc, 4);
   disassemble_inst_to_buf(itrace_logbuf, 128, (uint8_t *)&inst, cpu.pc, cpu.pc + 4);
 #endif
   cpu.pc = *npcpc;
