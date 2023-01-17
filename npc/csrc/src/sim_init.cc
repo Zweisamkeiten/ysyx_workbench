@@ -55,9 +55,9 @@ extern "C" void npc_pmem_write(long long waddr, long long wdata, char wmask) {
   // `wmask`中每比特表示`wdata`中1个字节的掩码,
   // 如`wmask = 0x3`代表只写入最低2个字节, 内存中的其它字节保持不变
   word_t addr = waddr & ~0x7ull;
-  for (int i = 7; i >= 0; i--, addr += 1) {
+  for (int i = 7; i >= 0; i--) {
     if (((wmask >> i) & 0x1) == 0x1) {
-      paddr_write(addr, 1, wdata & 0xff);
+      paddr_write(addr + i, 1, wdata & 0xff);
       wdata = wdata >> 8;
     }
   }
