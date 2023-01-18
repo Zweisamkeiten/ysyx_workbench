@@ -111,10 +111,8 @@ module ysyx_22050710_exu (
   wire [63:0] unsigned_div_result = src_a / src_b;
 
   // signed rem
-  wire signed [63:0] signed_rem_result = $signed(src_a) % $signed(src_b);
-  always @(*) begin
-    $display("%x, %x, %x", signed_rem_result, $signed(src_a), $signed(src_b));
-  end
+  /* wire signed [63:0] signed_rem_result = $signed(src_a) % $signed(src_b); */
+  wire signed [63:0] signed_rem_result = $signed({{32{src_a[31]}}, src_a[31:0]}) % $signed({{32{src_b[31]}}, src_b[31:0]});
 
   // unsigned rem
   wire [63:0] unsigned_rem_result = src_a % src_b;
