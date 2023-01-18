@@ -113,7 +113,7 @@ module ysyx_22050710_exu (
   // signed rem
   wire signed [63:0] signed_rem_result = $signed(src_a) % $signed(src_b);
   always @(*) begin
-    $display("%x", signed_rem_result);
+    $display("%x, %x, %x", signed_rem_result, $signed(src_a), $signed(src_b));
   end
 
   // unsigned rem
