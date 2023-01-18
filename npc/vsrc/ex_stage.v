@@ -179,7 +179,7 @@ module ysyx_22050710_exu (
   );
 
   always @(*) begin
-    $display("rdata: %x, %x", rdata, i_rdata);
+    $display("imemop: %x, rdata: %x, %x", i_MemOP, rdata, i_rdata);
   end
 
   reg [63:0] CSRbusW;
