@@ -91,6 +91,9 @@ module ysyx_22050710_idu (
 
   // RV32M
   wire inst_mul    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b000) & (funct7[6:0] == 7'b0000001);
+  wire inst_mulh   = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b001) & (funct7[6:0] == 7'b0000001);
+  wire inst_mulhsu = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b010) & (funct7[6:0] == 7'b0000001);
+  wire inst_mulhu  = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b011) & (funct7[6:0] == 7'b0000001);
   wire inst_div    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b100) & (funct7[6:0] == 7'b0000001);
   wire inst_divu   = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b101) & (funct7[6:0] == 7'b0000001);
   wire inst_rem    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b110) & (funct7[6:0] == 7'b0000001);
@@ -112,7 +115,8 @@ module ysyx_22050710_idu (
                        // RV64I
                        inst_addw,   inst_subw,  inst_sllw,  inst_srlw,  inst_sraw,
                        // RV32M
-                       inst_mul,    inst_div,   inst_divu,  inst_rem,   inst_remu,
+                       inst_mul,    inst_mulh,  inst_mulhsu,inst_mulhu, inst_div,
+                       inst_divu,   inst_rem,   inst_remu,
                        // RV64M
                        inst_mulw,   inst_divw,  inst_divuw, inst_remw,  inst_remuw
                        };
@@ -216,43 +220,50 @@ module ysyx_22050710_idu (
                             };
   wire alu_sub          = |{inst_sub,   inst_subw};
   wire alu_signed_less  = |{inst_beq,   inst_bne,   inst_blt,   inst_bge,   inst_slt, inst_slti}; // branch set signed Less || slt rs1, rs2
-  wire alu_unsinged_less= |{inst_bltu,  inst_bgeu,  inst_sltiu, inst_sltu}; // branch set unsigned Less || sltu rs1, rs2
+  wire alu_unsigned_less= |{inst_bltu,  inst_bgeu,  inst_sltiu, inst_sltu}; // branch set unsigned Less || sltu rs1, rs2
   wire alu_xor          = |{inst_xori,  inst_xor};
   wire alu_and          = |{inst_andi,  inst_and};
   wire alu_or           = |{inst_ori,   inst_or};
   wire alu_sll          = |{inst_sll,   inst_slli,  inst_slliw, inst_sllw};
   wire alu_srl          = |{inst_srl,   inst_srli,  inst_srliw, inst_srlw};
   wire alu_sra          = |{inst_srai,  inst_sraiw, inst_sraw};
-  wire alu_singed_mul   = |{inst_mul,   inst_mulw};
-  wire alu_singed_div   = |{inst_div,   inst_divw};
-  wire alu_unsinged_div = |{inst_divu,  inst_divuw};
-  wire alu_singed_rem   = |{inst_rem,   inst_remw};
-  wire alu_unsinged_rem = |{inst_remu,  inst_remuw};
+  wire alu_signed_mul   = |{inst_mul,   inst_mulw};
+  wire alu_signed_mulh  = |{inst_mulh};
+  wire alu_su_mulh      = |{inst_mulhsu};
+  wire alu_unsigned_mulh= |{inst_mulhu};
+  wire alu_signed_div   = |{inst_div,   inst_divw};
+  wire alu_unsigned_div = |{inst_divu,  inst_divuw};
+  wire alu_signed_rem   = |{inst_rem,   inst_remw};
+  wire alu_unsigned_rem = |{inst_remu,  inst_remuw};
 
-  MuxKeyWithDefault #(.NR_KEY(16), .KEY_LEN(16), .DATA_LEN(5)) u_mux3 (
+  MuxKeyWithDefault #(.NR_KEY(19), .KEY_LEN(19), .DATA_LEN(5)) u_mux3 (
     .out(o_ALUctr),
-    .key({alu_copyimm,    alu_plus,       alu_sub,          alu_signed_less,alu_unsinged_less,
-          alu_xor,        alu_and,        alu_or,           alu_sll,        alu_srl,  alu_sra,
-          alu_singed_mul, alu_singed_div, alu_unsinged_div, alu_singed_rem, alu_unsinged_rem
+    .key({alu_copyimm,    alu_plus,       alu_sub,     alu_signed_less,   alu_unsigned_less,
+          alu_xor,        alu_and,        alu_or,      alu_sll,           alu_srl,           alu_sra,
+          alu_signed_mul, alu_signed_mulh,alu_su_mulh, alu_unsigned_mulh, alu_signed_div,    alu_unsigned_div,
+          alu_signed_rem, alu_unsigned_rem
           }),
     .default_out(5'b11111), // invalid
     .lut({
-      16'b1000000000000000, 5'b01111,  // copy imm
-      16'b0100000000000000, 5'b00000,  // add a + b
-      16'b0010000000000000, 5'b00001,  // sub a - b
-      16'b0001000000000000, 5'b00010,  // branch set signed Less || slt  a <s b
-      16'b0000100000000000, 5'b00011,  // branch set unsigned Less || sltu a <u b
-      16'b0000010000000000, 5'b00100,  // xor a ^ b
-      16'b0000001000000000, 5'b00101,  // and a & b
-      16'b0000000100000000, 5'b00110,  // or a | b
-      16'b0000000010000000, 5'b00111,  // sll <<
-      16'b0000000001000000, 5'b01000,  // srl >>
-      16'b0000000000100000, 5'b01001,  // sra >>>
-      16'b0000000000010000, 5'b01010,  // signed mul *
-      16'b0000000000001000, 5'b01011,  // signed   div /
-      16'b0000000000000100, 5'b01100,  // unsigned div /
-      16'b0000000000000010, 5'b01101,  // signed   rem %
-      16'b0000000000000001, 5'b01110   // unsigned rem %
+      19'b1000000000000000000, 5'b01111,  // copy imm
+      19'b0100000000000000000, 5'b00000,  // add a + b
+      19'b0010000000000000000, 5'b00001,  // sub a - b
+      19'b0001000000000000000, 5'b00010,  // branch set signed Less || slt  a <s b
+      19'b0000100000000000000, 5'b00011,  // branch set unsigned Less || sltu a <u b
+      19'b0000010000000000000, 5'b00100,  // xor a ^ b
+      19'b0000001000000000000, 5'b00101,  // and a & b
+      19'b0000000100000000000, 5'b00110,  // or a | b
+      19'b0000000010000000000, 5'b00111,  // sll <<
+      19'b0000000001000000000, 5'b01000,  // srl >>
+      19'b0000000000100000000, 5'b01001,  // sra >>>
+      19'b0000000000010000000, 5'b01010,  // signed mul *
+      19'b0000000000001000000, 5'b11001,  // signed mulh *
+      19'b0000000000000100000, 5'b11010,  // su mulh *
+      19'b0000000000000010000, 5'b11011,  // unsigned mulh *
+      19'b0000000000000001000, 5'b01011,  // signed   div /
+      19'b0000000000000000100, 5'b01100,  // unsigned div /
+      19'b0000000000000000010, 5'b01101,  // signed   rem %
+      19'b0000000000000000001, 5'b01110   // unsigned rem %
     })
   );
 
