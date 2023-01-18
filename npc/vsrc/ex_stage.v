@@ -98,11 +98,11 @@ module ysyx_22050710_exu (
   // signed mul
   wire signed [63:0] signed_mul_result = $signed(src_a) * $signed(src_b);
 
-  wire signed [63:0] signed_mulh_result = {$signed({{64{1'b0}, src_a}}) * $signed({{64{1'b0}, src_b}}) >> 64}[63:0]
+  wire signed [63:0] signed_mulh_result = {$signed({{64{1'b0}}, src_a}) * $signed({{64{1'b0}}, src_b}) >> 64}[63:0]
 
-  wire signed [63:0] su_mulh_result = {$signed({{64{1'b0}, src_a}}) * {{64{1'b0}, src_b}} >> 64}[63:0]
+  wire signed [63:0] su_mulh_result = {$signed({{64{1'b0}}, src_a}) * {{64{1'b0}}, src_b} >> 64}[63:0]
 
-  wire signed [63:0] unsigned_mulh_result = {{{64{1'b0}, src_a}} * {{64{1'b0}, src_b}} >> 64}[63:0]
+  wire signed [63:0] unsigned_mulh_result = {{{64{1'b0}}, src_a} * {{64{1'b0}}, src_b} >> 64}[63:0]
 
   // signed div
   wire signed [63:0] signed_div_result = $signed(src_a) / $signed(src_b);
