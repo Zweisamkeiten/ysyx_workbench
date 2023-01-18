@@ -105,15 +105,13 @@ module ysyx_22050710_exu (
   wire signed [63:0] unsigned_mulh_result = {{{64{1'b0}}, src_a} * {{64{1'b0}}, src_b} >> 64}[63:0];
 
   // signed div
-  /* wire signed [63:0] signed_div_result = $signed(src_a) / $signed(src_b); */
-  wire signed [63:0] signed_div_result = i_word_cut ? ($signed({{32{src_a[31]}}, src_a[31:0]}) / $signed({{32{src_b[31]}}, src_b[31:0]})) : $signed(src_a) / $signed(src_b);
+  wire signed [63:0] signed_div_result = $signed(src_a) / $signed(src_b);
 
   // unsigned div
   wire [63:0] unsigned_div_result = src_a / src_b;
 
   // signed rem
-  /* wire signed [63:0] signed_rem_result = $signed(src_a) % $signed(src_b); */
-  wire signed [63:0] signed_rem_result = i_word_cut ? ($signed({{32{src_a[31]}}, src_a[31:0]}) % $signed({{32{src_b[31]}}, src_b[31:0]})) : $signed(src_a) % $signed(src_b);
+  wire signed [63:0] signed_rem_result = $signed(src_a) % $signed(src_b);
 
   // unsigned rem
   wire [63:0] unsigned_rem_result = src_a % src_b;
