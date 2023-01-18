@@ -47,6 +47,10 @@ module ysyx_22050710_datamem (
       3'h7, {rdata[ 7:0], {56{1'b0}}}
     })
   );
+  
+  always @(*) begin
+    $display("%x, %x", rdata, o_data);
+  end
 
   always @(*) begin
     if (!i_rst & i_ReEn & i_MemOP != 3'b111) npc_pmem_read(raddr, rdata);
