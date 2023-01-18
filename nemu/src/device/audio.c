@@ -88,6 +88,7 @@ static void init_sound() {}
 
 static void audio_io_handler(uint32_t offset, int len, bool is_write) {
   if (is_write) {
+    printf("%d\n", offset);
     switch (offset / 4) {
       case reg_freq: s.freq = audio_base[reg_freq]; break;
       case reg_channels: s.channels = audio_base[reg_channels]; break;
