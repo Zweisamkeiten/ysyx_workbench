@@ -65,9 +65,9 @@ module ysyx_22050710_exu (
   wire unsigned_Less = (1'b1 ^ cout) & ~(|src_b == 1'b0); // CF = cin ^ cout
 
   // word_cut: cut operand to 32bits and unsigned extend OR dont cut
-  wire [63:0] src1 = i_word_cut ? {{32{1'b0}}, i_rs1[31:0]} : i_rs1;
-  wire [63:0] src2 = i_word_cut ? {{32{1'b0}}, i_rs2[31:0]} : i_rs2;
-  wire [63:0] imm  = i_word_cut ? {{32{1'b0}}, i_imm[31:0]} : i_imm;
+  wire [63:0] src1 = i_word_cut ? {{32{i_rs1[31]}}, i_rs1[31:0]} : i_rs1;
+  wire [63:0] src2 = i_word_cut ? {{32{i_rs2[31]}}, i_rs2[31:0]} : i_rs2;
+  wire [63:0] imm  = i_word_cut ? {{32{i_imm[31]}}, i_imm[31:0]} : i_imm;
 
   // if operand has been cut, the aluresult need signed extend to 64bits from
   // [32:0]
@@ -111,8 +111,8 @@ module ysyx_22050710_exu (
   wire [63:0] unsigned_div_result = src_a / src_b;
 
   // signed rem
-  /* wire signed [63:0] signed_rem_result = $signed(src_a) % $signed(src_b); */
-  wire signed [63:0] signed_rem_result = i_word_cut ? $signed({{32{src_a[31]}}, src_a[31:0]}) % $signed({{32{src_b[31]}}, src_b[31:0]}) : $signed(src_a) % $signed(src_b);
+  wire signed [63:0] signed_rem_result = $signed(src_a) % $signed(src_b);
+  /* wire signed [63:0] signed_rem_result = i_word_cut ? $signed({{32{src_a[31]}}, src_a[31:0]}) % $signed({{32{src_b[31]}}, src_b[31:0]}) : $signed(src_a) % $signed(src_b); */
 
   // unsigned rem
   wire [63:0] unsigned_rem_result = src_a % src_b;

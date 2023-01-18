@@ -83,7 +83,6 @@ static void init_sound() {
 
 static void audio_io_handler(uint32_t offset, int len, bool is_write) {
   if (is_write) {
-    printf("%d\n", offset);
     switch (offset / 4) {
       case reg_freq: s.freq = audio_base[reg_freq]; break;
       case reg_channels: s.channels = audio_base[reg_channels]; break;
@@ -93,7 +92,6 @@ static void audio_io_handler(uint32_t offset, int len, bool is_write) {
     }
   }
   else  {
-    printf("%d\n", offset);
     switch (offset / 4) {
       case reg_sbuf_size: audio_base[reg_sbuf_size] = CONFIG_SB_SIZE; break;
       case reg_init: audio_base[reg_init] = true; break;
