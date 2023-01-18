@@ -91,6 +91,9 @@ module ysyx_22050710_idu (
 
   // RV32M
   wire inst_mul    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b000) & (funct7[6:0] == 7'b0000001);
+  wire inst_mulh   = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b001) & (funct7[6:0] == 7'b0000001);
+  wire inst_mulhsu = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b010) & (funct7[6:0] == 7'b0000001);
+  wire inst_mulhu  = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b011) & (funct7[6:0] == 7'b0000001);
   wire inst_div    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b100) & (funct7[6:0] == 7'b0000001);
   wire inst_divu   = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b101) & (funct7[6:0] == 7'b0000001);
   wire inst_rem    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b110) & (funct7[6:0] == 7'b0000001);
@@ -112,7 +115,8 @@ module ysyx_22050710_idu (
                        // RV64I
                        inst_addw,   inst_subw,  inst_sllw,  inst_srlw,  inst_sraw,
                        // RV32M
-                       inst_mul,    inst_div,   inst_divu,  inst_rem,   inst_remu,
+                       inst_mul,    inst_mulh,  inst_mulhsu,inst_mulhu, inst_div,
+                       inst_divu,   inst_rem,   inst_remu,
                        // RV64M
                        inst_mulw,   inst_divw,  inst_divuw, inst_remw,  inst_remuw
                        };
@@ -223,6 +227,7 @@ module ysyx_22050710_idu (
   wire alu_srl          = |{inst_srl,   inst_srli,  inst_srliw, inst_srlw};
   wire alu_sra          = |{inst_srai,  inst_sraiw, inst_sraw};
   wire alu_singed_mul   = |{inst_mul,   inst_mulw};
+  wire alu_singed_mulh  = |{inst_mulh,   inst_mulw};
   wire alu_singed_div   = |{inst_div,   inst_divw};
   wire alu_unsinged_div = |{inst_divu,  inst_divuw};
   wire alu_singed_rem   = |{inst_rem,   inst_remw};
