@@ -114,7 +114,8 @@ static int cmd_x(char *args) {
 
           if (success) {
             for (int i = 0; i < n; addr += 4, ++i) {
-              printf("%#lx:\t", addr);
+              uint32_t data = paddr_read(addr, 4);
+              printf("%#lx:\t 0x%08x\t", addr, data);
               for (int j = 0; j < 4; j++) {
                 uint8_t data = paddr_read(addr + j, 1);
                 printf("0x%02x ", data);
