@@ -22,11 +22,13 @@ static void out_of_bound(paddr_t addr) {
 }
 
 void init_mem() {
+#ifdef CONFIG_MEM_RANDOM
   uint32_t *p = (uint32_t *)pmem;
   int i;
   for (i = 0; i < (int) (CONFIG_MSIZE / sizeof(p[0])); i ++) {
     p[i] = rand();
   }
+#endif
   printf("physical memory area [" FMT_PADDR ", " FMT_PADDR "]\n", PMEM_LEFT, PMEM_RIGHT);
 }
 
