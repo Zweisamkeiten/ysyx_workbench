@@ -33,18 +33,18 @@ module ysyx_22050710_datamem (
     })
   );
 
-  MuxKey #(.NR_KEY(8), .KEY_LEN(4), .DATA_LEN(64)) u_mux2 (
+  MuxKey #(.NR_KEY(8), .KEY_LEN(3), .DATA_LEN(64)) u_mux2 (
     .out(o_data),
-    .key(raddr[3:0]),
+    .key(raddr[2:0]),
     .lut({
-      4'h0, rdata,
-      4'h1, {rdata[55:0], { 8{1'b0}}},
-      4'h2, {rdata[47:0], {16{1'b0}}},
-      4'h3, {rdata[39:0], {24{1'b0}}},
-      4'h4, {rdata[31:0], {32{1'b0}}},
-      4'h5, {rdata[23:0], {40{1'b0}}},
-      4'h6, {rdata[15:0], {48{1'b0}}},
-      4'h7, {rdata[ 7:0], {56{1'b0}}}
+      3'h0, rdata,
+      3'h1, {rdata[55:0], { 8{1'b0}}},
+      3'h2, {rdata[47:0], {16{1'b0}}},
+      3'h3, {rdata[39:0], {24{1'b0}}},
+      3'h4, {rdata[31:0], {32{1'b0}}},
+      3'h5, {rdata[23:0], {40{1'b0}}},
+      3'h6, {rdata[15:0], {48{1'b0}}},
+      3'h7, {rdata[ 7:0], {56{1'b0}}}
     })
   );
 
