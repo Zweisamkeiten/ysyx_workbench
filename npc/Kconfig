@@ -1,0 +1,130 @@
+mainmenu "NPC Configuration Menu"
+
+menu "Build Options"
+choice
+  prompt "Compiler"
+  default CC_GCC
+config CC_GCC
+  bool "gcc"
+config CC_GPP
+  bool "g++"
+config CC_CLANG
+  depends on !TARGET_AM
+  bool "clang"
+endchoice
+
+config CC
+  string
+  default "gcc" if CC_GCC
+  default "g++" if CC_GPP
+  default "clang" if CC_CLANG
+  default "none"
+
+choice
+  prompt "Optimization Level"
+  default CC_O2
+config CC_O0
+  bool "O0"
+config CC_O1
+  bool "O1"
+config CC_O2
+  bool "O2"
+config CC_O3
+  bool "O3"
+endchoice
+
+config CC_OPT
+  string
+  default "-O0" if CC_O0
+  default "-O1" if CC_O1
+  default "-O2" if CC_O2
+  default "-O3" if CC_O3
+  default "none"
+
+config CC_LTO
+  depends on !TARGET_AM
+  bool "Enable link-time optimization"
+  default n
+
+config CC_DEBUG
+  bool "Enable debug information"
+  default n
+
+endmenu
+
+menu "Testing and Debugging"
+
+config VCD_TRACE
+  bool "Enable VCD tracer"
+  default y
+
+config WATCHPOINT
+  bool "Enable watchpoint"
+  default n
+
+config TRACE
+  bool "Enable tracer"
+  default y
+
+config TRACE_START
+  depends on TRACE
+  int "When tracing is enabled (unit: number of instructions)"
+  default 0
+
+config TRACE_END
+  depends on TRACE
+  int "When tracing is disabled (unit: number of instructions)"
+  default 10000
+
+config ITRACE
+  depends on TRACE
+  bool "Enable instruction tracer"
+  default y
+
+config ITRACE_COND
+  depends on ITRACE
+  string "Only trace instructions when the condition is true"
+  default "true"
+
+config IRINGTRACE
+  depends on TRACE
+  bool "Enable instruction ring tracer"
+  default y
+
+config IRINGTRACE_COND
+  depends on IRINGTRACE
+  string "Only trace instructions when the condition is true"
+  default "true"
+
+config MTRACE
+  depends on TRACE
+  bool "Enable memory read/write tracer"
+  default n
+
+config MTRACE_COND
+  depends on MTRACE
+  string "Only trace memory when the condition is true"
+  default "false"
+
+config FTRACE
+  depends on TRACE
+  bool "Enable function call/return tracer"
+  default n
+
+config FTRACE_COND
+  depends on FTRACE
+  string "Only trace function when the condition is true"
+  default "false"
+
+config DIFFTEST
+  bool "Enable differential testing"
+  default n
+  help
+    Enable differential testing with a reference design.
+    Note that this will significantly reduce the performance of NPC.
+
+endmenu
+
+source "csrc/src/memory/Kconfig"
+
+source "csrc/src/device/Kconfig"
