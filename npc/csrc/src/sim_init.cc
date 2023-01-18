@@ -58,9 +58,9 @@ extern "C" void npc_pmem_write(long long waddr, long long wdata, char wmask) {
   //   case 0xf: paddr_write(waddr, 4, wdata); break;
   //   default: paddr_write(waddr, 8, wdata); break;
   // }
-  for (int i = 7; i >= 0; i--) {
+  for (int i = 7; i >= 0; i--, waddr++) {
     if ((wmask & 0x1) == 0x1) {
-      paddr_write(waddr + i, 1, wdata & 0xff);
+      paddr_write(waddr, 1, wdata & 0xff);
     }
     wdata = wdata >> 8;
     wmask = wmask >> 1;
