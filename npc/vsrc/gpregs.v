@@ -17,6 +17,7 @@ module ysyx_22050710_gpr #(ADDR_WIDTH = 5, DATA_WIDTH = 64) (
   assign o_busB = |i_rb == 0 ? 64'b0 : rf[i_rb];
 
   always @(posedge i_clk) begin
+    $display("write back: %x", i_wdata);
     if (i_wen) rf[i_waddr] <= i_wdata;
   end
 endmodule
