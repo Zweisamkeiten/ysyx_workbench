@@ -8,7 +8,7 @@ module ysyx_22050710_datamem (
   input   [63:0] i_addr,
   input   [63:0] i_data,
   input   [2:0] i_MemOP,
-  input   i_WrEn,
+  input   i_WrEn, i_ReEn,
   output  [63:0] o_data
 );
 
@@ -34,7 +34,7 @@ module ysyx_22050710_datamem (
   );
 
   always @(*) begin
-    if (!i_rst & i_MemOP != 3'b111) npc_pmem_read(raddr, rdata);
+    if (!i_rst & i_ReEn & i_MemOP != 3'b111) npc_pmem_read(raddr, rdata);
     else rdata = 64'b0;
   end
 
