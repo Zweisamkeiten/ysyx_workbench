@@ -98,22 +98,14 @@ module ysyx_22050710_exu (
   // signed mul
   wire signed [63:0] signed_mul_result = $signed(src_a) * $signed(src_b);
 
-  wire signed [63:0] signed_mulh_result = {$signed({{64{1'b0}}, src_a}) * $signed({{64{1'b0}}, src_b}) >> 64}[63:0];
-
-  wire signed [63:0] su_mulh_result = {$signed({{64{1'b0}}, src_a}) * {{64{1'b0}}, src_b} >> 64}[63:0];
-
-  wire signed [63:0] unsigned_mulh_result = {{{64{1'b0}}, src_a} * {{64{1'b0}}, src_b} >> 64}[63:0];
-
   // signed div
-  /* wire signed [63:0] signed_div_result = $signed(src_a) / $signed(src_b); */
-  wire signed [63:0] signed_div_result = i_word_cut ? ($signed({{32{src_a[31]}}, src_a[31:0]}) / $signed({{32{src_b[31]}}, src_b[31:0]})) : $signed(src_a) / $signed(src_b);
+  wire signed [63:0] signed_div_result = $signed(src_a) / $signed(src_b);
 
   // unsigned div
   wire [63:0] unsigned_div_result = src_a / src_b;
 
   // signed rem
-  /* wire signed [63:0] signed_rem_result = $signed(src_a) % $signed(src_b); */
-  wire signed [63:0] signed_rem_result = i_word_cut ? ($signed({{32{src_a[31]}}, src_a[31:0]}) % $signed({{32{src_b[31]}}, src_b[31:0]})) : $signed(src_a) % $signed(src_b);
+  wire signed [63:0] signed_rem_result = $signed(src_a) % $signed(src_b);
 
   // unsigned rem
   wire [63:0] unsigned_rem_result = src_a % src_b;
@@ -138,7 +130,7 @@ module ysyx_22050710_exu (
                                   ? $signed({{32{src_a[31]}}, $signed(src_a[31:0]) >>> $signed((i_word_cut ? {1'b0, src_b[4:0]} : src_b[5:0]))})
                                   : $signed(src_a) >>> $signed((i_word_cut ? {1'b0, src_b[4:0]} : src_b[5:0]));
 
-  MuxKey #(.NR_KEY(19), .KEY_LEN(5), .DATA_LEN(64)) u_mux4 (
+  MuxKey #(.NR_KEY(16), .KEY_LEN(5), .DATA_LEN(64)) u_mux4 (
     .out(aluresult),
     .key(i_ALUctr),
     .lut({
@@ -154,9 +146,6 @@ module ysyx_22050710_exu (
       5'b01000, srl_result,
       5'b01001, sra_result,
       5'b01010, signed_mul_result,
-      5'b11001, signed_mulh_result,
-      5'b11010, su_mulh_result,
-      5'b11011, unsigned_mulh_result,
       5'b01011, signed_div_result,
       5'b01100, unsigned_div_result,
       5'b01101, signed_rem_result,

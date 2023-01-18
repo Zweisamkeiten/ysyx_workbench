@@ -199,28 +199,6 @@ static int cmd_attach(char *args) {
   return 0;
 }
 
-static int cmd_save(char *args) {
-  char *path = strtok(args, " ");
-
-  if (path != NULL) {
-
-    return 0;
-  }
-
-  return 1;
-}
-
-static int cmd_load(char *args) {
-  char *path = strtok(args, " ");
-
-  if (path != NULL) {
-
-    return 0;
-  }
-
-  return 1;
-}
-
 static int cmd_help(char *args);
 
 static struct {
@@ -241,8 +219,6 @@ static struct {
   { "d", "delete a watchpoint", cmd_d },
   { "detach", "exit difftest mode", cmd_detach },
   { "attach", "enter difftest mode", cmd_attach },
-  { "save", "save the snapshot to the path", cmd_save },
-  { "load", "load the snapshot from the path", cmd_load },
 
 };
 
