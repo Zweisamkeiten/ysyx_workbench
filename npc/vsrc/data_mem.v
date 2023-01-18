@@ -50,6 +50,7 @@ module ysyx_22050710_datamem (
   
   always @(*) begin
     $display("%x, %x", rdata, o_data);
+    $display("%x, %x, %x, %x, %x, %x, %x, %x", rdata[63:56], rdata[55:48], rdata[47:32], rdata[31:24], rdata[23:16], rdata[15:8], rdata[7:0]);
   end
 
   always @(*) begin
