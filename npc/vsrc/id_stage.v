@@ -219,28 +219,28 @@ module ysyx_22050710_idu (
                             };
   wire alu_sub          = |{inst_sub,   inst_subw};
   wire alu_signed_less  = |{inst_beq,   inst_bne,   inst_blt,   inst_bge,   inst_slt, inst_slti}; // branch set signed Less || slt rs1, rs2
-  wire alu_unsinged_less= |{inst_bltu,  inst_bgeu,  inst_sltiu, inst_sltu}; // branch set unsigned Less || sltu rs1, rs2
+  wire alu_unsigned_less= |{inst_bltu,  inst_bgeu,  inst_sltiu, inst_sltu}; // branch set unsigned Less || sltu rs1, rs2
   wire alu_xor          = |{inst_xori,  inst_xor};
   wire alu_and          = |{inst_andi,  inst_and};
   wire alu_or           = |{inst_ori,   inst_or};
   wire alu_sll          = |{inst_sll,   inst_slli,  inst_slliw, inst_sllw};
   wire alu_srl          = |{inst_srl,   inst_srli,  inst_srliw, inst_srlw};
   wire alu_sra          = |{inst_srai,  inst_sraiw, inst_sraw};
-  wire alu_singed_mul   = |{inst_mul,   inst_mulw};
-  wire alu_singed_mulh  = |{inst_mulh};
+  wire alu_signed_mul   = |{inst_mul,   inst_mulw};
+  wire alu_signed_mulh  = |{inst_mulh};
   wire alu_su_mulh      = |{inst_mulhsu};
-  wire alu_unsinged_mulh= |{inst_mulhu};
-  wire alu_singed_div   = |{inst_div,   inst_divw};
-  wire alu_unsinged_div = |{inst_divu,  inst_divuw};
-  wire alu_singed_rem   = |{inst_rem,   inst_remw};
-  wire alu_unsinged_rem = |{inst_remu,  inst_remuw};
+  wire alu_unsigned_mulh= |{inst_mulhu};
+  wire alu_signed_div   = |{inst_div,   inst_divw};
+  wire alu_unsigned_div = |{inst_divu,  inst_divuw};
+  wire alu_signed_rem   = |{inst_rem,   inst_remw};
+  wire alu_unsigned_rem = |{inst_remu,  inst_remuw};
 
   MuxKeyWithDefault #(.NR_KEY(19), .KEY_LEN(19), .DATA_LEN(5)) u_mux3 (
     .out(o_ALUctr),
-    .key({alu_copyimm,    alu_plus,       alu_sub,     alu_signed_less,   alu_unsinged_less,
+    .key({alu_copyimm,    alu_plus,       alu_sub,     alu_signed_less,   alu_unsigned_less,
           alu_xor,        alu_and,        alu_or,      alu_sll,           alu_srl,           alu_sra,
-          alu_singed_mul, alu_signed_mulh,alu_su_mulh, alu_unsinged_mulh, alu_singed_div,    alu_unsinged_div,
-          alu_singed_rem, alu_unsinged_rem
+          alu_signed_mul, alu_signed_mulh,alu_su_mulh, alu_unsigned_mulh, alu_signed_div,    alu_unsigned_div,
+          alu_signed_rem, alu_unsigned_rem
           }),
     .default_out(5'b11111), // invalid
     .lut({
