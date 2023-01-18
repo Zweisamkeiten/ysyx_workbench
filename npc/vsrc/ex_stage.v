@@ -130,7 +130,7 @@ module ysyx_22050710_exu (
   wire [63:0] sll_result = src_a << (i_word_cut ? {1'b0, src_b[4:0]} : src_b[5:0]);
 
   // srl
-  wire [63:0] srl_result = src_a >> (i_word_cut ? {1'b0, src_b[4:0]} : src_b[5:0]);
+  wire [63:0] srl_result = (i_word_cut ? {{32{1'b0}}, src_a[31:0]} : src_a) >> (i_word_cut ? {1'b0, src_b[4:0]} : src_b[5:0]);
 
   // sra
   wire signed [63:0] sra_result = i_word_cut
