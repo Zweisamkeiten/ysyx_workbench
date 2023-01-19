@@ -60,7 +60,6 @@ extern "C" void npc_pmem_write(long long waddr, long long wdata, char wmask) {
     if ((wmask & 0x1) == 0x1) {
       paddr_write(addr, 1, *p);
     }
-    wdata = wdata >> 8;
     wmask = wmask >> 1;
   }
 }
