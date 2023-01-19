@@ -178,10 +178,6 @@ module ysyx_22050710_exu (
     })
   );
 
-  always @(*) begin
-    $display("i_MemtoReg: %x, imemop: %x, rdata: %x, %x", i_MemtoReg, i_MemOP, rdata, i_rdata[15:0]);
-  end
-
   reg [63:0] CSRbusW;
   assign o_CSRbusW = CSRbusW;
   always @(*) begin
