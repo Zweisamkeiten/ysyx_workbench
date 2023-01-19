@@ -33,21 +33,6 @@ module ysyx_22050710_datamem (
     })
   );
 
-  MuxKey #(.NR_KEY(8), .KEY_LEN(3), .DATA_LEN(64)) u_mux2 (
-    .out(wdata),
-    .key(waddr[2:0]),
-    .lut({
-      3'h0, wdata,
-      3'h1, {{ 8{1'b0}}, wdata[63:8 ]},
-      3'h2, {{16{1'b0}}, wdata[63:16]},
-      3'h3, {{24{1'b0}}, wdata[63:24]},
-      3'h4, {{32{1'b0}}, wdata[63:32]},
-      3'h5, {{40{1'b0}}, wdata[63:40]},
-      3'h6, {{48{1'b0}}, wdata[63:48]},
-      3'h7, {{56{1'b0}}, wdata[63:56]}
-    })
-  );
-
   always @(*) begin
     if (!i_rst & i_ReEn & i_MemOP != 3'b111) begin
       npc_pmem_read(raddr, rdata);
