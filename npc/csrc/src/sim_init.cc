@@ -62,10 +62,11 @@ extern "C" void npc_pmem_write(long long waddr, long long wdata, char wmask) {
   printf("\n");
   word_t addr = waddr & ~0x7ull;
   // printf("waddr: 0x%08llx, wmask: %x, wdata: %llx, addr: %lx\n", waddr, wmask, wdata, addr);
-  for (int i = 7; i >= 0; i--) {
+  uint8_t *pt = (uint8_t *)&wdata;
+  for (int i = 7; i >= 0; i--, addr++) {
     if ((wmask & 0x1) == 0x1) {
-      // printf("addr: 0x%08lx, %llx\n", addr + i, wdata & 0xff);
-      paddr_write(addr + i, 1, wdata & 0xff);
+      printf("addr: 0x%08lx, %x\n", addr, *pt);
+      paddr_write(addr, 1, *pt);
     }
     wdata = wdata >> 8;
     wmask = wmask >> 1;
