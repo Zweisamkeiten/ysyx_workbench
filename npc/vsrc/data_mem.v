@@ -32,7 +32,7 @@ module ysyx_22050710_datamem (
     })
   );
 
-  wire [63:0] wdata = i_data;
+  wire [63:0] wdata;
   MuxKey #(.NR_KEY(8), .KEY_LEN(3), .DATA_LEN(64)) u_mux2 (
     .out(wdata),
     .key(waddr[2:0]),
