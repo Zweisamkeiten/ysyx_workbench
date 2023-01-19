@@ -14,6 +14,7 @@ module ysyx_22050710_datamem (
 
   reg [63:0] rdata;
   assign o_data = rdata;
+  wire [63:0] wdata = i_data;
   wire [63:0] raddr = i_addr;
   wire [63:0] waddr = i_addr;
   wire [7:0] wmask;
@@ -29,22 +30,6 @@ module ysyx_22050710_datamem (
       3'b100, 8'b00001111,
       3'b101, 8'b00001111,
       3'b110, 8'b11111111
-    })
-  );
-
-  wire [63:0] wdata;
-  MuxKey #(.NR_KEY(8), .KEY_LEN(3), .DATA_LEN(64)) u_mux2 (
-    .out(wdata),
-    .key(waddr[2:0]),
-    .lut({
-      3'h0, i_data,
-      3'h1, {{ 8{1'b0}}, i_data[63:8 ]},
-      3'h2, {{16{1'b0}}, i_data[63:16]},
-      3'h3, {{24{1'b0}}, i_data[63:24]},
-      3'h4, {{32{1'b0}}, i_data[63:32]},
-      3'h5, {{40{1'b0}}, i_data[63:40]},
-      3'h6, {{48{1'b0}}, i_data[63:48]},
-      3'h7, {{56{1'b0}}, i_data[63:56]}
     })
   );
 
