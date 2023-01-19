@@ -56,7 +56,6 @@ module ysyx_22050710_datamem (
   always @(*) begin
     if (!i_rst & i_ReEn & i_MemOP != 3'b111) begin
       npc_pmem_read(raddr, rdata);
-      rdata = 64'b1;
     end
     else rdata = 64'b0;
   end
