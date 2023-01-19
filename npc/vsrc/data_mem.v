@@ -51,6 +51,16 @@ module ysyx_22050710_datamem (
   end
 
   always @(posedge i_clk) begin
+    case (waddr[2:0])
+      3'h1: wdata = {{ 8{1'b0}}, wdata[63:8 ]};
+      3'h2: wdata = {{16{1'b0}}, wdata[63:16]};
+      3'h3: wdata = {{24{1'b0}}, wdata[63:24]};
+      3'h4: wdata = {{32{1'b0}}, wdata[63:32]};
+      3'h5: wdata = {{40{1'b0}}, wdata[63:40]};
+      3'h6: wdata = {{48{1'b0}}, wdata[63:48]};
+      3'h7: wdata = {{56{1'b0}}, wdata[63:56]};
+      default: wdata = wdata;
+    endcase
     if (i_WrEn & i_MemOP != 3'b111) npc_pmem_write(waddr, wdata, wmask);
   end
   
