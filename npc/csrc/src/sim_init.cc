@@ -20,7 +20,7 @@ void set_state_end() {
 }
 
 void set_state_abort() {
-  printf("123\n");
+  printf("NPC_ABORT: %d, npc_state: %d\n", NPC_ABORT, npc_state.state);
   if (npc_state.state != NPC_STOP) {
     printf("There are two cases which will trigger this unexpected exception:\n"
         "1. The instruction at PC = " FMT_WORD " is not implemented.\n"
