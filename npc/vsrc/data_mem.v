@@ -71,11 +71,7 @@ module ysyx_22050710_datamem (
     3'h6, {i_data[15:0], {48{1'b0}}},
     3'h7, {i_data[ 7:0], {56{1'b0}}}
     })
-    );
-
-    /* always @(*) begin */
-    /*   $display("%x, %x, %x, %x, %x, %x, %x, %x", i_data[63:56], i_data[55: 48], i_data[47:40], i_data[39:32], i_data[31:24], i_data[23:16], i_data[15:8], i_data[7:0]); */
-    /* end */
+  );
 
     always @(*) begin
       if (!i_rst & i_ReEn & i_MemOP != 3'b111) begin

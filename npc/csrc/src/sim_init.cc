@@ -46,7 +46,6 @@ extern "C" void set_csr_ptr(const svOpenArrayHandle r) {
 extern "C" void npc_pmem_read(long long raddr, long long *rdata) {
   // 总是读取地址为`raddr & ~0x7ull`的8字节返回给`rdata`
   word_t addr = raddr & ~0x7ull;
-  // word_t addr = raddr;
   *rdata = paddr_read(addr, 8);
 }
 
@@ -56,16 +55,12 @@ extern "C" void npc_pmem_write(long long waddr, long long wdata, char wmask) {
   // 如`wmask = 0x3`代表只写入最低2个字节, 内存中的其它字节保持不变
   word_t addr = waddr & ~0x7ull;
   uint8_t *p = (uint8_t *)&wdata;
-  // printf("write: ");
   for (int i = 7; i >= 0; i--, addr++) {
-    // printf("%02x: ", *(p-i+7));
-    // printf("%01x, ", (wmask & 0x1));
     if ((wmask & 0x1) == 0x1) {
       paddr_write(addr, 1, *(p - i + 7));
     }
     wmask = wmask >> 1;
   }
-  // printf("\n");
 }
 
 extern "C" void single_cycle() {
