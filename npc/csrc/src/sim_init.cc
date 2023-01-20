@@ -58,7 +58,7 @@ extern "C" void npc_pmem_write(long long waddr, long long wdata, char wmask) {
   uint8_t *p = (uint8_t *)&wdata;
   printf("write: ");
   for (int i = 7; i >= 0; i--) {
-    printf("%02x: ", *(p+i - 7));
+    printf("%02x: ", *(p-i+7));
     printf("%01x, ", (wmask & 0x1));
     if ((wmask & 0x1) == 0x1) {
       paddr_write(addr + i, 1, *(p+i));
