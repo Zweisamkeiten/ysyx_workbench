@@ -18,9 +18,7 @@ void __am_audio_init() {
 
 void __am_audio_config(AM_AUDIO_CONFIG_T *cfg) {
   cfg->present = inl(AUDIO_INIT_ADDR);
-  // cfg->present = true;
-  // cfg->bufsize = inl(AUDIO_SBUF_SIZE_ADDR);
-  cfg->bufsize = 0x10000;
+  cfg->bufsize = inl(AUDIO_SBUF_SIZE_ADDR);
   sbufsize = cfg->bufsize;
 }
 
@@ -32,7 +30,6 @@ void __am_audio_ctrl(AM_AUDIO_CTRL_T *ctrl) {
 
 void __am_audio_status(AM_AUDIO_STATUS_T *stat) {
   stat->count = inl(AUDIO_COUNT_ADDR);
-  printf("%d\n", stat->count);
 }
 
 static void audio_write(uint8_t *buf, int len) {
