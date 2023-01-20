@@ -10,7 +10,7 @@ module ysyx_22050710_ifu (
   assign o_inst = i_pc[2] == 1'b0 ? rdata[31:0] : rdata[63:32];
 
   always @(*) begin
-    $display("rdata: %x", rdata)
+    $display("rdata: %x", rdata);
   end
 
   always @(posedge i_clk) begin
