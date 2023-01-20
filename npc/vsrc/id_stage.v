@@ -314,6 +314,6 @@ module ysyx_22050710_idu (
     })
   );
 
-  assign o_is_invalid_inst = (o_ALUctr == 5'b11111) && (o_EXctr == 4'b1111);
+  assign o_is_invalid_inst = (o_ALUctr == 5'b11111) && (o_EXctr == 4'b1111) && (i_inst != 32'b0);
 
 endmodule
