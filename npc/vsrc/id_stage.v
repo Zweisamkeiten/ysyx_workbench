@@ -275,6 +275,7 @@ module ysyx_22050710_idu (
           alu_signed_rem, alu_unsigned_rem
           });
     $display("jalr: %x", inst_jalr);
+    $display("inst: %x", i_inst);
 
   end
 
