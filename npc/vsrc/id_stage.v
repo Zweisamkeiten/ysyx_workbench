@@ -274,6 +274,7 @@ module ysyx_22050710_idu (
           alu_signed_mul, alu_signed_mulh,alu_su_mulh, alu_unsigned_mulh, alu_signed_div,    alu_unsigned_div,
           alu_signed_rem, alu_unsigned_rem
           });
+    $display("jalr: %x", inst_jalr);
 
   end
 
