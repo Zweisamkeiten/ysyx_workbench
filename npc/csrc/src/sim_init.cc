@@ -49,6 +49,7 @@ extern "C" void npc_pmem_read(long long raddr, long long *rdata) {
   if (likely(in_pmem(raddr))) {
     addr = raddr & ~0x7ull;
   } else {
+    printf("123\n");
     addr = raddr;
   }
 
