@@ -34,7 +34,6 @@ void set_state_abort() {
   npc_state.state = NPC_ABORT;
   npc_state.halt_pc = cpu.pc;
   npc_state.halt_ret = -1;
-  printf("NPC_ABORT: %d, npc_state: %d\n", NPC_ABORT, npc_state.state);
 }
 
 extern "C" void set_gpr_ptr(const svOpenArrayHandle r) {
