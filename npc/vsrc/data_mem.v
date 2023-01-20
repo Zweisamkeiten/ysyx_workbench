@@ -32,21 +32,21 @@ module ysyx_22050710_datamem (
     })
   );
 
-  wire [63:0] wdata;
-  MuxKey #(.NR_KEY(8), .KEY_LEN(3), .DATA_LEN(64)) u_mux2 (
-    .out(wdata),
-    .key(waddr[2:0]),
-    .lut({
-      3'h0, i_data,
-      3'h1, {i_data[55:0], { 8{1'b0}}},
-      3'h2, {i_data[47:0], {16{1'b0}}},
-      3'h3, {i_data[39:0], {24{1'b0}}},
-      3'h4, {i_data[31:0], {32{1'b0}}},
-      3'h5, {i_data[23:0], {40{1'b0}}},
-      3'h6, {i_data[15:0], {48{1'b0}}},
-      3'h7, {i_data[7:0], {56{1'b0}}}
-    })
-  );
+  wire [63:0] wdata = i_data;
+  /* MuxKey #(.NR_KEY(8), .KEY_LEN(3), .DATA_LEN(64)) u_mux2 ( */
+  /*   .out(wdata), */
+  /*   .key(waddr[2:0]), */
+  /*   .lut({ */
+  /*     3'h0, i_data, */
+  /*     3'h1, {i_data[55:0], { 8{1'b0}}}, */
+  /*     3'h2, {i_data[47:0], {16{1'b0}}}, */
+  /*     3'h3, {i_data[39:0], {24{1'b0}}}, */
+  /*     3'h4, {i_data[31:0], {32{1'b0}}}, */
+  /*     3'h5, {i_data[23:0], {40{1'b0}}}, */
+  /*     3'h6, {i_data[15:0], {48{1'b0}}}, */
+  /*     3'h7, {i_data[7:0], {56{1'b0}}} */
+  /*   }) */
+  /* ); */
 
   always @(*) begin
     $display("%x, %x, %x, %x, %x, %x, %x, %x", i_data[63:56], i_data[55: 48], i_data[47:40], i_data[39:32], i_data[31:24], i_data[23:16], i_data[15:8], i_data[7:0]);
