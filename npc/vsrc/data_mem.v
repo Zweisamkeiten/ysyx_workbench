@@ -16,7 +16,7 @@ module ysyx_22050710_datamem (
   assign o_data = rdata;
   wire [63:0] raddr = i_addr;
   wire [63:0] waddr = i_addr;
-  wire [7:0] wmask;
+  reg [7:0] wmask;
 
   always @(*) begin
     wmask = 8'b00000000;
