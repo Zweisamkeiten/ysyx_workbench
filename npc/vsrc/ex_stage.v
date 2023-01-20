@@ -189,7 +189,7 @@ module ysyx_22050710_exu (
     endcase
   end
 
-  always @(i_is_invalid_inst) begin
+  always @(i_is_invalid_inst) begin // 敏感变量只有 i_is_invalid_inst, reset(10) 因此只处理一次
       if (i_is_invalid_inst) set_state_abort(); // invalid inst
   end
 endmodule
