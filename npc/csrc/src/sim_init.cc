@@ -51,6 +51,7 @@ extern "C" void npc_pmem_read(long long raddr, long long *rdata) {
   } else {
     addr = raddr;
   }
+
   *rdata = paddr_read(addr, 8);
 }
 
@@ -61,15 +62,21 @@ extern "C" void npc_pmem_write(long long waddr, long long wdata, char wmask) {
   word_t addr;
   if (likely(in_pmem(waddr))) {
     addr = waddr & ~0x7ull;
+    uint8_t *p = (uint8_t *)&wdata;
+    for (int i = 0; i < 8; i++) {
+      if ((wmask & 0x1) == 0x1) {
+        paddr_write(addr + i, 1, *(p + i));
+      }
+      wmask = wmask >> 1;
+    }
   } else {
     addr = waddr;
-  }
-  uint8_t *p = (uint8_t *)&wdata;
-  for (int i = 0; i < 8; i++) {
-    if ((wmask & 0x1) == 0x1) {
-      paddr_write(addr + i, 1, *(p + i));
+    switch((unsigned char)wmask) {
+      case 0x1: paddr_write(addr, 1, wdata); break;
+      case 0x3: paddr_write(addr, 2, wdata); break;
+      case 0xf: paddr_write(addr, 4, wdata); break;
+      default: paddr_write(addr, 8, wdata); break;
     }
-    wmask = wmask >> 1;
   }
 }
 
