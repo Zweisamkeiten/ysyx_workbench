@@ -73,7 +73,7 @@ module ysyx_22050710_datamem (
     })
   );
 
-    always @(*) begin
+    always @(i_ReEn) begin
       if (!i_rst & i_ReEn & i_MemOP != 3'b111) begin
         npc_pmem_read(raddr, rdata);
         case (raddr[2:0])

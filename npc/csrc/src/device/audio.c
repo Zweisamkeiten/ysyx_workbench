@@ -88,7 +88,7 @@ static void audio_io_handler(uint32_t offset, int len, bool is_write) {
       case reg_channels: s.channels = audio_base[reg_channels]; break;
       case reg_samples: s.samples = audio_base[reg_samples]; init_sound(); break; // 照顺序写入, samples最后一个写入, 之后初始化音频设备
       case reg_count: count = audio_base[reg_count]; break;
-      // default: panic("offset illegal");
+      default: panic("offset illegal");
     }
   }
   else  {
@@ -96,7 +96,7 @@ static void audio_io_handler(uint32_t offset, int len, bool is_write) {
       case reg_sbuf_size: audio_base[reg_sbuf_size] = CONFIG_SB_SIZE; break;
       case reg_init: audio_base[reg_init] = true; break;
       case reg_count: audio_base[reg_count] = count; break;
-      // default: panic("offset illegal");
+      default: panic("offset illegal");
     }
   }
 }
