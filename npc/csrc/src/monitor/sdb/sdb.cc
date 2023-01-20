@@ -53,7 +53,12 @@ static int cmd_x(char *args) {
           if (success) {
             for (uint64_t i = 0; i < n; addr += 4, ++i) {
               uint32_t data = paddr_read(addr, 4);
-              printf("%#lx:\t0x%08x\n", addr, data);
+              printf("%#lx:\t 0x%08x\t", addr, data);
+              for (int j = 0; j < 4; j++) {
+                uint8_t data = paddr_read(addr + j, 1);
+                printf("0x%02x ", data);
+              }
+              printf("\n");
             }
             return 0;
           }
