@@ -15,7 +15,7 @@ module ysyx_22050710_ifu (
   end
 
   always @(*) begin
-    if (!i_rst) begin
+    if (!i_rst & !i_clk) begin
       npc_pmem_read(i_pc, rdata);
     end
   end
