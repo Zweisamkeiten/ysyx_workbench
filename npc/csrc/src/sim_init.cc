@@ -65,7 +65,7 @@ extern "C" void npc_pmem_write(long long waddr, long long wdata, char wmask) {
     }
     wmask = wmask >> 1;
   }
-  printf("\n");
+  // printf("\n");
 }
 
 extern "C" void single_cycle() {
