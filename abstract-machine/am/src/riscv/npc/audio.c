@@ -32,6 +32,7 @@ void __am_audio_ctrl(AM_AUDIO_CTRL_T *ctrl) {
 
 void __am_audio_status(AM_AUDIO_STATUS_T *stat) {
   stat->count = inl(AUDIO_COUNT_ADDR);
+  printf("%d\n", stat->count);
 }
 
 static void audio_write(uint8_t *buf, int len) {
