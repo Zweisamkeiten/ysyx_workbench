@@ -14,7 +14,7 @@ module ysyx_22050710_ifu (
     $display("rdata: %x", rdata);
   end
 
-  always @(posedge i_clk) begin
+  always @(*) begin
     if (!i_rst) begin
       npc_pmem_read(i_pc, rdata);
     end
