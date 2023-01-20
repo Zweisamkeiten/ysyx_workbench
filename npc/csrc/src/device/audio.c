@@ -93,14 +93,11 @@ static void audio_io_handler(uint32_t offset, int len, bool is_write) {
     }
   }
   else  {
-    printf("offset: %d\n", offset);
-    printf("pc: %lx\n", cpu.pc);
     switch (offset / 4) {
       case reg_sbuf_size: audio_base[reg_sbuf_size] = CONFIG_SB_SIZE; break;
       case reg_init: audio_base[reg_init] = true; break;
       case reg_count: audio_base[reg_count] = count; break;
       default: panic("offset illegal");
-      // default: audio_base[offset/4] = 0; break;
     }
   }
 }
