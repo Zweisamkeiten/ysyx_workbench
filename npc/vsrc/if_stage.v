@@ -9,14 +9,11 @@ module ysyx_22050710_ifu (
   wire [63:0] rdata;
   assign o_inst = i_pc[2] == 1'b0 ? rdata[31:0] : rdata[63:32];
 
-  always @(*) begin
-    $display("pc: %x", i_pc);
-    $display("rdata: %x", rdata);
-  end
-
-  always @(*) begin
-    if (!i_rst & !i_clk) begin
+  always @(posedge i_clk) begin
+    if (!i_rst) begin
       npc_pmem_read(i_pc, rdata);
+      $display("pc: %x", i_pc);
+      $display("rdata: %x", rdata);
     end
   end
 endmodule
