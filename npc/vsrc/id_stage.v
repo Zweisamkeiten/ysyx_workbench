@@ -276,6 +276,7 @@ module ysyx_22050710_idu (
           });
     $display("jalr: %x", inst_jalr);
     $display("inst: %x", i_inst);
+    $display("is_invalid: %x", o_is_invalid_inst);
 
   end
 
