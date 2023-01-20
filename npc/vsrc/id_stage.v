@@ -267,18 +267,18 @@ module ysyx_22050710_idu (
     })
   );
 
-  always @(*) begin
+  /* always @(*) begin */
 
-    $display("%x", {alu_copyimm,    alu_plus,       alu_sub,     alu_signed_less,   alu_unsigned_less,
-          alu_xor,        alu_and,        alu_or,      alu_sll,           alu_srl,           alu_sra,
-          alu_signed_mul, alu_signed_mulh,alu_su_mulh, alu_unsigned_mulh, alu_signed_div,    alu_unsigned_div,
-          alu_signed_rem, alu_unsigned_rem
-          });
-    $display("jalr: %x", inst_jalr);
-    $display("inst: %x", i_inst);
-    $display("is_invalid: %x", o_is_invalid_inst);
+  /*   $display("%x", {alu_copyimm,    alu_plus,       alu_sub,     alu_signed_less,   alu_unsigned_less, */
+  /*         alu_xor,        alu_and,        alu_or,      alu_sll,           alu_srl,           alu_sra, */
+  /*         alu_signed_mul, alu_signed_mulh,alu_su_mulh, alu_unsigned_mulh, alu_signed_div,    alu_unsigned_div, */
+  /*         alu_signed_rem, alu_unsigned_rem */
+  /*         }); */
+  /*   $display("jalr: %x", inst_jalr); */
+  /*   $display("inst: %x", i_inst); */
+  /*   $display("is_invalid: %x", o_is_invalid_inst); */
 
-  end
+  /* end */
 
   MuxKeyWithDefault #(.NR_KEY(8), .KEY_LEN(8), .DATA_LEN(3)) u_mux4 (
     .out(o_Branch),
