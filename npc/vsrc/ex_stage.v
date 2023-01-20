@@ -189,7 +189,7 @@ module ysyx_22050710_exu (
     endcase
   end
 
-  always @(i_is_invalid_inst) begin
+  always @(*) begin
       if (i_is_invalid_inst) set_state_abort(); // invalid inst
   end
 endmodule
