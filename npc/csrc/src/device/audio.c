@@ -97,6 +97,7 @@ static void audio_io_handler(uint32_t offset, int len, bool is_write) {
       case reg_init: audio_base[reg_init] = true; break;
       case reg_count: audio_base[reg_count] = count; break;
       // default: panic("offset illegal");
+      default: break;
     }
   }
 }
