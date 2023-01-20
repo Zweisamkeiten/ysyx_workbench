@@ -56,10 +56,10 @@ extern "C" void npc_pmem_write(long long waddr, long long wdata, char wmask) {
   // 如`wmask = 0x3`代表只写入最低2个字节, 内存中的其它字节保持不变
   word_t addr = waddr & ~0x7ull;
   uint8_t *p = (uint8_t *)&wdata;
-  printf("write: ");
+  // printf("write: ");
   for (int i = 7; i >= 0; i--, addr++) {
-    printf("%02x: ", *(p-i+7));
-    printf("%01x, ", (wmask & 0x1));
+    // printf("%02x: ", *(p-i+7));
+    // printf("%01x, ", (wmask & 0x1));
     if ((wmask & 0x1) == 0x1) {
       paddr_write(addr, 1, *(p - i + 7));
     }
