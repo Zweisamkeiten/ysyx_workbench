@@ -59,7 +59,6 @@ static void audio_play(void *userdata, uint8_t *stream, int len) {
   }
 
   count -= nread;
-  printf("%d\n", count);
   if (len > nread) {
     memset(stream + nread, 0, len - nread);
   }
