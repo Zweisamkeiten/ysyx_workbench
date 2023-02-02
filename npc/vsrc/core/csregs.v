@@ -64,10 +64,10 @@ module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
     .out(waddr),
     .key(i_waddr),
     .lut({
-      `MSTATUS, 0,
-      `MTVEC,   1,
-      `MEPC,    2,
-      `MCAUSE,  3
+      `MSTATUS, $clog2(`NRCSR)'d0,
+      `MTVEC,   $clog2(`NRCSR)'d1,
+      `MEPC,    $clog2(`NRCSR)'d2,
+      `MCAUSE,  $clog2(`NRCSR)'d3
     })
   );
   always @(posedge i_clk) begin
