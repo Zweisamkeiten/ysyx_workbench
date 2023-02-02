@@ -18,7 +18,7 @@ module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
   output  reg [63:0] o_nextpc, output reg o_sys_change_pc
 );
 
-  reg [DATA_WIDTH-1:0] rf [3:0];
+  reg [DATA_WIDTH-1:0] rf [2:0];
   initial set_csr_ptr(rf);
 
   always @(*) begin
