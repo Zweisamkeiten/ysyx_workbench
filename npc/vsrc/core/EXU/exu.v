@@ -28,7 +28,7 @@ module ysyx_22050710_exu (
   // ALU
   wire [63:0] src_a, src_b;
   assign src_a = i_ALUAsrc ? i_pc : src1;
-  MuxKey #(.NR_KEY(3), .KEY_LEN(2), .DATA_LEN(64)) u_mux1 (
+  MuxKey #(.NR_KEY(3), .KEY_LEN(2), .DATA_LEN(64)) u_mux0 (
     .out(src_b),
     .key(i_ALUBsrc),
     .lut({
@@ -49,7 +49,7 @@ module ysyx_22050710_exu (
 
   wire PCAsrc, PCBsrc;
   assign o_nextpc = (PCBsrc ? i_rs1 : i_pc) + (PCAsrc ? i_imm : 64'd4);
-  MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(1)) u_mux0 (
+  MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(1)) u_mux1 (
     .out(PCAsrc),
     .key(i_Branch),
     .lut({
@@ -62,7 +62,7 @@ module ysyx_22050710_exu (
       3'b111, Less == 1 ? 1'b0 : 1'b1
     })
   );
-  MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(1)) u_mux1 (
+  MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(1)) u_mux2 (
     .out(PCBsrc),
     .key(i_Branch),
     .lut({
@@ -78,7 +78,7 @@ module ysyx_22050710_exu (
 
   wire [63:0] rdata;
   assign o_GPRbusW = i_MemtoReg ? rdata : (i_sel_csr ? i_rs2 : o_ALUresult);
-  MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(64)) u_mux2 (
+  MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(64)) u_mux3 (
     .out(rdata),
     .key(i_MemOP),
     .lut({
