@@ -107,7 +107,7 @@ extern "C" void init_sim() {
 
   npcpc = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__pc);
 
-  uint64_t * csr[NR_CSREGS];
+  QData ** csr = (QData **)malloc(NR_CSREGS * sizeof(uint64_t *));
   csr[MSTATUS] = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__u_csrs__DOT__mstatus);
   csr[MTVEC] = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__u_csrs__DOT__mtvec);
   csr[MEPC] = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__u_csrs__DOT__mepc);
