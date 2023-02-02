@@ -15,7 +15,7 @@ module ysyx_22050710_ifu (
       npc_pmem_read(i_pc, rdata);
     end
     else begin
-      rdata <= 64'b0;
+      rdata = 64'b0;
     end
   end
 
