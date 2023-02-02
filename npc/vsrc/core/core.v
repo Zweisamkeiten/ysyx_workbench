@@ -29,7 +29,7 @@ module ysyx_22050710_core (
   ysyx_22050710_csr #(.ADDR_WIDTH(12), .DATA_WIDTH(64)) u_csrs (
     .i_clk(i_clk),
     .i_raddr(imm[11:0]), .i_waddr(imm[11:0]), .i_wdata(CSRbusW),
-    .i_Exctr(EXctr), .i_epc(pc),
+    .i_epc(pc),
     .i_ren(CsrRe), .i_wen(CsrWr),
     .i_raise_intr(raise_intr), .i_intr_ret(intr_ret),
     .o_bus(csrrdata),
