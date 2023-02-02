@@ -65,7 +65,7 @@ module ysyx_22050710_core (
   wire RegWr, MemtoReg, MemWr, MemRe; wire [2:0] MemOP;
   wire [3:0] EXctr;
   wire is_invalid_inst;
-  wire sel_csr, CsrWr, CsrRe;
+  wire sel_csr, sel_zimm, CsrWr, CsrRe;
   wire raise_intr, intr_ret;
   ysyx_22050710_idu u_idu (
     .i_inst(inst),
@@ -77,7 +77,7 @@ module ysyx_22050710_core (
     .o_RegWr(RegWr), .o_MemtoReg(MemtoReg), .o_MemWr(MemWr), .o_MemRe(MemRe), .o_MemOP(MemOP),
     .o_EXctr(EXctr),
     .o_is_invalid_inst(is_invalid_inst),
-    .o_sel_csr(sel_csr), .o_CsrWr(CsrWr), .o_CsrRe(CsrRe),
+    .o_sel_csr(sel_csr), .o_sel_zimm(sel_zimm), .o_CsrWr(CsrWr), .o_CsrRe(CsrRe),
     .o_zimm(zimm),
     .o_raise_intr(raise_intr), .o_intr_ret(intr_ret)
   );
@@ -92,7 +92,7 @@ module ysyx_22050710_core (
     .i_MemOP(MemOP), .i_MemtoReg(MemtoReg), .i_rdata(rdata),
     .i_EXctr(EXctr),
     .i_is_invalid_inst(is_invalid_inst),
-    .i_sel_csr(sel_csr), .i_sys_change_pc(sys_change_pc), .i_sysctr_pc(sysctr_pc),
+    .i_sel_csr(sel_csr), .i_sel_zimm(sel_zimm), .i_sys_change_pc(sys_change_pc), .i_sysctr_pc(sysctr_pc),
     .i_csrrdata(csrrdata), .i_zimm(zimm),
     .o_ALUresult(ALUresult),
     .o_nextpc(nextpc),

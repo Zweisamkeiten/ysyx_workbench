@@ -13,7 +13,7 @@ module ysyx_22050710_exu (
   input   [63:0] i_rdata,
   input   [3:0] i_EXctr,
   input   i_is_invalid_inst,
-  input   i_sel_csr, i_sys_change_pc,
+  input   i_sel_csr, i_sel_zimm, i_sys_change_pc,
   input   [63:0] i_csrrdata, i_zimm,
   output  [63:0] o_ALUresult,
   output  [63:0] o_nextpc,
@@ -73,13 +73,14 @@ module ysyx_22050710_exu (
     })
   );
 
+  wire [63:0] csr_oprand = i_sel_zimm ? i_zimm : i_rs1;
   MuxKeyWithDefault #(.NR_KEY(2), .KEY_LEN(4), .DATA_LEN(64)) u_mux2 (
     .out(o_CSRbusW),
     .key(i_EXctr),
     .default_out(64'b0),
     .lut({
-      4'b0000, i_rs1, // csrrw
-      4'b0001, i_csrrdata | i_rs1 // csrrs
+      4'b0000, csr_oprand, // csrrw, csrrwi
+      4'b0001, i_csrrdata | csr_oprand // csrrs
     })
   );
 

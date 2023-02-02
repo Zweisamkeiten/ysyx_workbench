@@ -10,7 +10,7 @@ module ysyx_22050710_idu (
   output  o_RegWr, o_MemtoReg, o_MemWr, o_MemRe, output [2:0] o_MemOP,
   output  [3:0] o_EXctr,
   output  o_is_invalid_inst,
-  output  o_sel_csr, o_CsrWr, o_CsrRe,
+  output  o_sel_csr, o_sel_zimm, o_CsrWr, o_CsrRe,
   output  [63:0] o_zimm,
   output  o_raise_intr, o_intr_ret
 );
@@ -91,6 +91,7 @@ module ysyx_22050710_idu (
   // RV32/RV64 Zicsr
   wire inst_csrrw  = (opcode[6:0] == 7'b1110011) & (funct3[2:0] == 3'b001);
   wire inst_csrrs  = (opcode[6:0] == 7'b1110011) & (funct3[2:0] == 3'b010);
+  wire inst_csrrwi = (opcode[6:0] == 7'b1110011) & (funct3[2:0] == 3'b101);
 
   // RV32M
   wire inst_mul    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b000) & (funct7[6:0] == 7'b0000001);
@@ -286,7 +287,8 @@ module ysyx_22050710_idu (
     })
   );
 
-  assign o_sel_csr          = |{inst_csrrw, inst_csrrs, inst_ecall, inst_mret};
+  assign o_sel_csr      = |{inst_csrrw, inst_csrrs, inst_csrrwi, inst_ecall, inst_mret};
+  assign o_sel_zimm     = |{inst_csrrwi};
   assign o_CsrWr        = o_sel_csr ? (|{inst_csrrs} == 1 ? (|o_ra == 0 ? 0 : 1) : 1) : 0;
   assign o_CsrRe        = o_sel_csr ? (|{inst_csrrw} == 1 ? (|o_rd == 0 ? 0 : 1) : 1) : 0;
   assign o_raise_intr   = inst_ecall;
@@ -294,7 +296,7 @@ module ysyx_22050710_idu (
 
   MuxKeyWithDefault #(.NR_KEY(5), .KEY_LEN(6), .DATA_LEN(4)) u_mux5 (
     .out(o_EXctr),
-    .key({|(o_ALUctr & 5'b11111), inst_ebreak, inst_ecall, inst_mret, |{inst_csrrw}, |{inst_csrrs}}),
+    .key({|(o_ALUctr & 5'b11111), inst_ebreak, inst_ecall, inst_mret, |{inst_csrrw, inst_csrrwi}, |{inst_csrrs}}),
     .default_out(4'b1111),
     .lut({
       6'b110000, 4'b1110,   // ebreak
