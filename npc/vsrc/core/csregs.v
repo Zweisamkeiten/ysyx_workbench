@@ -2,7 +2,7 @@
 
 import "DPI-C" function void set_csr_ptr(input logic [63:0] a[]);
 
-`define NRCSR     12'd4
+`define NRCSR     4
 `define MSTATUS   12'h300
 `define MTVEC     12'h305
 `define MEPC      12'h341
