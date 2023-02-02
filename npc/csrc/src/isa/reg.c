@@ -16,13 +16,6 @@
 #include <isa.h>
 #include "local-include/reg.h"
 
-const int csrs_addr[] = {
-  [MSTATUS] = 0,
-  [MTVEC]   = 1,
-  [MEPC]    = 2,
-  [MCAUSE]  = 3,
-};
-
 const char *regs[] = {
   // gprs
   "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
@@ -31,18 +24,12 @@ const char *regs[] = {
   "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
 };
 
-struct {
-  const char *name;
-  const int addr;
-} csr_table[] = {
-  {"mstatus", MSTATUS},
-  {"mtvec", MTVEC},
-  {"mepc", MEPC},
-  {"mcause", MCAUSE},
+csr csr_table[] = {
+  {"mstatus", 0x300, MSTATUS},
+  {"mtvec", 0x305, MTVEC},
+  {"mepc", 0x341, MEPC},
+  {"mcause", 0x342, MCAUSE},
 };
-
-#define NR_CSREGS ARRLEN(csr_table)
-
 
 void isa_reg_display() {
   printf(ANSI_FMT("GPRS:\n", ANSI_FG_MAGENTA));
@@ -52,7 +39,7 @@ void isa_reg_display() {
   }
   printf(ANSI_FMT("CSRS:\n", ANSI_FG_MAGENTA));
   for (int i = 0; i < NR_CSREGS; i++) {
-    // printf(ANSI_FMT("%-7s:", ANSI_FG_BLUE) ANSI_FMT(FMT_WORD "\n", ANSI_FG_GREEN), csr_table[i].name, csr(csrs_addr[csr_table[i].addr]));
+    printf(ANSI_FMT("%-7s:", ANSI_FG_BLUE) ANSI_FMT(FMT_WORD "\n", ANSI_FG_GREEN), csr_table[i].name, csr(csr_table[i].index));
   }
 }
 

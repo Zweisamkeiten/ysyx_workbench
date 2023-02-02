@@ -4,6 +4,7 @@
 #include <memory/host.h>
 extern "C" {
   #include <memory/paddr.h>
+  #include "../local-include/reg.h"
 }
 
 Vtop *top;
@@ -38,10 +39,6 @@ void set_state_abort() {
 extern "C" void set_gpr_ptr(const svOpenArrayHandle r) {
   cpu.gpr = (uint64_t *)(((VerilatedDpiOpenVar*)r)->datap());
 }
-
-// extern "C" void set_csr_ptr(const svOpenArrayHandle r) {
-//   cpu.csr = (uint64_t *)(((VerilatedDpiOpenVar*)r)->datap());
-// }
 
 extern "C" void npc_pmem_read(long long raddr, long long *rdata) {
   // 总是读取地址为`raddr & ~0x7ull`的8字节返回给`rdata`
@@ -109,6 +106,15 @@ extern "C" void init_sim() {
   npc_state.state = NPC_RUNNING;
 
   npcpc = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__pc);
+
+  QData ** csr = (QData **)malloc(NR_CSREGS * sizeof(uint64_t *));
+  csr[MSTATUS] = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__u_csrs__DOT__mstatus);
+  csr[MTVEC] = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__u_csrs__DOT__mtvec);
+  csr[MEPC] = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__u_csrs__DOT__mepc);
+  csr[MCAUSE] = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__u_csrs__DOT__mcause);
+
+  cpu.csr = csr;
+
   cpu.pc = *npcpc;
 }
 
