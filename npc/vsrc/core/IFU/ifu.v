@@ -14,4 +14,5 @@ module ysyx_22050710_ifu (
       npc_pmem_read(i_pc, rdata);
     end
   end
+
 endmodule

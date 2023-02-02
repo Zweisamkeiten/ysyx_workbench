@@ -180,6 +180,7 @@ module ysyx_22050710_exu (
 
   reg [63:0] CSRbusW;
   assign o_CSRbusW = CSRbusW;
+
   always @(*) begin
     CSRbusW = 64'b0;
     case (i_EXctr)
@@ -190,6 +191,7 @@ module ysyx_22050710_exu (
   end
 
   always @(i_is_invalid_inst) begin // 敏感变量只有 i_is_invalid_inst, reset(10) 因此只处理一次
-      if (i_is_invalid_inst) set_state_abort(); // invalid inst
+    if (i_is_invalid_inst) set_state_abort(); // invalid inst
   end
+
 endmodule

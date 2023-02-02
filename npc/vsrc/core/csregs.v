@@ -16,6 +16,7 @@ module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
   output  [DATA_WIDTH-1:0] o_bus,
   output  reg [63:0] o_nextpc, output reg o_sys_change_pc
 );
+
   initial set_csr_ptr(rf);
 
   reg [DATA_WIDTH-1:0] rf [4096-1:0];
@@ -27,6 +28,7 @@ module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
   always @(*) begin
     o_nextpc = 64'b0;
     o_sys_change_pc = 1'b0;
+
     if (i_ren) begin
       case (i_Exctr)
         4'b1101: begin // Environment call from M-mode Expection Code: 11
@@ -54,4 +56,5 @@ module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
       endcase
     end
   end
+
 endmodule
