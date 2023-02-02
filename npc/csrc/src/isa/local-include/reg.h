@@ -23,32 +23,27 @@ static inline int check_reg_idx(int idx) {
   return idx;
 }
 
-static inline int check_csr_addr(int addr) {
-  IFDEF(CONFIG_RT_CHECK, assert(addr >= 0 && addr < 4096));
-  return addr;
+static inline int check_csr_addr(int idx) {
+  IFDEF(CONFIG_RT_CHECK, assert(idx >= 0 && idx < 4096));
+  return idx;
 }
 
 #define gpr(idx) (cpu.gpr[check_reg_idx(idx)])
-#define csr(addr) (cpu.csr[check_csr_addr(addr)])
+#define csr(idx) (cpu.csr[check_csr_addr(idx)])
 
 typedef enum {
-  MSTATUS = 0x300,
-  MTVEC = 0x305,
-  MEPC = 0x341,
-  MCAUSE = 0x342
+  MSTATUS,
+  MTVEC,
+  MEPC,
+  MCAUSE,
+  NR_CSREGS
 } csr_addr;
 
-struct {
+typedef struct {
   const char *name;
   const int addr;
-} csr_table[] = {
-  {"mstatus", MSTATUS},
-  {"mtvec", MTVEC},
-  {"mepc", MEPC},
-  {"mcause", MCAUSE},
-};
-
-#define NR_CSREGS ARRLEN(csr_table)
+  const int index;
+} csr;
 
 static inline const char* reg_name(int idx, int width) {
   extern const char* regs[];
