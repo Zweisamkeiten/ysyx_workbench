@@ -20,10 +20,28 @@ module ysyx_22050710_exu (
   output  [63:0] o_CSRbusW
 );
 
-wire Zero, Less;
+  // word_cut: cut operand to 32bits and unsigned extend OR dont cut
+  wire [63:0] src1 = i_word_cut ? {{32{1'b0}}, i_rs1[31:0]} : i_rs1;
+  wire [63:0] src2 = i_word_cut ? {{32{1'b0}}, i_rs2[31:0]} : i_rs2;
+  wire [63:0] imm  = i_word_cut ? {{32{1'b0}}, i_imm[31:0]} : i_imm;
+
+  // ALU
+  wire [63:0] src_a, src_b;
+  assign src_a = i_ALUAsrc ? i_pc : src1;
+  MuxKey #(.NR_KEY(3), .KEY_LEN(2), .DATA_LEN(64)) u_mux1 (
+    .out(src_b),
+    .key(i_ALUBsrc),
+    .lut({
+      2'b00, src2,
+      2'b01, imm,
+      2'b10, 64'd4
+    })
+  );
+
+  wire Zero, Less;
   ysyx_22050710_alu u_alu (
-    .i_rs1(i_rs1), .i_rs2(i_rs2), .i_imm(i_imm), .i_pc(i_pc),
-    .i_ALUAsrc(i_ALUAsrc), .i_ALUBsrc(i_ALUBsrc), .i_ALUctr(i_ALUctr),
+    .i_src_a(src_a), .i_src_b(src_b),
+    .i_ALUctr(i_ALUctr),
     .i_word_cut(i_word_cut),
     .o_zero(Zero), .o_less(Less),
     .o_ALUresult(o_ALUresult)

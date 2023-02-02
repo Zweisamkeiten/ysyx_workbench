@@ -1,8 +1,8 @@
 // ysyx_22050710 alu
 
 module ysyx_22050710_alu (
-  input  [63:0] i_rs1, i_rs2, i_imm, i_pc,
-  input  i_ALUAsrc, input [1:0] i_ALUBsrc, input [4:0] i_ALUctr,
+  input  [63:0] i_src_a, i_src_b,
+  input  [4:0] i_ALUctr,
   input  i_word_cut,
   output o_zero,
   output o_less,
@@ -23,28 +23,10 @@ module ysyx_22050710_alu (
                    : (sub_result[63] == 0 ? 1'b1 : 1'b0);
   wire unsigned_Less = (1'b1 ^ cout) & ~(|src_b == 1'b0); // CF = cin ^ cout
 
-  // word_cut: cut operand to 32bits and unsigned extend OR dont cut
-  wire [63:0] src1 = i_word_cut ? {{32{1'b0}}, i_rs1[31:0]} : i_rs1;
-  wire [63:0] src2 = i_word_cut ? {{32{1'b0}}, i_rs2[31:0]} : i_rs2;
-  wire [63:0] imm  = i_word_cut ? {{32{1'b0}}, i_imm[31:0]} : i_imm;
-
   // if operand has been cut, the aluresult need signed extend to 64bits from
   // [32:0]
   wire [63:0] aluresult;
   assign o_ALUresult = i_word_cut ? {{32{aluresult[31]}}, aluresult[31:0]} : aluresult;
-
-  // ALU
-  wire [63:0] src_a, src_b;
-  assign src_a = i_ALUAsrc ? i_pc : src1;
-  MuxKey #(.NR_KEY(3), .KEY_LEN(2), .DATA_LEN(64)) u_mux1 (
-    .out(src_b),
-    .key(i_ALUBsrc),
-    .lut({
-      2'b00, src2,
-      2'b01, imm,
-      2'b10, 64'd4
-    })
-  );
 
   // adder
   wire[63:0] adder_result = src_a + src_b;
