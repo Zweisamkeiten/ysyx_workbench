@@ -47,7 +47,7 @@ module ysyx_22050710_exu (
     .o_ALUresult(o_ALUresult)
   );
 
-  ysyx_22050710_pc_jumper (
+  ysyx_22050710_pc_jumper u_pc_jumper (
     .i_rs1(i_rs1), .i_pc(i_pc), .i_imm(i_imm),
     .i_Branch(i_Branch),
     .i_zero(Zero), .i_less(Less),
