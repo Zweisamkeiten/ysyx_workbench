@@ -18,6 +18,7 @@ module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
   output  reg [63:0] o_nextpc, output reg o_sys_change_pc
 );
 
+  reg [DATA_WIDTH-1:0] rf [`NRCSR:0]
   initial set_csr_ptr(rf);
 
   always @(*) begin
@@ -52,11 +53,11 @@ module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
     end
   end
 
-  reg [DATA_WIDTH-1:0] mstatus;
+  reg [DATA_WIDTH-1:0] mstatus = rf[0];
   initial mstatus = 64'ha00001800;
-  reg [DATA_WIDTH-1:0] mtvec;
-  reg [DATA_WIDTH-1:0] mepc;
-  reg [DATA_WIDTH-1:0] mcause;
+  reg [DATA_WIDTH-1:0] mtvec = rf[1];
+  reg [DATA_WIDTH-1:0] mepc = rf[2];
+  reg [DATA_WIDTH-1:0] mcause = rf[3];
 
   wire [DATA_WIDTH-1:0] rdata;
   assign o_bus = i_ren ? rdata : 64'b0;
