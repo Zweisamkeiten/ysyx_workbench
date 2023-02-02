@@ -24,7 +24,7 @@ module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
 
     if (i_raise_intr) begin
       o_nextpc = mtvec;
-      $display(mtvec);
+      $display("%x", mtvec);
       o_sys_change_pc = 1'b1;
     end
     else if(i_intr_ret) begin // mret
