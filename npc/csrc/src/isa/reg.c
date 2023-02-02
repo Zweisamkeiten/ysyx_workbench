@@ -52,7 +52,7 @@ void isa_reg_display() {
   }
   printf(ANSI_FMT("CSRS:\n", ANSI_FG_MAGENTA));
   for (int i = 0; i < NR_CSREGS; i++) {
-    printf(ANSI_FMT("%-7s:", ANSI_FG_BLUE) ANSI_FMT(FMT_WORD "\n", ANSI_FG_GREEN), csr_table[i].name, csr(csrs_addr[csr_table[i].addr]));
+    // printf(ANSI_FMT("%-7s:", ANSI_FG_BLUE) ANSI_FMT(FMT_WORD "\n", ANSI_FG_GREEN), csr_table[i].name, csr(csrs_addr[csr_table[i].addr]));
   }
 }
 
