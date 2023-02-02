@@ -35,7 +35,7 @@ module ysyx_22050710_alu (
   assign {cout, sub_result}   = {1'b0, i_src_a} + {1'b0, (({64{1'b1}}^(i_src_b)) + 1)};
 
   // copy imm
-  wire [63:0] copy_result = i_imm;
+  wire [63:0] copy_result = i_src_b;
 
   // signed mul
   wire signed [63:0] signed_mul_result = $signed(i_src_a) * $signed(i_src_b);
