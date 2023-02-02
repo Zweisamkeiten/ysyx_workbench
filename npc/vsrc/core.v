@@ -1,6 +1,6 @@
-// ysyx_22050710 NPC CORE TOP
+// ysyx_22050710 NPC CORE
 
-module ysyx_22050710_npc (
+module ysyx_22050710_core (
   input i_clk,
   input i_rst
 );

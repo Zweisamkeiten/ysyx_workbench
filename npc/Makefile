@@ -1,4 +1,4 @@
-TOPNAME = ysyx_22050710_npc
+TOPNAME = ysyx_22050710_top
 BUILD_DIR = ./build
 VERILATOR_OBJ_DIR = $(BUILD_DIR)/obj_dir
 BIN = $(BUILD_DIR)/$(TOPNAME)
