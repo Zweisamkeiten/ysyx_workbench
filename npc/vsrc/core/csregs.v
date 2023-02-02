@@ -60,14 +60,14 @@ module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
   );
 
   wire [ADDR_WIDTH-1:0] waddr;
-  MuxKey #(.NR_KEY(`NRCSR), .KEY_LEN(2), .DATA_LEN(12)) u_mux1 (
+  MuxKey #(.NR_KEY(`NRCSR), .KEY_LEN($clog2(`NRCSR)), .DATA_LEN(12)) u_mux1 (
     .out(waddr),
     .key(i_waddr),
     .lut({
-      `MSTATUS, 12'd0,
-      `MTVEC,   12'd1,
-      `MEPC,    12'd2,
-      `MCAUSE,  12'd3
+      `MSTATUS, 0,
+      `MTVEC,   1,
+      `MEPC,    2,
+      `MCAUSE,  3
     })
   );
   always @(posedge i_clk) begin
