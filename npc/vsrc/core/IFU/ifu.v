@@ -6,7 +6,7 @@ module ysyx_22050710_ifu (
   output  [31:0] o_inst
 );
 
-  wire [63:0] rdata;
+  reg [63:0] rdata;
 
   assign o_inst = i_pc[2] == 1'b0 ? rdata[31:0] : rdata[63:32];
 
