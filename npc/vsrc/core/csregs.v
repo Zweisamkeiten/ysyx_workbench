@@ -60,7 +60,7 @@ module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
 
   wire [DATA_WIDTH-1:0] rdata;
   assign o_bus = i_ren ? rdata : 64'b0;
-  MuxKey #(.NR_KEY(NRCSR), .KEY_LEN(12), .DATA_LEN(64)) u_mux0 (
+  MuxKey #(.NR_KEY(`NRCSR), .KEY_LEN(12), .DATA_LEN(64)) u_mux0 (
     .out(rdata),
     .key(i_raddr),
     .lut({
