@@ -2,6 +2,7 @@
 
 import "DPI-C" function void set_csr_ptr(input logic [63:0] a[]);
 
+`define NRCSR     12'd4
 `define MSTATUS   12'h300
 `define MTVEC     12'h305
 `define MEPC      12'h341
@@ -18,12 +19,6 @@ module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
 );
 
   initial set_csr_ptr(rf);
-
-  reg [DATA_WIDTH-1:0] rf [4096-1:0];
-
-  initial rf[`MSTATUS] = 64'ha00001800;
-
-  assign o_bus = i_ren ? rf[i_raddr] : 64'b0;
 
   always @(*) begin
     o_nextpc = 64'b0;
@@ -56,5 +51,24 @@ module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
       endcase
     end
   end
+
+  reg [DATA_WIDTH=1:0] mstatus;
+  initial mstatus = 64'ha00001800;
+  reg [DATA_WIDTH=1:0] mtvec;
+  reg [DATA_WIDTH=1:0] mepc;
+  reg [DATA_WIDTH=1:0] mcause;
+
+  wire [DATA_WIDTH-1:0] rdata;
+  assign o_bus = i_ren ? rdata : 64'b0;
+  MuxKey #(.NR_KEY(NRCSR), .KEY_LEN(12), .DATA_LEN(64)) u_mux0 (
+    .out(rdata),
+    .key(i_raddr),
+    .lut({
+      `MSTATUS, mstatus,
+      `MTVEC,   mtvec,
+      `MEPC,    mepc,
+      `MCAUSE,  mcause
+    })
+  );
 
 endmodule

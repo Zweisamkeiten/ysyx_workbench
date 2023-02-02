@@ -56,7 +56,7 @@ module ysyx_22050710_exu (
 
   wire [63:0] rdata;
   assign o_GPRbusW = i_MemtoReg ? rdata : (i_sel_csr ? i_rs2 : o_ALUresult);
-  MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(64)) u_mux3 (
+  MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(64)) u_mux1 (
     .out(rdata),
     .key(i_MemOP),
     .lut({
