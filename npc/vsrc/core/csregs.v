@@ -1,9 +1,8 @@
 // ysyx_22050710 CSR regs
 
-import "DPI-C" function void set_csr_ptr(input logic [63:0] a[]);
-
 `define NRCSR     4
 `define MSTATUS   12'h300
+`define mstatus   12'h300
 `define MTVEC     12'h305
 `define MEPC      12'h341
 `define MCAUSE    12'h342
@@ -19,9 +18,6 @@ module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
   output  reg [63:0] o_nextpc, output reg o_sys_change_pc
 );
 
-  reg [DATA_WIDTH-1:0] rf [`NRCSR:0];
-  initial set_csr_ptr(rf);
-
   always @(*) begin
     o_nextpc = 64'b0;
     o_sys_change_pc = 1'b0;
@@ -36,7 +32,7 @@ module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
     end
   end
 
-  reg [DATA_WIDTH-1:0] mstatus = rf[0];
+  reg [DATA_WIDTH-1:0] mstatus;
   initial mstatus = 64'ha00001800;
   always @(posedge i_clk) begin
     if (i_waddr == `MSTATUS) begin
@@ -44,21 +40,21 @@ module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
     end
   end
 
-  reg [DATA_WIDTH-1:0] mtvec = rf[1];
+  reg [DATA_WIDTH-1:0] mtvec;
   always @(posedge i_clk) begin
     if (i_waddr == `MTVEC) begin
       mtvec <= i_wdata;
     end
   end
 
-  reg [DATA_WIDTH-1:0] mepc = rf[2];
+  reg [DATA_WIDTH-1:0] mepc;
   always @(posedge i_clk) begin
     if (i_waddr == `MEPC) begin
       mepc <= i_wdata;
     end
   end
 
-  reg [DATA_WIDTH-1:0] mcause = rf[3];
+  reg [DATA_WIDTH-1:0] mcause;
   always @(posedge i_clk) begin
     if (i_waddr == `MCAUSE) begin
       mcause <= i_wdata;
