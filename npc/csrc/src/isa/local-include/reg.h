@@ -1,7 +1,7 @@
 /***************************************************************************************
 * Copyright (c) 2014-2022 Zihao Yu, Nanjing University
 *
-* NPC is licensed under Mulan PSL v2.
+* NEMU is licensed under Mulan PSL v2.
 * You can use this software according to the terms and conditions of the Mulan PSL v2.
 * You may obtain a copy of Mulan PSL v2 at:
 *          http://license.coscl.org.cn/MulanPSL2
@@ -37,6 +37,18 @@ typedef enum {
   MEPC = 0x341,
   MCAUSE = 0x342
 } csr_addr;
+
+struct {
+  const char *name;
+  const int addr;
+} csr_table[] = {
+  {"mstatus", MSTATUS},
+  {"mtvec", MTVEC},
+  {"mepc", MEPC},
+  {"mcause", MCAUSE},
+};
+
+#define NR_CSREGS ARRLEN(csr_table)
 
 static inline const char* reg_name(int idx, int width) {
   extern const char* regs[];

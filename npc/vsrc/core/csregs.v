@@ -2,7 +2,6 @@
 
 `define NRCSR     4
 `define MSTATUS   12'h300
-`define mstatus   12'h300
 `define MTVEC     12'h305
 `define MEPC      12'h341
 `define MCAUSE    12'h342
@@ -76,13 +75,13 @@ module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
 
   always @(posedge i_clk) begin
     if (i_wen) begin
-        if (i_raise_intr) begin // Environment call from M-mode Expection Code: 11
-          mepc <= i_epc;
-          mcause <= 64'd11;
-        end
-        else if (i_intr_ret) begin
-          mstatus <= 64'ha00001800;
-        end
+      if (i_raise_intr) begin // Environment call from M-mode Expection Code: 11
+        mepc <= i_epc;
+        mcause <= 64'd11;
+      end
+      else if (i_intr_ret) begin
+        mstatus <= 64'ha00001800;
+      end
     end
   end
 
