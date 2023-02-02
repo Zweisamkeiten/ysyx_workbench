@@ -1,7 +1,7 @@
 // ysyx_22050710 alu
 
 module ysyx_22050710_alu (
-  input  [63:0] i_i_src_a, i_i_src_b,
+  input  [63:0] i_src_a, i_src_b,
   input  [4:0] i_ALUctr,
   input  i_word_cut,
   output o_zero,
