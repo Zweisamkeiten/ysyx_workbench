@@ -64,10 +64,10 @@ module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
     .out(waddr),
     .key(i_waddr),
     .lut({
-      `MSTATUS, 2'd0,
-      `MTVEC,   2'd1,
-      `MEPC,    2'd2,
-      `MCAUSE,  2'd3
+      `MSTATUS, 3'd0,
+      `MTVEC,   3'd1,
+      `MEPC,    3'd2,
+      `MCAUSE,  3'd3
     })
   );
   always @(posedge i_clk) begin
