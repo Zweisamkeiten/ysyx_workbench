@@ -14,7 +14,7 @@ module ysyx_22050710_core (
     .o_pc(pc)
   );
 
-  wire [63:0] rs1, rs2, ALUresult;
+  wire [63:0] rs1, rs2;
   wire [63:0] GPRbusW;
   ysyx_22050710_gpr #(.ADDR_WIDTH(5), .DATA_WIDTH(64)) u_gprs (
     .i_clk(i_clk),
@@ -36,10 +36,11 @@ module ysyx_22050710_core (
   );
 
   wire [63:0] rdata;
+  wire [63:0] lsu_addr = ALUresult; // x[rs1] + imm
   ysyx_22050710_lsu u_lsu (
     .i_clk(i_clk),
     .i_rst(i_rst),
-    .i_addr(ALUresult),
+    .i_addr(lsu_addr),
     .i_data(rs2),
     .i_MemOP(MemOP),
     .i_WrEn(MemWr),
@@ -77,6 +78,7 @@ module ysyx_22050710_core (
     .o_sel_csr(sel_csr), .o_sel_csr_imm(sel_csr_imm), .o_CsrW(CsrW), .o_CsrR(CsrR)
   );
 
+  wire [63:0] ALUresult;
   ysyx_22050710_exu u_exu (
     .i_rs1(sel_csr_imm ? {{59{1'b0}}, ra} : rs1), .i_rs2(sel_csr ? rcsr : rs2),
     .i_imm(imm), .i_pc(pc),
