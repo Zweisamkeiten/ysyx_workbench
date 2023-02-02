@@ -113,6 +113,8 @@ extern "C" void init_sim() {
   csr[MEPC] = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__u_csrs__DOT__mepc);
   csr[MCAUSE] = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__u_csrs__DOT__mcause);
 
+  cpu.csr = csr;
+
   cpu.pc = *npcpc;
 }
 
