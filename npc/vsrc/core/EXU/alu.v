@@ -5,7 +5,8 @@ module ysyx_22050710_alu (
   input  i_ALUAsrc, input [1:0] i_ALUBsrc, input [4:0] i_ALUctr,
   input  i_word_cut,
   output o_zero,
-  output o_less
+  output o_less,
+  output [63:0] o_ALUresult
 );
 
   assign o_zero = ~(|sub_result);

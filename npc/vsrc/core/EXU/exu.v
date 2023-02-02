@@ -26,6 +26,7 @@ wire Zero, Less;
     .i_ALUAsrc(i_ALUAsrc), .i_ALUBsrc(i_ALUBsrc), .i_ALUctr(i_ALUctr),
     .i_word_cut(i_word_cut),
     .o_zero(Zero), .o_less(Less)
+    .o_ALUresult(o_ALUresult)
   );
 
   wire PCAsrc, PCBsrc;
