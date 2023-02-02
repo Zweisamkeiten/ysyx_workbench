@@ -23,15 +23,16 @@ module ysyx_22050710_core (
     .o_busA(rs1), .o_busB(rs2)
   );
 
-  wire [63:0] rcsr;
+  wire [63:0] csrrdata;
   wire [63:0] CSRbusW;
   wire [63:0] sysctr_pc; wire sys_change_pc;
   ysyx_22050710_csr #(.ADDR_WIDTH(12), .DATA_WIDTH(64)) u_csrs (
     .i_clk(i_clk),
     .i_raddr(imm[11:0]), .i_waddr(imm[11:0]), .i_wdata(CSRbusW),
-    .i_Exctr(EXctr), .i_epc(pc),
-    .i_ren(CsrR), .i_wen(CsrW),
-    .o_bus(rcsr),
+    .i_epc(pc),
+    .i_ren(CsrRe), .i_wen(CsrWr),
+    .i_raise_intr(raise_intr), .i_intr_ret(intr_ret),
+    .o_bus(csrrdata),
     .o_nextpc(sysctr_pc), .o_sys_change_pc(sys_change_pc)
   );
 
@@ -56,7 +57,7 @@ module ysyx_22050710_core (
     .o_inst(inst)
   );
 
-  wire [63:0] imm;
+  wire [63:0] imm, zimm;
   wire [4:0] ra, rb, rd;
   wire [2:0] Branch;
   wire ALUAsrc; wire [1:0] ALUBsrc; wire [4:0] ALUctr;
@@ -64,7 +65,8 @@ module ysyx_22050710_core (
   wire RegWr, MemtoReg, MemWr, MemRe; wire [2:0] MemOP;
   wire [3:0] EXctr;
   wire is_invalid_inst;
-  wire sel_csr, sel_csr_imm, CsrW, CsrR;
+  wire sel_csr, sel_zimm, CsrWr, CsrRe;
+  wire raise_intr, intr_ret;
   ysyx_22050710_idu u_idu (
     .i_inst(inst),
     .o_imm(imm),
@@ -75,12 +77,14 @@ module ysyx_22050710_core (
     .o_RegWr(RegWr), .o_MemtoReg(MemtoReg), .o_MemWr(MemWr), .o_MemRe(MemRe), .o_MemOP(MemOP),
     .o_EXctr(EXctr),
     .o_is_invalid_inst(is_invalid_inst),
-    .o_sel_csr(sel_csr), .o_sel_csr_imm(sel_csr_imm), .o_CsrW(CsrW), .o_CsrR(CsrR)
+    .o_sel_csr(sel_csr), .o_sel_zimm(sel_zimm), .o_CsrWr(CsrWr), .o_CsrRe(CsrRe),
+    .o_zimm(zimm),
+    .o_raise_intr(raise_intr), .o_intr_ret(intr_ret)
   );
 
   wire [63:0] ALUresult;
   ysyx_22050710_exu u_exu (
-    .i_rs1(sel_csr_imm ? {{59{1'b0}}, ra} : rs1), .i_rs2(sel_csr ? rcsr : rs2),
+    .i_rs1(rs1), .i_rs2(rs2),
     .i_imm(imm), .i_pc(pc),
     .i_ALUAsrc(ALUAsrc), .i_ALUBsrc(ALUBsrc), .i_ALUctr(ALUctr),
     .i_word_cut(word_cut),
@@ -88,7 +92,8 @@ module ysyx_22050710_core (
     .i_MemOP(MemOP), .i_MemtoReg(MemtoReg), .i_rdata(rdata),
     .i_EXctr(EXctr),
     .i_is_invalid_inst(is_invalid_inst),
-    .i_sel_csr(sel_csr), .i_sys_change_pc(sys_change_pc), .i_sysctr_pc(sysctr_pc),
+    .i_sel_csr(sel_csr), .i_sel_zimm(sel_zimm), .i_sys_change_pc(sys_change_pc), .i_sysctr_pc(sysctr_pc),
+    .i_csrrdata(csrrdata), .i_zimm(zimm),
     .o_ALUresult(ALUresult),
     .o_nextpc(nextpc),
     .o_GPRbusW(GPRbusW),

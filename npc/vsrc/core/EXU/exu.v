@@ -13,7 +13,8 @@ module ysyx_22050710_exu (
   input   [63:0] i_rdata,
   input   [3:0] i_EXctr,
   input   i_is_invalid_inst,
-  input   i_sel_csr, i_sys_change_pc,
+  input   i_sel_csr, i_sel_zimm, i_sys_change_pc,
+  input   [63:0] i_csrrdata, i_zimm,
   output  [63:0] o_ALUresult,
   output  [63:0] o_nextpc,
   output  [63:0] o_GPRbusW,
@@ -57,7 +58,7 @@ module ysyx_22050710_exu (
   );
 
   wire [63:0] rdata;
-  assign o_GPRbusW = i_MemtoReg ? rdata : (i_sel_csr ? i_rs2 : o_ALUresult);
+  assign o_GPRbusW = i_MemtoReg ? rdata : (i_sel_csr ? i_csrrdata : o_ALUresult);
   MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(64)) u_mux1 (
     .out(rdata),
     .key(i_MemOP),
@@ -72,16 +73,21 @@ module ysyx_22050710_exu (
     })
   );
 
-  reg [63:0] CSRbusW;
-  assign o_CSRbusW = CSRbusW;
+  wire [63:0] csr_oprand = i_sel_zimm ? i_zimm : i_rs1;
+  MuxKeyWithDefault #(.NR_KEY(2), .KEY_LEN(4), .DATA_LEN(64)) u_mux2 (
+    .out(o_CSRbusW),
+    .key(i_EXctr),
+    .default_out(64'b0),
+    .lut({
+      4'b0000, csr_oprand, // csrrw, csrrwi
+      4'b0001, i_csrrdata | csr_oprand // csrrs
+    })
+  );
 
   always @(*) begin
-    CSRbusW = 64'b0;
-    case (i_EXctr)
-      4'b1110: set_state_end(); // ebreak
-      4'b0000: CSRbusW = src_a;
-      default:;
-    endcase
+    if (i_EXctr == 4'b1110) begin
+      set_state_end(); // ebreak
+    end
   end
 
   always @(i_is_invalid_inst) begin // 敏感变量只有 i_is_invalid_inst, reset(10) 因此只处理一次
