@@ -24,6 +24,7 @@ wire Zero, Less;
   ysyx_22050710_alu u_alu (
     .i_rs1(i_rs1), .i_rs2(i_rs2), .i_imm(i_imm), .i_pc(i_pc),
     .i_ALUAsrc(i_ALUAsrc), .i_ALUBsrc(i_ALUBsrc), .i_ALUctr(i_ALUctr),
+    .i_word_cut(i_word_cut),
     .o_zero(Zero), .o_less(Less)
   );
 
