@@ -10,7 +10,9 @@ module ysyx_22050710_idu (
   output  o_RegWr, o_MemtoReg, o_MemWr, o_MemRe, output [2:0] o_MemOP,
   output  [3:0] o_EXctr,
   output  o_is_invalid_inst,
-  output  o_sel_csr, o_sel_csr_imm, o_CsrW, o_CsrR
+  output  o_sel_csr, o_CsrWr, o_CsrRe,
+  output  [63:0] o_zimm,
+  output  o_raise_intr, o_intr_ret
 );
 
   wire [6:0] opcode;
@@ -22,6 +24,7 @@ module ysyx_22050710_idu (
   assign  o_rd    = i_inst[11:7];
   assign  funct3  = i_inst[14:12];
   assign  funct7  = i_inst[31:25];
+  assign  o_zimm  = {{59{1'b0}}, i_inst[19:15]};
 
   // imm gen
   wire [63:0] immI, immU, immS, immB, immJ;
@@ -283,10 +286,11 @@ module ysyx_22050710_idu (
     })
   );
 
-  assign o_sel_csr      = |{inst_csrrw, inst_csrrs, inst_ecall, inst_mret};
-  assign o_sel_csr_imm  = |{1'b0};
-  assign o_CsrW         = o_sel_csr ? (|{inst_csrrs} == 1 ? (|o_ra == 0 ? 0 : 1) : 1) : 0;
-  assign o_CsrR         = o_sel_csr ? (|{inst_csrrw} == 1 ? (|o_rd == 0 ? 0 : 1) : 1) : 0;
+  assign o_sel_csr          = |{inst_csrrw, inst_csrrs, inst_ecall, inst_mret};
+  assign o_CsrWr        = o_sel_csr ? (|{inst_csrrs} == 1 ? (|o_ra == 0 ? 0 : 1) : 1) : 0;
+  assign o_CsrRe        = o_sel_csr ? (|{inst_csrrw} == 1 ? (|o_rd == 0 ? 0 : 1) : 1) : 0;
+  assign o_raise_intr   = inst_ecall;
+  assign o_intr_ret     = inst_mret;
 
   MuxKeyWithDefault #(.NR_KEY(5), .KEY_LEN(6), .DATA_LEN(4)) u_mux5 (
     .out(o_EXctr),
