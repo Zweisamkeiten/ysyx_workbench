@@ -32,7 +32,8 @@ module ysyx_22050710_core (
     .i_Exctr(EXctr), .i_epc(pc),
     .i_ren(CsrRe), .i_wen(CsrWr),
     .i_raise_intr(raise_intr), .i_intr_ret(intr_ret),
-    .o_bus(csrrdata)
+    .o_bus(csrrdata),
+    .o_nextpc(sysctr_pc), .o_sys_change_pc(sys_change_pc)
   );
 
   wire [63:0] rdata;
