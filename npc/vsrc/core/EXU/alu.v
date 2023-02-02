@@ -6,10 +6,9 @@ module ysyx_22050710_alu (
   output o_less,
 );
 
-  wire Zero = ~(|sub_result);
-  wire Less;
+  assign o_zero = ~(|sub_result);
   MuxKey #(.NR_KEY(2), .KEY_LEN(5), .DATA_LEN(1)) u_mux0 (
-    .out(Less),
+    .out(o_less),
     .key(i_ALUctr),
     .lut({
       5'b00010, signed_Less,
