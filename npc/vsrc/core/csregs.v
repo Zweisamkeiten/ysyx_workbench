@@ -28,27 +28,14 @@ module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
     if (i_ren) begin
       case (i_Exctr)
         4'b1101: begin // Environment call from M-mode Expection Code: 11
-                  o_nextpc = rf[`MTVEC];
+                  o_nextpc = mtvec;
                   o_sys_change_pc = 1'b1;
                  end
         4'b1100: begin // mret
-                  o_nextpc = rf[`MEPC];
+                  o_nextpc = mepc;
                   o_sys_change_pc = 1'b1;
                  end
         default: ;
-      endcase
-    end
-  end
-
-  always @(posedge i_clk) begin
-    if (i_wen) begin
-      case (i_Exctr)
-        4'b1101: begin // Environment call from M-mode Expection Code: 11
-                  rf[`MEPC] <= i_epc;
-                  rf[`MCAUSE] <= 64'd11;
-                 end
-        4'b1001: rf[i_waddr] <= rf[i_waddr] | i_wdata; // csrrs
-        default: rf[i_waddr] <= i_wdata; // csrrw
       endcase
     end
   end
@@ -71,5 +58,30 @@ module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
       `MCAUSE,  mcause
     })
   );
+
+  wire [ADDR_WIDTH-1:0] waddr;
+  MuxKey #(.NR_KEY(`NRCSR), .KEY_LEN(12), .DATA_LEN(12)) u_mux1 (
+    .out(waddr),
+    .key(i_waddr),
+    .lut({
+      `MSTATUS, 12'd0,
+      `MTVEC,   12'd1,
+      `MEPC,    12'd2,
+      `MCAUSE,  12'd3
+    })
+  );
+  always @(posedge i_clk) begin
+    if (i_wen) begin
+      case (i_Exctr)
+        4'b1101: begin // Environment call from M-mode Expection Code: 11
+                  mepc <= i_epc;
+                  mcause <= 64'd11;
+                 end
+        4'b1001: rf[waddr] <= rf[waddr] | i_wdata; // csrrs
+        default: rf[waddr] <= i_wdata; // csrrw
+      endcase
+    end
+  end
+
 
 endmodule
