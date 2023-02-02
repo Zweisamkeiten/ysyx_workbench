@@ -5,7 +5,7 @@ module ysyx_22050710_pc_jumper (
   input  [2:0]  i_Branch,
   input  i_zero,
   input  i_less,
-  output o_nextpc
+  output [63:0] o_nextpc
 );
 
   wire PCAsrc, PCBsrc;
