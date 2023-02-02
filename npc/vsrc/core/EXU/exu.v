@@ -75,7 +75,7 @@ module ysyx_22050710_exu (
 
   MuxKeyWithDefault #(.NR_KEY(2), .KEY_LEN(4), .DATA_LEN(64)) u_mux2 (
     .out(o_CSRbusW),
-    .key(i_Exctr),
+    .key(i_EXctr),
     .default_out(64'b0),
     .lut({
       4'b0000, i_rs1, // csrrw
@@ -84,7 +84,7 @@ module ysyx_22050710_exu (
   );
 
   always @(*) begin
-    if (i_Exctr == 4'b1110) begin
+    if (i_EXctr == 4'b1110) begin
       set_state_end(); // ebreak
     end
   end
