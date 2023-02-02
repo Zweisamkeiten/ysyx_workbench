@@ -10,7 +10,7 @@ module ysyx_22050710_core (
     .i_clk(i_clk),
     .i_rst(i_rst),
     .i_load(1'b1),
-    .i_in(sys_change_pc ? sysctr_pc : nextpc),
+    .i_in(nextpc),
     .o_pc(pc)
   );
 
@@ -86,7 +86,7 @@ module ysyx_22050710_core (
     .i_MemOP(MemOP), .i_MemtoReg(MemtoReg), .i_rdata(rdata),
     .i_EXctr(EXctr),
     .i_is_invalid_inst(is_invalid_inst),
-    .i_sel_csr(sel_csr),
+    .i_sel_csr(sel_csr), .i_sys_change_pc(sys_change_pc), .i_sysctr_pc(sysctr_pc),
     .o_ALUresult(ALUresult),
     .o_nextpc(nextpc),
     .o_GPRbusW(GPRbusW),
