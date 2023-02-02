@@ -1,8 +1,10 @@
 // ysyx_22050710 pc arithmetic unit
 
 module ysyx_22050710_pc_jumper (
-  input [63:0] i_rs1, i_pc, i_imm,
-  input i_Branch,
+  input  [63:0] i_rs1, i_pc, i_imm,
+  input  [2:0]  i_Branch,
+  input  i_zero,
+  input  i_less,
   output o_nextpc
 );
 
@@ -16,10 +18,10 @@ module ysyx_22050710_pc_jumper (
       3'b000, 1'b0,
       3'b001, 1'b1,
       3'b010, 1'b1,
-      3'b100, Zero == 1 ? 1'b1 : 1'b0,
-      3'b101, Zero == 1 ? 1'b0 : 1'b1,
-      3'b110, Less == 1 ? 1'b1 : 1'b0,
-      3'b111, Less == 1 ? 1'b0 : 1'b1
+      3'b100, i_zero == 1 ? 1'b1 : 1'b0,
+      3'b101, i_zero == 1 ? 1'b0 : 1'b1,
+      3'b110, i_less == 1 ? 1'b1 : 1'b0,
+      3'b111, i_less == 1 ? 1'b0 : 1'b1
     })
   );
 

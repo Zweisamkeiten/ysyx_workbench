@@ -47,6 +47,13 @@ module ysyx_22050710_exu (
     .o_ALUresult(o_ALUresult)
   );
 
+  ysyx_22050710_pc_jumper (
+    .i_rs1(i_rs1), .i_pc(i_pc), .i_imm(i_imm),
+    .i_Branch(i_Branch),
+    .i_zero(Zero), .i_less(Less),
+    .o_nextpc(o_nextpc)
+  );
+
   wire [63:0] rdata;
   assign o_GPRbusW = i_MemtoReg ? rdata : (i_sel_csr ? i_rs2 : o_ALUresult);
   MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(64)) u_mux3 (
