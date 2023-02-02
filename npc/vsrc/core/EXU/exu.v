@@ -49,6 +49,9 @@ module ysyx_22050710_exu (
   );
 
   wire [63:0] nextpc;
+  always @(*) begin
+    $display(i_sys_change_pc);
+  end
   assign o_nextpc = i_sys_change_pc ? i_sysctr_pc : nextpc;
   ysyx_22050710_pc_jumper u_pc_jumper (
     .i_rs1(i_rs1), .i_pc(i_pc), .i_imm(i_imm),
