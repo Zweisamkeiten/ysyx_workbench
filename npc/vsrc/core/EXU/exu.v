@@ -21,7 +21,7 @@ module ysyx_22050710_exu (
 );
 
 wire Zero, Less;
-  ysyx_22050710_lsu u_alu (
+  ysyx_22050710_alu u_alu (
     .i_rs1(i_rs1), .i_rs2(i_rs2), .i_imm(i_imm),
     .o_zero(Zero), .o_less(Less)
   );
