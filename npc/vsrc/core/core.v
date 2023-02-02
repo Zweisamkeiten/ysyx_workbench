@@ -65,7 +65,7 @@ module ysyx_22050710_core (
   wire RegWr, MemtoReg, MemWr, MemRe; wire [2:0] MemOP;
   wire [3:0] EXctr;
   wire is_invalid_inst;
-  wire sel_csr, CsrW, CsrR;
+  wire sel_csr, CsrWr, CsrRe;
   wire raise_intr, intr_ret;
   ysyx_22050710_idu u_idu (
     .i_inst(inst),
