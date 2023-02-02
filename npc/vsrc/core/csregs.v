@@ -52,11 +52,11 @@ module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
     end
   end
 
-  reg [DATA_WIDTH=1:0] mstatus;
+  reg [DATA_WIDTH-1:0] mstatus;
   initial mstatus = 64'ha00001800;
-  reg [DATA_WIDTH=1:0] mtvec;
-  reg [DATA_WIDTH=1:0] mepc;
-  reg [DATA_WIDTH=1:0] mcause;
+  reg [DATA_WIDTH-1:0] mtvec;
+  reg [DATA_WIDTH-1:0] mepc;
+  reg [DATA_WIDTH-1:0] mcause;
 
   wire [DATA_WIDTH-1:0] rdata;
   assign o_bus = i_ren ? rdata : 64'b0;
