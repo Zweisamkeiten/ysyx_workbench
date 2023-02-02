@@ -292,9 +292,6 @@ module ysyx_22050710_idu (
   assign o_CsrWr        = o_sel_csr ? (|{inst_csrrs} == 1 ? (|o_ra == 0 ? 0 : 1) : 1) : 0;
   assign o_CsrRe        = o_sel_csr ? (|{inst_csrrw} == 1 ? (|o_rd == 0 ? 0 : 1) : 1) : 0;
   assign o_raise_intr   = inst_ecall;
-  always @(*) begin
-    $display(inst_ecall);
-  end
   assign o_intr_ret     = inst_mret;
 
   MuxKeyWithDefault #(.NR_KEY(5), .KEY_LEN(6), .DATA_LEN(4)) u_mux5 (
