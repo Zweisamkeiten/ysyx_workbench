@@ -1,9 +1,9 @@
-// ysyx_22050710 Data Memory
+// ysyx_22050710 Load and Store Memory Unit
 
 import "DPI-C" function void npc_pmem_read(input longint raddr, output longint rdata);
 import "DPI-C" function void npc_pmem_write(input longint waddr, input longint wdata, input byte wmask);
 
-module ysyx_22050710_datamem (
+module ysyx_22050710_lsu (
   input   i_clk, i_rst,
   input   [63:0] i_addr,
   input   [63:0] i_data,

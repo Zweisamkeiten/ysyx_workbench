@@ -36,7 +36,7 @@ module ysyx_22050710_core (
   );
 
   wire [63:0] rdata;
-  ysyx_22050710_datamem u_datamem (
+  ysyx_22050710_lsu u_lsu (
     .i_clk(i_clk),
     .i_rst(i_rst),
     .i_addr(ALUresult),
