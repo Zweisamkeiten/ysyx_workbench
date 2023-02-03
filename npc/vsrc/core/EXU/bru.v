@@ -1,6 +1,6 @@
-// ysyx_22050710 pc arithmetic unit
+// ysyx_22050710 branch unit
 
-module ysyx_22050710_pc_jumper (
+module ysyx_22050710_bru (
   input  [63:0] i_rs1, i_pc, i_imm,
   input  [2:0]  i_Branch,
   input  i_zero,
