@@ -10,6 +10,7 @@ module ysyx_22050710_lsu (
   input   [2:0] i_MemOP,
   input   i_MemtoReg,
   input   i_WrEn, i_ReEn,
+  input   i_sel_csr,
   output  [63:0] o_w_rf_data
 );
 

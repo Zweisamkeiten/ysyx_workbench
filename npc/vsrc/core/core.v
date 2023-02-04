@@ -73,7 +73,7 @@ module ysyx_22050710_core (
     .i_word_cut(word_cut),
     .i_EXctr(EXctr),
     .i_is_invalid_inst(is_invalid_inst),
-    .i_sel_csr(sel_csr), .i_sel_zimm(sel_zimm),
+    .i_sel_zimm(sel_zimm),
     .i_csrrdata(csrrdata), .i_zimm(zimm),
     .o_ALUzero(ALUzero), .o_ALUless(ALUless),
     .o_ALUresult(ALUresult),
@@ -91,6 +91,7 @@ module ysyx_22050710_core (
     .i_MemtoReg(MemtoReg),
     .i_WrEn(MemWr),
     .i_ReEn(MemRe),
+    .i_sel_csr(sel_csr), 
     .o_w_rf_data(ms_rf_wdata)
   );
 

@@ -10,7 +10,7 @@ module ysyx_22050710_exu (
   input   i_word_cut,
   input   [3:0] i_EXctr,
   input   i_is_invalid_inst,
-  input   i_sel_csr, i_sel_zimm,
+  input   i_sel_zimm,
   input   [63:0] i_csrrdata, i_zimm,
   output  o_ALUzero, o_ALUless,
   output  [63:0] o_ALUresult,
