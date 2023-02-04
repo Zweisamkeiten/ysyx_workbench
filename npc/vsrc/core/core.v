@@ -47,7 +47,7 @@ module ysyx_22050710_core (
     /* .o_RegWr(RegWr), */ .o_MemtoReg(MemtoReg), .o_MemWr(MemWr), .o_MemRe(MemRe), .o_MemOP(MemOP),
     .o_EXctr(EXctr),
     .o_is_invalid_inst(is_invalid_inst),
-    .o_sel_csr(sel_csr), .o_sel_zimm(sel_zimm), .o_CsrWr(CsrWr), .o_CsrRe(CsrRe),
+    .o_sel_csr(sel_csr), .o_sel_zimm(sel_zimm), .o_CsrWr(CsrWr),
     .o_zimm(zimm),
     .o_csrrdata(csrrdata),
     .o_sys_change_pc(sys_change_pc), .o_sysctr_pc(sysctr_pc),
