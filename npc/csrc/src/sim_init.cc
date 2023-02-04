@@ -81,11 +81,10 @@ extern "C" void single_cycle() {
 }
 
 static void reset(int n) {
-  top->i_rst = 0;
   while (n-- > 0) {
+    top->i_rst = 0;
     single_cycle();
   }
-  top->i_rst = 1;
 }
 
 extern "C" void init_sim() {
@@ -103,6 +102,8 @@ extern "C" void init_sim() {
 
   reset(10);
 
+  top->i_rst = 1;
+  single_cycle();
   npc_state.state = NPC_RUNNING;
 
   npcpc = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__pc);
@@ -119,6 +120,7 @@ extern "C" void init_sim() {
 }
 
 extern "C" void end_sim() {
+  free(cpu.csr);
   top->final();
   delete top;
 #ifdef CONFIG_VCD_TRACE

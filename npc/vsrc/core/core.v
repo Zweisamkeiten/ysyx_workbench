@@ -6,9 +6,9 @@ module ysyx_22050710_core (
 );
 
   // i_rst 低电平同步复位
-  /* reg reset; */
-  /* always @(posedge i_clk) reset <= ~i_rst; */
-  wire reset = ~i_rst;
+  reg reset;
+  always @(posedge i_clk) reset <= ~i_rst;
+  /* wire reset = ~i_rst; */
 
   wire [63:0] nextpc;
   ysyx_22050710_pc u_pc (
