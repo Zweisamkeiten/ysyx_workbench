@@ -73,7 +73,6 @@ extern "C" void single_cycle(int rst) {
   contextp->timeInc(1);
   tfp->dump(contextp->time());
 #endif
-  top->i_rst = rst;
   top->i_clk = 1;
   top->eval();
 #ifdef CONFIG_VCD_TRACE
@@ -86,6 +85,7 @@ static void reset(int n) {
   while (n-- > 0) {
     single_cycle(0); // always reset
   }
+  single_cycle(1); // always reset
 }
 
 extern "C" void init_sim() {
