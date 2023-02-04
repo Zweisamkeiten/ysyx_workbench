@@ -15,6 +15,7 @@ VerilatedVcdC *tfp = NULL;
 uint64_t * npcpc;
 
 void set_state_end() {
+  printf("123\n");
   npc_state.state = NPC_END;
   npc_state.halt_pc = *npcpc;
   npc_state.halt_ret = cpu.gpr[10];
