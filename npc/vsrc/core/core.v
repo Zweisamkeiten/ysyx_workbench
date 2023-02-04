@@ -47,7 +47,7 @@ module ysyx_22050710_core (
     .i_clk(i_clk),
     .i_inst(inst),
     .i_GPRbusW(GPRbusW),
-    .o_rs1data(rs1), .o_rs2data(rs2),
+    .o_rs1data(rs1data), .o_rs2data(rs2data),
     .o_imm(imm),
     .o_Branch(Branch),
     .o_ALUAsrc(ALUAsrc), .o_ALUBsrc(ALUBsrc), .o_ALUctr(ALUctr),
