@@ -9,7 +9,6 @@ module ysyx_22050710_core (
   reg reset;
   always @(posedge i_clk) reset <= ~i_rst;
 
-  always @* $display("%x", nextpc);
   wire [63:0] nextpc;
   ysyx_22050710_pc u_pc (
     .i_clk(i_clk),
