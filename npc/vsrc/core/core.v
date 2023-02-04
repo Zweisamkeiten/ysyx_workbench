@@ -9,9 +9,6 @@ module ysyx_22050710_core (
   reg reset;
   always @(posedge i_clk) reset <= ~i_rst;
 
-  wire [63:0] rs1, rs2;
-  wire [63:0] GPRbusW;
-
   wire [63:0] csrrdata;
   wire [63:0] CSRbusW;
   wire [63:0] sysctr_pc; wire sys_change_pc;
@@ -35,6 +32,8 @@ module ysyx_22050710_core (
     .o_inst(inst)
   );
 
+  wire [63:0] rs1data, rs2data;
+  wire [63:0] GPRbusW;
   wire [63:0] imm, zimm;
   wire [2:0] Branch;
   wire ALUAsrc; wire [1:0] ALUBsrc; wire [4:0] ALUctr;
@@ -48,7 +47,7 @@ module ysyx_22050710_core (
     .i_clk(i_clk),
     .i_inst(inst),
     .i_GPRbusW(GPRbusW),
-    .o_rs1(rs1), .o_rs2(rs2),
+    .o_rs1data(rs1), .o_rs2data(rs2),
     .o_imm(imm),
     .o_Branch(Branch),
     .o_ALUAsrc(ALUAsrc), .o_ALUBsrc(ALUBsrc), .o_ALUctr(ALUctr),
