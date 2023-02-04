@@ -20,7 +20,7 @@ module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
   always @(*) begin
     o_nextpc = 64'b0;
     o_sys_change_pc = 1'b0;
-    $display("pc: %x, mstatus: %x", i_epc, mstatus);
+    /* $display("pc: %x, mstatus: %x", i_epc, mstatus); */
 
     if (i_raise_intr) begin
       o_nextpc = mtvec;
@@ -36,6 +36,7 @@ module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
   initial mstatus = 64'ha00001800;
   always @(posedge i_clk) begin
     if (i_waddr == `MSTATUS) begin
+      $display("%x", i_wdata);
       mstatus <= i_wdata;
     end
   end
