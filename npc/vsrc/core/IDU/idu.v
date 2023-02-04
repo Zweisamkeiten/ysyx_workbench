@@ -322,7 +322,7 @@ module ysyx_22050710_idu (
   wire [11:0] csr = i_inst[31:20];
   ysyx_22050710_csr #(.ADDR_WIDTH(12), .DATA_WIDTH(64)) u_csrs (
     .i_clk(i_clk),
-    .i_raddr(csr), .i_waddr(csr), .i_wdata(CSRbusW),
+    .i_raddr(csr), .i_waddr(csr), .i_wdata(i_CSRbusW),
     .i_epc(i_pc),
     .i_ren(CsrRe), .i_wen(CsrWr),
     .i_raise_intr(raise_intr), .i_intr_ret(intr_ret),
