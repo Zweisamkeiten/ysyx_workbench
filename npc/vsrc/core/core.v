@@ -29,7 +29,6 @@ module ysyx_22050710_core (
   wire [3:0] EXctr;
   wire is_invalid_inst;
   wire sel_csr, sel_zimm, CsrWr, CsrRe;
-  wire raise_intr, intr_ret;
   wire [63:0] csrrdata;
   wire [63:0] CSRbusW;
   wire [63:0] sysctr_pc; wire sys_change_pc;
