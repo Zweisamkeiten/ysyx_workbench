@@ -62,7 +62,7 @@ module ysyx_22050710_core (
 
   wire [63:0] ALUresult;
   ysyx_22050710_exu u_exu (
-    .i_rs1(rs1), .i_rs2(rs2),
+    .i_rs1(rs1data), .i_rs2(rs2data),
     .i_imm(imm), .i_pc(pc),
     .i_ALUAsrc(ALUAsrc), .i_ALUBsrc(ALUBsrc), .i_ALUctr(ALUctr),
     .i_word_cut(word_cut),
