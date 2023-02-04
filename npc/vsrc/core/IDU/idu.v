@@ -2,8 +2,10 @@
 
 module ysyx_22050710_idu (
   input   i_clk,
+  input   [63:0] i_pc,
   input   [31:0] i_inst,
   input   [63:0] i_GPRbusW,
+  input   [63:0] i_CSRbusW,
   output  [63:0] o_rs1data, o_rs2data,
   output  [63:0] o_imm,
   output  [2:0] o_Branch,
@@ -12,9 +14,11 @@ module ysyx_22050710_idu (
   output  /* o_RegWr, */ o_MemtoReg, o_MemWr, o_MemRe, output [2:0] o_MemOP,
   output  [3:0] o_EXctr,
   output  o_is_invalid_inst,
-  output  o_sel_csr, o_sel_zimm, o_CsrWr, o_CsrRe,
+  output  o_sel_csr, o_sel_zimm, /* o_CsrWr, */
   output  [63:0] o_zimm,
-  output  o_raise_intr, o_intr_ret
+  output  [63:0] o_csrrdata,
+  output  [63:0] o_sysctr_pc,
+  output  o_sys_change_pc
 );
 
   wire [6:0] opcode  = i_inst[6:0];
@@ -23,7 +27,6 @@ module ysyx_22050710_idu (
   wire [4:0] rd      = i_inst[11:7];
   wire [2:0] funct3  = i_inst[14:12];
   wire [6:0] funct7  = i_inst[31:25];
-  assign o_zimm      = {{59{1'b0}}, i_inst[19:15]};
 
   // imm gen
   wire [63:0] immI, immU, immS, immB, immJ;
@@ -32,6 +35,7 @@ module ysyx_22050710_idu (
   assign immS = {{52{i_inst[31]}}, i_inst[31:25], i_inst[11:7]};
   assign immB = {{52{i_inst[31]}}, i_inst[7], i_inst[30:25], i_inst[11:8], 1'b0};
   assign immJ = {{44{i_inst[31]}}, i_inst[19:12], i_inst[20], i_inst[30:21], 1'b0};
+  assign o_zimm = {{59{1'b0}}, i_inst[19:15]};
   
   // RV32I and RV64I
   wire inst_lui    = (opcode[6:0] == 7'b0110111);
@@ -288,10 +292,10 @@ module ysyx_22050710_idu (
 
   assign o_sel_csr      = |{inst_csrrw, inst_csrrs, inst_csrrwi, inst_ecall, inst_mret};
   assign o_sel_zimm     = |{inst_csrrwi};
-  assign o_CsrWr        = o_sel_csr ? (|{inst_csrrs} == 1 ? (|rs1 == 0 ? 0 : 1) : 1) : 0;
-  assign o_CsrRe        = o_sel_csr ? (|{inst_csrrw} == 1 ? (|rd == 0 ? 0 : 1) : 1) : 0;
-  assign o_raise_intr   = inst_ecall;
-  assign o_intr_ret     = inst_mret;
+  wire   CsrWr          = o_sel_csr ? (|{inst_csrrs} == 1 ? (|rs1 == 0 ? 0 : 1) : 1) : 0;
+  wire   CsrRe          = o_sel_csr ? (|{inst_csrrw} == 1 ? (|rd == 0 ? 0 : 1) : 1) : 0;
+  wire   raise_intr     = inst_ecall;
+  wire   intr_ret       = inst_mret;
 
   MuxKeyWithDefault #(.NR_KEY(5), .KEY_LEN(6), .DATA_LEN(4)) u_mux5 (
     .out(o_EXctr),
@@ -313,6 +317,17 @@ module ysyx_22050710_idu (
     .i_raddr1(rs1), .i_raddr2(rs2), .i_waddr(rd),
     .i_wdata(i_GPRbusW), .i_wen(RegWr),
     .o_rdata1(o_rs1data), .o_rdata2(o_rs2data)
+  );
+
+  wire [11:0] csr = i_inst[31:20];
+  ysyx_22050710_csr #(.ADDR_WIDTH(12), .DATA_WIDTH(64)) u_csrs (
+    .i_clk(i_clk),
+    .i_raddr(csr), .i_waddr(csr), .i_wdata(i_CSRbusW),
+    .i_epc(i_pc),
+    .i_ren(CsrRe), .i_wen(CsrWr),
+    .i_raise_intr(raise_intr), .i_intr_ret(intr_ret),
+    .o_bus(o_csrrdata),
+    .o_nextpc(o_sysctr_pc), .o_sys_change_pc(o_sys_change_pc)
   );
 
 endmodule

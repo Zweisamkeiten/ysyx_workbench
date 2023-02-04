@@ -9,19 +9,6 @@ module ysyx_22050710_core (
   reg reset;
   always @(posedge i_clk) reset <= ~i_rst;
 
-  wire [63:0] csrrdata;
-  wire [63:0] CSRbusW;
-  wire [63:0] sysctr_pc; wire sys_change_pc;
-  ysyx_22050710_csr #(.ADDR_WIDTH(12), .DATA_WIDTH(64)) u_csrs (
-    .i_clk(i_clk),
-    .i_raddr(imm[11:0]), .i_waddr(imm[11:0]), .i_wdata(CSRbusW),
-    .i_epc(pc),
-    .i_ren(CsrRe), .i_wen(CsrWr),
-    .i_raise_intr(raise_intr), .i_intr_ret(intr_ret),
-    .o_bus(csrrdata),
-    .o_nextpc(sysctr_pc), .o_sys_change_pc(sys_change_pc)
-  );
-
   wire [31:0] inst; wire [63:0] pc;
   wire [63:0] nextpc;
   ysyx_22050710_ifu u_ifu (
@@ -41,12 +28,16 @@ module ysyx_22050710_core (
   wire /* RegWr, */ MemtoReg, MemWr, MemRe; wire [2:0] MemOP;
   wire [3:0] EXctr;
   wire is_invalid_inst;
-  wire sel_csr, sel_zimm, CsrWr, CsrRe;
-  wire raise_intr, intr_ret;
+  wire sel_csr, sel_zimm/* , CsrWr */;
+  wire [63:0] csrrdata;
+  wire [63:0] CSRbusW;
+  wire [63:0] sysctr_pc; wire sys_change_pc;
   ysyx_22050710_idu u_idu (
     .i_clk(i_clk),
+    .i_pc(pc),
     .i_inst(inst),
     .i_GPRbusW(GPRbusW),
+    .i_CSRbusW(CSRbusW),
     .o_rs1data(rs1data), .o_rs2data(rs2data),
     .o_imm(imm),
     .o_Branch(Branch),
@@ -55,9 +46,10 @@ module ysyx_22050710_core (
     /* .o_RegWr(RegWr), */ .o_MemtoReg(MemtoReg), .o_MemWr(MemWr), .o_MemRe(MemRe), .o_MemOP(MemOP),
     .o_EXctr(EXctr),
     .o_is_invalid_inst(is_invalid_inst),
-    .o_sel_csr(sel_csr), .o_sel_zimm(sel_zimm), .o_CsrWr(CsrWr), .o_CsrRe(CsrRe),
+    .o_sel_csr(sel_csr), .o_sel_zimm(sel_zimm),/*  .o_CsrWr(CsrWr), */
     .o_zimm(zimm),
-    .o_raise_intr(raise_intr), .o_intr_ret(intr_ret)
+    .o_csrrdata(csrrdata),
+    .o_sys_change_pc(sys_change_pc), .o_sysctr_pc(sysctr_pc)
   );
 
   wire [63:0] ALUresult;
