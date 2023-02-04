@@ -17,16 +17,13 @@ module ysyx_22050710_idu (
   output  o_raise_intr, o_intr_ret
 );
 
-  wire [6:0] opcode;
-  wire [2:0] funct3; wire [6:0] funct7;
-
-  assign  opcode  = i_inst[6:0];
-  assign  ra      = i_inst[19:15];
-  assign  rb      = i_inst[24:20];
-  assign  rd      = i_inst[11:7];
-  assign  funct3  = i_inst[14:12];
-  assign  funct7  = i_inst[31:25];
-  assign  o_zimm  = {{59{1'b0}}, i_inst[19:15]};
+  wire [6:0]  opcode  = i_inst[6:0];
+  wire ra             = i_inst[19:15];
+  wire rb             = i_inst[24:20];
+  wire rd             = i_inst[11:7];
+  wire [2:0]  funct3  = i_inst[14:12];
+  wire [6:0]  funct7  = i_inst[31:25];
+  assign o_zimm  = {{59{1'b0}}, i_inst[19:15]};
 
   // imm gen
   wire [63:0] immI, immU, immS, immB, immJ;
