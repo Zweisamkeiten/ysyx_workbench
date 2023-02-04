@@ -74,6 +74,7 @@ module ysyx_22050710_lsu (
   );
 
   always @(*) begin
+    rdata = 64'b0;
     if (i_rst) begin
       rdata = 64'b0;
     end
