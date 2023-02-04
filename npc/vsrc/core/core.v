@@ -36,19 +36,6 @@ module ysyx_22050710_core (
     .o_nextpc(sysctr_pc), .o_sys_change_pc(sys_change_pc)
   );
 
-  wire [63:0] rdata;
-  wire [63:0] lsu_addr = ALUresult; // x[rs1] + imm
-  ysyx_22050710_lsu u_lsu (
-    .i_clk(i_clk),
-    .i_rst(i_rst),
-    .i_addr(lsu_addr),
-    .i_data(rs2),
-    .i_MemOP(MemOP),
-    .i_WrEn(MemWr),
-    .i_ReEn(MemRe),
-    .o_data(rdata)
-  );
-
   wire [31:0] inst; wire [63:0] pc;
   ysyx_22050710_ifu u_ifu (
     .i_clk(i_clk),
@@ -98,6 +85,19 @@ module ysyx_22050710_core (
     .o_nextpc(nextpc),
     .o_GPRbusW(GPRbusW),
     .o_CSRbusW(CSRbusW)
+  );
+
+  wire [63:0] rdata;
+  wire [63:0] lsu_addr = ALUresult; // x[rs1] + imm
+  ysyx_22050710_lsu u_lsu (
+    .i_clk(i_clk),
+    .i_rst(i_rst),
+    .i_addr(lsu_addr),
+    .i_data(rs2),
+    .i_MemOP(MemOP),
+    .i_WrEn(MemWr),
+    .i_ReEn(MemRe),
+    .o_data(rdata)
   );
 
 endmodule
