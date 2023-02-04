@@ -9,15 +9,6 @@ module ysyx_22050710_core (
   reg reset;
   always @(posedge i_clk) reset <= ~i_rst;
 
-  wire [63:0] nextpc;
-  ysyx_22050710_pc u_pc (
-    .i_clk(i_clk),
-    .i_rst(reset),
-    .i_load(1'b1),
-    .i_in(nextpc),
-    .o_pc(pc)
-  );
-
   wire [63:0] rs1, rs2;
   wire [63:0] GPRbusW;
   ysyx_22050710_gpr #(.ADDR_WIDTH(5), .DATA_WIDTH(64)) u_gprs (
@@ -41,10 +32,12 @@ module ysyx_22050710_core (
   );
 
   wire [31:0] inst; wire [63:0] pc;
+  wire [63:0] nextpc;
   ysyx_22050710_ifu u_ifu (
     .i_clk(i_clk),
     .i_rst(reset),
-    .i_pc(pc),
+    .i_nextpc(nextpc),
+    .o_pc(pc),
     .o_inst(inst)
   );
 
