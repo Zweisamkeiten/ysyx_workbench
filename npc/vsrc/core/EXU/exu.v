@@ -43,6 +43,7 @@ module ysyx_22050710_exu (
     .i_src_a(src_a), .i_src_b(src_b),
     .i_ALUctr(i_ALUctr),
     .i_word_cut(i_word_cut),
+    .o_ALUzero(o_ALUzero), .o_ALUless(o_ALUless),
     .o_ALUresult(o_ALUresult)
   );
 
