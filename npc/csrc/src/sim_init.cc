@@ -104,7 +104,7 @@ extern "C" void init_sim() {
 
   reset(10);
 
-  top->i_rst = 1;
+  // top->i_rst = 1;
   npc_state.state = NPC_RUNNING;
 
   npcpc = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__pc);
