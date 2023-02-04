@@ -7,6 +7,8 @@ module ysyx_22050710_lsu (
   input   i_clk, i_rst,
   input   [63:0] i_addr,
   input   [63:0] i_data,
+  input   [63:0] i_ALUresult,
+  input   [63:0] i_csrrdata,
   input   [2:0] i_MemOP,
   input   i_MemtoReg,
   input   i_WrEn, i_ReEn,
@@ -16,7 +18,7 @@ module ysyx_22050710_lsu (
 
   wire [63:0] rdata;
   wire [63:0] memrdata;
-  assign o_GPRbusW = i_MemtoReg ? rdata : (i_sel_csr ? i_csrrdata : o_ALUresult);
+  assign o_GPRbusW = i_MemtoReg ? rdata : (i_sel_csr ? i_csrrdata : i_ALUresult);
   MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(64)) u_mux0 (
     .out(memrdata),
     .key(i_MemOP),
