@@ -7,13 +7,33 @@ module ysyx_22050710_lsu (
   input   i_clk, i_rst,
   input   [63:0] i_addr,
   input   [63:0] i_data,
+  input   [63:0] i_ALUresult,
+  input   [63:0] i_csrrdata,
   input   [2:0] i_MemOP,
+  input   i_MemtoReg,
   input   i_WrEn, i_ReEn,
-  output  [63:0] o_data
+  input   i_sel_csr,
+  output  [63:0] o_w_rf_data
 );
 
+  wire [63:0] rdata;
+  wire [63:0] memrdata;
+  assign o_w_rf_data = i_MemtoReg ? memrdata : (i_sel_csr ? i_csrrdata : i_ALUresult);
+  MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(64)) u_mux0 (
+    .out(memrdata),
+    .key(i_MemOP),
+    .lut({
+      3'b000, {{56{rdata[7]}}, rdata[7:0]},
+      3'b001, {{56{1'b0}}, rdata[7:0]},
+      3'b010, {{48{rdata[15]}}, rdata[15:0]},
+      3'b011, {{48{1'b0}}, rdata[15:0]},
+      3'b100, {{32{rdata[31]}}, rdata[31:0]},
+      3'b101, {{32{1'b0}}, rdata[31:0]},
+      3'b110, rdata
+    })
+  );
+
   reg [63:0] rdata;
-  assign o_data = rdata;
   wire [63:0] raddr = i_addr;
   wire [63:0] waddr = i_addr;
   reg [7:0] wmask;
@@ -58,7 +78,7 @@ module ysyx_22050710_lsu (
   end
 
   wire [63:0] wdata;
-  MuxKey #(.NR_KEY(8), .KEY_LEN(3), .DATA_LEN(64)) u_mux1 (
+  MuxKey #(.NR_KEY(8), .KEY_LEN(3), .DATA_LEN(64)) u_mux2 (
     .out(wdata),
     .key(waddr[2:0]),
     .lut({

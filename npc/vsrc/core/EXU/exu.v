@@ -8,15 +8,12 @@ module ysyx_22050710_exu (
   input   [63:0] i_imm, i_pc,
   input   i_ALUAsrc, input [1:0] i_ALUBsrc, input [4:0] i_ALUctr,
   input   i_word_cut,
-  input   [2:0] i_MemOP, input i_MemtoReg,
-  input   [63:0] i_rdata,
   input   [3:0] i_EXctr,
   input   i_is_invalid_inst,
-  input   i_sel_csr, i_sel_zimm,
+  input   i_sel_zimm,
   input   [63:0] i_csrrdata, i_zimm,
   output  o_ALUzero, o_ALUless,
   output  [63:0] o_ALUresult,
-  output  [63:0] o_GPRbusW,
   output  [63:0] o_CSRbusW
 );
 
@@ -44,22 +41,6 @@ module ysyx_22050710_exu (
     .i_word_cut(i_word_cut),
     .o_ALUzero(o_ALUzero), .o_ALUless(o_ALUless),
     .o_ALUresult(o_ALUresult)
-  );
-
-  wire [63:0] rdata;
-  assign o_GPRbusW = i_MemtoReg ? rdata : (i_sel_csr ? i_csrrdata : o_ALUresult);
-  MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(64)) u_mux1 (
-    .out(rdata),
-    .key(i_MemOP),
-    .lut({
-      3'b000, {{56{i_rdata[7]}}, i_rdata[7:0]},
-      3'b001, {{56{1'b0}}, i_rdata[7:0]},
-      3'b010, {{48{i_rdata[15]}}, i_rdata[15:0]},
-      3'b011, {{48{1'b0}}, i_rdata[15:0]},
-      3'b100, {{32{i_rdata[31]}}, i_rdata[31:0]},
-      3'b101, {{32{1'b0}}, i_rdata[31:0]},
-      3'b110, i_rdata
-    })
   );
 
   wire [63:0] csr_oprand = i_sel_zimm ? i_zimm : i_rs1;

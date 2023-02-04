@@ -25,25 +25,29 @@ module ysyx_22050710_core (
   wire [2:0] brfunc;
   wire ALUAsrc; wire [1:0] ALUBsrc; wire [4:0] ALUctr;
   wire word_cut;
-  wire /* RegWr, */ MemtoReg, MemWr, MemRe; wire [2:0] MemOP;
+  wire ws_rf_wen, RegWr, MemtoReg, MemWr, MemRe; wire [2:0] MemOP;
   wire [3:0] EXctr;
   wire is_invalid_inst;
   wire sel_csr, sel_zimm/* , CsrWr */;
   wire [63:0] csrrdata;
   wire [63:0] CSRbusW;
   wire [63:0] sysctr_pc; wire sys_change_pc;
+  wire [4:0] rd;
   ysyx_22050710_idu u_idu (
     .i_clk(i_clk),
     .i_pc(pc),
     .i_inst(inst),
     .i_GPRbusW(GPRbusW),
     .i_CSRbusW(CSRbusW),
+    .i_ws_rf_wen(ws_rf_wen),
+    .i_ws_rf_waddr(ws_rf_waddr),
+    .o_rd(rd),
     .o_rs1data(rs1data), .o_rs2data(rs2data),
     .o_imm(imm),
     .o_brfunc(brfunc),
     .o_ALUAsrc(ALUAsrc), .o_ALUBsrc(ALUBsrc), .o_ALUctr(ALUctr),
     .o_word_cut(word_cut),
-    /* .o_RegWr(RegWr), */ .o_MemtoReg(MemtoReg), .o_MemWr(MemWr), .o_MemRe(MemRe), .o_MemOP(MemOP),
+    .o_RegWr(RegWr), .o_MemtoReg(MemtoReg), .o_MemWr(MemWr), .o_MemRe(MemRe), .o_MemOP(MemOP),
     .o_EXctr(EXctr),
     .o_is_invalid_inst(is_invalid_inst),
     .o_sel_csr(sel_csr), .o_sel_zimm(sel_zimm),/*  .o_CsrWr(CsrWr), */
@@ -67,28 +71,40 @@ module ysyx_22050710_core (
     .i_imm(imm), .i_pc(pc),
     .i_ALUAsrc(ALUAsrc), .i_ALUBsrc(ALUBsrc), .i_ALUctr(ALUctr),
     .i_word_cut(word_cut),
-    .i_MemOP(MemOP), .i_MemtoReg(MemtoReg), .i_rdata(rdata),
     .i_EXctr(EXctr),
     .i_is_invalid_inst(is_invalid_inst),
-    .i_sel_csr(sel_csr), .i_sel_zimm(sel_zimm),
+    .i_sel_zimm(sel_zimm),
     .i_csrrdata(csrrdata), .i_zimm(zimm),
     .o_ALUzero(ALUzero), .o_ALUless(ALUless),
     .o_ALUresult(ALUresult),
-    .o_GPRbusW(GPRbusW),
     .o_CSRbusW(CSRbusW)
   );
 
-  wire [63:0] rdata;
   wire [63:0] lsu_addr = ALUresult; // x[rs1] + imm
+  wire [63:0] ms_rf_wdata;
   ysyx_22050710_lsu u_lsu (
     .i_clk(i_clk),
     .i_rst(reset),
     .i_addr(lsu_addr),
     .i_data(rs2data),
+    .i_ALUresult(ALUresult),
+    .i_csrrdata(csrrdata),
     .i_MemOP(MemOP),
+    .i_MemtoReg(MemtoReg),
     .i_WrEn(MemWr),
     .i_ReEn(MemRe),
-    .o_data(rdata)
+    .i_sel_csr(sel_csr), 
+    .o_w_rf_data(ms_rf_wdata)
+  );
+
+  wire [4:0] ws_rf_waddr;
+  ysyx_22050710_wbu u_wbu (
+    .i_rf_wen(RegWr),
+    .i_rf_waddr(rd),
+    .i_rf_wdata(ms_rf_wdata),
+    .o_rf_wen(ws_rf_wen),
+    .o_rf_waddr(ws_rf_waddr),
+    .o_rf_wdata(GPRbusW)
   );
 
 endmodule

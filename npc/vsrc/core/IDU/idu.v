@@ -6,12 +6,15 @@ module ysyx_22050710_idu (
   input   [31:0] i_inst,
   input   [63:0] i_GPRbusW,
   input   [63:0] i_CSRbusW,
+  input   i_ws_rf_wen,
+  input   [4:0] i_ws_rf_waddr,
+  output  [4:0] o_rd,
   output  [63:0] o_rs1data, o_rs2data,
   output  [63:0] o_imm,
   output  [2:0] o_brfunc,
   output  o_ALUAsrc, output [1:0] o_ALUBsrc, output [4:0] o_ALUctr,
   output  o_word_cut,
-  output  /* o_RegWr, */ o_MemtoReg, o_MemWr, o_MemRe, output [2:0] o_MemOP,
+  output  o_RegWr, o_MemtoReg, o_MemWr, o_MemRe, output [2:0] o_MemOP,
   output  [3:0] o_EXctr,
   output  o_is_invalid_inst,
   output  o_sel_csr, o_sel_zimm, /* o_CsrWr, */
@@ -21,6 +24,7 @@ module ysyx_22050710_idu (
   output  o_sys_change_pc
 );
 
+  assign o_rd = rd;
   wire [6:0] opcode  = i_inst[6:0];
   wire [4:0] rs1     = i_inst[19:15];
   wire [4:0] rs2     = i_inst[24:20];
@@ -182,7 +186,7 @@ module ysyx_22050710_idu (
     })
   );
 
-  wire RegWr    = |{inst_type_r, inst_type_i, inst_type_u, inst_type_j} & !inst_csrrwi;
+  assign o_RegWr    = |{inst_type_r, inst_type_i, inst_type_u, inst_type_j} & !inst_csrrwi;
   /* 宽度为1bit,选择ALU输入端A的来源 */
   /* 为0时选择rs1, */
   /* 为1时选择PC */
@@ -314,8 +318,8 @@ module ysyx_22050710_idu (
 
   ysyx_22050710_gpr #(.ADDR_WIDTH(5), .DATA_WIDTH(64)) u_gprs (
     .i_clk(i_clk),
-    .i_raddr1(rs1), .i_raddr2(rs2), .i_waddr(rd),
-    .i_wdata(i_GPRbusW), .i_wen(RegWr),
+    .i_raddr1(rs1), .i_raddr2(rs2), .i_waddr(i_ws_rf_waddr),
+    .i_wdata(i_GPRbusW), .i_wen(i_ws_rf_wen),
     .o_rdata1(o_rs1data), .o_rdata2(o_rs2data)
   );
 
