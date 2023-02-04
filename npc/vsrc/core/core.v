@@ -84,7 +84,7 @@ module ysyx_22050710_core (
     .i_clk(i_clk),
     .i_rst(reset),
     .i_addr(lsu_addr),
-    .i_data(rs2),
+    .i_data(rs2data),
     .i_MemOP(MemOP),
     .i_WrEn(MemWr),
     .i_ReEn(MemRe),
