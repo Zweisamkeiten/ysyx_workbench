@@ -71,7 +71,6 @@ module ysyx_22050710_core (
     .i_imm(imm), .i_pc(pc),
     .i_ALUAsrc(ALUAsrc), .i_ALUBsrc(ALUBsrc), .i_ALUctr(ALUctr),
     .i_word_cut(word_cut),
-    .i_MemOP(MemOP), .i_MemtoReg(MemtoReg),
     .i_EXctr(EXctr),
     .i_is_invalid_inst(is_invalid_inst),
     .i_sel_csr(sel_csr), .i_sel_zimm(sel_zimm),
@@ -89,6 +88,7 @@ module ysyx_22050710_core (
     .i_addr(lsu_addr),
     .i_data(rs2data),
     .i_MemOP(MemOP),
+    .i_MemtoReg(MemtoReg),
     .i_WrEn(MemWr),
     .i_ReEn(MemRe),
     .o_w_rf_data(ms_rf_wdata)

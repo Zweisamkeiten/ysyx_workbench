@@ -8,6 +8,7 @@ module ysyx_22050710_lsu (
   input   [63:0] i_addr,
   input   [63:0] i_data,
   input   [2:0] i_MemOP,
+  input   i_MemtoReg,
   input   i_WrEn, i_ReEn,
   output  [63:0] o_w_rf_data
 );
