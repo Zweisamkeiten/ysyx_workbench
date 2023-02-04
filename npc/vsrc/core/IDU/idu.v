@@ -319,7 +319,7 @@ module ysyx_22050710_idu (
   ysyx_22050710_gpr #(.ADDR_WIDTH(5), .DATA_WIDTH(64)) u_gprs (
     .i_clk(i_clk),
     .i_raddr1(rs1), .i_raddr2(rs2), .i_waddr(rd),
-    .i_wdata(i_GPRbusW), .i_wen(i_ws_rf_en),
+    .i_wdata(i_GPRbusW), .i_wen(i_ws_rf_wen),
     .o_rdata1(o_rs1data), .o_rdata2(o_rs2data)
   );
 
