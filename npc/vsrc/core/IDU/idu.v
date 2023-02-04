@@ -1,6 +1,7 @@
 // ysyx_22050710 Instruction Decode Unit
 
 module ysyx_22050710_idu (
+  input   i_clk,
   input   [31:0] i_inst,
   input   [63:0] i_GPRbusW,
   output  [63:0] o_rs1, o_rs2,

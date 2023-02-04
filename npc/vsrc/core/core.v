@@ -45,6 +45,7 @@ module ysyx_22050710_core (
   wire sel_csr, sel_zimm, CsrWr, CsrRe;
   wire raise_intr, intr_ret;
   ysyx_22050710_idu u_idu (
+    .i_clk(i_clk),
     .i_inst(inst),
     .i_GPRbusW(GPRbusW),
     .o_rs1(rs1), .o_rs2(rs2),
