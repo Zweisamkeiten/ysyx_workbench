@@ -2,8 +2,9 @@
 
 module ysyx_22050710_idu (
   input   [31:0] i_inst,
+  input   [63:0] i_GPRbusW,
+  output  [63:0] o_rs1, o_rs2,
   output  [63:0] o_imm,
-  output  [4:0] o_ra, o_rb, o_rd,
   output  [2:0] o_Branch,
   output  o_ALUAsrc, output [1:0] o_ALUBsrc, output [4:0] o_ALUctr,
   output  o_word_cut,
@@ -19,9 +20,9 @@ module ysyx_22050710_idu (
   wire [2:0] funct3; wire [6:0] funct7;
 
   assign  opcode  = i_inst[6:0];
-  assign  o_ra    = i_inst[19:15];
-  assign  o_rb    = i_inst[24:20];
-  assign  o_rd    = i_inst[11:7];
+  assign  ra      = i_inst[19:15];
+  assign  rb      = i_inst[24:20];
+  assign  rd      = i_inst[11:7];
   assign  funct3  = i_inst[14:12];
   assign  funct7  = i_inst[31:25];
   assign  o_zimm  = {{59{1'b0}}, i_inst[19:15]};
@@ -308,5 +309,12 @@ module ysyx_22050710_idu (
   );
 
   assign o_is_invalid_inst = (o_ALUctr == 5'b11111) && (o_EXctr == 4'b1111) && (i_inst != 32'b0);
+
+  ysyx_22050710_gpr #(.ADDR_WIDTH(5), .DATA_WIDTH(64)) u_gprs (
+    .i_clk(i_clk),
+    .i_ra(ra), .i_rb(rb), .i_waddr(rd),
+    .i_wdata(i_GPRbusW), .i_wen(o_RegWr),
+    .o_busA(o_rs1), .o_busB(o_rs2)
+  );
 
 endmodule
