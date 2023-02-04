@@ -8,7 +8,7 @@ module ysyx_22050710_idu (
   input   [63:0] i_CSRbusW,
   output  [63:0] o_rs1data, o_rs2data,
   output  [63:0] o_imm,
-  output  [2:0] o_Branch,
+  output  [2:0] o_brfunc,
   output  o_ALUAsrc, output [1:0] o_ALUBsrc, output [4:0] o_ALUctr,
   output  o_word_cut,
   output  /* o_RegWr, */ o_MemtoReg, o_MemWr, o_MemRe, output [2:0] o_MemOP,
@@ -275,7 +275,7 @@ module ysyx_22050710_idu (
   );
 
   MuxKeyWithDefault #(.NR_KEY(8), .KEY_LEN(8), .DATA_LEN(3)) u_mux4 (
-    .out(o_Branch),
+    .out(o_brfunc),
     .key({inst_jal, inst_jalr, inst_beq, inst_bne, inst_blt, inst_bge, inst_bltu, inst_bgeu}),
     .default_out(3'b000),
     .lut({

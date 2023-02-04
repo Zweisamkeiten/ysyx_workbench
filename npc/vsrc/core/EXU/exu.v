@@ -5,18 +5,17 @@ import "DPI-C" function void set_state_abort();
 
 module ysyx_22050710_exu (
   input   [63:0] i_rs1, i_rs2,
-  input   [63:0] i_imm, i_pc, i_sysctr_pc,
+  input   [63:0] i_imm, i_pc,
   input   i_ALUAsrc, input [1:0] i_ALUBsrc, input [4:0] i_ALUctr,
   input   i_word_cut,
-  input   [2:0] i_Branch,
   input   [2:0] i_MemOP, input i_MemtoReg,
   input   [63:0] i_rdata,
   input   [3:0] i_EXctr,
   input   i_is_invalid_inst,
-  input   i_sel_csr, i_sel_zimm, i_sys_change_pc,
+  input   i_sel_csr, i_sel_zimm,
   input   [63:0] i_csrrdata, i_zimm,
+  output  o_ALUzero, o_ALUless,
   output  [63:0] o_ALUresult,
-  output  [63:0] o_nextpc,
   output  [63:0] o_GPRbusW,
   output  [63:0] o_CSRbusW
 );
@@ -39,22 +38,12 @@ module ysyx_22050710_exu (
     })
   );
 
-  wire Zero, Less;
   ysyx_22050710_alu u_alu (
     .i_src_a(src_a), .i_src_b(src_b),
     .i_ALUctr(i_ALUctr),
     .i_word_cut(i_word_cut),
-    .o_zero(Zero), .o_less(Less),
+    .o_ALUzero(o_ALUzero), .o_ALUless(o_ALUless),
     .o_ALUresult(o_ALUresult)
-  );
-
-  wire [63:0] nextpc;
-  assign o_nextpc = i_sys_change_pc ? i_sysctr_pc : nextpc;
-  ysyx_22050710_bru u_bru (
-    .i_rs1(i_rs1), .i_pc(i_pc), .i_imm(i_imm),
-    .i_Branch(i_Branch),
-    .i_zero(Zero), .i_less(Less),
-    .o_nextpc(nextpc)
   );
 
   wire [63:0] rdata;

@@ -10,7 +10,7 @@ module ysyx_22050710_core (
   always @(posedge i_clk) reset <= ~i_rst;
 
   wire [31:0] inst; wire [63:0] pc;
-  wire [63:0] nextpc;
+  wire [63:0] nextpc = sys_change_pc ? sysctr_pc : brtarget;
   ysyx_22050710_ifu u_ifu (
     .i_clk(i_clk),
     .i_rst(reset),
@@ -22,7 +22,7 @@ module ysyx_22050710_core (
   wire [63:0] rs1data, rs2data;
   wire [63:0] GPRbusW;
   wire [63:0] imm, zimm;
-  wire [2:0] Branch;
+  wire [2:0] brfunc;
   wire ALUAsrc; wire [1:0] ALUBsrc; wire [4:0] ALUctr;
   wire word_cut;
   wire /* RegWr, */ MemtoReg, MemWr, MemRe; wire [2:0] MemOP;
@@ -40,7 +40,7 @@ module ysyx_22050710_core (
     .i_CSRbusW(CSRbusW),
     .o_rs1data(rs1data), .o_rs2data(rs2data),
     .o_imm(imm),
-    .o_Branch(Branch),
+    .o_brfunc(brfunc),
     .o_ALUAsrc(ALUAsrc), .o_ALUBsrc(ALUBsrc), .o_ALUctr(ALUctr),
     .o_word_cut(word_cut),
     /* .o_RegWr(RegWr), */ .o_MemtoReg(MemtoReg), .o_MemWr(MemWr), .o_MemRe(MemRe), .o_MemOP(MemOP),
@@ -52,20 +52,28 @@ module ysyx_22050710_core (
     .o_sys_change_pc(sys_change_pc), .o_sysctr_pc(sysctr_pc)
   );
 
+  wire [63:0] brtarget;
+  ysyx_22050710_bru u_bru (
+    .i_rs1data(rs1data), .i_pc(pc), .i_imm(imm),
+    .i_brfunc(brfunc),
+    .i_zero(ALUzero), .i_less(ALUless),
+    .o_dnpc(brtarget)
+  );
+
+  wire ALUzero, ALUless;
   wire [63:0] ALUresult;
   ysyx_22050710_exu u_exu (
     .i_rs1(rs1data), .i_rs2(rs2data),
     .i_imm(imm), .i_pc(pc),
     .i_ALUAsrc(ALUAsrc), .i_ALUBsrc(ALUBsrc), .i_ALUctr(ALUctr),
     .i_word_cut(word_cut),
-    .i_Branch(Branch),
     .i_MemOP(MemOP), .i_MemtoReg(MemtoReg), .i_rdata(rdata),
     .i_EXctr(EXctr),
     .i_is_invalid_inst(is_invalid_inst),
-    .i_sel_csr(sel_csr), .i_sel_zimm(sel_zimm), .i_sys_change_pc(sys_change_pc), .i_sysctr_pc(sysctr_pc),
+    .i_sel_csr(sel_csr), .i_sel_zimm(sel_zimm),
     .i_csrrdata(csrrdata), .i_zimm(zimm),
+    .o_ALUzero(ALUzero), .o_ALUless(ALUless),
     .o_ALUresult(ALUresult),
-    .o_nextpc(nextpc),
     .o_GPRbusW(GPRbusW),
     .o_CSRbusW(CSRbusW)
   );

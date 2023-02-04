@@ -4,14 +4,14 @@ module ysyx_22050710_alu (
   input  [63:0] i_src_a, i_src_b,
   input  [4:0] i_ALUctr,
   input  i_word_cut,
-  output o_zero,
-  output o_less,
+  output o_ALUzero,
+  output o_ALUless,
   output [63:0] o_ALUresult
 );
 
-  assign o_zero = ~(|sub_result);
+  assign o_ALUzero = ~(|sub_result);
   MuxKey #(.NR_KEY(2), .KEY_LEN(5), .DATA_LEN(1)) u_mux0 (
-    .out(o_less),
+    .out(o_ALUless),
     .key(i_ALUctr),
     .lut({
       5'b00010, signed_Less,
