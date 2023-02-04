@@ -82,9 +82,6 @@ module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
       else if (i_intr_ret) begin
         mstatus <= 64'ha00001800;
       end
-      else begin
-        mstatus <= 64'ha00001800;
-      end
     end
   end
 
