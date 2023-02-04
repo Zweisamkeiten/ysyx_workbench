@@ -9,15 +9,6 @@ module ysyx_22050710_core (
   reg reset;
   always @(posedge i_clk) reset <= ~i_rst;
 
-  wire [63:0] rs1, rs2;
-  wire [63:0] GPRbusW;
-  ysyx_22050710_gpr #(.ADDR_WIDTH(5), .DATA_WIDTH(64)) u_gprs (
-    .i_clk(i_clk),
-    .i_ra(ra), .i_rb(rb), .i_waddr(rd),
-    .i_wdata(GPRbusW), .i_wen(RegWr),
-    .o_busA(rs1), .o_busB(rs2)
-  );
-
   wire [63:0] csrrdata;
   wire [63:0] CSRbusW;
   wire [63:0] sysctr_pc; wire sys_change_pc;
@@ -41,24 +32,27 @@ module ysyx_22050710_core (
     .o_inst(inst)
   );
 
+  wire [63:0] rs1data, rs2data;
+  wire [63:0] GPRbusW;
   wire [63:0] imm, zimm;
-  wire [4:0] ra, rb, rd;
   wire [2:0] Branch;
   wire ALUAsrc; wire [1:0] ALUBsrc; wire [4:0] ALUctr;
   wire word_cut;
-  wire RegWr, MemtoReg, MemWr, MemRe; wire [2:0] MemOP;
+  wire /* RegWr, */ MemtoReg, MemWr, MemRe; wire [2:0] MemOP;
   wire [3:0] EXctr;
   wire is_invalid_inst;
   wire sel_csr, sel_zimm, CsrWr, CsrRe;
   wire raise_intr, intr_ret;
   ysyx_22050710_idu u_idu (
+    .i_clk(i_clk),
     .i_inst(inst),
+    .i_GPRbusW(GPRbusW),
+    .o_rs1data(rs1data), .o_rs2data(rs2data),
     .o_imm(imm),
-    .o_ra(ra), .o_rb(rb), .o_rd(rd),
     .o_Branch(Branch),
     .o_ALUAsrc(ALUAsrc), .o_ALUBsrc(ALUBsrc), .o_ALUctr(ALUctr),
     .o_word_cut(word_cut),
-    .o_RegWr(RegWr), .o_MemtoReg(MemtoReg), .o_MemWr(MemWr), .o_MemRe(MemRe), .o_MemOP(MemOP),
+    /* .o_RegWr(RegWr), */ .o_MemtoReg(MemtoReg), .o_MemWr(MemWr), .o_MemRe(MemRe), .o_MemOP(MemOP),
     .o_EXctr(EXctr),
     .o_is_invalid_inst(is_invalid_inst),
     .o_sel_csr(sel_csr), .o_sel_zimm(sel_zimm), .o_CsrWr(CsrWr), .o_CsrRe(CsrRe),
@@ -68,7 +62,7 @@ module ysyx_22050710_core (
 
   wire [63:0] ALUresult;
   ysyx_22050710_exu u_exu (
-    .i_rs1(rs1), .i_rs2(rs2),
+    .i_rs1(rs1data), .i_rs2(rs2data),
     .i_imm(imm), .i_pc(pc),
     .i_ALUAsrc(ALUAsrc), .i_ALUBsrc(ALUBsrc), .i_ALUctr(ALUctr),
     .i_word_cut(word_cut),
@@ -90,7 +84,7 @@ module ysyx_22050710_core (
     .i_clk(i_clk),
     .i_rst(reset),
     .i_addr(lsu_addr),
-    .i_data(rs2),
+    .i_data(rs2data),
     .i_MemOP(MemOP),
     .i_WrEn(MemWr),
     .i_ReEn(MemRe),
