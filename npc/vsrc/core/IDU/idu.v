@@ -15,6 +15,9 @@ module ysyx_22050710_idu (
   output  o_raise_intr, o_intr_ret
 );
 
+  always @(*) begin
+    $display("%x", i_inst);
+  end
   wire [6:0] opcode;
   wire [2:0] funct3; wire [6:0] funct7;
 
