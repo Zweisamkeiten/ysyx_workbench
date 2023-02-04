@@ -50,7 +50,7 @@ module ysyx_22050710_core (
     .o_sel_csr(sel_csr), .o_sel_zimm(sel_zimm),/*  .o_CsrWr(CsrWr), */
     .o_zimm(zimm),
     .o_csrrdata(csrrdata),
-    .o_sys_change_pc(sys_change_pc), .o_sysctr_pc(sysctr_pc),
+    .o_sys_change_pc(sys_change_pc), .o_sysctr_pc(sysctr_pc)
   );
 
   wire [63:0] ALUresult;
