@@ -82,8 +82,9 @@ extern "C" void single_cycle() {
 
 static void reset(int n) {
   while (n-- > 0) {
-    top->i_rst = 0;
+    top->i_rst = 1;
     single_cycle();
+    top->i_rst = 0;
   }
 }
 
@@ -102,8 +103,6 @@ extern "C" void init_sim() {
 
   reset(10);
 
-  top->i_rst = 1;
-  single_cycle();
   npc_state.state = NPC_RUNNING;
 
   npcpc = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__pc);
