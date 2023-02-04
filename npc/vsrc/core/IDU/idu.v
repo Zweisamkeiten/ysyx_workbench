@@ -15,9 +15,6 @@ module ysyx_22050710_idu (
   output  o_raise_intr, o_intr_ret
 );
 
-  always @(*) begin
-    $display("%x", i_inst);
-  end
   wire [6:0] opcode;
   wire [2:0] funct3; wire [6:0] funct7;
 
@@ -311,5 +308,8 @@ module ysyx_22050710_idu (
   );
 
   assign o_is_invalid_inst = (o_ALUctr == 5'b11111) && (o_EXctr == 4'b1111) && (i_inst != 32'b0);
+  always @(*) begin
+    $display("%x", o_is_invalid_inst);
+  end
 
 endmodule
