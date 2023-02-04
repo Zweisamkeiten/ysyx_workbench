@@ -249,7 +249,6 @@ void cpu_exec(uint64_t n) {
 
   execute(n);
 
-  printf("%d", npc_state.state);
   switch (npc_state.state) {
   case NPC_RUNNING:
     npc_state.state = NPC_STOP;
