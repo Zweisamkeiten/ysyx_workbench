@@ -25,7 +25,7 @@ module ysyx_22050710_core (
   wire [2:0] brfunc;
   wire ALUAsrc; wire [1:0] ALUBsrc; wire [4:0] ALUctr;
   wire word_cut;
-  wire /* RegWr, */ MemtoReg, MemWr, MemRe; wire [2:0] MemOP;
+  wire ws_rf_en, RegWr, MemtoReg, MemWr, MemRe; wire [2:0] MemOP;
   wire [3:0] EXctr;
   wire is_invalid_inst;
   wire sel_csr, sel_zimm/* , CsrWr */;
@@ -38,12 +38,13 @@ module ysyx_22050710_core (
     .i_inst(inst),
     .i_GPRbusW(GPRbusW),
     .i_CSRbusW(CSRbusW),
+    .i_ws_rf_en(ws_rf_en),
     .o_rs1data(rs1data), .o_rs2data(rs2data),
     .o_imm(imm),
     .o_brfunc(brfunc),
     .o_ALUAsrc(ALUAsrc), .o_ALUBsrc(ALUBsrc), .o_ALUctr(ALUctr),
     .o_word_cut(word_cut),
-    /* .o_RegWr(RegWr), */ .o_MemtoReg(MemtoReg), .o_MemWr(MemWr), .o_MemRe(MemRe), .o_MemOP(MemOP),
+    .o_RegWr(RegWr), .o_MemtoReg(MemtoReg), .o_MemWr(MemWr), .o_MemRe(MemRe), .o_MemOP(MemOP),
     .o_EXctr(EXctr),
     .o_is_invalid_inst(is_invalid_inst),
     .o_sel_csr(sel_csr), .o_sel_zimm(sel_zimm),/*  .o_CsrWr(CsrWr), */

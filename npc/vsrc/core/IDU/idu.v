@@ -11,7 +11,7 @@ module ysyx_22050710_idu (
   output  [2:0] o_brfunc,
   output  o_ALUAsrc, output [1:0] o_ALUBsrc, output [4:0] o_ALUctr,
   output  o_word_cut,
-  output  /* o_RegWr, */ o_MemtoReg, o_MemWr, o_MemRe, output [2:0] o_MemOP,
+  output  o_RegWr, o_MemtoReg, o_MemWr, o_MemRe, output [2:0] o_MemOP,
   output  [3:0] o_EXctr,
   output  o_is_invalid_inst,
   output  o_sel_csr, o_sel_zimm, /* o_CsrWr, */
@@ -182,7 +182,7 @@ module ysyx_22050710_idu (
     })
   );
 
-  wire RegWr    = |{inst_type_r, inst_type_i, inst_type_u, inst_type_j} & !inst_csrrwi;
+  wire o_RegWr    = |{inst_type_r, inst_type_i, inst_type_u, inst_type_j} & !inst_csrrwi;
   /* 宽度为1bit,选择ALU输入端A的来源 */
   /* 为0时选择rs1, */
   /* 为1时选择PC */
@@ -315,7 +315,7 @@ module ysyx_22050710_idu (
   ysyx_22050710_gpr #(.ADDR_WIDTH(5), .DATA_WIDTH(64)) u_gprs (
     .i_clk(i_clk),
     .i_raddr1(rs1), .i_raddr2(rs2), .i_waddr(rd),
-    .i_wdata(i_GPRbusW), .i_wen(RegWr),
+    .i_wdata(i_GPRbusW), .i_wen(i_RegWr),
     .o_rdata1(o_rs1data), .o_rdata2(o_rs2data)
   );
 
