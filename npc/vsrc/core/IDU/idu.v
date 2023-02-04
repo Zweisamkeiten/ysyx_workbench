@@ -9,7 +9,7 @@ module ysyx_22050710_idu (
   output  [2:0] o_Branch,
   output  o_ALUAsrc, output [1:0] o_ALUBsrc, output [4:0] o_ALUctr,
   output  o_word_cut,
-  output  o_RegWr, o_MemtoReg, o_MemWr, o_MemRe, output [2:0] o_MemOP,
+  output  /* o_RegWr, */ o_MemtoReg, o_MemWr, o_MemRe, output [2:0] o_MemOP,
   output  [3:0] o_EXctr,
   output  o_is_invalid_inst,
   output  o_sel_csr, o_sel_zimm, o_CsrWr, o_CsrRe,
