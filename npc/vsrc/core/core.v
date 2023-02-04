@@ -10,7 +10,7 @@ module ysyx_22050710_core (
   always @(posedge i_clk) reset <= ~i_rst;
 
   wire [31:0] inst; wire [63:0] pc;
-  wire [63:0] nextpc;
+  wire [63:0] nextpc = sys_change_pc ? sysctr_pc : brtarget;
   ysyx_22050710_ifu u_ifu (
     .i_clk(i_clk),
     .i_rst(reset),
@@ -52,7 +52,6 @@ module ysyx_22050710_core (
     .o_sys_change_pc(sys_change_pc), .o_sysctr_pc(sysctr_pc)
   );
 
-  wire [63:0] dnpc = sys_change_pc ? sysctr_pc : brtarget;
   wire [63:0] brtarget;
   ysyx_22050710_bru u_bru (
     .i_rs1data(rs1data), .i_pc(pc), .i_imm(imm),
@@ -68,7 +67,6 @@ module ysyx_22050710_core (
     .i_imm(imm), .i_pc(pc),
     .i_ALUAsrc(ALUAsrc), .i_ALUBsrc(ALUBsrc), .i_ALUctr(ALUctr),
     .i_word_cut(word_cut),
-    .i_Branch(Branch),
     .i_MemOP(MemOP), .i_MemtoReg(MemtoReg), .i_rdata(rdata),
     .i_EXctr(EXctr),
     .i_is_invalid_inst(is_invalid_inst),
