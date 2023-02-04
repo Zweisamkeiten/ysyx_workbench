@@ -15,7 +15,7 @@ module ysyx_22050710_lsu (
   wire [63:0] rdata;
   wire [63:0] memrdata;
   assign o_GPRbusW = i_MemtoReg ? rdata : (i_sel_csr ? i_csrrdata : o_ALUresult);
-  MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(64)) u_mux1 (
+  MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(64)) u_mux0 (
     .out(memrdata),
     .key(i_MemOP),
     .lut({
@@ -75,7 +75,7 @@ module ysyx_22050710_lsu (
   end
 
   wire [63:0] wdata;
-  MuxKey #(.NR_KEY(8), .KEY_LEN(3), .DATA_LEN(64)) u_mux1 (
+  MuxKey #(.NR_KEY(8), .KEY_LEN(3), .DATA_LEN(64)) u_mux2 (
     .out(wdata),
     .key(waddr[2:0]),
     .lut({
