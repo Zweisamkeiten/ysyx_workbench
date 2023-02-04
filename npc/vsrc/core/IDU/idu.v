@@ -186,7 +186,7 @@ module ysyx_22050710_idu (
     })
   );
 
-  wire o_RegWr    = |{inst_type_r, inst_type_i, inst_type_u, inst_type_j} & !inst_csrrwi;
+  assign o_RegWr    = |{inst_type_r, inst_type_i, inst_type_u, inst_type_j} & !inst_csrrwi;
   /* 宽度为1bit,选择ALU输入端A的来源 */
   /* 为0时选择rs1, */
   /* 为1时选择PC */
