@@ -294,9 +294,10 @@ module ysyx_22050710_idu (
   assign o_raise_intr   = inst_ecall;
   assign o_intr_ret     = inst_mret;
 
+  $display()
   MuxKeyWithDefault #(.NR_KEY(5), .KEY_LEN(6), .DATA_LEN(4)) u_mux5 (
     .out(o_EXctr),
-    .key({|(o_ALUctr & 5'b11111), inst_ebreak, inst_ecall, inst_mret, |{inst_csrrw, inst_csrrwi}, |{inst_csrrs}}),
+    .key({(o_ALUctr == 5'b11111), inst_ebreak, inst_ecall, inst_mret, |{inst_csrrw, inst_csrrwi}, |{inst_csrrs}}),
     .default_out(4'b1111),
     .lut({
       6'b110000, 4'b1110,   // ebreak

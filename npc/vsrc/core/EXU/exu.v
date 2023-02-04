@@ -85,7 +85,6 @@ module ysyx_22050710_exu (
   );
 
   always @(*) begin
-    $display("%x", i_EXctr);
     if (i_EXctr == 4'b1110) begin
       set_state_end(); // ebreak
     end
