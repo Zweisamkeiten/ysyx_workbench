@@ -66,12 +66,14 @@ extern "C" void npc_pmem_write(long long waddr, long long wdata, char wmask) {
 }
 
 extern "C" void single_cycle() {
+  top->i_rst = 1;
   top->i_clk = 0;
   top->eval();
 #ifdef CONFIG_VCD_TRACE
   contextp->timeInc(1);
   tfp->dump(contextp->time());
 #endif
+  top->i_rst = 1;
   top->i_clk = 1;
   top->eval();
 #ifdef CONFIG_VCD_TRACE
@@ -81,11 +83,11 @@ extern "C" void single_cycle() {
 }
 
 static void reset(int n) {
-  top->i_rst = 1;
+  top->i_rst = 0;
   while (n-- > 0) {
     single_cycle();
   }
-  top->i_rst = 0;
+  top->i_rst = 1;
 }
 
 extern "C" void init_sim() {
