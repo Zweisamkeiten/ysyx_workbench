@@ -15,13 +15,13 @@ VerilatedVcdC *tfp = NULL;
 uint64_t * npcpc;
 
 void set_state_end() {
-  printf("123\n");
   npc_state.state = NPC_END;
   npc_state.halt_pc = *npcpc;
   npc_state.halt_ret = cpu.gpr[10];
 }
 
 void set_state_abort() {
+  printf("123\n");
   if (npc_state.state != NPC_STOP) {
     printf("There are two cases which will trigger this unexpected exception:\n"
         "1. The instruction at PC = " FMT_WORD " is not implemented.\n"
