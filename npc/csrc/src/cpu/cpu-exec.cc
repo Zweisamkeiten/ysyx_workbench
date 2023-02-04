@@ -5,7 +5,7 @@ extern "C" {
   #include <cpu/difftest.h>
   #include <memory/paddr.h>
 }
-static vaddr_t snpc; // use at IRINGTRACE and difftest
+static vaddr_t snpc; // use at IRINGTRACE and difftest 现在指上一状态 刚执行过的指令的PC
 #ifdef CONFIG_WATCHPOINT
 extern "C" void diff_watchpoint_value();
 #endif
