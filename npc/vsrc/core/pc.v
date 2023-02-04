@@ -8,7 +8,7 @@ module ysyx_22050710_pc (
   output [63:0] o_pc
 );
   
-  always * begin
+  always @* begin
     $display("%x", i_rst);
   end
   // 位宽为64bits, 复位值为64'h80000000, 写使能为i_load;
