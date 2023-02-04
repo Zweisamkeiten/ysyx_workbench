@@ -74,7 +74,11 @@ module ysyx_22050710_lsu (
   );
 
   always @(*) begin
-    if (!i_rst & i_ReEn & i_MemOP != 3'b111) begin
+    if (i_rst) begin
+      rdata = 64'b0;
+    end
+    else begin
+      if (i_ReEn & i_MemOP != 3'b111) begin
       npc_pmem_read(raddr, rdata);
       case (raddr[2:0])
         3'h1: rdata = {{ 8{1'b0}}, rdata[63:8 ]};
@@ -86,9 +90,6 @@ module ysyx_22050710_lsu (
         3'h7: rdata = {{56{1'b0}}, rdata[63:56]};
         default: rdata = rdata;
       endcase
-    end
-    else begin
-      rdata = 64'b0;
     end
   end
 
