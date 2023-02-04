@@ -21,7 +21,7 @@ module ysyx_22050710_idu (
   output  [63:0] o_zimm,
   output  [63:0] o_csrrdata,
   output  [63:0] o_sysctr_pc,
-  output  o_sys_change_pc,
+  output  o_sys_change_pc
 );
 
   assign o_rd = rd;
