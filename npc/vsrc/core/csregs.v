@@ -35,7 +35,7 @@ module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
   reg [DATA_WIDTH-1:0] mstatus;
   initial mstatus = 64'ha00001800;
   always @(posedge i_clk) begin
-    if (i_waddr == `MSTATUS) begin
+    if (i_waddr == `MSTATUS && i_wen) begin
       $display("%x", i_wdata);
       mstatus <= i_wdata;
     end
@@ -43,21 +43,21 @@ module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
 
   reg [DATA_WIDTH-1:0] mtvec;
   always @(posedge i_clk) begin
-    if (i_waddr == `MTVEC) begin
+    if (i_waddr == `MTVEC && i_wen) begin
       mtvec <= i_wdata;
     end
   end
 
   reg [DATA_WIDTH-1:0] mepc;
   always @(posedge i_clk) begin
-    if (i_waddr == `MEPC) begin
+    if (i_waddr == `MEPC && i_wen) begin
       mepc <= i_wdata;
     end
   end
 
   reg [DATA_WIDTH-1:0] mcause;
   always @(posedge i_clk) begin
-    if (i_waddr == `MCAUSE) begin
+    if (i_waddr == `MCAUSE && i_wen) begin
       mcause <= i_wdata;
     end
   end
