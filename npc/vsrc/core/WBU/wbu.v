@@ -8,7 +8,6 @@ module ysyx_22050710_wbu #(GPRADDR_WIDTH = 5, DATA_WIDTH = 64) (
   output [DATA_WIDTH-1:0] o_rf_wdata
 );
 
-
   assign o_rf_wen = i_rf_wen;
   assign o_rf_waddr = i_rf_waddr;
   assign o_rf_wdata = i_rf_wdata;

@@ -6,6 +6,9 @@ module ysyx_22050710_idu (
   input   [31:0] i_inst,
   input   [63:0] i_GPRbusW,
   input   [63:0] i_CSRbusW,
+  input   i_ws_rf_wen,
+  input   [4:0] i_ws_rf_waddr,
+  output  [4:0] o_rd,
   output  [63:0] o_rs1data, o_rs2data,
   output  [63:0] o_imm,
   output  [2:0] o_brfunc,
@@ -18,9 +21,10 @@ module ysyx_22050710_idu (
   output  [63:0] o_zimm,
   output  [63:0] o_csrrdata,
   output  [63:0] o_sysctr_pc,
-  output  o_sys_change_pc
+  output  o_sys_change_pc,
 );
 
+  assign o_rd = rd;
   wire [6:0] opcode  = i_inst[6:0];
   wire [4:0] rs1     = i_inst[19:15];
   wire [4:0] rs2     = i_inst[24:20];
@@ -315,7 +319,7 @@ module ysyx_22050710_idu (
   ysyx_22050710_gpr #(.ADDR_WIDTH(5), .DATA_WIDTH(64)) u_gprs (
     .i_clk(i_clk),
     .i_raddr1(rs1), .i_raddr2(rs2), .i_waddr(rd),
-    .i_wdata(i_GPRbusW), .i_wen(i_RegWr),
+    .i_wdata(i_GPRbusW), .i_wen(i_ws_rf_en),
     .o_rdata1(o_rs1data), .o_rdata2(o_rs2data)
   );
 
