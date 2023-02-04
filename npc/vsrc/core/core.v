@@ -43,7 +43,7 @@ module ysyx_22050710_core (
   wire [31:0] inst; wire [63:0] pc;
   ysyx_22050710_ifu u_ifu (
     .i_clk(i_clk),
-    .i_rst(rest),
+    .i_rst(reset),
     .i_pc(pc),
     .o_inst(inst)
   );
@@ -95,7 +95,7 @@ module ysyx_22050710_core (
   wire [63:0] lsu_addr = ALUresult; // x[rs1] + imm
   ysyx_22050710_lsu u_lsu (
     .i_clk(i_clk),
-    .i_rst(rest),
+    .i_rst(reset),
     .i_addr(lsu_addr),
     .i_data(rs2),
     .i_MemOP(MemOP),
