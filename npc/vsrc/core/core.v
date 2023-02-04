@@ -102,6 +102,6 @@ module ysyx_22050710_core (
     .o_rf_wen(ws_rf_wen),
     .o_rf_waddr(ws_rf_waddr),
     .o_rf_wdata(GPRbusW)
-  )
+  );
 
 endmodule
