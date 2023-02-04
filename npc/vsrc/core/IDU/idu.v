@@ -290,8 +290,8 @@ module ysyx_22050710_idu (
 
   assign o_sel_csr      = |{inst_csrrw, inst_csrrs, inst_csrrwi, inst_ecall, inst_mret};
   assign o_sel_zimm     = |{inst_csrrwi};
-  assign o_CsrWr        = o_sel_csr ? (|{inst_csrrs} == 1 ? (|o_ra == 0 ? 0 : 1) : 1) : 0;
-  assign o_CsrRe        = o_sel_csr ? (|{inst_csrrw} == 1 ? (|o_rd == 0 ? 0 : 1) : 1) : 0;
+  assign o_CsrWr        = o_sel_csr ? (|{inst_csrrs} == 1 ? (|ra == 0 ? 0 : 1) : 1) : 0;
+  assign o_CsrRe        = o_sel_csr ? (|{inst_csrrw} == 1 ? (|rd == 0 ? 0 : 1) : 1) : 0;
   assign o_raise_intr   = inst_ecall;
   assign o_intr_ret     = inst_mret;
 
