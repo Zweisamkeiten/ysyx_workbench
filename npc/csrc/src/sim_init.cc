@@ -84,9 +84,9 @@ extern "C" void single_cycle() {
 
 static void reset(int n) {
   while (n-- > 0) {
-    top->i_rst = 0;
-    single_cycle();
     top->i_rst = 1;
+    single_cycle();
+    top->i_rst = 0;
   }
 }
 
