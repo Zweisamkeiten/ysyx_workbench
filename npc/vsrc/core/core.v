@@ -5,14 +5,10 @@ module ysyx_22050710_core (
   input i_rst
 );
 
-  // i_rst 低电平同步复位
-  reg reset;
-  always @(posedge i_clk) reset <= ~i_rst;
-
   wire [63:0] nextpc;
   ysyx_22050710_pc u_pc (
     .i_clk(i_clk),
-    .i_rst(reset),
+    .i_rst(i_rst),
     .i_load(1'b1),
     .i_in(nextpc),
     .o_pc(pc)
@@ -43,7 +39,7 @@ module ysyx_22050710_core (
   wire [31:0] inst; wire [63:0] pc;
   ysyx_22050710_ifu u_ifu (
     .i_clk(i_clk),
-    .i_rst(reset),
+    .i_rst(i_rst),
     .i_pc(pc),
     .o_inst(inst)
   );
@@ -95,7 +91,7 @@ module ysyx_22050710_core (
   wire [63:0] lsu_addr = ALUresult; // x[rs1] + imm
   ysyx_22050710_lsu u_lsu (
     .i_clk(i_clk),
-    .i_rst(reset),
+    .i_rst(i_rst),
     .i_addr(lsu_addr),
     .i_data(rs2),
     .i_MemOP(MemOP),
