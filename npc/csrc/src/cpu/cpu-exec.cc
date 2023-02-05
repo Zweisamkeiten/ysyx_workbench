@@ -204,8 +204,8 @@ void exec_once() {
   last_inst = cpu.inst;
 #endif
   snpc = cpu.pc;
-  single_cycle(1);
-  single_cycle(1);
+  single_cycle(0);
+  single_cycle(0);
   cpu.pc = *npcpc;
   trace_and_difftest(cpu.pc);
 }
