@@ -26,10 +26,10 @@ module ysyx_22050710_idu (
   output  o_sys_change_pc
 );
 
-  reg [31:0] idu_inst;
-  always @(posedge i_clk) begin
+  wire [31:0] idu_inst;
+  always @(*) begin
     if (i_ifu_ready) begin
-      idu_inst <= i_inst;
+      idu_inst = i_inst;
     end
   end
 
