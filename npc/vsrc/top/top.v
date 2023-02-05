@@ -20,7 +20,7 @@ module ysyx_22050710_top (
 
   //inst ram
   ysyx_22050710_inst_sram u_inst_ram (
-      .i_clk   (i_clk              ),   
+      .i_clk   (i_clk              ),
       .i_en    (cpu_inst_en        ),
       .i_addr  (cpu_inst_addr      ),
       .o_rdata (cpu_inst_rdata     )    //63:0
