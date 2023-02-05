@@ -64,6 +64,6 @@ module ysyx_22050710_bru (
   );
 
   wire PCAsrc, PCBsrc;
-  assign o_dnpc = (PCBsrc ? i_rs1data : i_pc) + i_bren ? (PCAsrc ? i_imm : 64'd4) | 64'd4;
+  assign o_dnpc = (PCBsrc ? i_rs1data : i_pc) + (i_bren ? (PCAsrc ? i_imm : 64'd4) : 64'd4);
 
 endmodule
