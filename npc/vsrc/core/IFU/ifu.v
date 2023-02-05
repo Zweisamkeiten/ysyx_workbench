@@ -18,8 +18,8 @@ module ysyx_22050710_ifu #(INST_WIDTH = 32, DATA_WIDTH = 64) (
   ysyx_22050710_pc u_pc (
     .i_clk(i_clk),
     .i_rst(i_rst),
-    .i_load(1'b1),
-    .i_in(ready ? i_nextpc : pc),
+    .i_load(ready),
+    .i_in(i_nextpc),
     .o_pc(pc)
   );
   /* always @* $display("%x, %x, %x", ready, i_nextpc, pc); */
