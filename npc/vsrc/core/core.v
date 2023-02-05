@@ -8,7 +8,7 @@ module ysyx_22050710_core (
   output [ 3:0] o_inst_sram_wen,
   output [31:0] o_inst_sram_addr,
   output [63:0] o_inst_sram_wdata,
-  input  [63:0] i_inst_sram_rdata,
+  input  [63:0] i_inst_sram_rdata
 );
 
   wire [31:0] inst; wire [63:0] pc;
