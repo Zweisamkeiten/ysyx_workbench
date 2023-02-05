@@ -74,6 +74,7 @@ extern "C" void single_cycle(int rst) {
   tfp->dump(contextp->time());
 #endif
   top->i_clk = 1;
+  top->i_rst = rst;
   top->eval();
 #ifdef CONFIG_VCD_TRACE
   contextp->timeInc(1);
