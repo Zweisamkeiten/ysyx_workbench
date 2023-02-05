@@ -40,6 +40,6 @@ module ysyx_22050710_ifu #(INST_WIDTH = 32, DATA_WIDTH = 64) (
   assign o_inst_sram_en    = 1'b1;
   assign o_inst_sram_wen   = 4'h0;
   assign o_inst_sram_addr  = pc[31:0];
-  assign o_inst_sram_wdata = 32'b0;
+  assign o_inst_sram_wdata = 64'b0;
 
 endmodule
