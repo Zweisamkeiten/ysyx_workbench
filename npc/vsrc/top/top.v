@@ -19,7 +19,7 @@ module ysyx_22050710_top (
     .o_inst_sram_wen    (cpu_inst_wen  ),
     .o_inst_sram_addr   (cpu_inst_addr ),
     .o_inst_sram_wdata  (cpu_inst_wdata),
-    .i_inst_sram_rdata  (cpu_inst_rdata),
+    .i_inst_sram_rdata  (cpu_inst_rdata)
   );
 
   //inst ram
