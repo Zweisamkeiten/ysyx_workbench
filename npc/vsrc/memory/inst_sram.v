@@ -12,8 +12,6 @@ module ysyx_22050710_inst_sram #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 64) (
   assign o_data = rdata;
 
   always @(posedge clk) begin
-    if (!i_rst) begin
       npc_pmem_read(i_addr, rdata);
-    end
   end 
 endmodule
