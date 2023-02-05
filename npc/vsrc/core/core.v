@@ -85,7 +85,6 @@ module ysyx_22050710_core (
     .o_dnpc(brtarget)
   );
 
-  wire ALUzero, ALUless;
   wire [63:0] ALUresult;
   ysyx_22050710_exu u_exu (
     .i_rs1(rs1data), .i_rs2(rs2data),
@@ -96,7 +95,6 @@ module ysyx_22050710_core (
     .i_is_invalid_inst(is_invalid_inst),
     .i_sel_zimm(sel_zimm),
     .i_csrrdata(csrrdata), .i_zimm(zimm),
-    .o_ALUzero(ALUzero), .o_ALUless(ALUless),
     .o_ALUresult(ALUresult),
     .o_CSRbusW(CSRbusW)
   );
