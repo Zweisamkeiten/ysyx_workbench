@@ -34,28 +34,28 @@ module ysyx_22050710_csr #(ADDR_WIDTH = 12, DATA_WIDTH = 64) (
   reg [DATA_WIDTH-1:0] mstatus;
   initial mstatus = 64'ha00001800;
   always @(posedge i_clk) begin
-    if (i_waddr == `MSTATUS && i_wen) begin
+    if (i_wen && i_waddr == `MSTATUS) begin
       mstatus <= i_wdata;
     end
   end
 
   reg [DATA_WIDTH-1:0] mtvec;
   always @(posedge i_clk) begin
-    if (i_waddr == `MTVEC && i_wen) begin
+    if (i_wen && i_waddr == `MTVEC) begin
       mtvec <= i_wdata;
     end
   end
 
   reg [DATA_WIDTH-1:0] mepc;
   always @(posedge i_clk) begin
-    if (i_waddr == `MEPC && i_wen) begin
+    if (i_wen && i_waddr == `MEPC) begin
       mepc <= i_wdata;
     end
   end
 
   reg [DATA_WIDTH-1:0] mcause;
   always @(posedge i_clk) begin
-    if (i_waddr == `MCAUSE && i_wen) begin
+    if (i_wen && i_waddr == `MCAUSE) begin
       mcause <= i_wdata;
     end
   end

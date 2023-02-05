@@ -226,12 +226,12 @@ module ysyx_22050710_idu (
   );
 
   wire alu_copyimm      = |{inst_lui};
-  wire alu_plus         = |{inst_auipc, inst_jal,   inst_jalr,  inst_addi,  inst_add,
+  wire alu_plus         = |{inst_auipc, inst_addi,  inst_add,
                             inst_load,  inst_store, inst_addiw, inst_addw
                             };
   wire alu_sub          = |{inst_sub,   inst_subw};
-  wire alu_signed_less  = |{inst_beq,   inst_bne,   inst_blt,   inst_bge,   inst_slt, inst_slti}; // branch set signed Less || slt rs1, rs2
-  wire alu_unsigned_less= |{inst_bltu,  inst_bgeu,  inst_sltiu, inst_sltu}; // branch set unsigned Less || sltu rs1, rs2
+  wire alu_signed_less  = |{inst_slt,   inst_slti}; // slt rs1, rs2
+  wire alu_unsigned_less= |{inst_sltiu, inst_sltu}; // sltu rs1, rs2
   wire alu_xor          = |{inst_xori,  inst_xor};
   wire alu_and          = |{inst_andi,  inst_and};
   wire alu_or           = |{inst_ori,   inst_or};

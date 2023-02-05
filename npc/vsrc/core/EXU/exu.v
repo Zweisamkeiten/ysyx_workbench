@@ -12,7 +12,6 @@ module ysyx_22050710_exu (
   input   i_is_invalid_inst,
   input   i_sel_zimm,
   input   [63:0] i_csrrdata, i_zimm,
-  output  o_ALUzero, o_ALUless,
   output  [63:0] o_ALUresult,
   output  [63:0] o_CSRbusW
 );
@@ -39,7 +38,6 @@ module ysyx_22050710_exu (
     .i_src_a(src_a), .i_src_b(src_b),
     .i_ALUctr(i_ALUctr),
     .i_word_cut(i_word_cut),
-    .o_ALUzero(o_ALUzero), .o_ALUless(o_ALUless),
     .o_ALUresult(o_ALUresult)
   );
 
