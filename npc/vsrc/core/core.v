@@ -5,36 +5,16 @@ module ysyx_22050710_core (
   input i_rst
 );
 
-  /* wire         idu_allowin; */
-  /* wire         exu_allowin; */
-  /* wire         lsu_allowin; */
-  /* wire         wbu_allowin; */
-  /* wire         ifu_to_idu_valid; */
-  /* wire         idu_to_exu_valid; */
-  /* wire         exu_to_lsu_valid; */
-  /* wire         lsu_to_wbu_valid; */
-  /* wire [`FS_TO_DS_BUS_WD -1:0] ifu_to_idu_bus; */
-  /* wire [`DS_TO_ES_BUS_WD -1:0] idu_to_exu_bus; */
-  /* wire [`ES_TO_MS_BUS_WD -1:0] exu_to_lsu_bus; */
-  /* wire [`MS_TO_WS_BUS_WD -1:0] lsu_to_wbu_bus; */
-  /* wire [`WS_TO_RF_BUS_WD -1:0] wbu_to_rf_bus; */
-  /* wire [`BR_BUS_WD       -1:0] br_bus; */
+  // i_rst 低电平同步复位
+  reg reset;
+  always @(posedge i_clk) reset <= ~i_rst;
 
   wire [31:0] inst; wire [63:0] pc;
   wire [63:0] nextpc = sys_change_pc ? sysctr_pc : brtarget;
-  wire ifu_ready;
   ysyx_22050710_ifu u_ifu (
     .i_clk(i_clk),
-    .i_rst(i_rst),
-    /* // allowin */
-    /* .i_idu_allowin(idu_allowin), */
-    /* // br_bus */
-    /* .i_br_bus(br_bus), */
+    .i_rst(reset),
     .i_nextpc(nextpc),
-    /* // outputs */
-    /* .ifu_to_idu_valid(ifu_to_idu_valid), */
-    /* .ifu_to_idu_bus(ifu_to_idu_bus), */
-    .o_ifu_ready(ifu_ready),
     .o_pc(pc),
     .o_inst(inst)
   );
@@ -58,7 +38,6 @@ module ysyx_22050710_core (
     .i_clk(i_clk),
     .i_pc(pc),
     .i_inst(inst),
-    .i_ifu_ready(ifu_ready),
     .i_GPRbusW(GPRbusW),
     .i_CSRbusW(CSRbusW),
     .i_ws_rf_wen(ws_rf_wen),
@@ -105,7 +84,7 @@ module ysyx_22050710_core (
   wire [63:0] ms_rf_wdata;
   ysyx_22050710_lsu u_lsu (
     .i_clk(i_clk),
-    .i_rst(i_rst),
+    .i_rst(reset),
     .i_addr(lsu_addr),
     .i_data(rs2data),
     .i_ALUresult(ALUresult),
