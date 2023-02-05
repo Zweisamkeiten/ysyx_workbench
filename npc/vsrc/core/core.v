@@ -25,7 +25,7 @@ module ysyx_22050710_core (
   wire ifu_ready;
   ysyx_22050710_ifu u_ifu (
     .i_clk(i_clk),
-    .i_rst(reset),
+    .i_rst(i_rst),
     /* // allowin */
     /* .i_idu_allowin(idu_allowin), */
     /* // br_bus */
@@ -105,7 +105,7 @@ module ysyx_22050710_core (
   wire [63:0] ms_rf_wdata;
   ysyx_22050710_lsu u_lsu (
     .i_clk(i_clk),
-    .i_rst(reset),
+    .i_rst(i_rst),
     .i_addr(lsu_addr),
     .i_data(rs2data),
     .i_ALUresult(ALUresult),
