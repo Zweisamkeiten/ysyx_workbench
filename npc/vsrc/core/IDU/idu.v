@@ -25,22 +25,29 @@ module ysyx_22050710_idu (
   output  o_sys_change_pc
 );
 
+  reg [63:0] idu_inst;
+  always @(posedge i_clk) begin
+    if (i_fs_ready) begin
+      idu_inst <= i_inst;
+    end
+  end
+
   assign o_rd = rd;
-  wire [6:0] opcode  = i_inst[6:0];
-  wire [4:0] rs1     = i_inst[19:15];
-  wire [4:0] rs2     = i_inst[24:20];
-  wire [4:0] rd      = i_inst[11:7];
-  wire [2:0] funct3  = i_inst[14:12];
-  wire [6:0] funct7  = i_inst[31:25];
+  wire [6:0] opcode  = idu_inst[6:0];
+  wire [4:0] rs1     = idu_inst[19:15];
+  wire [4:0] rs2     = idu_inst[24:20];
+  wire [4:0] rd      = idu_inst[11:7];
+  wire [2:0] funct3  = idu_inst[14:12];
+  wire [6:0] funct7  = idu_inst[31:25];
 
   // imm gen
   wire [63:0] immI, immU, immS, immB, immJ;
-  assign immI = {{52{i_inst[31]}}, i_inst[31:20]};
-  assign immU = {{32{i_inst[31]}}, i_inst[31:12], 12'b0};
-  assign immS = {{52{i_inst[31]}}, i_inst[31:25], i_inst[11:7]};
-  assign immB = {{52{i_inst[31]}}, i_inst[7], i_inst[30:25], i_inst[11:8], 1'b0};
-  assign immJ = {{44{i_inst[31]}}, i_inst[19:12], i_inst[20], i_inst[30:21], 1'b0};
-  assign o_zimm = {{59{1'b0}}, i_inst[19:15]};
+  assign immI = {{52{idu_inst[31]}}, idu_inst[31:20]};
+  assign immU = {{32{idu_inst[31]}}, idu_inst[31:12], 12'b0};
+  assign immS = {{52{idu_inst[31]}}, idu_inst[31:25], idu_inst[11:7]};
+  assign immB = {{52{idu_inst[31]}}, idu_inst[7], idu_inst[30:25], idu_inst[11:8], 1'b0};
+  assign immJ = {{44{idu_inst[31]}}, idu_inst[19:12], idu_inst[20], idu_inst[30:21], 1'b0};
+  assign o_zimm = {{59{1'b0}}, idu_inst[19:15]};
   
   // RV32I and RV64I
   wire inst_lui    = (opcode[6:0] == 7'b0110111);
@@ -76,8 +83,8 @@ module ysyx_22050710_idu (
   wire inst_srl    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b101) & (funct7[6:0] == 7'b0000000);
   wire inst_or     = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b110) & (funct7[6:0] == 7'b0000000);
   wire inst_and    = (opcode[6:0] == 7'b0110011) & (funct3[2:0] == 3'b111) & (funct7[6:0] == 7'b0000000);
-  wire inst_ebreak = (opcode[6:0] == 7'b1110011) & (funct3[2:0] == 3'b000) & (i_inst[31:20] == 12'b000000000001);
-  wire inst_ecall  = (opcode[6:0] == 7'b1110011) & (funct3[2:0] == 3'b000) & (i_inst[31:20] == 12'b000000000000);
+  wire inst_ebreak = (opcode[6:0] == 7'b1110011) & (funct3[2:0] == 3'b000) & (idu_inst[31:20] == 12'b000000000001);
+  wire inst_ecall  = (opcode[6:0] == 7'b1110011) & (funct3[2:0] == 3'b000) & (idu_inst[31:20] == 12'b000000000000);
 
   // RV64I
   wire inst_lwu    = (opcode[6:0] == 7'b0000011) & (funct3[2:0] == 3'b110);
@@ -119,7 +126,7 @@ module ysyx_22050710_idu (
   wire inst_remuw  = (opcode[6:0] == 7'b0111011) & (funct3[2:0] == 3'b111) & (funct7[6:0] == 7'b0000001);
 
   // mret
-  wire inst_mret   = i_inst == 32'b00110000001000000000000001110011;
+  wire inst_mret   = idu_inst == 32'b00110000001000000000000001110011;
 
   wire inst_type_r = |{ // RV32I
                        inst_add,    inst_sub,   inst_sll,   inst_slt,   inst_sltu,
@@ -317,7 +324,7 @@ module ysyx_22050710_idu (
     })
   );
 
-  assign o_is_invalid_inst = (|inst_type == 1'b0) && (i_inst != 32'b0);
+  assign o_is_invalid_inst = (|inst_type == 1'b0) && (idu_inst != 32'b0);
 
   ysyx_22050710_gpr #(.ADDR_WIDTH(5), .DATA_WIDTH(64)) u_gprs (
     .i_clk(i_clk),
@@ -326,7 +333,7 @@ module ysyx_22050710_idu (
     .o_rdata1(o_rs1data), .o_rdata2(o_rs2data)
   );
 
-  wire [11:0] csr = i_inst[31:20];
+  wire [11:0] csr = idu_inst[31:20];
   ysyx_22050710_csr #(.ADDR_WIDTH(12), .DATA_WIDTH(64)) u_csrs (
     .i_clk(i_clk),
     .i_raddr(csr), .i_waddr(csr), .i_wdata(i_CSRbusW),

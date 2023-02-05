@@ -26,6 +26,7 @@ module ysyx_22050710_core (
 
   wire [31:0] inst; wire [63:0] pc;
   wire [63:0] nextpc = sys_change_pc ? sysctr_pc : brtarget;
+  wire ifu_ready;
   ysyx_22050710_ifu u_ifu (
     .i_clk(i_clk),
     .i_rst(reset),
@@ -37,6 +38,7 @@ module ysyx_22050710_core (
     /* // outputs */
     /* .ifu_to_idu_valid(ifu_to_idu_valid), */
     /* .ifu_to_idu_bus(ifu_to_idu_bus), */
+    .o_ifu_ready(ifu_ready),
     .o_pc(pc),
     .o_inst(inst)
   );
