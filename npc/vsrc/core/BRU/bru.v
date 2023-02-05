@@ -36,7 +36,7 @@ module ysyx_22050710_bru (
     .out(PCAsrc),
     .key(i_brfunc),
     .lut({
-      3'b000, 1'b0,
+      3'b000, 1'b1,
       3'b001, 1'b1,
       3'b010, zero == 1 ? 1'b1 : 1'b0,
       3'b011, zero == 1 ? 1'b0 : 1'b1,
