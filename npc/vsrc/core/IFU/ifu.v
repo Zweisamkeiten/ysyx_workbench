@@ -32,9 +32,6 @@ module ysyx_22050710_ifu #(INST_WIDTH = 32, DATA_WIDTH = 64) (
       nextpc <= i_nextpc;
       ready <= 0;
     end
-    else begin
-      nextpc <= pc;
-    end
   end
 
   reg ready;
