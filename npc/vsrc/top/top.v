@@ -7,9 +7,7 @@ module ysyx_22050710_top (
 
   //cpu inst sram
   wire        cpu_inst_en;
-  wire [3 :0] cpu_inst_wen;
   wire [31:0] cpu_inst_addr;
-  wire [63:0] cpu_inst_wdata;
   wire [63:0] cpu_inst_rdata;
   ysyx_22050710_core u_core (
     .i_clk(i_clk),
