@@ -27,9 +27,7 @@ module ysyx_22050710_ifu #(INST_WIDTH = 32, DATA_WIDTH = 64) (
   assign o_inst = pc[2] == 1'b0 ? rdata[31:0] : rdata[63:32];
 
   always @(posedge i_clk) begin
-    /* $display("%x, %x, %x, %x", i_rst, ready, i_nextpc, pc); */
     if (!i_rst && ready) begin
-      $display("%x, %x, %x, %x, %x", i_rst, ready, i_nextpc, pc, o_inst);
       ready <= 1'b0;
     end
   end
