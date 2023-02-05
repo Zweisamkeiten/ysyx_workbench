@@ -21,38 +21,40 @@ module ysyx_22050710_bru (
     .out(less),
     .key(i_brfunc),
     .lut({
+      3'b000, 1'b0,
       3'b001, 1'b0,
-      3'b010, 1'b0,
+      3'b010, signed_Less,
+      3'b011, signed_Less,
       3'b100, signed_Less,
       3'b101, signed_Less,
-      3'b110, signed_Less,
-      3'b111, signed_Less,
       3'b110, unsigned_Less,
       3'b111, unsigned_Less
     })
   );
 
-  MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(1)) u_mux1 (
+  MuxKey #(.NR_KEY(8), .KEY_LEN(3), .DATA_LEN(1)) u_mux1 (
     .out(PCAsrc),
     .key(i_brfunc),
     .lut({
       3'b000, 1'b0,
       3'b001, 1'b1,
-      3'b010, 1'b1,
-      3'b100, zero == 1 ? 1'b1 : 1'b0,
-      3'b101, zero == 1 ? 1'b0 : 1'b1,
+      3'b010, zero == 1 ? 1'b1 : 1'b0,
+      3'b011, zero == 1 ? 1'b0 : 1'b1,
+      3'b100, less == 1 ? 1'b1 : 1'b0,
+      3'b101, less == 1 ? 1'b0 : 1'b1,
       3'b110, less == 1 ? 1'b1 : 1'b0,
       3'b111, less == 1 ? 1'b0 : 1'b1
     })
   );
 
-  MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(1)) u_mux2 (
+  MuxKey #(.NR_KEY(8), .KEY_LEN(3), .DATA_LEN(1)) u_mux2 (
     .out(PCBsrc),
     .key(i_brfunc),
     .lut({
       3'b000, 1'b0,
-      3'b001, 1'b0,
-      3'b010, 1'b1,
+      3'b001, 1'b1,
+      3'b010, 1'b0,
+      3'b011, 1'b0,
       3'b100, 1'b0,
       3'b101, 1'b0,
       3'b110, 1'b0,
