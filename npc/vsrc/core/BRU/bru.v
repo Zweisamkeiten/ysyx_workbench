@@ -2,6 +2,7 @@
 
 module ysyx_22050710_bru (
   input  [63:0] i_rs1data, i_rs2data, i_pc, i_imm,
+  input  i_bren,
   input  [2:0]  i_brfunc,
   output [63:0] o_dnpc
 );
@@ -63,6 +64,6 @@ module ysyx_22050710_bru (
   );
 
   wire PCAsrc, PCBsrc;
-  assign o_dnpc = (PCBsrc ? i_rs1data : i_pc) + (PCAsrc ? i_imm : 64'd4);
+  assign o_dnpc = (PCBsrc ? i_rs1data : i_pc) + i_bren ? (PCAsrc ? i_imm : 64'd4) | 64'd4;
 
 endmodule
