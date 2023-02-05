@@ -27,6 +27,7 @@ module ysyx_22050710_idu (
 );
 
   reg [31:0] idu_inst;
+  always @* $display("%x", idu_inst);
   always @(posedge i_clk) begin
     if (i_ifu_ready) begin
       idu_inst <= i_inst;
