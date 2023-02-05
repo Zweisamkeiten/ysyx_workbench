@@ -9,9 +9,9 @@ module ysyx_22050710_inst_sram #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 64) (
 );
 
   reg [DATA_WIDTH-1:0] rdata;  // address register for pmem read.
-  assign o_data = rdata;
+  assign o_rdata = rdata;
 
   always @(posedge clk) begin
-      npc_pmem_read(i_addr, rdata);
+    npc_pmem_read(i_addr, rdata);
   end 
 endmodule
