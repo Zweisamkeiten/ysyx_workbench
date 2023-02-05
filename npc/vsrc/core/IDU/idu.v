@@ -27,7 +27,6 @@ module ysyx_22050710_idu (
 );
 
   reg [31:0] idu_inst;
-  always @* $display("%x", idu_inst);
   always @(posedge i_clk) begin
     if (i_ifu_ready) begin
       idu_inst <= i_inst;
@@ -202,6 +201,7 @@ module ysyx_22050710_idu (
   /* 宽度为1bit,选择ALU输入端A的来源 */
   /* 为0时选择rs1, */
   /* 为1时选择PC */
+  always @* $display("%x", o_ALUAsrc);
   assign o_ALUAsrc  = |{inst_type_j, inst_auipc, inst_jalr} == 1 ? 1'b1 : 1'b0; // '1' when inst about pc
   /* 宽度为2bit,选择ALU输入端B的来源. */
   /* 为00时选择rs2. */
