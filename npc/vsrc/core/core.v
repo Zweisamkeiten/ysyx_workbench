@@ -5,21 +5,6 @@ module ysyx_22050710_core (
   input i_rst
 );
 
-  /* wire         idu_allowin; */
-  /* wire         exu_allowin; */
-  /* wire         lsu_allowin; */
-  /* wire         wbu_allowin; */
-  /* wire         ifu_to_idu_valid; */
-  /* wire         idu_to_exu_valid; */
-  /* wire         exu_to_lsu_valid; */
-  /* wire         lsu_to_wbu_valid; */
-  /* wire [`FS_TO_DS_BUS_WD -1:0] ifu_to_idu_bus; */
-  /* wire [`DS_TO_ES_BUS_WD -1:0] idu_to_exu_bus; */
-  /* wire [`ES_TO_MS_BUS_WD -1:0] exu_to_lsu_bus; */
-  /* wire [`MS_TO_WS_BUS_WD -1:0] lsu_to_wbu_bus; */
-  /* wire [`WS_TO_RF_BUS_WD -1:0] wbu_to_rf_bus; */
-  /* wire [`BR_BUS_WD       -1:0] br_bus; */
-
   wire [31:0] inst; wire [63:0] pc;
   wire [63:0] nextpc = sys_change_pc ? sysctr_pc : brtarget;
   wire ifu_ready;
