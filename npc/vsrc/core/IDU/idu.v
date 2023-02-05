@@ -201,7 +201,6 @@ module ysyx_22050710_idu (
   /* 宽度为1bit,选择ALU输入端A的来源 */
   /* 为0时选择rs1, */
   /* 为1时选择PC */
-  always @* $display("%x", o_ALUAsrc);
   assign o_ALUAsrc  = |{inst_type_j, inst_auipc, inst_jalr} == 1 ? 1'b1 : 1'b0; // '1' when inst about pc
   /* 宽度为2bit,选择ALU输入端B的来源. */
   /* 为00时选择rs2. */
@@ -328,6 +327,7 @@ module ysyx_22050710_idu (
 
   assign o_is_invalid_inst = (|inst_type == 1'b0) && (idu_inst != 32'b0);
 
+  always @* $display("%x", i_wen);
   ysyx_22050710_gpr #(.ADDR_WIDTH(5), .DATA_WIDTH(64)) u_gprs (
     .i_clk(i_clk),
     .i_raddr1(rs1), .i_raddr2(rs2), .i_waddr(i_ws_rf_waddr),
