@@ -26,12 +26,7 @@ module ysyx_22050710_idu (
   output  o_sys_change_pc
 );
 
-  wire [31:0] idu_inst;
-  always @(*) begin
-    if (i_ifu_ready) begin
-      idu_inst = i_inst;
-    end
-  end
+  wire [31:0] idu_inst = i_ifu_ready ? i_inst : 32'b0;
 
   assign o_rd = rd;
   wire [6:0] opcode  = idu_inst[6:0];
