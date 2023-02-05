@@ -136,7 +136,7 @@ module ysyx_22050710_idu (
                        inst_jalr,   inst_lb,    inst_lh,    inst_lw,    inst_lbu,
                        inst_lhu,    inst_addi,  inst_slti,  inst_sltiu, inst_xori,
                        inst_ori,    inst_andi,  inst_slli,  inst_srli,  inst_srai,
-                       inst_ebreak,
+                       inst_ecall,  inst_ebreak,
                        // RV64I
                        inst_lwu,    inst_ld,    inst_addiw, inst_slliw, inst_srliw,
                        inst_sraiw,
