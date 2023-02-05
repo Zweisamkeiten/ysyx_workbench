@@ -81,12 +81,12 @@ extern "C" void single_cycle(int rst) {
 #endif
 }
 
-static void reset(int n) {
-  while (n-- > 0) {
-    single_cycle(0); // always reset
-  }
-  // single_cycle(1); // start init state
-}
+// static void reset(int n) {
+//   while (n-- > 0) {
+//     single_cycle(0); // always reset
+//   }
+//   // single_cycle(1); // start init state
+// }
 
 extern "C" void init_sim() {
 #ifdef CONFIG_VCD_TRACE
@@ -101,7 +101,7 @@ extern "C" void init_sim() {
   tfp->open("dump.vcd");
 #endif
 
-  reset(10);
+  // reset(10);
 
   npc_state.state = NPC_RUNNING;
 
