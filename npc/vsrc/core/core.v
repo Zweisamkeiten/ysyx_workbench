@@ -22,6 +22,7 @@ module ysyx_22050710_core (
   wire [63:0] rs1data, rs2data;
   wire [63:0] GPRbusW;
   wire [63:0] imm, zimm;
+  wire bren;
   wire [2:0] brfunc;
   wire ALUAsrc; wire [1:0] ALUBsrc; wire [4:0] ALUctr;
   wire word_cut;
@@ -44,6 +45,7 @@ module ysyx_22050710_core (
     .o_rd(rd),
     .o_rs1data(rs1data), .o_rs2data(rs2data),
     .o_imm(imm),
+    .o_bren(bren),
     .o_brfunc(brfunc),
     .o_ALUAsrc(ALUAsrc), .o_ALUBsrc(ALUBsrc), .o_ALUctr(ALUctr),
     .o_word_cut(word_cut),
@@ -58,13 +60,12 @@ module ysyx_22050710_core (
 
   wire [63:0] brtarget;
   ysyx_22050710_bru u_bru (
-    .i_rs1data(rs1data), .i_pc(pc), .i_imm(imm),
+    .i_rs1data(rs1data), .i_rs2data(rs2data), .i_pc(pc), .i_imm(imm),
+    .i_bren(bren),
     .i_brfunc(brfunc),
-    .i_zero(ALUzero), .i_less(ALUless),
     .o_dnpc(brtarget)
   );
 
-  wire ALUzero, ALUless;
   wire [63:0] ALUresult;
   ysyx_22050710_exu u_exu (
     .i_rs1(rs1data), .i_rs2(rs2data),
@@ -75,7 +76,6 @@ module ysyx_22050710_core (
     .i_is_invalid_inst(is_invalid_inst),
     .i_sel_zimm(sel_zimm),
     .i_csrrdata(csrrdata), .i_zimm(zimm),
-    .o_ALUzero(ALUzero), .o_ALUless(ALUless),
     .o_ALUresult(ALUresult),
     .o_CSRbusW(CSRbusW)
   );

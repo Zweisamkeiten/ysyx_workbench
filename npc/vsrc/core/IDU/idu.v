@@ -11,6 +11,7 @@ module ysyx_22050710_idu (
   output  [4:0] o_rd,
   output  [63:0] o_rs1data, o_rs2data,
   output  [63:0] o_imm,
+  output  o_bren,
   output  [2:0] o_brfunc,
   output  o_ALUAsrc, output [1:0] o_ALUBsrc, output [4:0] o_ALUctr,
   output  o_word_cut,
@@ -129,13 +130,15 @@ module ysyx_22050710_idu (
                        inst_mul,    inst_mulh,  inst_mulhsu,inst_mulhu, inst_div,
                        inst_divu,   inst_rem,   inst_remu,
                        // RV64M
-                       inst_mulw,   inst_divw,  inst_divuw, inst_remw,  inst_remuw
+                       inst_mulw,   inst_divw,  inst_divuw, inst_remw,  inst_remuw,
+                       // machine
+                       inst_mret
                        };
   wire inst_type_i = |{ // RV32I
                        inst_jalr,   inst_lb,    inst_lh,    inst_lw,    inst_lbu,
                        inst_lhu,    inst_addi,  inst_slti,  inst_sltiu, inst_xori,
                        inst_ori,    inst_andi,  inst_slli,  inst_srli,  inst_srai,
-                       inst_ebreak,
+                       inst_ecall,  inst_ebreak,
                        // RV64I
                        inst_lwu,    inst_ld,    inst_addiw, inst_slliw, inst_srliw,
                        inst_sraiw,
@@ -226,12 +229,12 @@ module ysyx_22050710_idu (
   );
 
   wire alu_copyimm      = |{inst_lui};
-  wire alu_plus         = |{inst_auipc, inst_jal,   inst_jalr,  inst_addi,  inst_add,
+  wire alu_plus         = |{inst_auipc, inst_addi,  inst_add,   inst_jal,  inst_jalr,
                             inst_load,  inst_store, inst_addiw, inst_addw
                             };
   wire alu_sub          = |{inst_sub,   inst_subw};
-  wire alu_signed_less  = |{inst_beq,   inst_bne,   inst_blt,   inst_bge,   inst_slt, inst_slti}; // branch set signed Less || slt rs1, rs2
-  wire alu_unsigned_less= |{inst_bltu,  inst_bgeu,  inst_sltiu, inst_sltu}; // branch set unsigned Less || sltu rs1, rs2
+  wire alu_signed_less  = |{inst_slt,   inst_slti}; // slt rs1, rs2
+  wire alu_unsigned_less= |{inst_sltiu, inst_sltu}; // sltu rs1, rs2
   wire alu_xor          = |{inst_xori,  inst_xor};
   wire alu_and          = |{inst_andi,  inst_and};
   wire alu_or           = |{inst_ori,   inst_or};
@@ -259,8 +262,8 @@ module ysyx_22050710_idu (
       19'b1000000000000000000, 5'b01111,  // copy imm
       19'b0100000000000000000, 5'b00000,  // add a + b
       19'b0010000000000000000, 5'b00001,  // sub a - b
-      19'b0001000000000000000, 5'b00010,  // branch set signed Less || slt  a <s b
-      19'b0000100000000000000, 5'b00011,  // branch set unsigned Less || sltu a <u b
+      19'b0001000000000000000, 5'b00010,  // slt  a <s b
+      19'b0000100000000000000, 5'b00011,  // sltu a <u b
       19'b0000010000000000000, 5'b00100,  // xor a ^ b
       19'b0000001000000000000, 5'b00101,  // and a & b
       19'b0000000100000000000, 5'b00110,  // or a | b
@@ -278,17 +281,17 @@ module ysyx_22050710_idu (
     })
   );
 
-  MuxKeyWithDefault #(.NR_KEY(8), .KEY_LEN(8), .DATA_LEN(3)) u_mux4 (
+  assign o_bren = |{inst_type_b, inst_jal, inst_jalr};
+  MuxKey #(.NR_KEY(8), .KEY_LEN(8), .DATA_LEN(3)) u_mux4 (
     .out(o_brfunc),
     .key({inst_jal, inst_jalr, inst_beq, inst_bne, inst_blt, inst_bge, inst_bltu, inst_bgeu}),
-    .default_out(3'b000),
     .lut({
-      8'b10000000, 3'b001,
-      8'b01000000, 3'b010,
-      8'b00100000, 3'b100,
-      8'b00010000, 3'b101,
-      8'b00001000, 3'b110,
-      8'b00000100, 3'b111,
+      8'b10000000, 3'b000,
+      8'b01000000, 3'b001,
+      8'b00100000, 3'b010,
+      8'b00010000, 3'b011,
+      8'b00001000, 3'b100,
+      8'b00000100, 3'b101,
       8'b00000010, 3'b110,
       8'b00000001, 3'b111
     })
@@ -314,7 +317,7 @@ module ysyx_22050710_idu (
     })
   );
 
-  assign o_is_invalid_inst = (o_ALUctr == 5'b11111) && (o_EXctr == 4'b1111) && (i_inst != 32'b0);
+  assign o_is_invalid_inst = (|inst_type == 1'b0) && (i_inst != 32'b0);
 
   ysyx_22050710_gpr #(.ADDR_WIDTH(5), .DATA_WIDTH(64)) u_gprs (
     .i_clk(i_clk),

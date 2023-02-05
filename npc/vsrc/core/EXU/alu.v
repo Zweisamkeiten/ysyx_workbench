@@ -4,20 +4,9 @@ module ysyx_22050710_alu (
   input  [63:0] i_src_a, i_src_b,
   input  [4:0] i_ALUctr,
   input  i_word_cut,
-  output o_ALUzero,
-  output o_ALUless,
   output [63:0] o_ALUresult
 );
 
-  assign o_ALUzero = ~(|sub_result);
-  MuxKey #(.NR_KEY(2), .KEY_LEN(5), .DATA_LEN(1)) u_mux0 (
-    .out(o_ALUless),
-    .key(i_ALUctr),
-    .lut({
-      5'b00010, signed_Less,
-      5'b00011, unsigned_Less
-    })
-  );
   wire signed_Less = overflow == 0
                    ? (sub_result[63] == 1 ? 1'b1 : 1'b0)
                    : (sub_result[63] == 0 ? 1'b1 : 1'b0);
