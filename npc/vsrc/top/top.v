@@ -23,7 +23,7 @@ module ysyx_22050710_top (
   );
 
   //inst ram
-  ysyx_22050710_inst_ram u_inst_ram (
+  ysyx_22050710_inst_sram u_inst_ram (
       .i_clk   (i_clk              ),   
       .i_en    (cpu_inst_en        ),
       .i_wen   (cpu_inst_wen       ),   //3:0
