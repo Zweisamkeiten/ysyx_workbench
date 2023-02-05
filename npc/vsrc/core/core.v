@@ -20,7 +20,7 @@ module ysyx_22050710_core (
     .i_nextpc(nextpc),
     .o_ifu_ready(ifu_ready),
     .o_pc(pc),
-    .o_inst(inst)
+    .o_inst(inst),
     // inst sram interface
     .o_inst_sram_en   (inst_sram_en   ),
     .o_inst_sram_wen  (inst_sram_wen  ),
