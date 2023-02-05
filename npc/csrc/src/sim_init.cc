@@ -85,7 +85,6 @@ static void reset(int n) {
   while (n-- > 0) {
     single_cycle(1); // always reset
   }
-  single_cycle(0); // start init state
 }
 
 extern "C" void init_sim() {
