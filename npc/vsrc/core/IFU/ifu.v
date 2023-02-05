@@ -22,7 +22,7 @@ module ysyx_22050710_ifu #(INST_WIDTH = 32, DATA_WIDTH = 64) (
     .i_in(ready ? i_nextpc : pc),
     .o_pc(pc)
   );
-  always @* $display("%x, %x, %x", ready, i_nextpc, pc);
+  /* always @* $display("%x, %x, %x", ready, i_nextpc, pc); */
 
   reg [DATA_WIDTH-1:0] rdata;
   assign o_inst = pc[2] == 1'b0 ? rdata[31:0] : rdata[63:32];
