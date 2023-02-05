@@ -26,7 +26,7 @@ module ysyx_22050710_ifu #(INST_WIDTH = 32, DATA_WIDTH = 64) (
   reg [DATA_WIDTH-1:0] rdata;
   assign o_inst = pc[2] == 1'b0 ? rdata[31:0] : rdata[63:32];
 
-  reg [63:0] nextpc;
+  reg [63:0] nextpc = pc;
   always @(posedge i_clk) begin
     if (ready) begin
       nextpc <= i_nextpc;
