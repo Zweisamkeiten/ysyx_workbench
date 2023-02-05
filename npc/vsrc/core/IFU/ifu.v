@@ -8,9 +8,7 @@ module ysyx_22050710_ifu #(INST_WIDTH = 32, DATA_WIDTH = 64) (
   output  o_ifu_ready,
   // inst sram interface
   output        o_inst_sram_en   ,
-  output [ 3:0] o_inst_sram_wen  ,
   output [31:0] o_inst_sram_addr ,
-  output [63:0] o_inst_sram_wdata,
   input  [63:0] i_inst_sram_rdata
 );
 
@@ -38,8 +36,6 @@ module ysyx_22050710_ifu #(INST_WIDTH = 32, DATA_WIDTH = 64) (
   assign o_pc = pc;
 
   assign o_inst_sram_en    = 1'b1;
-  assign o_inst_sram_wen   = 4'h0;
   assign o_inst_sram_addr  = pc[31:0];
-  assign o_inst_sram_wdata = 64'b0;
 
 endmodule
