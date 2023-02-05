@@ -327,7 +327,7 @@ module ysyx_22050710_idu (
 
   assign o_is_invalid_inst = (|inst_type == 1'b0) && (idu_inst != 32'b0);
 
-  always @* $display("%x, %x, %x", inst_auipc, o_RegWr, i_GPRbusW);
+  always @* $display("%x, %x, %x", inst_type, o_RegWr, i_GPRbusW);
   ysyx_22050710_gpr #(.ADDR_WIDTH(5), .DATA_WIDTH(64)) u_gprs (
     .i_clk(i_clk),
     .i_raddr1(rs1), .i_raddr2(rs2), .i_waddr(i_ws_rf_waddr),
