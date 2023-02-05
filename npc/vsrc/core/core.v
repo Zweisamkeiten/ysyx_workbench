@@ -5,10 +5,6 @@ module ysyx_22050710_core (
   input i_rst
 );
 
-  // i_rst 低电平同步复位
-  reg reset;
-  always @(posedge i_clk) reset <= ~i_rst;
-
   /* wire         idu_allowin; */
   /* wire         exu_allowin; */
   /* wire         lsu_allowin; */
