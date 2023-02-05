@@ -19,7 +19,7 @@ module ysyx_22050710_ifu #(INST_WIDTH = 32, DATA_WIDTH = 64) (
     .i_clk(i_clk),
     .i_rst(i_rst),
     .i_load(1'b1),
-    .i_in(i_nextpc),
+    .i_in(ready ? i_nextpc : pc),
     .o_pc(pc)
   );
 
