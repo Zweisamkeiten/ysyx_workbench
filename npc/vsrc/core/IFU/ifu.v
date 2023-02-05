@@ -39,6 +39,7 @@ module ysyx_22050710_ifu #(INST_WIDTH = 32, DATA_WIDTH = 64) (
     if (!i_rst && ready == 0) begin
       npc_pmem_read(pc, rdata);
       ready <= 1'b1;
+      $display("%x", rdata);
     end
   end
 
