@@ -19,7 +19,7 @@ module ysyx_22050710_ifu #(INST_WIDTH = 32, DATA_WIDTH = 64) (
     .i_clk(i_clk),
     .i_rst(i_rst),
     .i_load(1'b1),
-    .i_in(ready ? i_nextpc : pc),
+    .i_in(nextpc),
     .o_pc(pc)
   );
 
@@ -27,12 +27,14 @@ module ysyx_22050710_ifu #(INST_WIDTH = 32, DATA_WIDTH = 64) (
   assign o_inst = pc[2] == 1'b0 ? rdata[31:0] : rdata[63:32];
 
   reg ready;
+  reg [63:0] nextpc;
   assign o_ifu_ready = ready;
   always @(posedge i_clk) begin
     ready <= 1'b0;
     if (!i_rst) begin
       npc_pmem_read(pc, rdata);
       ready <= 1'b1;
+      nextpc <= i_nextpc;
     end
   end
 
