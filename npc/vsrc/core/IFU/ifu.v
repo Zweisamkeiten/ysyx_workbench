@@ -5,7 +5,11 @@ module ysyx_22050710_ifu #(INST_WIDTH = 32, DATA_WIDTH = 64) (
   input   [DATA_WIDTH-1:0] i_nextpc,
   output  [DATA_WIDTH-1:0] o_pc,
   output  [INST_WIDTH-1:0] o_inst,
-  output  o_ifu_ready
+  output  o_ifu_ready,
+  // inst sram interface
+  output        o_inst_sram_en   ,
+  output [31:0] o_inst_sram_addr ,
+  input  [63:0] i_inst_sram_rdata
 );
 
   wire [DATA_WIDTH-1:0] pc;
@@ -17,24 +21,21 @@ module ysyx_22050710_ifu #(INST_WIDTH = 32, DATA_WIDTH = 64) (
     .o_pc(pc)
   );
 
-  reg [DATA_WIDTH-1:0] rdata;
-  assign o_inst = pc[2] == 1'b0 ? rdata[31:0] : rdata[63:32];
+  assign o_inst = pc[2] == 1'b0 ? i_inst_sram_rdata[31:0] : i_inst_sram_rdata[63:32];
 
   always @(posedge i_clk) begin
-    if (!i_rst && ready) begin
-      ready <= 1'b0;
+    if (!i_rst) begin
+      if (ready) ready <= 1'b0;
+      else ready <= 1'b1;
     end
   end
 
   reg ready = 1'b0;
   assign o_ifu_ready = ready;
-  always @(posedge i_clk) begin
-    if (!i_rst && ready == 0) begin
-      npc_pmem_read(pc, rdata);
-      ready <= 1'b1;
-    end
-  end
 
   assign o_pc = pc;
+
+  assign o_inst_sram_en    = 1'b1;
+  assign o_inst_sram_addr  = pc[31:0];
 
 endmodule
