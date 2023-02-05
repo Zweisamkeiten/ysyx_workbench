@@ -19,21 +19,16 @@ module ysyx_22050710_ifu #(INST_WIDTH = 32, DATA_WIDTH = 64) (
     .i_clk(i_clk),
     .i_rst(i_rst),
     .i_load(1'b1),
-    .i_in(nextpc),
+    .i_in(ready ? i_nextpc : pc),
     .o_pc(pc)
   );
 
   reg [DATA_WIDTH-1:0] rdata;
   assign o_inst = pc[2] == 1'b0 ? rdata[31:0] : rdata[63:32];
 
-  reg [DATA_WIDTH-1:0] nextpc;
   always @(posedge i_clk) begin
     if (ready) begin
-      nextpc <= i_nextpc;
       ready <= 0;
-    end
-    else begin
-      nextpc <= pc;
     end
   end
 
