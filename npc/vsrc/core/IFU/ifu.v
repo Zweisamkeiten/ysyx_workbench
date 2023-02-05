@@ -29,7 +29,7 @@ module ysyx_22050710_ifu #(INST_WIDTH = 32, DATA_WIDTH = 64) (
   always @(posedge i_clk) begin
     $display("%x", i_nextpc);
     if (ready) begin
-      ready <= 0;
+      ready <= 1'b0;
     end
   end
 
