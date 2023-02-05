@@ -259,8 +259,8 @@ module ysyx_22050710_idu (
       19'b1000000000000000000, 5'b01111,  // copy imm
       19'b0100000000000000000, 5'b00000,  // add a + b
       19'b0010000000000000000, 5'b00001,  // sub a - b
-      19'b0001000000000000000, 5'b00010,  // branch set signed Less || slt  a <s b
-      19'b0000100000000000000, 5'b00011,  // branch set unsigned Less || sltu a <u b
+      19'b0001000000000000000, 5'b00010,  // slt  a <s b
+      19'b0000100000000000000, 5'b00011,  // sltu a <u b
       19'b0000010000000000000, 5'b00100,  // xor a ^ b
       19'b0000001000000000000, 5'b00101,  // and a & b
       19'b0000000100000000000, 5'b00110,  // or a | b
@@ -278,17 +278,16 @@ module ysyx_22050710_idu (
     })
   );
 
-  MuxKeyWithDefault #(.NR_KEY(8), .KEY_LEN(8), .DATA_LEN(3)) u_mux4 (
+  MuxKey #(.NR_KEY(8), .KEY_LEN(8), .DATA_LEN(3)) u_mux4 (
     .out(o_brfunc),
     .key({inst_jal, inst_jalr, inst_beq, inst_bne, inst_blt, inst_bge, inst_bltu, inst_bgeu}),
-    .default_out(3'b000),
     .lut({
-      8'b10000000, 3'b001,
-      8'b01000000, 3'b010,
-      8'b00100000, 3'b100,
-      8'b00010000, 3'b101,
-      8'b00001000, 3'b110,
-      8'b00000100, 3'b111,
+      8'b10000000, 3'b000,
+      8'b01000000, 3'b001,
+      8'b00100000, 3'b010,
+      8'b00010000, 3'b011,
+      8'b00001000, 3'b100,
+      8'b00000100, 3'b101,
       8'b00000010, 3'b110,
       8'b00000001, 3'b111
     })
@@ -314,7 +313,7 @@ module ysyx_22050710_idu (
     })
   );
 
-  assign o_is_invalid_inst = (o_ALUctr == 5'b11111) && (o_EXctr == 4'b1111) && (o_brfunc == 3'b000) && (i_inst != 32'b0);
+  assign o_is_invalid_inst = (|inst_type == 1'b0) && (i_inst != 32'b0);
 
   ysyx_22050710_gpr #(.ADDR_WIDTH(5), .DATA_WIDTH(64)) u_gprs (
     .i_clk(i_clk),
