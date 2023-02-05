@@ -2,7 +2,13 @@
 
 module ysyx_22050710_core (
   input i_clk,
-  input i_rst
+  input i_rst,
+  // inst sram interface
+  output        o_inst_sram_en,
+  output [ 3:0] o_inst_sram_wen,
+  output [31:0] o_inst_sram_addr,
+  output [63:0] o_inst_sram_wdata,
+  input  [63:0] i_inst_sram_rdata,
 );
 
   wire [31:0] inst; wire [63:0] pc;
@@ -11,17 +17,16 @@ module ysyx_22050710_core (
   ysyx_22050710_ifu u_ifu (
     .i_clk(i_clk),
     .i_rst(i_rst),
-    /* // allowin */
-    /* .i_idu_allowin(idu_allowin), */
-    /* // br_bus */
-    /* .i_br_bus(br_bus), */
     .i_nextpc(nextpc),
-    /* // outputs */
-    /* .ifu_to_idu_valid(ifu_to_idu_valid), */
-    /* .ifu_to_idu_bus(ifu_to_idu_bus), */
     .o_ifu_ready(ifu_ready),
     .o_pc(pc),
     .o_inst(inst)
+    // inst sram interface
+    .o_inst_sram_en   (inst_sram_en   ),
+    .o_inst_sram_wen  (inst_sram_wen  ),
+    .o_inst_sram_addr (inst_sram_addr ),
+    .o_inst_sram_wdata(inst_sram_wdata),
+    .i_inst_sram_rdata(inst_sram_rdata)
   );
 
   wire [63:0] rs1data, rs2data;
