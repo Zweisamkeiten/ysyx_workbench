@@ -80,7 +80,7 @@ module ysyx_22050710_core (
 
   wire [63:0] brtarget;
   ysyx_22050710_bru u_bru (
-    .i_rs1data(rs1data), .i_pc(pc), .i_imm(imm),
+    .i_rs1data(rs1data), .i_rs2data(rs2data), .i_pc(pc), .i_imm(imm),
     .i_brfunc(brfunc),
     .o_dnpc(brtarget)
   );
