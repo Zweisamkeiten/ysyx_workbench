@@ -4,6 +4,7 @@ module ysyx_22050710_idu (
   input   i_clk,
   input   [63:0] i_pc,
   input   [31:0] i_inst,
+  input   i_ifu_ready,
   input   [63:0] i_GPRbusW,
   input   [63:0] i_CSRbusW,
   input   i_ws_rf_wen,
@@ -27,7 +28,7 @@ module ysyx_22050710_idu (
 
   reg [63:0] idu_inst;
   always @(posedge i_clk) begin
-    if (i_fs_ready) begin
+    if (i_ifu_ready) begin
       idu_inst <= i_inst;
     end
   end
