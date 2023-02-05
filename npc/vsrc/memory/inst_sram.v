@@ -1,6 +1,5 @@
 module ysyx_22050710_inst_sram #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 64) (
   input  wire i_clk,
-  input  wire i_rst,
 
   input i_en,
   input i_wen,
