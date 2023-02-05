@@ -7,10 +7,12 @@ module ysyx_22050710_core (
 
   wire [31:0] inst; wire [63:0] pc;
   wire [63:0] nextpc = sys_change_pc ? sysctr_pc : brtarget;
+  wire ifu_ready;
   ysyx_22050710_ifu u_ifu (
     .i_clk(i_clk),
     .i_rst(i_rst),
     .i_nextpc(nextpc),
+    .o_ifu_ready(ifu_ready),
     .o_pc(pc),
     .o_inst(inst)
   );
@@ -34,6 +36,7 @@ module ysyx_22050710_core (
     .i_clk(i_clk),
     .i_pc(pc),
     .i_inst(inst),
+    .i_ifu_ready(ifu_ready),
     .i_GPRbusW(GPRbusW),
     .i_CSRbusW(CSRbusW),
     .i_ws_rf_wen(ws_rf_wen),
