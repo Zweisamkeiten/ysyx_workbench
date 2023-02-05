@@ -33,7 +33,7 @@ module ysyx_22050710_ifu #(INST_WIDTH = 32, DATA_WIDTH = 64) (
     end
   end
 
-  reg ready = 1'b0;
+  reg ready = 1'b1;
   assign o_ifu_ready = ready;
   always @(posedge i_clk) begin
     if (!i_rst && ready == 0) begin
