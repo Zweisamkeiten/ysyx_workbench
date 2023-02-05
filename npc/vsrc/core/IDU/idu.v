@@ -226,7 +226,7 @@ module ysyx_22050710_idu (
   );
 
   wire alu_copyimm      = |{inst_lui};
-  wire alu_plus         = |{inst_auipc, inst_addi,  inst_add,
+  wire alu_plus         = |{inst_auipc, inst_addi,  inst_add,   inst_jal,  inst_jalr,
                             inst_load,  inst_store, inst_addiw, inst_addw
                             };
   wire alu_sub          = |{inst_sub,   inst_subw};
