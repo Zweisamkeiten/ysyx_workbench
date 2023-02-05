@@ -28,6 +28,7 @@ module ysyx_22050710_ifu #(INST_WIDTH = 32, DATA_WIDTH = 64) (
 
   always @(posedge i_clk) begin
     /* $display("%x, %x, %x, %x", i_rst, ready, i_nextpc, pc); */
+    $display("%x, %x, %x, %x", i_rst, ready, i_nextpc, pc);
     if (!i_rst && ready) begin
       ready <= 1'b0;
     end
@@ -37,7 +38,6 @@ module ysyx_22050710_ifu #(INST_WIDTH = 32, DATA_WIDTH = 64) (
   assign o_ifu_ready = ready;
   always @(posedge i_clk) begin
     if (!i_rst && ready == 0) begin
-      $display("%x, %x, %x, %x", i_rst, ready, i_nextpc, pc);
       npc_pmem_read(pc, rdata);
       ready <= 1'b1;
     end
