@@ -31,8 +31,8 @@ module ysyx_22050710_ifu #(INST_WIDTH = 32, DATA_WIDTH = 64) (
   always @(posedge i_clk) begin
     ready <= 1'b0;
     if (!i_rst) begin
-      #1 npc_pmem_read(pc, rdata);
-      #1 ready <= 1'b1;
+      npc_pmem_read(pc, rdata);
+      ready <= 1'b1;
     end
   end
 
