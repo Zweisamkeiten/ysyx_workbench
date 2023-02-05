@@ -130,7 +130,9 @@ module ysyx_22050710_idu (
                        inst_mul,    inst_mulh,  inst_mulhsu,inst_mulhu, inst_div,
                        inst_divu,   inst_rem,   inst_remu,
                        // RV64M
-                       inst_mulw,   inst_divw,  inst_divuw, inst_remw,  inst_remuw
+                       inst_mulw,   inst_divw,  inst_divuw, inst_remw,  inst_remuw,
+                       // machine
+                       inst_mret
                        };
   wire inst_type_i = |{ // RV32I
                        inst_jalr,   inst_lb,    inst_lh,    inst_lw,    inst_lbu,
