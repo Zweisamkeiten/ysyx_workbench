@@ -38,7 +38,7 @@ module ysyx_22050710_if_stage #(
   wire [INST_WD-1:0          ] fs_inst                       ;
   wire [PC_WD-1:0            ] fs_pc                         ;
   assign o_fs_to_ds_bus      = {fs_inst, fs_pc}              ;
-  always @(posedge clk) begin
+  always @(posedge i_clk) begin
     if (i_rst) begin
       fs_valid <= 1'b0;
     end
