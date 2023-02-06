@@ -1,27 +1,25 @@
 // ysyx_22050710 Instruction Fetch Unit
 
-module ysyx_22050710_ifu #(INST_WIDTH = 32, DATA_WIDTH = 64) (
-  input   i_clk, i_rst,
-  input   [DATA_WIDTH-1:0] i_nextpc,
-  output  [DATA_WIDTH-1:0] o_pc,
-  output  [INST_WIDTH-1:0] o_inst,
-  output  o_ifu_ready,
+module ysyx_22050710_ifu #(
+  parameter INST_WD                                          ,
+  parameter PC_WD                                            ,
+  parameter SRAM_ADDR_WD                                     ,
+  parameter SRAM_DATA_WD                        
+) (
+  input                        i_clk                         ,
+  input                        i_rst                         ,
+  input  [PC_WD-1:0          ] i_pc                          ,
+  output                       o_ifu_ready                   ,
+  output [INST_WD-1:0        ] o_inst                        ,
   // inst sram interface
-  output        o_inst_sram_en   ,
-  output [31:0] o_inst_sram_addr ,
-  input  [63:0] i_inst_sram_rdata
+  output                       o_inst_sram_en                ,
+  output [SRAM_ADDR_WD-1:0   ] o_inst_sram_addr              ,
+  input  [SRAM_DATA_WD-1:0   ] i_inst_sram_rdata
 );
 
-  wire [DATA_WIDTH-1:0] pc;
-  ysyx_22050710_pc u_pc (
-    .i_clk(i_clk),
-    .i_rst(i_rst),
-    .i_load(ready),
-    .i_in(i_nextpc),
-    .o_pc(pc)
-  );
-
-  assign o_inst = pc[2] == 1'b0 ? i_inst_sram_rdata[31:0] : i_inst_sram_rdata[63:32];
+  assign o_inst              = i_pc[2] == 1'b0
+                             ? i_inst_sram_rdata[31:0]
+                             : i_inst_sram_rdata[63:32]      ;
 
   always @(posedge i_clk) begin
     if (!i_rst) begin
@@ -30,12 +28,10 @@ module ysyx_22050710_ifu #(INST_WIDTH = 32, DATA_WIDTH = 64) (
     end
   end
 
-  reg ready = 1'b0;
-  assign o_ifu_ready = ready;
+  reg ready                  = 1'b0                          ;
+  assign o_ifu_ready         = ready                         ;
 
-  assign o_pc = pc;
-
-  assign o_inst_sram_en    = 1'b1;
-  assign o_inst_sram_addr  = pc[31:0];
+  assign o_inst_sram_en      = 1'b1                          ;
+  assign o_inst_sram_addr    = i_pc[31:0]                    ;
 
 endmodule

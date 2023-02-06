@@ -4,7 +4,7 @@ module ysyx_22050710_idu (
   input   i_clk,
   input   [63:0] i_pc,
   input   [31:0] i_inst,
-  input   i_ifu_ready,
+  input   i_fs_to_ds_valid,
   input   [63:0] i_GPRbusW,
   input   [63:0] i_CSRbusW,
   input   i_ws_rf_wen,
@@ -29,7 +29,7 @@ module ysyx_22050710_idu (
   output  o_sys_change_pc
 );
 
-  wire [31:0] idu_inst = i_ifu_ready ? i_inst : 32'b0;
+  wire [31:0] idu_inst = i_fs_to_ds_valid ? i_inst : 32'b0;
 
   assign o_rd = rd;
   wire [6:0] opcode  = idu_inst[6:0];
