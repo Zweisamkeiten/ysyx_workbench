@@ -6,8 +6,6 @@ module ysyx_22050710_ifu #(
   parameter SRAM_ADDR_WD                                     ,
   parameter SRAM_DATA_WD                        
 ) (
-  input                        i_clk                         ,
-  input                        i_rst                         ,
   input  [PC_WD-1:0          ] i_pc                          ,
   output [INST_WD-1:0        ] o_inst                        ,
   input                        i_to_fs_valid                 ,

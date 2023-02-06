@@ -10,8 +10,6 @@ module ysyx_22050710_if_stage #(
 ) (
   input                        i_clk                         ,
   input                        i_rst                         ,
-  //allwoin
-  input                        i_ds_allowin                  ,
   // brbus
   input  [BR_BUS_WD-1:0 ]      i_br_bus                      ,
   // to ds
@@ -48,8 +46,6 @@ module ysyx_22050710_if_stage #(
   ysyx_22050710_pc #(
     .PC_WD                    (PC_WD                        )
   ) u_pc (
-    .i_clk                    (i_clk                        ),
-    .i_rst                    (i_rst                        ),
     .i_load                   (fs_valid                     ), // if stage 有数据发往 id stage, pc 写使能 为下一周期准备
     .i_br_sel                 (br_sel                       ),
     .i_br_target              (br_target                    ),
