@@ -39,7 +39,7 @@ module ysyx_22050710_core #(
   wire [BR_BUS_WD-1:0        ] br_bus                        ;
 
 
-  assign br_bus = {|{sys_change_pc, o_bren}, nextpc};
+  assign br_bus = {|{sys_change_pc, bren}, nextpc};
   ysyx_22050710_if_stage #(
     .INST_WD                  (INST_WD                      ),
     .PC_WD                    (PC_WD                        ),
