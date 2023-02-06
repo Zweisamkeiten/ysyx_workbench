@@ -10,6 +10,8 @@ module ysyx_22050710_if_stage #(
 ) (
   input                        i_clk                         ,
   input                        i_rst                         ,
+  //allwoin
+  input                        i_ds_allowin                  ,
   // brbus
   input  [BR_BUS_WD-1:0 ]      i_br_bus                      ,
   // to ds
@@ -21,9 +23,11 @@ module ysyx_22050710_if_stage #(
   input  [SRAM_DATA_WD-1:0   ] i_inst_sram_rdata
 );
 
-  wire fs_valid                                              ;
+  reg  fs_valid                                              ;
   wire fs_ready_go                                           ;
+  wire to_fs_valid                                           ;
 
+  assign to_fs_valid         = ~i_rst;
   wire                         br_sel                        ;
   wire [PC_WD-1:0            ] br_target                     ;
   assign {br_sel, br_target} = i_br_bus                      ;
@@ -34,6 +38,12 @@ module ysyx_22050710_if_stage #(
   wire [INST_WD-1:0          ] fs_inst                       ;
   wire [PC_WD-1:0            ] fs_pc                         ;
   assign o_fs_to_ds_bus      = {fs_inst, fs_pc}              ;
+  always @(posedge clk) begin
+    if (i_rst) begin
+      fs_valid <= 1'b0;
+    end
+    fs_valid <= ~fs_valid;
+  end
 
   ysyx_22050710_pc #(
     .PC_WD                    (PC_WD                        )
@@ -54,7 +64,7 @@ module ysyx_22050710_if_stage #(
   ) u_ifu (
     .i_clk                    (i_clk                        ),
     .i_rst                    (i_rst                        ),
-    .o_ifu_ready              (fs_valid                     ),
+    .i_to_fs_valid            (to_fs_valid                  ),
     .i_pc                     (fs_pc                        ),
     .o_inst                   (fs_inst                      ),
     // inst sram interface

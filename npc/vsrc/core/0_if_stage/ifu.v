@@ -9,8 +9,8 @@ module ysyx_22050710_ifu #(
   input                        i_clk                         ,
   input                        i_rst                         ,
   input  [PC_WD-1:0          ] i_pc                          ,
-  output                       o_ifu_ready                   ,
   output [INST_WD-1:0        ] o_inst                        ,
+  input                        i_to_fs_valid                 ,
   // inst sram interface
   output                       o_inst_sram_en                ,
   output [SRAM_ADDR_WD-1:0   ] o_inst_sram_addr              ,
@@ -21,17 +21,7 @@ module ysyx_22050710_ifu #(
                              ? i_inst_sram_rdata[31:0]
                              : i_inst_sram_rdata[63:32]      ;
 
-  always @(posedge i_clk) begin
-    if (!i_rst) begin
-      if (ready) ready <= 1'b0;
-      else ready <= 1'b1;
-    end
-  end
-
-  reg ready                  = 1'b0                          ;
-  assign o_ifu_ready         = ready                         ;
-
-  assign o_inst_sram_en      = 1'b1                          ;
+  assign o_inst_sram_en      = i_to_fs_valid                 ;
   assign o_inst_sram_addr    = 1'b1
                              ? i_pc[31:0]
                              : i_pc[63:32]                   ;
