@@ -305,7 +305,7 @@ module ysyx_22050710_idu (
 
   assign o_sel_csr      = |{inst_csrrw, inst_csrrs, inst_csrrwi, inst_ecall, inst_mret};
   assign o_sel_zimm     = |{inst_csrrwi};
-  wire   o_CsrWr          = o_sel_csr ? (|{inst_csrrs} == 1 ? (|rs1 == 0 ? 0 : 1) : 1) : 0;
+  assign o_CsrWr        = o_sel_csr ? (|{inst_csrrs} == 1 ? (|rs1 == 0 ? 0 : 1) : 1) : 0;
   wire   CsrRe          = o_sel_csr ? (|{inst_csrrw} == 1 ? (|rd == 0 ? 0 : 1) : 1) : 0;
   wire   raise_intr     = inst_ecall;
   wire   intr_ret       = inst_mret;
