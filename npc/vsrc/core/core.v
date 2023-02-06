@@ -1,5 +1,5 @@
 // ysyx_22050710 NPC CORE
-`include "defines.v"
+`include "../defines.v"
 
 module ysyx_22050710_core #(
   parameter PC_WD                                            ,
