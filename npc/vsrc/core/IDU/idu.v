@@ -339,7 +339,7 @@ module ysyx_22050710_idu (
     .i_clk(i_clk),
     .i_raddr(csr), .i_waddr(i_ws_csrrf_waddr), .i_wdata(i_CSRbusW),
     .i_epc(i_pc),
-    .i_ren(CsrRe), .i_wen(i_ws_rf_wen),
+    .i_ren(CsrRe), .i_wen(i_ws_csrrf_wen),
     .i_raise_intr(raise_intr), .i_intr_ret(intr_ret),
     .o_bus(o_csrrdata),
     .o_nextpc(o_sysctr_pc), .o_sys_change_pc(o_sys_change_pc)
