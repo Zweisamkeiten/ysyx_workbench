@@ -22,7 +22,6 @@ module ysyx_22050710_inst_sram #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 64) (
 
   always @(posedge i_clk) begin
     if (i_en && ready_go == 0) begin
-      $display("123");
       npc_pmem_read({32'b0, i_addr}, rdata);
       ready_go <= 1;
     end
