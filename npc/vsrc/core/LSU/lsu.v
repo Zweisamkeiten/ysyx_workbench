@@ -15,7 +15,7 @@ module ysyx_22050710_lsu (
   input   i_WrEn, i_ReEn,
   input   i_sel_csr,
   output  [63:0] o_w_rf_data,
-  output  [63:0] o_w_csrf_data
+  output  [63:0] o_w_csrrf_data
 );
 
   wire [63:0] rdata;
