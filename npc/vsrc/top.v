@@ -5,7 +5,7 @@ module ysyx_22050710_top #(
   parameter PC_WD            = `ysyx_22050710_PC_WD           ,
   parameter INST_WD          = `ysyx_22050710_INST_WD         ,
   parameter SRAM_ADDR_WD     = `ysyx_22050710_SRAM_ADDR_WD    ,
-  parameter SRAM_DATA_WD     = `ysyx_22050710_SRAM_DATA_WD      
+  parameter SRAM_DATA_WD     = `ysyx_22050710_SRAM_DATA_WD
 ) (
   input                        i_clk                         ,
   input                        i_rst

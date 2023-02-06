@@ -3,10 +3,10 @@
 `define ysyx_22050710_SRAM_DATA_WD                64
 
 // pc width
-`define ysyx_22050710_PC_WD                       64            
+`define ysyx_22050710_PC_WD                       64
 
 // inst width
-`define ysyx_22050710_INST_WD                     32            
+`define ysyx_22050710_INST_WD                     32
 
 // Bus width
 `define ysyx_22050710_FS_TO_DS_BUS_WD             96  // {fs_inst[31:0], fs_pc[63:0]} 32 + 64
