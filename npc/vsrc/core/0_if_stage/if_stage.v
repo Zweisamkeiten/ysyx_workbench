@@ -22,7 +22,6 @@ module ysyx_22050710_if_stage #(
 
   wire fs_valid                                              ;
   wire fs_ready_go                                           ;
-  wire fs_allowin                                            ;
   wire to_fs_valid                                           ;
 
   wire                         br_sel                        ;
