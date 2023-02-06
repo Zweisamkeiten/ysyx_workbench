@@ -1,29 +1,52 @@
 // ysyx_22050710 NPC CORE
+`include "defines.v"
 
-module ysyx_22050710_core (
-  input i_clk,
-  input i_rst,
+module ysyx_22050710_core #(
+  parameter PC_WD                                            ,
+  parameter INST_WD                                          ,
+
+  parameter FS_TO_DS_BUS_WD  = `ysyx_22050710_FS_TO_DS_BUS_WD,
+  parameter BR_BUS_WD        = `ysyx_22050710_BR_BUS_WD      ,
+
+  parameter SRAM_ADDR_WD                                     ,
+  parameter SRAM_DATA_WD
+) (
+  input                        i_clk                         ,
+  input                        i_rst                         ,
   // inst sram interface
-  output        o_inst_sram_en,
-  output [31:0] o_inst_sram_addr,
-  input  [63:0] i_inst_sram_rdata
+  output                       o_inst_sram_en                ,
+  output [SRAM_ADDR_WD-1:0   ] o_inst_sram_addr              ,
+  input  [SRAM_DATA_WD-1:0   ] i_inst_sram_rdata
 );
 
-  wire [31:0] inst; wire [63:0] pc;
-  wire [63:0] nextpc = sys_change_pc ? sysctr_pc : brtarget;
-  wire ifu_ready;
-  ysyx_22050710_ifu u_ifu (
-    .i_clk(i_clk),
-    .i_rst(i_rst),
-    .i_nextpc(nextpc),
-    .o_ifu_ready(ifu_ready),
-    .o_pc(pc),
-    .o_inst(inst),
+  wire                         fs_to_ds_valid                ;
+  wire [FS_TO_DS_BUS_WD-1:0  ] fs_to_ds_bus                  ;
+  wire [BR_BUS_WD-1:0        ] br_bus                        ;
+
+
+  assign br_bus = {|{sys_change_pc, bren}, nextpc};
+  ysyx_22050710_if_stage #(
+    .INST_WD                  (INST_WD                      ),
+    .PC_WD                    (PC_WD                        ),
+    .FS_TO_DS_BUS_WD          (FS_TO_DS_BUS_WD              ),
+    .BR_BUS_WD                (BR_BUS_WD                    ),
+    .SRAM_ADDR_WD             (SRAM_ADDR_WD                 ),
+    .SRAM_DATA_WD             (SRAM_DATA_WD                 )
+  ) u_if_stage (
+    .i_clk                    (i_clk                        ),
+    .i_rst                    (i_rst                        ),
+    .i_br_bus                 (br_bus                       ),
+    .o_fs_to_ds_valid         (fs_to_ds_valid               ),
+    .o_fs_to_ds_bus           (fs_to_ds_bus                 ),
     // inst sram interface
-    .o_inst_sram_en   (o_inst_sram_en   ),
-    .o_inst_sram_addr (o_inst_sram_addr ),
-    .i_inst_sram_rdata(i_inst_sram_rdata)
+    .o_inst_sram_en           (o_inst_sram_en               ),
+    .o_inst_sram_addr         (o_inst_sram_addr             ),
+    .i_inst_sram_rdata        (i_inst_sram_rdata            )
   );
+
+  wire [31:0] inst; wire [63:0] pc;
+  assign {inst, pc} = fs_to_ds_bus;
+  wire [63:0] nextpc = sys_change_pc ? sysctr_pc : brtarget;
 
   wire [63:0] rs1data, rs2data;
   wire [63:0] GPRbusW;
@@ -45,7 +68,7 @@ module ysyx_22050710_core (
     .i_clk(i_clk),
     .i_pc(pc),
     .i_inst(inst),
-    .i_ifu_ready(ifu_ready),
+    .i_fs_to_ds_valid(fs_to_ds_valid),
     .i_GPRbusW(GPRbusW),
     .i_CSRbusW(CSRbusW),
     .i_ws_rf_wen(ws_rf_wen),
