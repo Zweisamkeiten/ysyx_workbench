@@ -22,9 +22,7 @@ module ysyx_22050710_if_stage #(
 
   wire fs_valid                                              ;
   wire fs_ready_go                                           ;
-  wire to_fs_valid                                           ;
 
-  assign to_fs_valid         = ~i_rst                        ;
   wire                         br_sel                        ;
   wire [PC_WD-1:0            ] br_target                     ;
   assign {br_sel, br_target} = i_br_bus                      ;
