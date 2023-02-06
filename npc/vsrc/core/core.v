@@ -1,4 +1,5 @@
 // ysyx_22050710 NPC CORE
+`include "defines_bus.v"
 
 module ysyx_22050710_core #(
   parameter WORD_WD                                          ,
