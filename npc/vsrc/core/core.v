@@ -40,6 +40,7 @@ module ysyx_22050710_core (
   wire [63:0] CSRbusW;
   wire [63:0] sysctr_pc; wire sys_change_pc;
   wire [4:0] rd;
+  wire [11:0] csrwaddr;
   ysyx_22050710_idu u_idu (
     .i_clk(i_clk),
     .i_pc(pc),
@@ -52,6 +53,7 @@ module ysyx_22050710_core (
     .i_ws_csrrf_wen(ws_csrrf_wen),
     .i_ws_csrrf_waddr(ws_csrrf_waddr),
     .o_rd(rd),
+    .o_rd(csrwaddr),
     .o_rs1data(rs1data), .o_rs2data(rs2data),
     .o_imm(imm),
     .o_bren(bren),
