@@ -94,7 +94,7 @@ module ysyx_22050710_core #(
     .i_clk(i_clk),
     .i_pc(pc),
     .i_inst(inst),
-    .i_ifu_ready(ifu_ready),
+    .i_fs_to_ds_valid(fs_to_ds_valid),
     .i_GPRbusW(GPRbusW),
     .i_CSRbusW(CSRbusW),
     .i_ws_rf_wen(ws_rf_wen),
