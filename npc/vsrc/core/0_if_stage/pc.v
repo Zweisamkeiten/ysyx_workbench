@@ -22,7 +22,7 @@ module ysyx_22050710_pc #(
   // 位宽为64bits, 复位值为64'h80000000, 写使能为i_load;
   Reg #(
     .WIDTH                    (PC_WD                        ),
-    .RESET_VAL                (64'h80000000                 )
+    .RESET_VAL                (PC_WD'h80000000                 )
   ) u_pcreg (
     .clk                      (i_clk                        ),
     .rst                      (i_rst                        ),
