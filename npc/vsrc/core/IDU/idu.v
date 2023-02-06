@@ -9,7 +9,10 @@ module ysyx_22050710_idu (
   input   [63:0] i_CSRbusW,
   input   i_ws_rf_wen,
   input   [4:0] i_ws_rf_waddr,
+  input   i_ws_csrrf_wen,
+  input   [11:0] i_ws_csrrf_waddr,
   output  [4:0] o_rd,
+  output  [11:0] o_csrwaddr,
   output  [63:0] o_rs1data, o_rs2data,
   output  [63:0] o_imm,
   output  o_bren,
@@ -19,7 +22,7 @@ module ysyx_22050710_idu (
   output  o_RegWr, o_MemtoReg, o_MemWr, o_MemRe, output [2:0] o_MemOP,
   output  [3:0] o_EXctr,
   output  o_is_invalid_inst,
-  output  o_sel_csr, o_sel_zimm, /* o_CsrWr, */
+  output  o_sel_csr, o_sel_zimm, o_CsrWr,
   output  [63:0] o_zimm,
   output  [63:0] o_csrrdata,
   output  [63:0] o_sysctr_pc,
@@ -302,7 +305,7 @@ module ysyx_22050710_idu (
 
   assign o_sel_csr      = |{inst_csrrw, inst_csrrs, inst_csrrwi, inst_ecall, inst_mret};
   assign o_sel_zimm     = |{inst_csrrwi};
-  wire   CsrWr          = o_sel_csr ? (|{inst_csrrs} == 1 ? (|rs1 == 0 ? 0 : 1) : 1) : 0;
+  wire   o_CsrWr          = o_sel_csr ? (|{inst_csrrs} == 1 ? (|rs1 == 0 ? 0 : 1) : 1) : 0;
   wire   CsrRe          = o_sel_csr ? (|{inst_csrrw} == 1 ? (|rd == 0 ? 0 : 1) : 1) : 0;
   wire   raise_intr     = inst_ecall;
   wire   intr_ret       = inst_mret;
@@ -331,11 +334,12 @@ module ysyx_22050710_idu (
   );
 
   wire [11:0] csr = idu_inst[31:20];
+  assign o_csrwaddr = csr;
   ysyx_22050710_csr #(.ADDR_WIDTH(12), .DATA_WIDTH(64)) u_csrs (
     .i_clk(i_clk),
-    .i_raddr(csr), .i_waddr(csr), .i_wdata(i_CSRbusW),
+    .i_raddr(csr), .i_waddr(i_ws_csrrf_waddr), .i_wdata(i_CSRbusW),
     .i_epc(i_pc),
-    .i_ren(CsrRe), .i_wen(CsrWr),
+    .i_ren(CsrRe), .i_wen(i_ws_rf_wen),
     .i_raise_intr(raise_intr), .i_intr_ret(intr_ret),
     .o_bus(o_csrrdata),
     .o_nextpc(o_sysctr_pc), .o_sys_change_pc(o_sys_change_pc)

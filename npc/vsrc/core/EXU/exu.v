@@ -13,7 +13,7 @@ module ysyx_22050710_exu (
   input   i_sel_zimm,
   input   [63:0] i_csrrdata, i_zimm,
   output  [63:0] o_ALUresult,
-  output  [63:0] o_CSRbusW
+  output  [63:0] o_CSRresult
 );
 
   // word_cut: cut operand to 32bits and unsigned extend OR dont cut
@@ -43,7 +43,7 @@ module ysyx_22050710_exu (
 
   wire [63:0] csr_oprand = i_sel_zimm ? i_zimm : i_rs1;
   MuxKeyWithDefault #(.NR_KEY(2), .KEY_LEN(4), .DATA_LEN(64)) u_mux2 (
-    .out(o_CSRbusW),
+    .out(o_CSRresult),
     .key(i_EXctr),
     .default_out(64'b0),
     .lut({
