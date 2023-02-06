@@ -5,8 +5,8 @@ module ysyx_22050710_core #(
   parameter PC_WD                                            ,
   parameter INST_WD                                          ,
 
-  parameter FS_TO_DS_BUS_WD  = `ysyx_22050710_FS_TO_DS_BUS_WD ,
-  parameter BR_BUS_WD        = `ysyx_22050710_BR_BUS_WD       ,
+  parameter FS_TO_DS_BUS_WD  = `ysyx_22050710_FS_TO_DS_BUS_WD,
+  parameter BR_BUS_WD        = `ysyx_22050710_BR_BUS_WD      ,
 
   parameter SRAM_ADDR_WD                                     ,
   parameter SRAM_DATA_WD

@@ -16,7 +16,7 @@ module ysyx_22050710_pc #(
   wire [PC_WD-1:0            ] dnpc                          ;
 
   assign o_pc                = pc;
-  assign snpc                = pc + 64'h4;
+  assign snpc                = pc + PC_WD'h4;
   assign dnpc                = i_br_sel ? i_br_target : snpc ;
 
   // 位宽为64bits, 复位值为64'h80000000, 写使能为i_load;

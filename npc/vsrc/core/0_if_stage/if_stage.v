@@ -1,4 +1,5 @@
-// ysyx_22050710
+// ysyx_22050710 If stage
+
 module ysyx_22050710_if_stage #(
   parameter INST_WD                                          ,
   parameter PC_WD                                            ,
