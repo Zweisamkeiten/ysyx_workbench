@@ -61,19 +61,18 @@ module ysyx_22050710_core #(
   wire [31:0] inst; wire [63:0] pc;
   assign {inst, pc} = fs_to_ds_bus;
   wire [63:0] nextpc = sys_change_pc ? sysctr_pc : brtarget;
-  wire ifu_ready;
-  ysyx_22050710_ifu u_ifu (
-    .i_clk(i_clk),
-    .i_rst(i_rst),
-    .i_nextpc(nextpc),
-    .i_fs_to_ds_valid(fs_to_ds_valid),
-    .o_pc(pc),
-    .o_inst(inst),
-    // inst sram interface
-    .o_inst_sram_en   (o_inst_sram_en   ),
-    .o_inst_sram_addr (o_inst_sram_addr ),
-    .i_inst_sram_rdata(i_inst_sram_rdata)
-  );
+  /* ysyx_22050710_ifu u_ifu ( */
+  /*   .i_clk(i_clk), */
+  /*   .i_rst(i_rst), */
+  /*   .i_nextpc(nextpc), */
+  /*   .i_fs_to_ds_valid(fs_to_ds_valid), */
+  /*   .o_pc(pc), */
+  /*   .o_inst(inst), */
+  /*   // inst sram interface */
+  /*   .o_inst_sram_en   (o_inst_sram_en   ), */
+  /*   .o_inst_sram_addr (o_inst_sram_addr ), */
+  /*   .i_inst_sram_rdata(i_inst_sram_rdata) */
+  /* ); */
 
   wire [63:0] rs1data, rs2data;
   wire [63:0] GPRbusW;
