@@ -45,7 +45,7 @@ module ysyx_22050710_core #(
     .PC_WD                    (PC_WD                        ),
     .FS_TO_DS_BUS_WD          (FS_TO_DS_BUS_WD              ),
     .BR_BUS_WD                (BR_BUS_WD                    ),
-    .SRAM_ADDR_WD             (SRAM_ADDR_WD                 )
+    .SRAM_ADDR_WD             (SRAM_ADDR_WD                 ),
     .SRAM_DATA_WD             (SRAM_DATA_WD                 )
   ) u_if_stage (
     .i_clk                    (i_clk                        ),
