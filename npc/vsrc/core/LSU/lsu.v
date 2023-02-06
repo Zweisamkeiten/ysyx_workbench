@@ -21,7 +21,7 @@ module ysyx_22050710_lsu (
   wire [63:0] rdata;
   wire [63:0] memrdata;
   assign o_w_rf_data = i_MemtoReg ? memrdata : (i_sel_csr ? i_csrrdata : i_ALUresult);
-  assign o_w_csrf_data = i_CSRresult;
+  assign o_w_csrrf_data = i_CSRresult;
   MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(64)) u_mux0 (
     .out(memrdata),
     .key(i_MemOP),
