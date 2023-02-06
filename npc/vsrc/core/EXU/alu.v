@@ -29,11 +29,11 @@ module ysyx_22050710_alu (
   // signed mul
   wire signed [63:0] signed_mul_result = $signed(i_src_a) * $signed(i_src_b);
 
-  wire signed [63:0] signed_mulh_result = {$signed({{64{1'b0}}, i_src_a}) * $signed({{64{1'b0}}, i_src_b}) >> 64}[63:0];
+  wire signed [63:0] signed_mulh_result = {$signed({64'b0, i_src_a}) * $signed({64'b0, i_src_b}) >> 64}[63:0];
 
-  wire signed [63:0] su_mulh_result = {$signed({{64{1'b0}}, i_src_a}) * {{64{1'b0}}, i_src_b} >> 64}[63:0];
+  wire signed [63:0] su_mulh_result = {$signed({64'b0, i_src_a}) * {64'b0, i_src_b} >> 64}[63:0];
 
-  wire signed [63:0] unsigned_mulh_result = {{{64{1'b0}}, i_src_a} * {{64{1'b0}}, i_src_b} >> 64}[63:0];
+  wire signed [63:0] unsigned_mulh_result = {{64'b0, i_src_a} * {64'b0, i_src_b} >> 64}[63:0];
 
   // signed div
   wire signed [63:0] signed_div_result = i_word_cut
