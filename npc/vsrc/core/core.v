@@ -2,6 +2,7 @@
 `include "defines.v"
 
 module ysyx_22050710_core #(
+  parameter PC_RESETVAL                                      ,
   parameter PC_WD                                            ,
   parameter INST_WD                                          ,
 
@@ -27,6 +28,7 @@ module ysyx_22050710_core #(
   assign br_bus = {|{sys_change_pc, bren}, nextpc};
   ysyx_22050710_if_stage #(
     .INST_WD                  (INST_WD                      ),
+    .PC_RESETVAL              (PC_RESETVAL                  ),
     .PC_WD                    (PC_WD                        ),
     .FS_TO_DS_BUS_WD          (FS_TO_DS_BUS_WD              ),
     .BR_BUS_WD                (BR_BUS_WD                    ),

@@ -2,6 +2,7 @@
 `include "defines.v"
 
 module ysyx_22050710_top #(
+  parameter PC_RESETVAL      = `ysyx_22050710_PC_RESETVAL     ,
   parameter PC_WD            = `ysyx_22050710_PC_WD           ,
   parameter INST_WD          = `ysyx_22050710_INST_WD         ,
   parameter SRAM_ADDR_WD     = `ysyx_22050710_SRAM_ADDR_WD    ,
@@ -17,6 +18,7 @@ module ysyx_22050710_top #(
   wire [SRAM_DATA_WD-1:0     ] cpu_inst_rdata                ;
 
   ysyx_22050710_core #( 
+    .PC_RESETVAL              (PC_RESETVAL                  ),
     .PC_WD                    (PC_WD                        ),
     .INST_WD                  (INST_WD                      ),
     .SRAM_ADDR_WD             (SRAM_ADDR_WD                 ),

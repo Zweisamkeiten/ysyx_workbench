@@ -1,7 +1,7 @@
 // ysyx_22050710 Program Counter
-`include "defines.v"
 
 module ysyx_22050710_pc #(
+  parameter PC_RESETVAL                                      ,
   parameter PC_WD
 ) (
   input                        i_clk                         ,
@@ -23,7 +23,7 @@ module ysyx_22050710_pc #(
   // 位宽为64bits, 复位值为64'h80000000, 写使能为i_load;
   Reg #(
     .WIDTH                    (PC_WD                        ),
-    .RESET_VAL                (`ysyx_22050710_PC_RESTVAL    )
+    .RESET_VAL                (PC_RESETVAL                  )
   ) u_pcreg (
     .clk                      (i_clk                        ),
     .rst                      (i_rst                        ),

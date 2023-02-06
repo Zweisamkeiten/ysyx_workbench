@@ -2,6 +2,7 @@
 
 module ysyx_22050710_if_stage #(
   parameter INST_WD                                          ,
+  parameter PC_RESETVAL                                      ,
   parameter PC_WD                                            ,
   parameter FS_TO_DS_BUS_WD                                  ,
   parameter BR_BUS_WD                                        ,
@@ -49,6 +50,7 @@ module ysyx_22050710_if_stage #(
   );
 
   ysyx_22050710_pc #(
+    .PC_RESETVAL              (PC_RESETVAL                  ),
     .PC_WD                    (PC_WD                        )
   ) u_pc (
     .i_clk                    (i_clk                        ),
