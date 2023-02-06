@@ -35,7 +35,9 @@ module ysyx_22050710_core #(
   ) u_if_stage (
     .i_clk                    (i_clk                        ),
     .i_rst                    (i_rst                        ),
+    // br bus
     .i_br_bus                 (br_bus                       ),
+    // output
     .o_fs_to_ds_valid         (fs_to_ds_valid               ),
     .o_fs_to_ds_bus           (fs_to_ds_bus                 ),
     // inst sram interface
