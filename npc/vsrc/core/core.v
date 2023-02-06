@@ -121,11 +121,11 @@ module ysyx_22050710_core (
     .o_rf_wdata(GPRbusW),
 
     .i_csrrf_wen(CsrWr),
-    .i_csrrf_waddr(rd),
-    .i_csrrf_wdata(ms_rf_wdata),
-    .o_csrrf_wen(ws_rf_wen),
-    .o_csrrf_waddr(ws_rf_waddr),
-    .o_csrrf_wdata(GPRbusW)
+    .i_csrrf_waddr(csrwaddr),
+    .i_csrrf_wdata(ms_csrrf_wdata),
+    .o_csrrf_wen(ws_csrrf_wen),
+    .o_csrrf_waddr(ws_csrrf_waddr),
+    .o_csrrf_wdata(CSRbusW)
   );
 
 endmodule
