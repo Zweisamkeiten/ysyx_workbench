@@ -32,6 +32,8 @@ module ysyx_22050710_ifu #(
   assign o_ifu_ready         = ready                         ;
 
   assign o_inst_sram_en      = 1'b1                          ;
-  assign o_inst_sram_addr    = i_pc[31:0]                    ;
+  assign o_inst_sram_addr    = 1'b1
+                             ? i_pc[31:0]
+                             : i_pc[63:32]                   ;
 
 endmodule
