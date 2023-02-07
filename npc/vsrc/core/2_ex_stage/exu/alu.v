@@ -96,8 +96,8 @@ module ysyx_22050710_alu #(
       5'b01111, copy_result,
       5'b00000, adder_result,
       5'b00001, sub_result,
-      5'b00010, signed_Less == 1 ? 1 : 0, // slt
-      5'b00011, unsigned_Less == 1 ? 1 : 0, // sltu
+      5'b00010, signed_Less == 1 ? 64'b1 : 64'b0, // slt
+      5'b00011, unsigned_Less == 1 ? 64'b1 : 64'b0, // sltu
       5'b00100, xor_result,
       5'b00101, and_result,
       5'b00110, or_result,
