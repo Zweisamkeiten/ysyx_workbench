@@ -79,7 +79,7 @@ module ysyx_22050710_id_stage #(
           gpr_rf_wdata                                       ,  // 140:77
           csr_rf_wen                                         ,  // 76 :76
           csr_rf_waddr                                       ,  // 75 :64
-          csr_rf_wdata                                       ,  // 63 :0
+          csr_rf_wdata                                          // 63 :0
           }                  = ws_to_rf_bus                  ;
 
   // epu to bru 用于 异常发生 跳转
