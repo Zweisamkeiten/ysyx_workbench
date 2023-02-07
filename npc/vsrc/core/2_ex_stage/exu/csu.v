@@ -18,7 +18,7 @@ module ysyx_22050710_csu #(
                              ? i_imm
                              : i_rs1data                     ;
 
-  MuxKeyWithDefault #(.NR_KEY(2), .KEY_LEN(3), .DATA_LEN(CSR_WD)) u_mux0 (
+  MuxKeyWithDefault #(.NR_KEY(3), .KEY_LEN(3), .DATA_LEN(CSR_WD)) u_mux0 (
     .out(o_csr_result),
     .key(i_csr_op),
     .default_out(64'b0),
