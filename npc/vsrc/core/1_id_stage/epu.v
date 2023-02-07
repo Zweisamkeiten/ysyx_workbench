@@ -14,7 +14,6 @@ module ysyx_22050710_epu #(
 
   assign o_ep_sel            = i_ecall_sel | i_mret_sel      ;
 
-  always @* $display(i_ecall_sel);
   assign o_epnpc             = i_ecall_sel
                              ? i_mtvec
                              : i_mret_sel
