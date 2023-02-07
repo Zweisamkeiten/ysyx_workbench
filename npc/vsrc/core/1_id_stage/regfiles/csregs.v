@@ -24,25 +24,54 @@ module ysyx_22050710_csr #(
 );
 
   reg [DATA_WIDTH-1:0        ] mstatus                       ;
-  reg [DATA_WIDTH-1:0        ] mtvec                         ;
-  reg [DATA_WIDTH-1:0        ] mepc                          ;
-  reg [DATA_WIDTH-1:0        ] mcause                        ;
-
-  always @(posedge i_clk) begin
-    if (i_wen) begin
-      case (i_waddr)
-       `ysyx_22050710_MSTATUS: mstatus <= i_wdata;
-       `ysyx_22050710_MTVEC  : mtvec   <= i_wdata;
-       `ysyx_22050710_MEPC   : mepc    <= i_wdata;
-       `ysyx_22050710_MCAUSE : mcause  <= i_wdata;
-       default               :
-      endcase
-    end
-  end
-
   always @(posedge i_clk) begin
     if (i_rst) begin
       mstatus <= 64'ha00001800;
+    end
+    else if (i_wen && i_waddr == `ysyx_22050710_MSTATUS) begin
+      mstatus <= i_wdata;
+    end
+
+    if (i_mret_sel) begin
+      mstatus <= 64'ha00001800;
+    end
+  end
+
+  reg [DATA_WIDTH-1:0        ] mtvec                         ;
+  always @(posedge i_clk) begin
+    if (i_rst) begin
+      mtvec <= 64'h0;
+    end
+    else if (i_wen && i_waddr == `ysyx_22050710_MTVEC) begin
+      mtvec <= i_wdata;
+    end
+  end
+
+  reg [DATA_WIDTH-1:0        ] mepc                          ;
+  always @(posedge i_clk) begin
+    if (i_rst) begin
+      mepc <= 64'h0;
+    end
+    else if (i_wen && i_waddr == `ysyx_22050710_MEPC) begin
+      mepc <= i_wdata;
+    end
+
+    if (i_ecall_sel) begin // Environment call from M-mode Expection Code: 11
+      mepc <= i_epc;
+    end
+  end
+
+  reg [DATA_WIDTH-1:0        ] mcause                        ;
+  always @(posedge i_clk) begin
+    if (i_rst) begin
+      mcause <= 64'h0;
+    end
+    else if (i_wen && i_waddr == `ysyx_22050710_MCAUSE) begin
+      mcause <= i_wdata;
+    end
+
+    if (i_ecall_sel) begin // Environment call from M-mode Expection Code: 11
+      mcause <= 64'd11;
     end
   end
 
@@ -57,16 +86,6 @@ module ysyx_22050710_csr #(
       `ysyx_22050710_MCAUSE,  mcause
     })
   );
-
-  always @(posedge i_clk) begin
-    if (i_ecall_sel) begin // Environment call from M-mode Expection Code: 11
-      mepc <= i_epc;
-      mcause <= 64'd11;
-    end
-    else if (i_mret_sel) begin
-      mstatus <= 64'ha00001800;
-    end
-  end
 
   assign o_csrrdata          = i_ren ? rdata : 64'b0         ;
   assign o_mtvec             = mtvec                         ;
