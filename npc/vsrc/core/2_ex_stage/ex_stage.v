@@ -11,8 +11,8 @@ module ysyx_22050710_ex_stage #(
   parameter DS_TO_ES_BUS_WD                                  ,
   parameter ES_TO_MS_BUS_WD
 ) (
-  input                        i_clk                         ,
-  input                        i_rst                         ,
+  /* input                        i_clk                         , */
+  /* input                        i_rst                         , */
   // from ds
   input  [DS_TO_ES_BUS_WD-1:0] i_ds_to_es_bus                ,
   // to ms

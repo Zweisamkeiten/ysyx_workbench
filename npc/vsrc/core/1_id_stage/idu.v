@@ -1,7 +1,6 @@
 // ysyx_22050710 Instruction Decode Unit
 
 module ysyx_22050710_idu #(
-  parameter WORD_WD                                          ,
   parameter INST_WD                                          ,
   parameter GPR_ADDR_WD                                      ,
   parameter CSR_ADDR_WD                                      ,

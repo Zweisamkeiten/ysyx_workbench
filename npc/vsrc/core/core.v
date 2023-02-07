@@ -67,7 +67,6 @@ module ysyx_22050710_core #(
   );
 
   ysyx_22050710_id_stage #(
-    .WORD_WD                  (WORD_WD                      ),
     .INST_WD                  (INST_WD                      ),
     .PC_WD                    (PC_WD                        ),
     .GPR_WD                   (GPR_WD                       ),
@@ -104,8 +103,8 @@ module ysyx_22050710_core #(
     .DS_TO_ES_BUS_WD          (DS_TO_ES_BUS_WD              ),
     .ES_TO_MS_BUS_WD          (ES_TO_MS_BUS_WD              )
   ) u_ex_stage (
-    .i_clk                    (i_clk                        ),
-    .i_rst                    (i_rst                        ),
+    /* .i_clk                    (i_clk                        ), */
+    /* .i_rst                    (i_rst                        ), */
     // from ds
     .i_ds_to_es_bus           (ds_to_es_bus                 ),
     // to ms
