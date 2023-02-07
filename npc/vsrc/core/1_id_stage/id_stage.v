@@ -189,7 +189,6 @@ module ysyx_22050710_id_stage #(
   );
 
   ysyx_22050710_idu #(
-    .WORD_WD                  (WORD_WD                      ),
     .INST_WD                  (INST_WD                      ),
     .GPR_ADDR_WD              (GPR_ADDR_WD                  ),
     .CSR_ADDR_WD              (CSR_ADDR_WD                  ),

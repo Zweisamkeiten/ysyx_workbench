@@ -67,6 +67,7 @@ module ysyx_22050710_core #(
   );
 
   ysyx_22050710_id_stage #(
+    .WORD_WD                  (WORD_WD                      ),
     .INST_WD                  (INST_WD                      ),
     .PC_WD                    (PC_WD                        ),
     .GPR_WD                   (GPR_WD                       ),
