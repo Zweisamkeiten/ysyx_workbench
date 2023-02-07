@@ -350,7 +350,7 @@ module ysyx_22050710_idu #(
 
   assign o_csr_inst_sel      = |{inst_csrrw, inst_csrrs, inst_csrrwi};
 
-  assign o_gpr_wn            = |{inst_type_r, inst_type_i, inst_type_u, inst_type_j}/*  & !inst_csrrwi */;
+  assign o_gpr_wen           = |{inst_type_r, inst_type_i, inst_type_u, inst_type_j}/*  & !inst_csrrwi */;
   // 对于 CSRRW 和 CSRRWI 指令而言，如果结果寄存器 rd 的索引值为 0，则不会发起
   // CSR 寄存器的读操作，也不会带来任何读操作造成的副作用。 
   assign o_csr_ren           = o_csr_inst_sel ? (|{inst_csrrw} == 1 ? (|rd == 0 ? 0 : 1) : 1) : 0;
@@ -370,6 +370,6 @@ module ysyx_22050710_idu #(
   assign o_mret_sel          = inst_mret                     ;
   assign o_ebreak_sel        = inst_ebreak                   ;
 
-  assign o_is_invalid_inst   = (|inst_type == 1'b0) && (i_inst != 32'b0);
+  assign o_invalid_inst_sel  = (|inst_type == 1'b0) && (i_inst != 32'b0);
 
 endmodule

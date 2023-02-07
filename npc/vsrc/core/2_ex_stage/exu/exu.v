@@ -72,7 +72,7 @@ module ysyx_22050710_exu #(
     .i_csrrdata               (i_csrrdata                   ),
     .i_imm                    (i_imm                        ),
     .i_csr_op                 (i_csr_op                     ),
-    .i_csr_imm_rs1_sel        (i_csr_imm_rs1_sel            ),
+    .i_csr_imm_rs1_sel        (csr_imm_rs1_sel            ),
     .o_csr_result             (o_csr_result                 )
   );
 
@@ -82,8 +82,8 @@ module ysyx_22050710_exu #(
     end
   end
 
-  always @(i_is_invalid_inst) begin // 敏感变量只有 i_is_invalid_inst, reset(10) 因此只处理一次
-    if (i_is_invalid_inst) set_state_abort(); // invalid inst
+  always @(i_invalid_inst_sel) begin // 敏感变量只有 i_is_invalid_inst, reset(10) 因此只处理一次
+    if (i_invalid_inst_sel) set_state_abort(); // invalid inst
   end
 
 endmodule

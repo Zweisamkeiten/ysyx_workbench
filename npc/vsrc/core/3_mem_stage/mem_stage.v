@@ -25,7 +25,7 @@ module ysyx_22050710_mem_stage #(
   wire [2:0                  ] ms_mem_op                     ; // mem 操作 op
   wire                         ms_csr_inst_sel               ; // write csrrdata to gpr
   wire [WORD_WD-1:0          ] ms_rs2data                    ;
-  wire [WORD_WD-1:0          ] ms_csrdata                    ;
+  wire [WORD_WD-1:0          ] ms_csrrdata                   ;
   wire [WORD_WD-1:0          ] ms_alu_result                 ;
   wire [WORD_WD-1:0          ] ms_csr_result                 ;
 
@@ -64,7 +64,7 @@ module ysyx_22050710_mem_stage #(
     .i_wdata                  (ms_rs2data                   ),
     .i_alu_result             (ms_alu_result                ),
     .i_csr_result             (ms_csr_result                ),
-    .i_csrrdata               (ms_csrdata                   ),
+    .i_csrrdata               (ms_csrrdata                  ),
     .i_mem_ren                (ms_mem_ren                   ),
     .i_mem_wen                (ms_mem_wen                   ),
     .i_mem_op                 (ms_mem_op                    ),
