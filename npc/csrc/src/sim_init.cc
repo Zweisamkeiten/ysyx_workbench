@@ -107,10 +107,10 @@ extern "C" void init_sim() {
   npcpc = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__u_if_stage__DOT__u_pc__DOT__pc);
 
   QData ** csr = (QData **)malloc(NR_CSREGS * sizeof(uint64_t *));
-  csr[MSTATUS] = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__u_idu__DOT__u_csrs__DOT__mstatus);
-  csr[MTVEC] = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__u_idu__DOT__u_csrs__DOT__mtvec);
-  csr[MEPC] = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__u_idu__DOT__u_csrs__DOT__mepc);
-  csr[MCAUSE] = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__u_idu__DOT__u_csrs__DOT__mcause);
+  csr[MSTATUS] = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__u_id_stage__DOT__u_csrs__DOT__mstatus);
+  csr[MTVEC] = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__u_id_stage__DOT__u_csrs__DOT__mtvec);
+  csr[MEPC] = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__u_id_stage__DOT__u_csrs__DOT__mepc);
+  csr[MCAUSE] = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__u_id_stage__DOT__u_csrs__DOT__mcause);
 
   cpu.csr = csr;
 
