@@ -31,8 +31,6 @@ module ysyx_22050710_if_stage #(
   wire [PC_WD-1:0            ] br_target                     ;
   assign {br_sel, br_target} = i_br_bus                      ;
 
-  always @* $display("%x", br_target);
-
   assign fs_ready_go         = 1'b1                          ;
   assign o_fs_to_ds_valid    = fs_valid && fs_ready_go       ;
 

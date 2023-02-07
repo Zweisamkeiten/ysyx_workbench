@@ -84,6 +84,7 @@ module ysyx_22050710_bru #(
     })
   );
 
+  always @* $display("%x, %x", i_ep_sel, i_epnpc);
   assign o_br_sel            = i_bren | i_ep_sel             ;
   assign o_br_target         = i_ep_sel
                              ? i_epnpc
