@@ -65,6 +65,7 @@ module ysyx_22050710_exu #(
   wire                         csr_imm_rs1_sel              ;
   assign csr_imm_rs1_sel     = i_alu_src2_sel == 2'b01      ;
   ysyx_22050710_csu #(
+    .GPR_WD                   (GPR_WD                       ),
     .WORD_WD                  (WORD_WD                      ),
     .CSR_WD                   (CSR_WD                       )
   ) u_csu (
