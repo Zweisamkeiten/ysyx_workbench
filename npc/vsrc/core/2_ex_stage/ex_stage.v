@@ -47,7 +47,7 @@ module ysyx_22050710_ex_stage #(
           es_rs2data                                            ,  // 294:231
           es_csrrdata                                           ,  // 230:167
           es_imm                                                ,  // 166:103
-          es_ds_pc                                              ,  // 102:39
+          es_pc                                                 ,  // 102:39
           es_alu_src1_sel                                       ,  //  38:38
           es_alu_src2_sel                                       ,  //  37:36
           es_alu_word_cut_sel                                   ,  //  35:35

@@ -80,7 +80,7 @@ module ysyx_22050710_id_stage #(
           csr_rf_wen                                         ,  // 76 :76
           csr_rf_waddr                                       ,  // 75 :64
           csr_rf_wdata                                          // 63 :0
-          }                  = ws_to_rf_bus                  ;
+          }                  = i_ws_to_rf_bus                ;
 
   // epu to bru 用于 异常发生 跳转
   wire [CSR_WD-1:0           ] mtvec                         ;
@@ -94,7 +94,7 @@ module ysyx_22050710_id_stage #(
   assign o_br_bus            = {br_sel, br_target           };
 
   // id stage to ex stage
-  assign ds_to_es_bus        = {rs1data                      ,  // 358:295
+  assign o_ds_to_es_bus      = {rs1data                      ,  // 358:295
                                 rs2data                      ,  // 294:231
                                 csrrdata                     ,  // 230:167
                                 imm                          ,  // 166:103
@@ -121,7 +121,6 @@ module ysyx_22050710_id_stage #(
     .DATA_WIDTH               (GPR_WD                       )
   ) u_gprs (
     .i_clk                    (i_clk                        ),
-    .i_rst                    (i_rst                        ),
     // read port 1
     .i_raddr1                 (rs1),
     .o_rdata1                 (rs1data                      ),

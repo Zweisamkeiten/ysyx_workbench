@@ -56,7 +56,7 @@ module ysyx_22050710_mem_stage #(
   assign lsu_addr            = ms_alu_result                 ; // x[rs1] + imm
 
   ysyx_22050710_lsu #(
-    .WORD_WD                  (WORD_WD                      ),
+    .WORD_WD                  (WORD_WD                      )
   ) u_lsu (
     .i_clk                    (i_clk                        ),
     .i_rst                    (i_rst                        ),
