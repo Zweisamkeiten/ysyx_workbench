@@ -320,6 +320,9 @@ module ysyx_22050710_idu #(
     })
   );
 
+  wire                         csr_inst_without_imm          ; // csr 相关指令都为 I-type, 但只有一部分要选择zimm, 另外部分选择rs1
+  assign csr_inst_without_imm= |{inst_csrrw, inst_csrrs}     ;
+
   assign o_rs1               = rs1                           ;
   assign o_rs2               = rs2                           ;
   assign o_rd                = rd                            ;
@@ -337,7 +340,7 @@ module ysyx_22050710_idu #(
   /* 为00时选择rs2. */
   /* 为01时选择imm 当是立即数移位指令时，只有低5位有效, */
   /* 为10时选择常数4 用于跳转时计算返回地址PC+4 */
-  assign o_alu_src2_sel      = {|{inst_jal, inst_jalr}, |inst_type[4:2] & !inst_jalr};
+  assign o_alu_src2_sel      = {|{inst_jal, inst_jalr}, |inst_type[4:2] & !inst_jalr & !csr_inst_without_imm};
   assign o_alu_op            = alu_op                        ;
 
   // 是否需要对操作数进行32位截断
