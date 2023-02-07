@@ -58,6 +58,7 @@ module ysyx_22050710_csr #(
 
     if (i_ecall_sel) begin // Environment call from M-mode Expection Code: 11
       mepc <= i_epc;
+      $display("%x, %x", mepc, i_epc);
     end
   end
 
