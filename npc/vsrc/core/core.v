@@ -135,7 +135,7 @@ module ysyx_22050710_core #(
     .CSR_WD                   (CSR_WD                       ),
     .MS_TO_WS_BUS_WD          (MS_TO_WS_BUS_WD              ),
     .WS_TO_RF_BUS_WD          (WS_TO_RF_BUS_WD              )
-  ) u_ex_stage (
+  ) u_wb_stage (
     /* .i_clk                    (i_clk                        ), */
     /* .i_rst                    (i_rst                        ), */
     // from ms
