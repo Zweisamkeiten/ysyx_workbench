@@ -130,7 +130,9 @@ module ysyx_22050710_core #(
   ysyx_22050710_wb_stage #(
     .WORD_WD                  (WORD_WD                      ),
     .GPR_ADDR_WD              (GPR_ADDR_WD                  ),
+    .GPR_WD                   (GPR_WD                       ),
     .CSR_ADDR_WD              (CSR_ADDR_WD                  ),
+    .CSR_WD                   (CSR_WD                       ),
     .MS_TO_WS_BUS_WD          (MS_TO_WS_BUS_WD              ),
     .WS_TO_RF_BUS_WD          (WS_TO_RF_BUS_WD              )
   ) u_ex_stage (

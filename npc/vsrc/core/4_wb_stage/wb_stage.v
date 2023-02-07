@@ -3,7 +3,9 @@
 module ysyx_22050710_wb_stage #(
   parameter WORD_WD                                          ,
   parameter GPR_ADDR_WD                                      ,
+  parameter GPR_WD                                           ,
   parameter CSR_ADDR_WD                                      ,
+  parameter CSR_WD                                           ,
   parameter MS_TO_WS_BUS_WD                                  ,
   parameter WS_TO_RF_BUS_WD
 ) (
@@ -29,7 +31,11 @@ module ysyx_22050710_wb_stage #(
           }                  = i_ms_to_ws_bus                ;
 
   ysyx_22050710_wbu #(
-    .WS_TO_RF_BUS_WD          (WS_TO_RF_BUS_WD              ),
+    .GPR_ADDR_WD              (GPR_ADDR_WD                  ),
+    .GPR_WD                   (GPR_WD                       ),
+    .CSR_ADDR_WD              (CSR_ADDR_WD                  ),
+    .CSR_WD                   (CSR_WD                       ),
+    .WS_TO_RF_BUS_WD          (WS_TO_RF_BUS_WD              )
   ) u_wbu (
     // gpr
     .i_gpr_wen                (ws_gpr_wen                   ),
