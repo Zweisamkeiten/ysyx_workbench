@@ -35,13 +35,13 @@ module ysyx_22050710_alu #(
   assign signed_mul_result   = $signed(i_src_a) * $signed(i_src_b);
 
   wire signed [WORD_WD-1:0   ] signed_mulh_result            ;
-  assign signed_mulh_result  = {$signed({WORD_WD'b0, i_src_a}) * $signed({WORD_WD'b0, i_src_b}) >> WORD_WD}[WORD_WD-1:0];
+  assign signed_mulh_result  = {$signed({{WORD_WD{1'b0}}, i_src_a}) * $signed({{WORD_WD{1'b0}}, i_src_b}) >> WORD_WD}[WORD_WD-1:0];
 
   wire signed [WORD_WD-1:0   ] su_mulh_result                ;
-  assign su_mulh_result      = {$signed({WORD_WD'b0, i_src_a}) * {WORD_WD'b0, i_src_b} >> WORD_WD}[WORD_WD-1:0];
+  assign su_mulh_result      = {$signed({{WORD_WD{1'b0}}, i_src_a}) * {{WORD_WD{1'b0}}, i_src_b} >> WORD_WD}[WORD_WD-1:0];
 
   wire signed [WORD_WD-1:0   ] unsigned_mulh_result          ;
-  assign unsigned_mulh_result= {{WORD_WD'b0, i_src_a} * {WORD_WD'b0, i_src_b} >> WORD_WD}[WORD_WD-1:0];
+  assign unsigned_mulh_result= {{{WORD_WD{1'b0}}, i_src_a} * {{WORD_WD{1'b0}}, i_src_b} >> WORD_WD}[WORD_WD-1:0];
 
   // signed div
   wire signed [WORD_WD-1:0   ] signed_div_result             ;

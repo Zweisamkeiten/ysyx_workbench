@@ -14,7 +14,7 @@ module ysyx_22050710_csu #(
 );
 
   wire [WORD_WD-1:0          ] csr_oprand                    ;
-  assign csr_oprand          = i_csr_imm_rs1_sel             ;
+  assign csr_oprand          = i_csr_imm_rs1_sel
                              ? i_imm
                              : i_rs1data                     ;
 
