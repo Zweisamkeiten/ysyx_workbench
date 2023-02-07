@@ -30,7 +30,7 @@ module ysyx_22050710_idu #(
   output [2:0                ] o_mem_op                      ,
   output                       o_csr_inst_sel                , // write csrdata to gpr
   // for ecall, ebreak, csr ctrl inst, mret
-  output [3:0                ] o_csr_op                      ,
+  output [2:0                ] o_csr_op                      ,
   // for ebreak, ecall, mret
   output                       o_ebreak_sel                  ,
   output                       o_ecall_sel                   ,
