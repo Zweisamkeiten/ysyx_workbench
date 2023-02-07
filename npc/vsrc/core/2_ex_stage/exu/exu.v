@@ -70,6 +70,7 @@ module ysyx_22050710_exu #(
   ) u_csu (
     .i_rs1data                (i_rs1data                    ),
     .i_csrrdata               (i_csrrdata                   ),
+    .i_imm                    (i_imm                        ),
     .i_csr_op                 (i_csr_op                     ),
     .i_csr_imm_rs1_sel        (i_csr_imm_rs1_sel            ),
     .o_csr_result             (o_csr_result                 )
