@@ -28,10 +28,10 @@ module ysyx_22050710_id_stage #(
 );
 
   wire [PC_WD-1:0            ] fs_pc;
-  assign fs_pc               = i_fs_to_ds_bus[31:0]          ;
+  assign fs_pc               = i_fs_to_ds_bus[63:0]          ;
 
-  wire [31:0                 ] ds_inst                       ;
-  wire [31:0                 ] ds_pc                         ;
+  wire [INST_WD-1:0          ] ds_inst                       ;
+  wire [PC_WD-1:0            ] ds_pc                         ;
   assign {ds_inst, ds_pc}    = i_fs_to_ds_valid
                              ? i_fs_to_ds_bus
                              : {FS_TO_DS_BUS_WD{1'b0}}       ;
