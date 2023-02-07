@@ -44,7 +44,7 @@ module ysyx_22050710_exu #(
   assign src_a               = i_alu_src1_sel ? i_pc : src1  ;
   MuxKey #(.NR_KEY(3), .KEY_LEN(2), .DATA_LEN(64)) u_mux0 (
     .out(src_b),
-    .key(i_ALUBsrc),
+    .key(i_alu_src2_sel),
     .lut({
       2'b00, src2,
       2'b01, imm,
@@ -62,8 +62,8 @@ module ysyx_22050710_exu #(
     .o_alu_result             (o_alu_result                 )
   );
 
-  wire                         csr_rs1_imm_sel              ;
-  assign csr_rs1_imm_sel     = i_alu_src2_sel == 2'b01      ;
+  wire                         csr_imm_rs1_sel              ;
+  assign csr_imm_rs1_sel     = i_alu_src2_sel == 2'b01      ;
   ysyx_22050710_csu #(
     .WORD_WD                  (WORD_WD                      ),
     .CSR_WD                   (CSR_WD                       )

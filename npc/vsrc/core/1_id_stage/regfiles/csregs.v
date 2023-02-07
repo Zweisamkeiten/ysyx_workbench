@@ -23,20 +23,6 @@ module ysyx_22050710_csr #(
   output [DATA_WIDTH-1:0     ] o_mepc
 );
 
-  always @(*) begin
-    o_nextpc = 64'b0;
-    o_sys_change_pc = 1'b0;
-
-    if (i_raise_intr) begin
-      o_nextpc = mtvec;
-      o_sys_change_pc = 1'b1;
-    end
-    else if(i_intr_ret) begin // mret
-      o_nextpc = mepc;
-      o_sys_change_pc = 1'b1;
-    end
-  end
-
   reg [DATA_WIDTH-1:0        ] mstatus                       ;
   reg [DATA_WIDTH-1:0        ] mtvec                         ;
   reg [DATA_WIDTH-1:0        ] mepc                          ;
