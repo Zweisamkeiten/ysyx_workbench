@@ -33,8 +33,8 @@ module ysyx_22050710_exu #(
 );
 
   // word_cut: cut operand to 32bits and unsigned extend OR dont cut
-  wire [WORD_WD-1:0   ] src1 = i_alu_word_cut_sel ? {{32{1'b0}}, i_rs1[31:0]} : i_rs1;
-  wire [WORD_WD-1:0   ] src2 = i_alu_word_cut_sel ? {{32{1'b0}}, i_rs2[31:0]} : i_rs2;
+  wire [WORD_WD-1:0   ] src1 = i_alu_word_cut_sel ? {{32{1'b0}}, i_rs1data[31:0]} : i_rs1data;
+  wire [WORD_WD-1:0   ] src2 = i_alu_word_cut_sel ? {{32{1'b0}}, i_rs2data[31:0]} : i_rs2data;
   wire [WORD_WD-1:0   ] imm  = i_alu_word_cut_sel ? {{32{1'b0}}, i_imm[31:0]} : i_imm;
 
   // ALU
