@@ -9,14 +9,14 @@ module ysyx_22050710_csu #(
   input  [CSR_WD-1:0         ] i_csrrdata                    ,
   input  [WORD_WD-1:0        ] i_imm                         ,
   input  [2:0                ] i_csr_op                      ,
-  input                        i_csr_imm_rs1_sel             ,
+  input                        i_csr_rs1_imm_sel             ,
   output [CSR_WD-1:0         ] o_csr_result
 );
 
   wire [WORD_WD-1:0          ] csr_oprand                    ;
-  assign csr_oprand          = i_csr_imm_rs1_sel
-                             ? i_imm
-                             : i_rs1data                     ;
+  assign csr_oprand          = i_csr_rs1_imm_sel
+                             ? i_rs1data
+                             : i_imm                     ;
 
   MuxKeyWithDefault #(.NR_KEY(3), .KEY_LEN(3), .DATA_LEN(CSR_WD)) u_mux0 (
     .out(o_csr_result),
