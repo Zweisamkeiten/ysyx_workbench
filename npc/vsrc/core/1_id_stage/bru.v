@@ -1,23 +1,44 @@
 // ysyx_22050710 branch unit
 
-module ysyx_22050710_bru (
-  input  [63:0] i_rs1data, i_rs2data, i_pc, i_imm,
-  input  i_bren,
-  input  [2:0]  i_brfunc,
-  output [63:0] o_dnpc
+module ysyx_22050710_bru #(
+  parameter WORD_WD                                          ,
+  parameter PC_WD                                            ,
+  parameter GPR_WD                                           ,
+  parameter IMM_WD
+) (
+  input  [GPR_WD-1:0         ] i_rs1data                     ,
+  input  [GPR_WD-1:0         ] i_rs2data                     ,
+  input  [PC_WD-1:0          ] i_pc                          ,
+  input  [IMM_WD-1:0         ] i_imm                         ,
+  // br inst
+  input                        i_bren                        ,
+  input  [2:0                ] i_brfunc                      ,
+  // ecall mret
+  input                        i_ep_sel                      ,
+  input  [PC_WD-1:0          ] i_epnpc                       ,
+  // output br bus
+  output                       o_br_sel                      ,
+  output [PC_WD-1:0          ] o_br_target
 );
 
-  wire [63:0] sub_result; wire cout;
-  wire overflow = ~(i_rs1data[63] ^ i_rs2data[63]) ^ ~(i_rs1data[62] ^ i_rs2data[62]);
-  assign {cout, sub_result}   = {1'b0, i_rs1data} + {1'b0, (({64{1'b1}}^(i_rs2data)) + 1)};
+  wire [WORD_WD-1:0          ] sub_result                    ;
+  wire                         cout                          ;
+  wire                         overflow                      ;
+  wire                         zero                          ;
+  wire                         less                          ;
+  wire                         signed_Less, unsigned_Less    ;
 
-  wire signed_Less = overflow == 0
-                   ? (sub_result[63] == 1 ? 1'b1 : 1'b0)
-                   : (sub_result[63] == 0 ? 1'b1 : 1'b0);
-  wire unsigned_Less = (1'b1 ^ cout) & ~(|i_rs2data == 1'b0); // CF = cin ^ cout
+  wire                         PCAsrc, PCBsrc                ;
 
-  wire zero = ~(|sub_result);
-  wire less;
+  assign overflow            = ~(i_rs1data[WORD_WD-1] ^ i_rs2data[WORD_WD-1]) ^ ~(i_rs1data[WORD_WD-2] ^ i_rs2data[WORD_WD-2]);
+  assign {cout, sub_result}  = {1'b0, i_rs1data} + {1'b0, (({WORD_WD{1'b1}}^(i_rs2data)) + 1)};
+
+  assign signed_Less         = overflow == 0
+                             ? (sub_result[WORD_WD-1] == 1 ? 1'b1 : 1'b0)
+                             : (sub_result[WORD_WD-1] == 0 ? 1'b1 : 1'b0);
+  assign unsigned_Less       = (1'b1 ^ cout) & ~(|i_rs2data == 1'b0); // CF = cin ^ cout
+
+  assign zero                = ~(|sub_result)                ;
   MuxKey #(.NR_KEY(8), .KEY_LEN(3), .DATA_LEN(1)) u_mux0 (
     .out(less),
     .key(i_brfunc),
@@ -63,7 +84,9 @@ module ysyx_22050710_bru (
     })
   );
 
-  wire PCAsrc, PCBsrc;
-  assign o_dnpc = (PCBsrc ? i_rs1data : i_pc) + (i_bren ? (PCAsrc ? i_imm : 64'd4) : 64'd4);
+  assign o_br_sel            = i_bren | i_ep_sel             ;
+  assign o_br_target         = i_ep_sel
+                             ? i_epnpc
+                             : (PCBsrc ? i_rs1data : i_pc) + (PCAsrc ? i_imm : 4);
 
 endmodule

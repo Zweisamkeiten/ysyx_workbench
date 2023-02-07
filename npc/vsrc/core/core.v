@@ -1,12 +1,21 @@
 // ysyx_22050710 NPC CORE
-`include "defines.v"
 
 module ysyx_22050710_core #(
+  parameter WORD_WD                                          ,
   parameter PC_RESETVAL                                      ,
   parameter PC_WD                                            ,
+  parameter GPR_WD                                           ,
+  parameter GPR_ADDR_WD                                      ,
+  parameter CSR_WD                                           ,
+  parameter CSR_ADDR_WD                                      ,
+  parameter IMM_WD                                           ,
   parameter INST_WD                                          ,
 
   parameter FS_TO_DS_BUS_WD  = `ysyx_22050710_FS_TO_DS_BUS_WD,
+  parameter DS_TO_ES_BUS_WD  = `ysyx_22050710_DS_TO_ES_BUS_WD,
+  parameter ES_TO_MS_BUS_WD  = `ysyx_22050710_ES_TO_MS_BUS_WD,
+  parameter MS_TO_WS_BUS_WD  = `ysyx_22050710_MS_TO_WS_BUS_WD,
+  parameter WS_TO_RF_BUS_WD  = `ysyx_22050710_WS_TO_RF_BUS_WD,
   parameter BR_BUS_WD        = `ysyx_22050710_BR_BUS_WD      ,
 
   parameter SRAM_ADDR_WD                                     ,
@@ -20,12 +29,21 @@ module ysyx_22050710_core #(
   input  [SRAM_DATA_WD-1:0   ] i_inst_sram_rdata
 );
 
+  /* wire         ds_allowin; */
+  /* wire         es_allowin; */
+  /* wire         ms_allowin; */
+  /* wire         ws_allowin; */
   wire                         fs_to_ds_valid                ;
+  /* wire         ds_to_es_valid; */
+  /* wire         es_to_ms_valid; */
+  /* wire         ms_to_ws_valid; */
   wire [FS_TO_DS_BUS_WD-1:0  ] fs_to_ds_bus                  ;
+  wire [DS_TO_ES_BUS_WD-1:0  ] ds_to_es_bus                  ;
+  wire [ES_TO_MS_BUS_WD-1:0  ] es_to_ms_bus                  ;
+  wire [MS_TO_WS_BUS_WD -1:0 ] ms_to_ws_bus                  ;
+  wire [WS_TO_RF_BUS_WD -1:0 ] ws_to_rf_bus                  ;
   wire [BR_BUS_WD-1:0        ] br_bus                        ;
 
-
-  assign br_bus = {|{sys_change_pc, bren}, nextpc};
   ysyx_22050710_if_stage #(
     .INST_WD                  (INST_WD                      ),
     .PC_RESETVAL              (PC_RESETVAL                  ),
@@ -48,74 +66,67 @@ module ysyx_22050710_core #(
     .i_inst_sram_rdata        (i_inst_sram_rdata            )
   );
 
-  wire [31:0] inst; wire [63:0] pc;
-  assign {inst, pc} = fs_to_ds_bus;
-  wire [63:0] nextpc = sys_change_pc ? sysctr_pc : brtarget;
-
-  wire [63:0] rs1data, rs2data;
-  wire [63:0] GPRbusW;
-  wire [63:0] imm, zimm;
-  wire bren;
-  wire [2:0] brfunc;
-  wire ALUAsrc; wire [1:0] ALUBsrc; wire [4:0] ALUctr;
-  wire word_cut;
-  wire ws_rf_wen, ws_csrrf_wen, RegWr, MemtoReg, MemWr, MemRe; wire [2:0] MemOP;
-  wire [3:0] EXctr;
-  wire is_invalid_inst;
-  wire sel_csr, sel_zimm, CsrWr;
-  wire [63:0] csrrdata;
-  wire [63:0] CSRbusW;
-  wire [63:0] sysctr_pc; wire sys_change_pc;
-  wire [4:0] rd;
-  wire [11:0] csrwaddr;
-  ysyx_22050710_idu u_idu (
-    .i_clk(i_clk),
-    .i_pc(pc),
-    .i_inst(inst),
-    .i_fs_to_ds_valid(fs_to_ds_valid),
-    .i_GPRbusW(GPRbusW),
-    .i_CSRbusW(CSRbusW),
-    .i_ws_rf_wen(ws_rf_wen),
-    .i_ws_rf_waddr(ws_rf_waddr),
-    .i_ws_csrrf_wen(ws_csrrf_wen),
-    .i_ws_csrrf_waddr(ws_csrrf_waddr),
-    .o_rd(rd),
-    .o_csrwaddr(csrwaddr),
-    .o_rs1data(rs1data), .o_rs2data(rs2data),
-    .o_imm(imm),
-    .o_bren(bren),
-    .o_brfunc(brfunc),
-    .o_ALUAsrc(ALUAsrc), .o_ALUBsrc(ALUBsrc), .o_ALUctr(ALUctr),
-    .o_word_cut(word_cut),
-    .o_RegWr(RegWr), .o_MemtoReg(MemtoReg), .o_MemWr(MemWr), .o_MemRe(MemRe), .o_MemOP(MemOP),
-    .o_EXctr(EXctr),
-    .o_is_invalid_inst(is_invalid_inst),
-    .o_sel_csr(sel_csr), .o_sel_zimm(sel_zimm), .o_CsrWr(CsrWr),
-    .o_zimm(zimm),
-    .o_csrrdata(csrrdata),
-    .o_sys_change_pc(sys_change_pc), .o_sysctr_pc(sysctr_pc)
+  ysyx_22050710_id_stage #(
+    .WORD_WD                  (WORD_WD                      ),
+    .INST_WD                  (INST_WD                      ),
+    .PC_WD                    (PC_WD                        ),
+    .GPR_WD                   (GPR_WD                       ),
+    .GPR_ADDR_WD              (GPR_ADDR_WD                  ),
+    .IMM_WD                   (IMM_WD                       ),
+    .CSR_WD                   (CSR_WD                       ),
+    .CSR_ADDR_WD              (CSR_ADDR_WD                  ),
+    .FS_TO_DS_BUS_WD          (FS_TO_DS_BUS_WD              ),
+    .DS_TO_ES_BUS_WD          (DS_TO_ES_BUS_WD              ),
+    .BR_BUS_WD                (BR_BUS_WD                    ),
+    .WS_TO_RF_BUS_WD          (WS_TO_RF_BUS_WD              )
+  ) u_id_stage (
+    .i_clk                    (i_clk                        ),
+    .i_rst                    (i_rst                        ),
+    // from fs
+    .i_fs_to_ds_valid         (fs_to_ds_valid               ),
+    .i_fs_to_ds_bus           (fs_to_ds_bus                 ),
+    // to es
+    .o_ds_to_es_bus           (ds_to_es_bus                 ),
+    // to fs
+    .o_br_bus                 (br_bus                       ),
+    // from ws to rf: for write back
+    .i_ws_to_rf_bus           (ws_to_rf_bus                 )
   );
 
-  wire [63:0] brtarget;
-  ysyx_22050710_bru u_bru (
-    .i_rs1data(rs1data), .i_rs2data(rs2data), .i_pc(pc), .i_imm(imm),
-    .i_bren(bren),
-    .i_brfunc(brfunc),
-    .o_dnpc(brtarget)
+  ysyx_22050710_ex_stage #(
+    .WORD_WD                  (WORD_WD                      ),
+    .PC_WD                    (PC_WD                        ),
+    .GPR_WD                   (GPR_WD                       ),
+    .GPR_ADDR_WD              (GPR_ADDR_WD                  ),
+    .IMM_WD                   (IMM_WD                       ),
+    .CSR_WD                   (CSR_WD                       ),
+    .DS_TO_ES_BUS_WD          (DS_TO_ES_BUS_WD              ),
+    .ES_TO_MS_BUS_WD          (ES_TO_MS_BUS_WD              )
+  ) u_ex_stage (
+    .i_clk                    (i_clk                        ),
+    .i_rst                    (i_rst                        ),
+    // from ds
+    .i_ds_to_es_bus           (ds_to_es_bus                 ),
+    // to ms
+    .o_es_to_ms_bus           (es_to_ms_bus                 )
   );
 
-  wire [63:0] ALUresult, CSRresult;
-  ysyx_22050710_exu u_exu (
-    .i_rs1(rs1data), .i_rs2(rs2data),
-    .i_imm(imm), .i_pc(pc),
-    .i_ALUAsrc(ALUAsrc), .i_ALUBsrc(ALUBsrc), .i_ALUctr(ALUctr),
-    .i_word_cut(word_cut),
-    .i_EXctr(EXctr),
-    .i_is_invalid_inst(is_invalid_inst),
-    .i_sel_zimm(sel_zimm),
-    .i_csrrdata(csrrdata), .i_zimm(zimm),
-    .o_ALUresult(ALUresult),
-    .o_CSRresult(CSRresult)
+  ysyx_22050710_mem_stage #(
+    .WORD_WD                  (WORD_WD                      ),
+    .PC_WD                    (PC_WD                        ),
+    .GPR_WD                   (GPR_WD                       ),
+    .GPR_ADDR_WD              (GPR_ADDR_WD                  ),
+    .IMM_WD                   (IMM_WD                       ),
+    .CSR_WD                   (CSR_WD                       ),
+    .ES_TO_MS_BUS_WD          (ES_TO_MS_BUS_WD              ),
+    .MS_TO_WS_BUS_WD          (MS_TO_WS_BUS_WD              )
+  ) u_ex_stage (
+    .i_clk                    (i_clk                        ),
+    .i_rst                    (i_rst                        ),
+    // from es
+    .i_es_to_ms_bus           (es_to_ms_bus                 ),
+    // to ws
+    .o_ms_to_ws_bus           (ms_to_ws_bus                 )
   );
 
   wire [63:0] lsu_addr = ALUresult; // x[rs1] + imm
