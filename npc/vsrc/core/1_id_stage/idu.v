@@ -229,7 +229,7 @@ module ysyx_22050710_idu #(
   wire unsigned_halfword     = |{inst_lhu}                   ;
   wire unsigned_word         = |{inst_lwu}                   ;
  
-  wire [3:0                  ] mem_op                        ;
+  wire [2:0                  ] mem_op                        ;
   MuxKeyWithDefault #(.NR_KEY(7), .KEY_LEN(7), .DATA_LEN(3)) u_mux2 (
     .out(mem_op),
     .key({

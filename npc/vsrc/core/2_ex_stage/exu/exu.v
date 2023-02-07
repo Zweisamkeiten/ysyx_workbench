@@ -22,7 +22,7 @@ module ysyx_22050710_exu #(
   input  [4:0                ] i_alu_op                      ,
   input                        i_alu_word_cut_sel            ,
   // csr 运算操作
-  input  [3:0                ] i_csr_op                      ,
+  input  [2:0                ] i_csr_op                      ,
   // ebreak
   input                        i_ebreak_sel                  ,
   // invalid inst
