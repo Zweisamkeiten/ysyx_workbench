@@ -94,16 +94,17 @@ module ysyx_22050710_id_stage #(
   assign o_br_bus            = {br_sel, br_target           };
 
   // id stage to ex stage
-  assign ds_to_es_bus        = {rs1data                      ,  // 346:283
-                                rs2data                      ,  // 282:219
-                                csrrdata                     ,  // 218:155
-                                imm                          ,  // 154:91
-                                ds_pc                        ,  //  90:27
-                                alu_src1_sel                 ,  //  26:26
-                                alu_src2_sel                 ,  //  25:24
-                                alu_word_cut_sel             ,  //  23:23
-                                alu_op                       ,  //  22:18
-                                rd                           ,  //  17:13
+  assign ds_to_es_bus        = {rs1data                      ,  // 358:295
+                                rs2data                      ,  // 294:231
+                                csrrdata                     ,  // 230:167
+                                imm                          ,  // 166:103
+                                ds_pc                        ,  // 102:39
+                                alu_src1_sel                 ,  //  38:38
+                                alu_src2_sel                 ,  //  37:36
+                                alu_word_cut_sel             ,  //  35:35
+                                alu_op                       ,  //  34:30
+                                rd                           ,  //  29:25
+                                csr                          ,  //  24:13
                                 gpr_wen                      ,  //  12:12
                                 csr_wen                      ,  //  11:11
                                 mem_ren                      ,  //  10:10

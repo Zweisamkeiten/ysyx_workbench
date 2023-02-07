@@ -100,6 +100,7 @@ module ysyx_22050710_core #(
     .GPR_ADDR_WD              (GPR_ADDR_WD                  ),
     .IMM_WD                   (IMM_WD                       ),
     .CSR_WD                   (CSR_WD                       ),
+    .CSR_ADDR_WD              (CSR_ADDR_WD                  ),
     .DS_TO_ES_BUS_WD          (DS_TO_ES_BUS_WD              ),
     .ES_TO_MS_BUS_WD          (ES_TO_MS_BUS_WD              )
   ) u_ex_stage (
@@ -113,11 +114,8 @@ module ysyx_22050710_core #(
 
   ysyx_22050710_mem_stage #(
     .WORD_WD                  (WORD_WD                      ),
-    .PC_WD                    (PC_WD                        ),
-    .GPR_WD                   (GPR_WD                       ),
     .GPR_ADDR_WD              (GPR_ADDR_WD                  ),
-    .IMM_WD                   (IMM_WD                       ),
-    .CSR_WD                   (CSR_WD                       ),
+    .CSR_ADDR_WD              (CSR_ADDR_WD                  ),
     .ES_TO_MS_BUS_WD          (ES_TO_MS_BUS_WD              ),
     .MS_TO_WS_BUS_WD          (MS_TO_WS_BUS_WD              )
   ) u_ex_stage (
@@ -129,41 +127,19 @@ module ysyx_22050710_core #(
     .o_ms_to_ws_bus           (ms_to_ws_bus                 )
   );
 
-  wire [63:0] lsu_addr = ALUresult; // x[rs1] + imm
-  wire [63:0] ms_rf_wdata, ms_csrrf_wdata;
-  ysyx_22050710_lsu u_lsu (
-    .i_clk(i_clk),
-    .i_rst(i_rst),
-    .i_addr(lsu_addr),
-    .i_data(rs2data),
-    .i_ALUresult(ALUresult),
-    .i_CSRresult(CSRresult),
-    .i_csrrdata(csrrdata),
-    .i_MemOP(MemOP),
-    .i_MemtoReg(MemtoReg),
-    .i_WrEn(MemWr),
-    .i_ReEn(MemRe),
-    .i_sel_csr(sel_csr), 
-    .o_w_rf_data(ms_rf_wdata),
-    .o_w_csrrf_data(ms_csrrf_wdata)
-  );
-
-  wire [4:0] ws_rf_waddr;
-  wire [11:0] ws_csrrf_waddr;
-  ysyx_22050710_wbu u_wbu (
-    .i_rf_wen(RegWr),
-    .i_rf_waddr(rd),
-    .i_rf_wdata(ms_rf_wdata),
-    .o_rf_wen(ws_rf_wen),
-    .o_rf_waddr(ws_rf_waddr),
-    .o_rf_wdata(GPRbusW),
-
-    .i_csrrf_wen(CsrWr),
-    .i_csrrf_waddr(csrwaddr),
-    .i_csrrf_wdata(ms_csrrf_wdata),
-    .o_csrrf_wen(ws_csrrf_wen),
-    .o_csrrf_waddr(ws_csrrf_waddr),
-    .o_csrrf_wdata(CSRbusW)
+  ysyx_22050710_wb_stage #(
+    .WORD_WD                  (WORD_WD                      ),
+    .GPR_ADDR_WD              (GPR_ADDR_WD                  ),
+    .CSR_ADDR_WD              (CSR_ADDR_WD                  ),
+    .MS_TO_WS_BUS_WD          (MS_TO_WS_BUS_WD              ),
+    .WS_TO_RF_BUS_WD          (WS_TO_RF_BUS_WD              )
+  ) u_ex_stage (
+    /* .i_clk                    (i_clk                        ), */
+    /* .i_rst                    (i_rst                        ), */
+    // from ms
+    .i_ms_to_ws_bus           (ms_to_ws_bus                 ),
+    // to rf
+    .o_ws_to_rf_bus           (ws_to_rf_bus                 )
   );
 
 endmodule
