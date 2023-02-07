@@ -2,7 +2,7 @@
 
 module ysyx_22050710_epu #(
   parameter CSR_WD                                           ,
-  parameter PC_WD                                            ,
+  parameter PC_WD
 ) (
   input                        i_ecall_sel                   ,
   input                        i_mret_sel                    ,
