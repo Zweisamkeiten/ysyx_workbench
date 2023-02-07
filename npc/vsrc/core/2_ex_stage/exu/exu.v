@@ -67,7 +67,7 @@ module ysyx_22050710_exu #(
   ysyx_22050710_csu #(
     .WORD_WD                  (WORD_WD                      ),
     .CSR_WD                   (CSR_WD                       )
-  ) u_alu (
+  ) u_csu (
     .i_rs1data                (i_rs1data                    ),
     .i_csrrdata               (i_csrrdata                   ),
     .i_csr_op                 (i_csr_op                     ),
