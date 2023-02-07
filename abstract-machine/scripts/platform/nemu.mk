@@ -16,6 +16,7 @@ NEMUBATCHFLAGS += -b -l $(shell dirname $(IMAGE).elf)/nemu-log.txt -e $(IMAGE).e
 
 CFLAGS += -DMAINARGS=\"$(mainargs)\"
 CFLAGS += -I$(AM_HOME)/am/src/platform/nemu/include
+# 该伪目标让 mainargs 每次改变都强制编译
 .PHONY: $(AM_HOME)/am/src/platform/nemu/trm.c
 
 image: $(IMAGE).elf

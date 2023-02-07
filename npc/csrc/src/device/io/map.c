@@ -60,7 +60,7 @@ word_t map_read(paddr_t addr, int len, IOMap *map) {
   if (check_bound(map, addr) == false) return 0;
   paddr_t offset = addr - map->low;
   invoke_callback(map->callback, offset, len, false); // prepare data to read
-  word_t ret = host_read(map->space + offset, len);
+  word_t ret = host_read(map->space + (offset & ~0x7), len);
   return ret;
 }
 

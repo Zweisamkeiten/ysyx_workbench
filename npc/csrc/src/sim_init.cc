@@ -4,6 +4,7 @@
 #include <memory/host.h>
 extern "C" {
   #include <memory/paddr.h>
+  #include "../local-include/reg.h"
 }
 
 Vtop *top;
@@ -15,6 +16,8 @@ uint64_t * npcpc;
 
 void set_state_end() {
   npc_state.state = NPC_END;
+  npc_state.halt_pc = *npcpc;
+  npc_state.halt_ret = cpu.gpr[10];
 }
 
 void set_state_abort() {
@@ -37,29 +40,34 @@ extern "C" void set_gpr_ptr(const svOpenArrayHandle r) {
   cpu.gpr = (uint64_t *)(((VerilatedDpiOpenVar*)r)->datap());
 }
 
-extern "C" void set_csr_ptr(const svOpenArrayHandle r) {
-  cpu.csr = (uint64_t *)(((VerilatedDpiOpenVar*)r)->datap());
-}
-
 extern "C" void npc_pmem_read(long long raddr, long long *rdata) {
   // 总是读取地址为`raddr & ~0x7ull`的8字节返回给`rdata`
-  *rdata = paddr_read(raddr, 8);
+  word_t addr;
+  if (likely(in_pmem(raddr))) {
+    addr = raddr & ~0x7ull;
+  } else {
+    addr = raddr;
+  }
+  *rdata = paddr_read(addr, 8);
 }
 
 extern "C" void npc_pmem_write(long long waddr, long long wdata, char wmask) {
   // 总是往地址为`waddr & ~0x7ull`的8字节按写掩码`wmask`写入`wdata`
   // `wmask`中每比特表示`wdata`中1个字节的掩码,
   // 如`wmask = 0x3`代表只写入最低2个字节, 内存中的其它字节保持不变
-  switch ((unsigned char)wmask) {
-    case 0x1: paddr_write(waddr, 1, wdata); break;
-    case 0x3: paddr_write(waddr, 2, wdata); break;
-    case 0xf: paddr_write(waddr, 4, wdata); break;
-    default: paddr_write(waddr, 8, wdata); break;
+  word_t addr = waddr & ~0x7ull;
+  uint8_t *p = (uint8_t *)&wdata;
+  for (int i = 0; i < 8; i++) {
+    if ((wmask & 0x1) == 0x1) {
+      paddr_write(addr + i, 1, *(p + i));
+    }
+    wmask = wmask >> 1;
   }
 }
 
-extern "C" void single_cycle() {
+extern "C" void single_cycle(int rst) {
   top->i_clk = 0;
+  top->i_rst = rst;
   top->eval();
 #ifdef CONFIG_VCD_TRACE
   contextp->timeInc(1);
@@ -74,11 +82,9 @@ extern "C" void single_cycle() {
 }
 
 static void reset(int n) {
-  top->i_rst = 1;
   while (n-- > 0) {
-    single_cycle();
+    single_cycle(1); // always reset
   }
-  top->i_rst = 0;
 }
 
 extern "C" void init_sim() {
@@ -98,12 +104,21 @@ extern "C" void init_sim() {
 
   npc_state.state = NPC_RUNNING;
 
-  npcpc = &(top->rootp->ysyx_22050710_npc__DOT__pc);
-  cpu.inst = (uint32_t *)&(top->rootp->ysyx_22050710_npc__DOT__u_ifu__DOT__rdata);
+  npcpc = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__u_if_stage__DOT__u_pc__DOT__pc);
+
+  QData ** csr = (QData **)malloc(NR_CSREGS * sizeof(uint64_t *));
+  csr[MSTATUS] = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__u_id_stage__DOT__u_csrs__DOT__mstatus);
+  csr[MTVEC] = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__u_id_stage__DOT__u_csrs__DOT__mtvec);
+  csr[MEPC] = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__u_id_stage__DOT__u_csrs__DOT__mepc);
+  csr[MCAUSE] = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__u_id_stage__DOT__u_csrs__DOT__mcause);
+
+  cpu.csr = csr;
+
   cpu.pc = *npcpc;
 }
 
 extern "C" void end_sim() {
+  free(cpu.csr);
   top->final();
   delete top;
 #ifdef CONFIG_VCD_TRACE

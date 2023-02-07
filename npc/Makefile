@@ -1,4 +1,4 @@
-TOPNAME = ysyx_22050710_npc
+TOPNAME = ysyx_22050710_top
 BUILD_DIR = ./build
 VERILATOR_OBJ_DIR = $(BUILD_DIR)/obj_dir
 BIN = $(BUILD_DIR)/$(TOPNAME)
@@ -11,7 +11,7 @@ else
 export VERILATOR_ROOT
 VERILATOR = $(VERILATOR_ROOT)/bin/verilator
 endif
-VERILATOR_CFLAGS += --build -cc -j $(shell nproc) -Wall -Wno-DECLFILENAME -O3 -CFLAGS -O3 --trace #-O0
+VERILATOR_CFLAGS += --build -cc -j $(shell nproc) -Wall -Wno-DECLFILENAME -O3 -CFLAGS -O3 --trace -I./vsrc #-O0
 
 remove_quote = $(patsubst "%",%,$(1))
 
@@ -42,7 +42,7 @@ CFLAGS_TRACE += -DITRACE_COND=$(if $(CONFIG_ITRACE_COND),$(call remove_quote,$(C
 CFLAGS_TRACE += -DIRINGTRACE_COND=$(if $(CONFIG_IRINGTRACE_COND),$(call remove_quote,$(CONFIG_IRINGTRACE_COND)),true)
 CFLAGS_TRACE += -DFTRACE_COND=$(if $(CONFIG_FTRACE_COND),$(call remove_quote,$(CONFIG_FTRACE_COND)),true)
 CFLAGS  += $(CFLAGS_BUILD) $(CFLAGS_TRACE)
-LDFLAGS += $(CFLAGS_BUILD)
+LDFLAGS += $(CFLAGS_BUILD) -latomic
 
 # Include rules for menuconfig
 include $(NPC_HOME)/scripts/config.mk
