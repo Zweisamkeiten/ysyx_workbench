@@ -35,6 +35,7 @@ module ysyx_22050710_csr #(
        `ysyx_22050710_MTVEC  : mtvec   <= i_wdata;
        `ysyx_22050710_MEPC   : mepc    <= i_wdata;
        `ysyx_22050710_MCAUSE : mcause  <= i_wdata;
+       default               :
       endcase
     end
   end
