@@ -139,6 +139,7 @@ module ysyx_22050710_id_stage #(
     .DATA_WIDTH               (CSR_WD                       )
   ) u_csrs (
     .i_clk                    (i_clk                        ),
+    .i_rst                    (i_rst                        ),
     // read port
     .i_ren                    (csr_ren                      ),
     .i_raddr                  (csr                          ),
