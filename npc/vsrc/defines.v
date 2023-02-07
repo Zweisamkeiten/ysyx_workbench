@@ -1,5 +1,7 @@
 `ifndef YSYX_22050710_MYCPU_TOP_H
   `define YSYX_22050710_MYCPU_TOP_H
+
+  `define ysyx_22050710_WORD_WD                     64
   // sram addr width
   `define ysyx_22050710_SRAM_ADDR_WD                32
   `define ysyx_22050710_SRAM_DATA_WD                64
