@@ -14,7 +14,9 @@ module ysyx_22050710_inst_sram #(
 
   always @(posedge i_clk) begin
     if (i_en) begin
+      $display("%x", i_addr);
       npc_pmem_read({32'b0, i_addr}, rdata);
+      $display("%x", rdata);
     end
   end
 
