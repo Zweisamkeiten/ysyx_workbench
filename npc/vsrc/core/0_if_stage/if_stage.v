@@ -22,7 +22,7 @@ module ysyx_22050710_if_stage #(
   input  [SRAM_DATA_WD-1:0   ] i_inst_sram_rdata
 );
 
-  wire fs_valid                                              ;
+  wire fs_valid = 1'b1                                             ;
   wire fs_ready_go                                           ;
   wire to_fs_valid                                           ;
 
@@ -39,15 +39,15 @@ module ysyx_22050710_if_stage #(
   assign o_fs_to_ds_bus      = {fs_inst, fs_pc}              ;
 
   Reg #(
-    .WIDTH                    (1                            ),
-    .RESET_VAL                (1'b0                         )
-  ) u_fs_valid (
-    .clk                      (i_clk                        ),
-    .rst                      (i_rst                        ),
-    .din                      (~fs_valid                    ),
-    .dout                     (fs_valid                     ),
-    .wen                      (1'b1                         )
-  );
+  /*   .WIDTH                    (1                            ), */
+  /*   .RESET_VAL                (1'b0                         ) */
+  /* ) u_fs_valid ( */
+  /*   .clk                      (i_clk                        ), */
+  /*   .rst                      (i_rst                        ), */
+  /*   .din                      (~fs_valid                    ), */
+  /*   .dout                     (fs_valid                     ), */
+  /*   .wen                      (1'b1                         ) */
+  /* ); */
 
   ysyx_22050710_pc #(
     .PC_RESETVAL              (PC_RESETVAL                  ),
