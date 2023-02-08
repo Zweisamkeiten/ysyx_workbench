@@ -27,7 +27,7 @@ module ysyx_22050710_core #(
   // inst sram interface
   output                       o_inst_sram_ren               ,
   output [SRAM_ADDR_WD-1:0   ] o_inst_sram_addr              ,
-  input  [SRAM_DATA_WD-1:0   ] i_inst_sram_rdata
+  input  [SRAM_DATA_WD-1:0   ] i_inst_sram_rdata             ,
   // data sram interface
   output [SRAM_ADDR_WD-1:0   ] o_data_sram_addr              ,
   output                       o_data_sram_ren               ,
