@@ -24,7 +24,7 @@ module ysyx_22050710_core #(
   input                        i_clk                         ,
   input                        i_rst                         ,
   // inst sram interface
-  output                       o_inst_sram_en                ,
+  output                       o_inst_sram_ren               ,
   output [SRAM_ADDR_WD-1:0   ] o_inst_sram_addr              ,
   input  [SRAM_DATA_WD-1:0   ] i_inst_sram_rdata
 );
@@ -61,7 +61,7 @@ module ysyx_22050710_core #(
     .o_fs_to_ds_valid         (fs_to_ds_valid               ),
     .o_fs_to_ds_bus           (fs_to_ds_bus                 ),
     // inst sram interface
-    .o_inst_sram_en           (o_inst_sram_en               ),
+    .o_inst_sram_ren          (o_inst_sram_ren               ),
     .o_inst_sram_addr         (o_inst_sram_addr             ),
     .i_inst_sram_rdata        (i_inst_sram_rdata            )
   );
