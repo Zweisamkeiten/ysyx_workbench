@@ -22,7 +22,7 @@ module ysyx_22050710_data_sram #(
   assign raddr               = i_addr;
   assign waddr               = i_addr;
 
-  reg  [SRAM_DATA_WD-1:0     ] rdata                         ;  // read register for pmem read.
+  wire  [SRAM_DATA_WD-1:0     ] rdata                         ;  // read register for pmem read.
 
   // read port
   always @(*) begin
