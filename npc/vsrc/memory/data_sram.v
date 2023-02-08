@@ -22,7 +22,7 @@ module ysyx_22050710_data_sram #(
   assign raddr               = i_addr;
   assign waddr               = i_addr;
 
-  wire  [SRAM_DATA_WD-1:0     ] rdata                         ;  // TODO read register for pmem read.
+  reg  [SRAM_DATA_WD-1:0     ] rdata                         ;  // TODO read register for pmem read.
 
   // read port
   always @(*) begin                                              // TODO 改为 同步接口 延迟一周期返回
