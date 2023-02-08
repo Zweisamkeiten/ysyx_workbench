@@ -1,10 +1,9 @@
 // ysyx_22050710 lsu load unit
 
 module ysyx_22050710_lsu_load #(
-  parameter WORD_WD                                          ,
   parameter SRAM_DATA_WD
 ) (
-  input  [WORD_WD-1:0        ] i_addr                        ,
+  input  [2:0                ] i_raddr_align                 , // 地址的低三位 因为对齐访存
   input  [SRAM_DATA_WD-1:0   ] i_data_sram_rdata             ,
   input                        i_mem_ren                     ,
   input  [2:0                ] i_mem_op                      ,
@@ -16,7 +15,7 @@ module ysyx_22050710_lsu_load #(
 
   always @(*) begin
     if (i_mem_ren) begin
-      case (i_addr[2:0])
+      case (i_raddr_align)
         3'h1: rdata = {{ 8{1'b0}}, i_data_sram_rdata[63:8 ]};
         3'h2: rdata = {{16{1'b0}}, i_data_sram_rdata[63:16]};
         3'h3: rdata = {{24{1'b0}}, i_data_sram_rdata[63:24]};

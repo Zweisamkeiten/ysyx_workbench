@@ -59,14 +59,11 @@ module ysyx_22050710_mem_stage #(
                                 ms_csr                       ,
                                 ms_csr_final_result          };
 
-  wire [WORD_WD-1:0          ] lsu_addr                      ;
-  assign lsu_addr            = ms_alu_result                 ; // x[rs1] + imm
-
   ysyx_22050710_lsu_load #(
     .WORD_WD                  (WORD_WD                      ),
     .SRAM_DATA_WD             (SRAM_DATA_WD                 )
   ) u_lsu_load (
-    .i_addr                   (lsu_addr                     ),
+    .i_raddr_align            (ms_alu_result[2:0]           ), // x[rs1] + imm
     .i_data_sram_rdata        (i_data_sram_rdata            ),
     .i_mem_ren                (ms_mem_ren                   ),
     .i_mem_op                 (ms_mem_op                    ),
