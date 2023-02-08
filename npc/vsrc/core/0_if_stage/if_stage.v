@@ -77,7 +77,7 @@ module ysyx_22050710_if_stage #(
     .INST_WD                  (INST_WD                      ),
     .SRAM_DATA_WD             (SRAM_DATA_WD                 )
   ) u_ifu (
-    .i_pc                     (fs_pc[2]                     ),
+    .i_pc_align               (fs_pc[2]                     ), // 取指访问指令sram 64位对齐 根据 pc[2] 选择前32bits还是后32bits
     .o_inst                   (fs_inst                      ),
     // inst sram interface
     .i_inst_sram_rdata        (i_inst_sram_rdata            )
