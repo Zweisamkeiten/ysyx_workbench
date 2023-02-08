@@ -55,7 +55,7 @@ module ysyx_22050710_if_stage #(
   ) u_pc (
     .i_clk                    (i_clk                        ),
     .i_rst                    (i_rst                        ),
-    .i_load                   (fs_valid                     ), // if stage 有数据发往 id stage, pc 写使能 为下一周期准备
+    .i_load                   (1'b1                     ), // if stage 有数据发往 id stage, pc 写使能 为下一周期准备
     .i_br_sel                 (br_sel                       ),
     .i_br_target              (br_target                    ),
     .o_pc                     (fs_pc                        )
