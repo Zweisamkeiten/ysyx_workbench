@@ -26,7 +26,12 @@ module ysyx_22050710_data_sram #(
 
   // read port
   always @(*) begin                                              // TODO 改为 同步接口 延迟一周期返回
-    npc_pmem_read({32'b0, raddr}, rdata);
+    if (i_ren) begin
+      npc_pmem_read({32'b0, raddr}, rdata);
+    end
+    else begin
+      rdata <= 0;
+    end
   end
 
   // write port
