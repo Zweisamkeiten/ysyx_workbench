@@ -56,7 +56,7 @@ module ysyx_22050710_lsu_store #(
 
   wire [SRAM_DATA_WD-1:0     ] wdata                         ;
 
-  MuxKey #(.NR_KEY(8), .KEY_LEN(3), .DATA_LEN(WORD_WD)) u_mux1 (
+  MuxKey #(.NR_KEY(8), .KEY_LEN(3), .DATA_LEN(SRAM_DATA_WD)) u_mux1 (
     .out(wdata),
     .key(i_waddr[2:0]),
     .lut({
