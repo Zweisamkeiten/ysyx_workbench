@@ -61,7 +61,7 @@ module ysyx_22050710_core #(
     .o_fs_to_ds_valid         (fs_to_ds_valid               ),
     .o_fs_to_ds_bus           (fs_to_ds_bus                 ),
     // inst sram interface
-    .o_inst_sram_ren          (o_inst_sram_ren               ),
+    .o_inst_sram_ren          (o_inst_sram_ren              ),
     .o_inst_sram_addr         (o_inst_sram_addr             ),
     .i_inst_sram_rdata        (i_inst_sram_rdata            )
   );
