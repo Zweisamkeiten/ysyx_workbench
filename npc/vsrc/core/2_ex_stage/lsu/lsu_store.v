@@ -9,7 +9,7 @@ module ysyx_22050710_lsu_store #(
   input  [2:0                ] i_mem_op                      ,
   input  [2:0                ] i_waddr                       ,
   input  [GPR_WD-1:0         ] i_wdata                       , // store rs2data
-  output [SRAM_WMASK_WD-1:   ] o_wmask                       ,
+  output [SRAM_WMASK_WD-1:0  ] o_wmask                       ,
   output [SRAM_DATA_WD-1:0   ] o_wdata
 );
 
