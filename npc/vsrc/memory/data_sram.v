@@ -25,7 +25,7 @@ module ysyx_22050710_data_sram #(
   reg  [SRAM_DATA_WD-1:0     ] rdata                         ;  // read register for pmem read.
 
   // read port
-  always @(posedge i_clk) begin
+  always @(*) begin
     if (i_ren) begin
       npc_pmem_read({32'b0, raddr}, rdata);
     end
