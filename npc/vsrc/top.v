@@ -1,6 +1,10 @@
 // ysyx_22050710 TOP
 `include "defines.v"
 
+import "DPI-C" function void npc_pmem_read(input longint raddr, output longint rdata);
+import "DPI-C" function void npc_pmem_write(input longint waddr, input longint wdata, input byte wmask);
+
+
 module ysyx_22050710_top #(
   parameter WORD_WD          = `ysyx_22050710_WORD_WD         ,
   parameter PC_RESETVAL      = `ysyx_22050710_PC_RESETVAL     ,

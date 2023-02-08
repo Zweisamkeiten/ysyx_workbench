@@ -1,7 +1,5 @@
 // ysyx_22050710 Inst sram
 
-import "DPI-C" function void npc_pmem_read(input longint raddr, output longint rdata);
-
 module ysyx_22050710_inst_sram #(
   parameter SRAM_ADDR_WD                                     ,
   parameter SRAM_DATA_WD
