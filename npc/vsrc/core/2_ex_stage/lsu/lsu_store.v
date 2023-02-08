@@ -18,7 +18,7 @@ module ysyx_22050710_lsu_store #(
     wmask = 8'b00000000;
     case (i_mem_op)
       3'b000, 3'b001: begin
-        case (i_waddr[2:0])
+        case (i_waddr_align)
           3'h0:    wmask = 8'b00000001                       ;
           3'h1:    wmask = 8'b00000010                       ;
           3'h2:    wmask = 8'b00000100                       ;
@@ -57,7 +57,7 @@ module ysyx_22050710_lsu_store #(
 
   MuxKey #(.NR_KEY(8), .KEY_LEN(3), .DATA_LEN(SRAM_DATA_WD)) u_mux1 (
     .out(wdata),
-    .key(i_waddr[2:0]),
+    .key(i_waddr_align),
     .lut({
     3'h0, i_wdata                                            ,
     3'h1, {i_wdata[55:0], { 8{1'b0}}}                        ,
