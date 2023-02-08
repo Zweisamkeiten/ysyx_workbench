@@ -137,8 +137,8 @@ module ysyx_22050710_core #(
     .MS_TO_WS_BUS_WD          (MS_TO_WS_BUS_WD              ),
     .SRAM_DATA_WD             (SRAM_DATA_WD                 )
   ) u_mem_stage (
-    .i_clk                    (i_clk                        ),
-    .i_rst                    (i_rst                        ),
+    /* .i_clk                    (i_clk                        ), */
+    /* .i_rst                    (i_rst                        ), */
     // from es
     .i_es_to_ms_bus           (es_to_ms_bus                 ),
     // to ws

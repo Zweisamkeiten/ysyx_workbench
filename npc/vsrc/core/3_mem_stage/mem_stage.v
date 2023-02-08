@@ -8,8 +8,8 @@ module ysyx_22050710_mem_stage #(
   parameter MS_TO_WS_BUS_WD                                  ,
   parameter SRAM_DATA_WD                        
 ) (
-  input                        i_clk                         ,
-  input                        i_rst                         ,
+  /* input                        i_clk                         , */
+  /* input                        i_rst                         , */
   // from es
   input  [ES_TO_MS_BUS_WD-1:0] i_es_to_ms_bus                ,
   // to ws
