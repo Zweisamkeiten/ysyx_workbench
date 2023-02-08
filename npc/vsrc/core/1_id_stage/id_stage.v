@@ -16,6 +16,9 @@ module ysyx_22050710_id_stage #(
 ) (
   input                        i_clk                         ,
   input                        i_rst                         ,
+  // allowin
+  input                        i_es_allowin                  ,
+  output                       o_ds_allowin                  ,
   // from fs
   input                        i_fs_to_ds_valid              ,
   input  [FS_TO_DS_BUS_WD-1:0] i_fs_to_ds_bus                , // {fs_inst[31:0], fs_pc[63:0]}
