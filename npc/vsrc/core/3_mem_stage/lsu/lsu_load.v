@@ -11,7 +11,7 @@ module ysyx_22050710_lsu_load #(
   output [WORD_WD-1:0        ] o_rdata
 );
 
-  wire [WORD_WD-1:0          ] rdata                         ;
+  reg  [WORD_WD-1:0          ] rdata                         ;
   wire [WORD_WD-1:0          ] memrdata                      ;
 
   always @(*) begin
