@@ -18,9 +18,9 @@ module ysyx_22050710_top #(
   input                        i_rst
 );
 
-  //cpu inst sram
-  wire                         cpu_inst_en                   ;
+  // cpu inst sram
   wire [SRAM_ADDR_WD-1:0     ] cpu_inst_addr                 ;
+  wire                         cpu_inst_ren                  ;
   wire [SRAM_DATA_WD-1:0     ] cpu_inst_rdata                ;
 
   ysyx_22050710_core #( 
@@ -39,20 +39,20 @@ module ysyx_22050710_top #(
     .i_clk                    (i_clk                        ),
     .i_rst                    (i_rst                        ),
 
-    .o_inst_sram_en           (cpu_inst_en                  ),
+    .o_inst_sram_ren          (cpu_inst_ren                 ),
     .o_inst_sram_addr         (cpu_inst_addr                ),
     .i_inst_sram_rdata        (cpu_inst_rdata               )
   );
 
-  //inst ram
+  // inst ram
   ysyx_22050710_inst_sram #(
     .SRAM_ADDR_WD            (SRAM_ADDR_WD                  ),
     .SRAM_DATA_WD            (SRAM_DATA_WD                  )
   ) u_inst_ram (
     .i_clk                   (i_clk                         ),
-    .i_en                    (cpu_inst_en                   ),
+    .i_ren                   (cpu_inst_ren                  ),
     .i_addr                  (cpu_inst_addr                 ),
-    .o_rdata                 (cpu_inst_rdata                )    //63:0
+    .o_rdata                 (cpu_inst_rdata                )   //63:0
   );
 
 endmodule

@@ -4,18 +4,19 @@ module ysyx_22050710_inst_sram #(
 ) (
   input                        i_clk                         ,
 
-  input                        i_en                         ,
-  input  [SRAM_ADDR_WD   -1:0] i_addr                        ,
-  output [SRAM_DATA_WD   -1:0] o_rdata
+  input                        i_ren                         ,
+  input  [SRAM_ADDR_WD-1:0   ] i_addr                        ,
+  output [SRAM_DATA_WD-1:0   ] o_rdata
 );
 
-  reg [SRAM_DATA_WD-1:0]       rdata                         ;  // address register for pmem read.
-  assign o_rdata             = i_en ? rdata  : 0                      ;
+  reg  [SRAM_DATA_WD-1:0     ] rdata                         ;  // address register for pmem read.
 
   always @(posedge i_clk) begin
-    if (i_en) begin
+    if (i_ren) begin
       npc_pmem_read({32'b0, i_addr}, rdata);
     end
   end
+
+  assign o_rdata             = i_ren ? rdata : 0             ;
 
 endmodule
