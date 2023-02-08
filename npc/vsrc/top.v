@@ -58,7 +58,7 @@ module ysyx_22050710_top #(
     .i_data_sram_rdata        (cpu_data_rdata               ),
     .o_data_sram_wen          (cpu_data_wen                 ),
     .o_data_sram_wmask        (cpu_data_wmask               ),
-    .i_data_sram_wdata        (cpu_data_wdata               )
+    .o_data_sram_wdata        (cpu_data_wdata               )
   );
 
   // inst ram
