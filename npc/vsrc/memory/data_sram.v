@@ -37,7 +37,7 @@ module ysyx_22050710_data_sram #(
   // write port
   always @(posedge i_clk) begin
     if (i_wen) begin
-      npc_pmem_write({32'b0, waddr}, wdata, wmask);
+      npc_pmem_write({32'b0, waddr}, i_wdata, i_wmask);
     end
   end
 
