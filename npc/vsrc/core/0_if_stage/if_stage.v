@@ -75,10 +75,9 @@ module ysyx_22050710_if_stage #(
 
   ysyx_22050710_ifu #(
     .INST_WD                  (INST_WD                      ),
-    .PC_WD                    (PC_WD                        ),
     .SRAM_DATA_WD             (SRAM_DATA_WD                 )
   ) u_ifu (
-    .i_pc                     (fs_pc                        ),
+    .i_pc                     (fs_pc[2]                     ),
     .o_inst                   (fs_inst                      ),
     // inst sram interface
     .i_inst_sram_rdata        (i_inst_sram_rdata            )
