@@ -116,7 +116,7 @@ module ysyx_22050710_ex_stage #(
     .o_csr_result             (es_csr_result                )
   );
 
-  always @* $display("%x", es_rs2data);
+  always @* $display("%x", es_mem_op);
 
   ysyx_22050710_lsu_store #(
     .GPR_WD                   (GPR_WD                       ),
