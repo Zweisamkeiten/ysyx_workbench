@@ -38,7 +38,7 @@ module ysyx_22050710_if_stage #(
   wire [PC_WD-1:0            ] fs_pc                         ;
   assign o_fs_to_ds_bus      = {fs_inst, fs_pc}              ;
 
-  Reg #(
+  /* Reg #( */
   /*   .WIDTH                    (1                            ), */
   /*   .RESET_VAL                (1'b0                         ) */
   /* ) u_fs_valid ( */
