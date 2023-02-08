@@ -55,7 +55,7 @@ module ysyx_22050710_top #(
   // data sram interface
     .o_data_sram_addr         (cpu_data_addr                ),
     .o_data_sram_ren          (cpu_data_ren                 ),
-    .i_data_sram_rdata        (cpu_data_rdata               )
+    .i_data_sram_rdata        (cpu_data_rdata               ),
     .o_data_sram_wen          (cpu_data_wen                 ),
     .o_data_sram_wmask        (cpu_data_wmask               ),
     .i_data_sram_wdata        (cpu_data_wdata               )
