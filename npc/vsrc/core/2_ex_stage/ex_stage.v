@@ -123,7 +123,7 @@ module ysyx_22050710_ex_stage #(
     .SRAM_DATA_WD             (SRAM_DATA_WD                 )
   ) u_lsu_store (
     .i_mem_op                 (es_mem_op                    ),
-    .i_waddr                  (es_alu_result                ), // x[rs1] + imm
+    .i_waddr_align            (es_alu_result[2:0]           ), // x[rs1] + imm
     .i_wdata                  (es_rs2data                   ), // store inst
     .o_wmask                  (o_data_sram_wmask            ),
     .o_wdata                  (o_data_sram_wdata            )
