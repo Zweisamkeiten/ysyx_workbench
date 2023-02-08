@@ -43,27 +43,27 @@ module ysyx_22050710_ex_stage #(
   wire                         es_ebreak_sel                 ; // 环境断点 用于结束运行
   wire                         es_invalid_inst_sel           ; // 译码错误 非法指令
   
-  assign {es_rs1data                                            ,  // 358:295
-          es_rs2data                                            ,  // 294:231
-          es_csrrdata                                           ,  // 230:167
-          es_imm                                                ,  // 166:103
-          es_pc                                                 ,  // 102:39
-          es_alu_src1_sel                                       ,  //  38:38
-          es_alu_src2_sel                                       ,  //  37:36
-          es_alu_word_cut_sel                                   ,  //  35:35
-          es_alu_op                                             ,  //  34:30
-          es_rd                                                 ,  //  29:25
-          es_csr                                                ,  //  24:13
-          es_gpr_wen                                            ,  //  12:12
-          es_csr_wen                                            ,  //  11:11
-          es_mem_ren                                            ,  //  10:10
-          es_mem_wen                                            ,  //   9:9
-          es_mem_op                                             ,  //   8:6
-          es_csr_inst_sel                                       ,  //   5:5
-          es_csr_op                                             ,  //   4:2
-          es_ebreak_sel                                         ,  //   1:1
-          es_invalid_inst_sel                                      //   0:0
-          }                   = i_ds_to_es_bus                 ;
+  assign {es_rs1data                                         ,  // 358:295
+          es_rs2data                                         ,  // 294:231
+          es_csrrdata                                        ,  // 230:167
+          es_imm                                             ,  // 166:103
+          es_pc                                              ,  // 102:39
+          es_alu_src1_sel                                    ,  //  38:38
+          es_alu_src2_sel                                    ,  //  37:36
+          es_alu_word_cut_sel                                ,  //  35:35
+          es_alu_op                                          ,  //  34:30
+          es_rd                                              ,  //  29:25
+          es_csr                                             ,  //  24:13
+          es_gpr_wen                                         ,  //  12:12
+          es_csr_wen                                         ,  //  11:11
+          es_mem_ren                                         ,  //  10:10
+          es_mem_wen                                         ,  //   9:9
+          es_mem_op                                          ,  //   8:6
+          es_csr_inst_sel                                    ,  //   5:5
+          es_csr_op                                          ,  //   4:2
+          es_ebreak_sel                                      ,  //   1:1
+          es_invalid_inst_sel                                   //   0:0
+          }                   = i_ds_to_es_bus               ;
 
   wire [WORD_WD-1:0          ] es_alu_result                 ;
   wire [WORD_WD-1:0          ] es_csr_result                 ;
