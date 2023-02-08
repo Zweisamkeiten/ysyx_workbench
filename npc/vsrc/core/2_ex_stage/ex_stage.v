@@ -130,7 +130,7 @@ module ysyx_22050710_ex_stage #(
     .o_wdata                  (o_data_sram_wdata            )
   );
 
-  assign o_data_sram_ren     = 1'b1                          ;
+  assign o_data_sram_ren     = es_mem_ren                    ;
   assign o_data_sram_wen     = es_mem_wen                    ;
   assign o_data_sram_addr    = es_alu_result[31:0]           ; // x[rs1] + imm
 
