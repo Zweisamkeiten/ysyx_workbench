@@ -70,6 +70,4 @@ module ysyx_22050710_mem_stage #(
     .o_rdata                  (memrdata                     )
   );
 
-  always @* $display("%x", memrdata);
-
 endmodule

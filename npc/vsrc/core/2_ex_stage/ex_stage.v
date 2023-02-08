@@ -116,6 +116,8 @@ module ysyx_22050710_ex_stage #(
     .o_csr_result             (es_csr_result                )
   );
 
+  always @* $display("%x", es_rs2data);
+
   ysyx_22050710_lsu_store #(
     .GPR_WD                   (GPR_WD                       ),
     .SRAM_WMASK_WD            (SRAM_WMASK_WD                ),
