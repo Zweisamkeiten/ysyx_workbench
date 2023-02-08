@@ -9,7 +9,7 @@ module ysyx_22050710_inst_sram #(
   output [SRAM_DATA_WD   -1:0] o_rdata
 );
 
-  reg [SRAM_DATA_WD-1:0]       rdata                         ;  // address register for pmem read.
+  wire [SRAM_DATA_WD-1:0]       rdata                         ;  // address register for pmem read.
   assign o_rdata             = rdata                         ;
 
   always @(*) begin
