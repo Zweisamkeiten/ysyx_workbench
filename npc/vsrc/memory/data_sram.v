@@ -1,5 +1,8 @@
 // ysyx_22050710 Data Sram
 
+import "DPI-C" function void npc_pmem_read(input longint raddr, output longint rdata);
+import "DPI-C" function void npc_pmem_write(input longint waddr, input longint wdata, input byte wmask);
+
 module ysyx_22050710_data_sram #(
   parameter SRAM_ADDR_WD                                     ,
   parameter SRAM_WMASK_WD                                    ,
