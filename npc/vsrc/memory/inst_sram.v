@@ -12,11 +12,9 @@ module ysyx_22050710_inst_sram #(
   reg [SRAM_DATA_WD-1:0]       rdata                         ;  // address register for pmem read.
   assign o_rdata             = rdata                         ;
 
-  always @(posedge i_clk) begin
+  always @(*) begin
     if (i_en) begin
-      $display("%x", i_addr);
       npc_pmem_read({32'b0, i_addr}, rdata);
-      $display("%x", rdata);
     end
   end
 
