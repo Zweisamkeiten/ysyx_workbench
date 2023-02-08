@@ -19,6 +19,7 @@ module ysyx_22050710_core #(
   parameter BR_BUS_WD        = `ysyx_22050710_BR_BUS_WD      ,
 
   parameter SRAM_ADDR_WD                                     ,
+  parameter SRAM_WMASK_WD                                    ,
   parameter SRAM_DATA_WD
 ) (
   input                        i_clk                         ,
@@ -27,6 +28,13 @@ module ysyx_22050710_core #(
   output                       o_inst_sram_ren               ,
   output [SRAM_ADDR_WD-1:0   ] o_inst_sram_addr              ,
   input  [SRAM_DATA_WD-1:0   ] i_inst_sram_rdata
+  // data sram interface
+  output [SRAM_ADDR_WD-1:0   ] o_data_sram_addr              ,
+  output                       o_data_sram_ren               ,
+  input  [SRAM_DATA_WD-1:0   ] i_data_sram_rdata             ,
+  output                       o_data_sram_wen               ,
+  output [SRAM_WMASK_WD-1:0  ] o_data_sram_wmask             ,
+  output [SRAM_DATA_WD-1:0   ] o_data_sram_wdata
 );
 
   /* wire         ds_allowin; */
@@ -102,14 +110,23 @@ module ysyx_22050710_core #(
     .CSR_WD                   (CSR_WD                       ),
     .CSR_ADDR_WD              (CSR_ADDR_WD                  ),
     .DS_TO_ES_BUS_WD          (DS_TO_ES_BUS_WD              ),
-    .ES_TO_MS_BUS_WD          (ES_TO_MS_BUS_WD              )
+    .ES_TO_MS_BUS_WD          (ES_TO_MS_BUS_WD              ),
+    .SRAM_ADDR_WD             (SRAM_ADDR_WD                 ),
+    .SRAM_WMASK_WD            (SRAM_WMASK_WD                ),
+    .SRAM_DATA_WD             (SRAM_DATA_WD                 )
   ) u_ex_stage (
     /* .i_clk                    (i_clk                        ), */
     /* .i_rst                    (i_rst                        ), */
     // from ds
     .i_ds_to_es_bus           (ds_to_es_bus                 ),
     // to ms
-    .o_es_to_ms_bus           (es_to_ms_bus                 )
+    .o_es_to_ms_bus           (es_to_ms_bus                 ),
+    // data sram interface
+    .o_data_sram_addr         (o_data_sram_addr             ),
+    .o_data_sram_ren          (o_data_sram_ren              ), // data ram 读请求或写请求是在 ex stage 发出
+    .o_data_sram_wen          (o_data_sram_wen              ), // data ram 的读数据在mem stage 返回
+    .o_data_sram_wmask        (o_data_sram_wmask            ),
+    .o_data_sram_wdata        (o_data_sram_wdata            )
   );
 
   ysyx_22050710_mem_stage #(
@@ -117,14 +134,17 @@ module ysyx_22050710_core #(
     .GPR_ADDR_WD              (GPR_ADDR_WD                  ),
     .CSR_ADDR_WD              (CSR_ADDR_WD                  ),
     .ES_TO_MS_BUS_WD          (ES_TO_MS_BUS_WD              ),
-    .MS_TO_WS_BUS_WD          (MS_TO_WS_BUS_WD              )
+    .MS_TO_WS_BUS_WD          (MS_TO_WS_BUS_WD              ),
+    .SRAM_DATA_WD             (SRAM_DATA_WD                 )
   ) u_mem_stage (
     .i_clk                    (i_clk                        ),
     .i_rst                    (i_rst                        ),
     // from es
     .i_es_to_ms_bus           (es_to_ms_bus                 ),
     // to ws
-    .o_ms_to_ws_bus           (ms_to_ws_bus                 )
+    .o_ms_to_ws_bus           (ms_to_ws_bus                 ),
+    // from data-sram
+    .i_data_sram_rdata        (i_data_sram_rdata            )  // data ram 读数据返回 进入 lsu 进行处理
   );
 
   ysyx_22050710_wb_stage #(

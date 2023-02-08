@@ -9,14 +9,23 @@ module ysyx_22050710_ex_stage #(
   parameter CSR_ADDR_WD                                      ,
   parameter IMM_WD                                           ,
   parameter DS_TO_ES_BUS_WD                                  ,
-  parameter ES_TO_MS_BUS_WD
+  parameter ES_TO_MS_BUS_WD                                  ,
+  parameter SRAM_ADDR_WD                                     ,
+  parameter SRAM_WMASK_WD                                    ,
+  parameter SRAM_DATA_WD                        
 ) (
   /* input                        i_clk                         , */
   /* input                        i_rst                         , */
   // from ds
   input  [DS_TO_ES_BUS_WD-1:0] i_ds_to_es_bus                ,
   // to ms
-  output [ES_TO_MS_BUS_WD-1:0] o_es_to_ms_bus
+  output [ES_TO_MS_BUS_WD-1:0] o_es_to_ms_bus                ,
+  // data sram interface
+  output [SRAM_ADDR_WD-1:0   ] o_data_sram_addr              ,  // data ram 读请求或写请求是在 ex stage 发出
+  output                       o_data_sram_ren               ,  // data ram 的读数据在mem stage 返回
+  output                       o_data_sram_wen               ,
+  output [SRAM_WMASK_WD-1:0  ] o_data_sram_wmask             ,
+  output [SRAM_DATA_WD-1:0   ] o_data_sram_wdata
 );
 
   // oprand
@@ -72,10 +81,8 @@ module ysyx_22050710_ex_stage #(
                                 es_gpr_wen                   ,
                                 es_csr_wen                   ,
                                 es_mem_ren                   ,
-                                es_mem_wen                   ,
                                 es_mem_op                    ,
                                 es_csr_inst_sel              ,
-                                es_rs2data                   ,
                                 es_csrrdata                  ,
                                 es_alu_result                ,
                                 es_csr_result               };
@@ -108,5 +115,22 @@ module ysyx_22050710_ex_stage #(
     .o_alu_result             (es_alu_result                ),
     .o_csr_result             (es_csr_result                )
   );
+
+  ysyx_22050710_lsu_store #(
+    .GPR_WD                   (GPR_WD                       ),
+    .SRAM_ADDR_WD             (SRAM_ADDR_WD                 ),
+    .SRAM_WMASK_WD            (SRAM_WMASK_WD                ),
+    .SRAM_DATA_WD             (SRAM_DATA_WD                 )
+  ) u_lsu_store (
+    .i_mem_op                 (es_mem_op                    ),
+    .i_waddr                  (es_alu_result                ), // x[rs1] + imm
+    .i_wdata                  (es_rs2data                   ), // store inst
+    .o_wmask                  (o_data_sram_wmask            ),
+    .o_wdata                  (o_data_sram_wdata            )
+  );
+
+  assign o_data_sram_ren     = 1'b1                          ;
+  assign o_data_sram_wen     = es_mem_wen                    ;
+  assign o_data_sram_addr    = es_alu_result                 ; // x[rs1] + imm
 
 endmodule

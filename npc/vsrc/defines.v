@@ -3,6 +3,7 @@
 
   `define ysyx_22050710_WORD_WD                     64
   // sram addr width
+  `define ysyx_22050710_SRAM_WMASK_WD                8
   `define ysyx_22050710_SRAM_ADDR_WD                32
   `define ysyx_22050710_SRAM_DATA_WD                64
 

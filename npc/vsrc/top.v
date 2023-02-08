@@ -12,6 +12,7 @@ module ysyx_22050710_top #(
   parameter CSR_ADDR_WD      = `ysyx_22050710_CSR_ADDR_WD     ,
   parameter INST_WD          = `ysyx_22050710_INST_WD         ,
   parameter SRAM_ADDR_WD     = `ysyx_22050710_SRAM_ADDR_WD    ,
+  parameter SRAM_WMASK_WD    = `ysyx_22050710_SRAM_WMASK_WD   ,
   parameter SRAM_DATA_WD     = `ysyx_22050710_SRAM_DATA_WD
 ) (
   input                        i_clk                         ,
@@ -22,6 +23,13 @@ module ysyx_22050710_top #(
   wire [SRAM_ADDR_WD-1:0     ] cpu_inst_addr                 ;
   wire                         cpu_inst_ren                  ;
   wire [SRAM_DATA_WD-1:0     ] cpu_inst_rdata                ;
+  // cpu data sram
+  wire [SRAM_ADDR_WD-1:0     ] cpu_data_addr                 ;
+  wire                         cpu_data_ren                  ;
+  wire [SRAM_DATA_WD-1:0     ] cpu_data_rdata                ;
+  wire                         cpu_data_wen                  ;
+  wire [SRAM_WMASK_WD-1:0    ] cpu_data_wmask                ;
+  wire [SRAM_DATA_WD-1:0     ] cpu_data_wdata                ;
 
   ysyx_22050710_core #( 
     .WORD_WD                  (WORD_WD                      ),
@@ -34,6 +42,7 @@ module ysyx_22050710_top #(
     .CSR_ADDR_WD              (CSR_ADDR_WD                  ),
     .INST_WD                  (INST_WD                      ),
     .SRAM_ADDR_WD             (SRAM_ADDR_WD                 ),
+    .SRAM_WMASK_WD            (SRAM_WMASK_WD                ),
     .SRAM_DATA_WD             (SRAM_DATA_WD                 )
   ) u_core (
     .i_clk                    (i_clk                        ),
@@ -41,7 +50,15 @@ module ysyx_22050710_top #(
 
     .o_inst_sram_ren          (cpu_inst_ren                 ),
     .o_inst_sram_addr         (cpu_inst_addr                ),
-    .i_inst_sram_rdata        (cpu_inst_rdata               )
+    .i_inst_sram_rdata        (cpu_inst_rdata               ),
+
+  // data sram interface
+    .o_data_sram_addr         (cpu_data_addr                ),
+    .o_data_sram_ren          (cpu_data_ren                 ),
+    .i_data_sram_rdata        (cpu_data_rdata               )
+    .o_data_sram_wen          (cpu_data_wen                 ),
+    .o_data_sram_wmask        (cpu_data_wmask               ),
+    .i_data_sram_wdata        (cpu_data_wdata               )
   );
 
   // inst ram
@@ -53,6 +70,21 @@ module ysyx_22050710_top #(
     .i_ren                   (cpu_inst_ren                  ),
     .i_addr                  (cpu_inst_addr                 ),
     .o_rdata                 (cpu_inst_rdata                )   //63:0
+  );
+
+  // data ram
+  ysyx_22050710_data_sram #(
+    .SRAM_ADDR_WD            (SRAM_ADDR_WD                  ),
+    .SRAM_WMASK_WD           (SRAM_WMASK_WD                 ),
+    .SRAM_DATA_WD            (SRAM_DATA_WD                  )
+  ) u_data_ram (
+    .i_clk                   (i_clk                         ),
+    .i_addr                  (cpu_data_addr                 ),
+    .i_ren                   (cpu_data_ren                  ),
+    .o_rdata                 (cpu_data_rdata                ),  //63:0
+    .i_wen                   (cpu_data_wen                  ),
+    .i_wmask                 (cpu_data_wmask                ),
+    .i_wdata                 (cpu_data_wdata                )   // 63:0
   );
 
 endmodule
