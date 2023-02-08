@@ -20,6 +20,7 @@ module ysyx_22050710_id_stage #(
   input                        i_fs_to_ds_valid              ,
   input  [FS_TO_DS_BUS_WD-1:0] i_fs_to_ds_bus                , // {fs_inst[31:0], fs_pc[63:0]}
   // to es
+  output                       o_ds_to_es_valid              ,
   output [DS_TO_ES_BUS_WD-1:0] o_ds_to_es_bus                ,
   // to fs
   output [BR_BUS_WD-1:0      ] o_br_bus                      ,
@@ -27,14 +28,41 @@ module ysyx_22050710_id_stage #(
   input  [WS_TO_RF_BUS_WD-1:0] i_ws_to_rf_bus
 );
 
-  wire [PC_WD-1:0            ] fs_pc;
+  wire                         ds_valid                      ;
+  wire                         ds_ready_go                   ;
+  assign ds_ready_go         = 1'b1                          ;
+  assign o_ds_allowin        = (!ds_valid) || (ds_ready_go && i_es_allowin);
+  assign o_ds_to_es_valid    = ds_valid && ds_ready_go       ;
+
+  Reg #(
+    .WIDTH                    (1                            ),
+    .RESET_VAL                (1'b0                         )
+  ) u_ds_valid (
+    .clk                      (i_clk                        ),
+    .rst                      (i_rst                        ),
+    .din                      (i_fs_to_ds_valid             ),
+    .dout                     (ds_valid                     ),
+    .wen                      (o_ds_allowin                 )
+  );
+
+  wire [PC_WD-1:0            ] fs_pc                         ;
+  wire [FS_TO_DS_BUS_WD-1:0  ] fs_to_ds_bus_r                ;
   assign fs_pc               = i_fs_to_ds_bus[63:0]          ;
+
+  Reg #(
+    .WIDTH                    (FS_TO_DS_BUS_WD              ),
+    .RESET_VAL                (0                            )
+  ) u_fs_to_ds_bus_r (
+    .clk                      (i_clk                        ),
+    .rst                      (i_rst                        ),
+    .din                      (i_fs_to_ds_bus               ),
+    .dout                     (fs_to_ds_bus_r               ),
+    .wen                      (i_fs_to_ds_valid&&o_ds_allowin)
+  );
 
   wire [INST_WD-1:0          ] ds_inst                       ;
   wire [PC_WD-1:0            ] ds_pc                         ;
-  assign {ds_inst, ds_pc}    = i_fs_to_ds_valid
-                             ? i_fs_to_ds_bus
-                             : {FS_TO_DS_BUS_WD{1'b0}}       ;
+  assign {ds_inst, ds_pc}    = fs_to_ds_bus_r                ;
 
   // 通用寄存器
   wire [GPR_ADDR_WD-1:0      ] rs1, rs2                      ;

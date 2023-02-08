@@ -6,17 +6,51 @@ module ysyx_22050710_mem_stage #(
   parameter CSR_ADDR_WD                                      ,
   parameter ES_TO_MS_BUS_WD                                  ,
   parameter MS_TO_WS_BUS_WD                                  ,
-  parameter SRAM_DATA_WD                        
+  parameter SRAM_DATA_WD
 ) (
-  /* input                        i_clk                         , */
-  /* input                        i_rst                         , */
+  input                        i_clk                         ,
+  input                        i_rst                         ,
+  // allowin
+  input                        i_ws_allowin                  ,
+  output                       o_ms_allowin                  ,
   // from es
+  input                        i_es_to_ms_valid              ,
   input  [ES_TO_MS_BUS_WD-1:0] i_es_to_ms_bus                ,
   // to ws
   output [MS_TO_WS_BUS_WD-1:0] o_ms_to_ws_bus                ,
   // from data-sram
   input  [SRAM_DATA_WD-1:0   ] i_data_sram_rdata               // data ram 读数据返回 进入 lsu 进行处理
 );
+
+  wire                         ms_valid                      ;
+  wire                         ms_ready_go                   ;
+  assign ms_ready_go         = 1'b1                          ;
+  assign o_ms_allowin        = (!ms_valid) || (ms_ready_go && i_ws_allowin);
+  assign o_ms_to_ws_valid    = ms_valid && ms_ready_go       ;
+
+  Reg #(
+    .WIDTH                    (1                            ),
+    .RESET_VAL                (1'b0                         )
+  ) u_ms_valid (
+    .clk                      (i_clk                        ),
+    .rst                      (i_rst                        ),
+    .din                      (i_es_to_ms_valid             ),
+    .dout                     (ms_valid                     ),
+    .wen                      (o_ms_allowin                 )
+  );
+
+  wire [ES_TO_MS_BUS_WD-1:0  ] es_to_ms_bus_r                ;
+
+  Reg #(
+    .WIDTH                    (ES_TO_MS_BUS_WD              ),
+    .RESET_VAL                (0                            )
+  ) u_es_to_ms_bus_r (
+    .clk                      (i_clk                        ),
+    .rst                      (i_rst                        ),
+    .din                      (i_es_to_ms_bus               ),
+    .dout                     (es_to_ms_bus_r               ),
+    .wen                      (i_es_to_ms_valid&&o_ms_allowin)
+  );
 
   // result reg dest
   wire [GPR_ADDR_WD-1:0      ] ms_rd                         ;
@@ -40,7 +74,7 @@ module ysyx_22050710_mem_stage #(
           ms_csrrdata                                        ,
           ms_alu_result                                      ,
           ms_csr_result               
-          }                  = i_es_to_ms_bus                ;
+          }                  = es_to_ms_bus_r                ;
 
   wire [WORD_WD-1:0          ] ms_gpr_final_result           ;
   wire [WORD_WD-1:0          ] ms_csr_final_result           ;

@@ -12,13 +12,18 @@ module ysyx_22050710_ex_stage #(
   parameter ES_TO_MS_BUS_WD                                  ,
   parameter SRAM_ADDR_WD                                     ,
   parameter SRAM_WMASK_WD                                    ,
-  parameter SRAM_DATA_WD                        
+  parameter SRAM_DATA_WD
 ) (
-  /* input                        i_clk                         , */
-  /* input                        i_rst                         , */
+  input                        i_clk                         ,
+  input                        i_rst                         ,
+  // allowin
+  input                        i_ms_allowin                  ,
+  output                       o_es_allowin                  ,
   // from ds
+  input                        i_ds_to_es_valid              ,
   input  [DS_TO_ES_BUS_WD-1:0] i_ds_to_es_bus                ,
   // to ms
+  output                       o_es_to_ms_valid              ,
   output [ES_TO_MS_BUS_WD-1:0] o_es_to_ms_bus                ,
   // data sram interface
   output [SRAM_ADDR_WD-1:0   ] o_data_sram_addr              ,  // data ram 读请求或写请求是在 ex stage 发出
@@ -27,6 +32,36 @@ module ysyx_22050710_ex_stage #(
   output [SRAM_WMASK_WD-1:0  ] o_data_sram_wmask             ,
   output [SRAM_DATA_WD-1:0   ] o_data_sram_wdata
 );
+
+  wire                         es_valid                      ;
+  wire                         es_ready_go                   ;
+  assign es_ready_go         = 1'b1                          ;
+  assign o_es_allowin        = (!es_valid) || (es_ready_go && i_ms_allowin);
+  assign o_es_to_ms_valid    = es_valid && es_ready_go       ;
+
+  Reg #(
+    .WIDTH                    (1                            ),
+    .RESET_VAL                (1'b0                         )
+  ) u_es_valid (
+    .clk                      (i_clk                        ),
+    .rst                      (i_rst                        ),
+    .din                      (i_ds_to_es_valid             ),
+    .dout                     (es_valid                     ),
+    .wen                      (o_es_allowin                 )
+  );
+
+  wire [DS_TO_ES_BUS_WD-1:0  ] ds_to_es_bus_r                ;
+
+  Reg #(
+    .WIDTH                    (DS_TO_ES_BUS_WD              ),
+    .RESET_VAL                (0                            )
+  ) u_ds_to_es_bus_r (
+    .clk                      (i_clk                        ),
+    .rst                      (i_rst                        ),
+    .din                      (i_ds_to_es_bus               ),
+    .dout                     (ds_to_es_bus_r               ),
+    .wen                      (i_ds_to_es_valid&&o_es_allowin)
+  );
 
   // oprand
   wire [GPR_WD-1:0           ] es_rs1data                    ;
@@ -72,7 +107,7 @@ module ysyx_22050710_ex_stage #(
           es_csr_op                                          ,  //   4:2
           es_ebreak_sel                                      ,  //   1:1
           es_invalid_inst_sel                                   //   0:0
-          }                   = i_ds_to_es_bus               ;
+          }                   = ds_to_es_bus_r               ;
 
   wire [WORD_WD-1:0          ] es_alu_result                 ;
   wire [WORD_WD-1:0          ] es_csr_result                 ;

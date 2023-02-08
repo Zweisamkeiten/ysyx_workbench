@@ -37,14 +37,14 @@ module ysyx_22050710_core #(
   output [SRAM_DATA_WD-1:0   ] o_data_sram_wdata
 );
 
-  /* wire         ds_allowin; */
-  /* wire         es_allowin; */
-  /* wire         ms_allowin; */
-  /* wire         ws_allowin; */
+  wire                         ds_allowin                    ;
+  wire                         es_allowin                    ;
+  wire                         ms_allowin                    ;
+  wire                         ws_allowin                    ;
   wire                         fs_to_ds_valid                ;
-  /* wire         ds_to_es_valid; */
-  /* wire         es_to_ms_valid; */
-  /* wire         ms_to_ws_valid; */
+  wire                         ds_to_es_valid                ;
+  wire                         es_to_ms_valid                ;
+  wire                         ms_to_ws_valid                ;
   wire [FS_TO_DS_BUS_WD-1:0  ] fs_to_ds_bus                  ;
   wire [DS_TO_ES_BUS_WD-1:0  ] ds_to_es_bus                  ;
   wire [ES_TO_MS_BUS_WD-1:0  ] es_to_ms_bus                  ;
@@ -63,6 +63,8 @@ module ysyx_22050710_core #(
   ) u_if_stage (
     .i_clk                    (i_clk                        ),
     .i_rst                    (i_rst                        ),
+    // allowin
+    .i_ds_allowin             (ds_allowin                   ),
     // br bus
     .i_br_bus                 (br_bus                       ),
     // output
@@ -90,10 +92,14 @@ module ysyx_22050710_core #(
   ) u_id_stage (
     .i_clk                    (i_clk                        ),
     .i_rst                    (i_rst                        ),
+    // allowin
+    .i_es_allowin             (es_allowin                   ),
+    .o_ds_allowin             (ds_allowin                   ),
     // from fs
     .i_fs_to_ds_valid         (fs_to_ds_valid               ),
     .i_fs_to_ds_bus           (fs_to_ds_bus                 ),
     // to es
+    .o_ds_to_es_valid         (ds_to_es_valid               ),
     .o_ds_to_es_bus           (ds_to_es_bus                 ),
     // to fs
     .o_br_bus                 (br_bus                       ),
@@ -115,11 +121,16 @@ module ysyx_22050710_core #(
     .SRAM_WMASK_WD            (SRAM_WMASK_WD                ),
     .SRAM_DATA_WD             (SRAM_DATA_WD                 )
   ) u_ex_stage (
-    /* .i_clk                    (i_clk                        ), */
-    /* .i_rst                    (i_rst                        ), */
+    .i_clk                    (i_clk                        ),
+    .i_rst                    (i_rst                        ),
+    // allowin
+    .i_ms_allowin             (ms_allowin                   ),
+    .o_es_allowin             (es_allowin                   ),
     // from ds
+    .i_ds_to_es_valid         (ds_to_es_valid               ),
     .i_ds_to_es_bus           (ds_to_es_bus                 ),
     // to ms
+    .o_es_to_ms_valid         (es_to_ms_valid               ),
     .o_es_to_ms_bus           (es_to_ms_bus                 ),
     // data sram interface
     .o_data_sram_addr         (o_data_sram_addr             ),
@@ -137,11 +148,16 @@ module ysyx_22050710_core #(
     .MS_TO_WS_BUS_WD          (MS_TO_WS_BUS_WD              ),
     .SRAM_DATA_WD             (SRAM_DATA_WD                 )
   ) u_mem_stage (
-    /* .i_clk                    (i_clk                        ), */
-    /* .i_rst                    (i_rst                        ), */
+    .i_clk                    (i_clk                        ),
+    .i_rst                    (i_rst                        ),
+    // allowin
+    .i_ws_allowin             (ws_allowin                   ),
+    .o_ms_allowin             (ms_allowin                   ),
     // from es
+    .i_es_to_ms_valid         (es_to_ms_valid               ),
     .i_es_to_ms_bus           (es_to_ms_bus                 ),
     // to ws
+    .o_ms_to_ws_valid         (ms_to_ws_valid               ),
     .o_ms_to_ws_bus           (ms_to_ws_bus                 ),
     // from data-sram
     .i_data_sram_rdata        (i_data_sram_rdata            )  // data ram 读数据返回 进入 lsu 进行处理
@@ -156,9 +172,12 @@ module ysyx_22050710_core #(
     .MS_TO_WS_BUS_WD          (MS_TO_WS_BUS_WD              ),
     .WS_TO_RF_BUS_WD          (WS_TO_RF_BUS_WD              )
   ) u_wb_stage (
-    /* .i_clk                    (i_clk                        ), */
-    /* .i_rst                    (i_rst                        ), */
+    .i_clk                    (i_clk                        ),
+    .i_rst                    (i_rst                        ),
+    // allowin
+    .o_ws_allowin             (ws_allowin                   ),
     // from ms
+    .i_ms_to_ws_valid         (ms_to_ws_valid               ),
     .i_ms_to_ws_bus           (ms_to_ws_bus                 ),
     // to rf
     .o_ws_to_rf_bus           (ws_to_rf_bus                 )

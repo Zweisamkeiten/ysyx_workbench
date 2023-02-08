@@ -9,11 +9,45 @@ module ysyx_22050710_wb_stage #(
   parameter MS_TO_WS_BUS_WD                                  ,
   parameter WS_TO_RF_BUS_WD
 ) (
+  input                        i_clk                         ,
+  input                        i_rst                         ,
+  // allowin
+  output                       o_ws_allowin                  ,
   // from ms
+  input                        i_ms_to_ws_valid              ,
   input  [MS_TO_WS_BUS_WD-1:0] i_ms_to_ws_bus                ,
   // to rf
   output [WS_TO_RF_BUS_WD-1:0] o_ws_to_rf_bus
 );
+
+  wire                         ws_valid                      ;
+  wire                         ws_ready_go                   ;
+  assign ws_ready_go         = 1'b1                          ;
+  assign o_ws_allowin        = (!ws_valid) || (ws_ready_go)  ;
+
+  Reg #(
+    .WIDTH                    (1                            ),
+    .RESET_VAL                (1'b0                         )
+  ) u_ws_valid (
+    .clk                      (i_clk                        ),
+    .rst                      (i_rst                        ),
+    .din                      (i_ms_to_ws_valid             ),
+    .dout                     (ws_valid                     ),
+    .wen                      (o_ws_allowin                 )
+  );
+
+  wire [MS_TO_WS_BUS_WD-1:0  ] ms_to_ws_bus_r                ;
+
+  Reg #(
+    .WIDTH                    (MS_TO_WS_BUS_WD              ),
+    .RESET_VAL                (0                            )
+  ) u_es_to_ms_bus_r (
+    .clk                      (i_clk                        ),
+    .rst                      (i_rst                        ),
+    .din                      (i_ms_to_ws_bus               ),
+    .dout                     (ms_to_ws_bus_r               ),
+    .wen                      (i_ms_to_ws_valid&&o_ws_allowin)
+  );
 
   wire [GPR_ADDR_WD-1:0      ] ws_rd                         ;
   wire [CSR_ADDR_WD-1:0      ] ws_csr                        ;
@@ -28,7 +62,7 @@ module ysyx_22050710_wb_stage #(
           ws_csr_wen                                         ,
           ws_csr                                             ,
           ws_csr_final_result
-          }                  = i_ms_to_ws_bus                ;
+          }                  = ms_to_ws_bus_r                ;
 
   ysyx_22050710_wbu #(
     .GPR_ADDR_WD              (GPR_ADDR_WD                  ),
