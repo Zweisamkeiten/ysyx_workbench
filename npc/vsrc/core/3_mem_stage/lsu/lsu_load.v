@@ -1,7 +1,7 @@
 // ysyx_22050710 lsu load unit
 
 module ysyx_22050710_lsu_load #(
-  parameter WORD_WD
+  parameter WORD_WD                                          ,
   parameter SRAM_DATA_WD
 ) (
   input  [WORD_WD-1:0        ] i_addr                        ,
