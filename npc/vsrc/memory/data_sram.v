@@ -26,9 +26,7 @@ module ysyx_22050710_data_sram #(
 
   // read port
   always @(*) begin
-    if (i_ren) begin
-      npc_pmem_read({32'b0, raddr}, rdata);
-    end
+    npc_pmem_read({32'b0, raddr}, rdata);
   end
 
   // write port
