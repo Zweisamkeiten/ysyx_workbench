@@ -1,13 +1,13 @@
 // ysyx_22050710 Lsu Store unit
 
 module ysyx_22050710_lsu_store #(
+  parameter WORD_WD                                          ,
   parameter GPR_WD                                           ,
-  parameter SRAM_ADDR_WD                                     ,
   parameter SRAM_WMASK_WD                                    ,
   parameter SRAM_DATA_WD
 ) (
   input  [2:0                ] i_mem_op                      ,
-  input  [2:0                ] i_waddr                       ,
+  input  [WORD_WD-1:0        ] i_waddr                       ,
   input  [GPR_WD-1:0         ] i_wdata                       , // store rs2data
   output [SRAM_WMASK_WD-1:0  ] o_wmask                       ,
   output [SRAM_DATA_WD-1:0   ] o_wdata

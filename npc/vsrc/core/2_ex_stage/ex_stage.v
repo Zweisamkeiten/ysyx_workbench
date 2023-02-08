@@ -117,8 +117,8 @@ module ysyx_22050710_ex_stage #(
   );
 
   ysyx_22050710_lsu_store #(
+    .WORD_WD                  (WORD_WD                      ),
     .GPR_WD                   (GPR_WD                       ),
-    .SRAM_ADDR_WD             (SRAM_ADDR_WD                 ),
     .SRAM_WMASK_WD            (SRAM_WMASK_WD                ),
     .SRAM_DATA_WD             (SRAM_DATA_WD                 )
   ) u_lsu_store (
@@ -131,6 +131,6 @@ module ysyx_22050710_ex_stage #(
 
   assign o_data_sram_ren     = 1'b1                          ;
   assign o_data_sram_wen     = es_mem_wen                    ;
-  assign o_data_sram_addr    = es_alu_result                 ; // x[rs1] + imm
+  assign o_data_sram_addr    = es_alu_result[31:0]           ; // x[rs1] + imm
 
 endmodule
