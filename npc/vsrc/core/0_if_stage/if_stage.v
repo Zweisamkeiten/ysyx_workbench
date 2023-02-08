@@ -22,7 +22,7 @@ module ysyx_22050710_if_stage #(
   input  [SRAM_DATA_WD-1:0   ] i_inst_sram_rdata
 );
 
-  wire fs_valid = 1'b1                                             ;
+  wire fs_valid                                              ;
   wire fs_ready_go                                           ;
   wire to_fs_valid                                           ;
 
@@ -38,16 +38,16 @@ module ysyx_22050710_if_stage #(
   wire [PC_WD-1:0            ] fs_pc                         ;
   assign o_fs_to_ds_bus      = {fs_inst, fs_pc}              ;
 
-  /* Reg #( */
-  /*   .WIDTH                    (1                            ), */
-  /*   .RESET_VAL                (1'b0                         ) */
-  /* ) u_fs_valid ( */
-  /*   .clk                      (i_clk                        ), */
-  /*   .rst                      (i_rst                        ), */
-  /*   .din                      (~fs_valid                    ), */
-  /*   .dout                     (fs_valid                     ), */
-  /*   .wen                      (1'b1                         ) */
-  /* ); */
+  Reg #(
+    .WIDTH                    (1                            ),
+    .RESET_VAL                (1'b0                         )
+  ) u_fs_valid (
+    .clk                      (i_clk                        ),
+    .rst                      (i_rst                        ),
+    .din                      (~fs_valid                    ),
+    .dout                     (fs_valid                     ),
+    .wen                      (1'b1                         )
+  );
 
   ysyx_22050710_pc #(
     .PC_RESETVAL              (PC_RESETVAL                  ),
@@ -55,7 +55,7 @@ module ysyx_22050710_if_stage #(
   ) u_pc (
     .i_clk                    (i_clk                        ),
     .i_rst                    (i_rst                        ),
-    .i_load                   (1'b1                     ), // if stage 有数据发往 id stage, pc 写使能 为下一周期准备
+    .i_load                   (fs_valid                     ), // if stage 有数据发往 id stage, pc 写使能 为下一周期准备
     .i_br_sel                 (br_sel                       ),
     .i_br_target              (br_target                    ),
     .o_pc                     (fs_pc                        )
