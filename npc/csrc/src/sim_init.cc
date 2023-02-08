@@ -48,7 +48,6 @@ extern "C" void npc_pmem_read(long long raddr, long long *rdata) {
   } else {
     addr = raddr;
   }
-  printf("%lx\n", addr);
   *rdata = paddr_read(addr, 8);
 }
 
