@@ -17,7 +17,7 @@ module ysyx_22050710_if_stage #(
   output                       o_fs_to_ds_valid              ,
   output [FS_TO_DS_BUS_WD-1:0] o_fs_to_ds_bus                ,
   // inst sram interface
-  output                       o_inst_sram_en                ,
+  output                       o_inst_sram_ren               ,
   output [SRAM_ADDR_WD-1:0   ] o_inst_sram_addr              ,
   input  [SRAM_DATA_WD-1:0   ] i_inst_sram_rdata
 );
@@ -71,7 +71,7 @@ module ysyx_22050710_if_stage #(
     .i_pc                     (fs_pc                        ),
     .o_inst                   (fs_inst                      ),
     // inst sram interface
-    .o_inst_sram_en           (o_inst_sram_en               ),
+    .o_inst_sram_ren          (o_inst_sram_ren              ),
     .o_inst_sram_addr         (o_inst_sram_addr             ),
     .i_inst_sram_rdata        (i_inst_sram_rdata            )
   );

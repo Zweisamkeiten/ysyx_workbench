@@ -10,7 +10,7 @@ module ysyx_22050710_ifu #(
   output [INST_WD-1:0        ] o_inst                        ,
   input                        i_to_fs_valid                 ,
   // inst sram interface
-  output                       o_inst_sram_en                ,
+  output                       o_inst_sram_ren               ,
   output [SRAM_ADDR_WD-1:0   ] o_inst_sram_addr              ,
   input  [SRAM_DATA_WD-1:0   ] i_inst_sram_rdata
 );
@@ -19,7 +19,7 @@ module ysyx_22050710_ifu #(
                              ? i_inst_sram_rdata[31:0]
                              : i_inst_sram_rdata[63:32]      ;
 
-  assign o_inst_sram_en      = i_to_fs_valid                 ;
+  assign o_inst_sram_ren     = i_to_fs_valid                 ;
   assign o_inst_sram_addr    = 1'b1
                              ? i_pc[31:0]
                              : i_pc[63:32]                   ;
