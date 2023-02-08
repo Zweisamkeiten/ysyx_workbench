@@ -117,7 +117,6 @@ module ysyx_22050710_ex_stage #(
   );
 
   ysyx_22050710_lsu_store #(
-    .WORD_WD                  (WORD_WD                      ),
     .GPR_WD                   (GPR_WD                       ),
     .SRAM_WMASK_WD            (SRAM_WMASK_WD                ),
     .SRAM_DATA_WD             (SRAM_DATA_WD                 )
