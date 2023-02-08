@@ -6,7 +6,7 @@ module ysyx_22050710_lsu_store #(
   parameter SRAM_DATA_WD
 ) (
   input  [2:0                ] i_mem_op                      ,
-  input  [2:0                ] i_waddr_align                 ,
+  input  [2:0                ] i_waddr_align                 , // 地址的低三位 因为对齐访存
   input  [GPR_WD-1:0         ] i_wdata                       , // store rs2data
   output [SRAM_WMASK_WD-1:0  ] o_wmask                       ,
   output [SRAM_DATA_WD-1:0   ] o_wdata
@@ -31,7 +31,7 @@ module ysyx_22050710_lsu_store #(
         endcase
       end
       3'b010, 3'b011: begin
-        case (i_waddr[2:0])
+        case (i_waddr_align)
           3'h0:    wmask = 8'b00000011                       ;
           3'h2:    wmask = 8'b00001100                       ;
           3'h4:    wmask = 8'b00110000                       ;
@@ -40,7 +40,7 @@ module ysyx_22050710_lsu_store #(
         endcase
       end
       3'b100, 3'b101: begin
-        case (i_waddr[2:0])
+        case (i_waddr_align)
           3'h0:    wmask = 8'b00001111                       ;
           3'h4:    wmask = 8'b11110000                       ;
           default: wmask = 8'b00000000                       ;
