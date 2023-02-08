@@ -4,7 +4,7 @@ module ysyx_22050710_inst_sram #(
 ) (
   input                        i_clk                         ,
 
-  input                        i_ren                         ,
+  input                        i_en                         ,
   input  [SRAM_ADDR_WD   -1:0] i_addr                        ,
   output [SRAM_DATA_WD   -1:0] o_rdata
 );
@@ -13,7 +13,7 @@ module ysyx_22050710_inst_sram #(
   assign o_rdata             = rdata                         ;
 
   always @(posedge i_clk) begin
-    if (i_ren) begin
+    if (i_en) begin
       npc_pmem_read({32'b0, i_addr}, rdata);
     end
     else begin
