@@ -10,14 +10,11 @@ module ysyx_22050710_inst_sram #(
 );
 
   reg [SRAM_DATA_WD-1:0]       rdata                         ;  // address register for pmem read.
-  assign o_rdata             = rdata                         ;
+  assign o_rdata             = i_en ? rdata  : 0                      ;
 
   always @(posedge i_clk) begin
     if (i_en) begin
       npc_pmem_read({32'b0, i_addr}, rdata);
-    end
-    else begin
-      rdata = 0;
     end
   end
 
