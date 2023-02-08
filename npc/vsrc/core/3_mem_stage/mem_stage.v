@@ -17,6 +17,7 @@ module ysyx_22050710_mem_stage #(
   input                        i_es_to_ms_valid              ,
   input  [ES_TO_MS_BUS_WD-1:0] i_es_to_ms_bus                ,
   // to ws
+  output                       o_ms_to_ws_valid              ,
   output [MS_TO_WS_BUS_WD-1:0] o_ms_to_ws_bus                ,
   // from data-sram
   input  [SRAM_DATA_WD-1:0   ] i_data_sram_rdata               // data ram 读数据返回 进入 lsu 进行处理
