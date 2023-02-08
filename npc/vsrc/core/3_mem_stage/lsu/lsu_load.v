@@ -1,6 +1,7 @@
 // ysyx_22050710 lsu load unit
 
 module ysyx_22050710_lsu_load #(
+  parameter WORD_WD                                          ,
   parameter SRAM_DATA_WD
 ) (
   input  [2:0                ] i_raddr_align                 , // 地址的低三位 因为对齐访存
