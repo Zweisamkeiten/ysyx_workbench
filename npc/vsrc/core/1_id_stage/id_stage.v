@@ -218,7 +218,7 @@ module ysyx_22050710_id_stage #(
   ) u_bru (
     .i_rs1data                (rs1data                      ),
     .i_rs2data                (rs2data                      ),
-    .i_pc                     (ds_pc                        ),
+    .i_pc                     (fs_pc                        ),
     .i_imm                    (imm                          ),
     // br inst
     .i_bren                   (bren                         ),
@@ -268,7 +268,5 @@ module ysyx_22050710_id_stage #(
     // invalid inst
     .o_invalid_inst_sel       (invalid_inst_sel             )
   );
-
-  
 
 endmodule
