@@ -80,7 +80,7 @@ module ysyx_22050710_if_stage #(
   end
 
   assign o_inst_sram_ren    = to_fs_valid && fs_allowin;
-  assign o_inst_sram_addr  = nextpc;
+  assign o_inst_sram_addr  = nextpc[31:0];
   assign fs_inst = fs_pc[2]
                  ? i_inst_sram_rdata[31:0]
                  : i_inst_sram_rdata[63:32]      ;
