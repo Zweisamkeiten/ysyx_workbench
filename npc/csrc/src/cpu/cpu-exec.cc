@@ -242,6 +242,7 @@ void cpu_exec(uint64_t n) {
     single_cycle(0);
     single_cycle(0);
     single_cycle(0);
+    single_cycle(0);
   }
   g_print_step = (n < MAX_INST_TO_PRINT);
   IFDEF(CONFIG_FTRACE, init_func_sym_str_table();)
