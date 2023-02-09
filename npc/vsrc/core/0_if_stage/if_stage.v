@@ -26,7 +26,16 @@ module ysyx_22050710_if_stage #(
 
   // pre if stage
   wire                         to_fs_valid                   ;
-  assign to_fs_valid         = ~i_rst;
+  Reg #(
+    .WIDTH                    (1                            ),
+    .RESET_VAL                (1'b0                         )
+  ) u_to_fs_valid (
+    .clk                      (i_clk                        ),
+    .rst                      (i_rst                        ),
+    .din                      (fs_allowin                   ),
+    .dout                     (to_fs_valid                  ),
+    .wen                      (fs_allowin                   )
+  );
   wire                         br_sel                        ;
   wire [PC_WD-1:0            ] br_target                     ;
   assign {br_sel, br_target} = i_br_bus                      ;
