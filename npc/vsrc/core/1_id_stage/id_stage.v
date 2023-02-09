@@ -40,9 +40,9 @@ module ysyx_22050710_id_stage #(
 
   wire                         ds_valid                      ;
   wire                         ds_ready_go                   ;
-  assign ds_ready_go         = !((i_es_to_ds_gpr_rd != 0 && (i_es_to_ds_gpr_rd == rs1 || i_es_to_ds_gpr_rd == rs2))
+  assign ds_ready_go         = !((i_es_to_ds_gpr_rd != 0 && (i_es_to_ds_gpr_rd == rs1 || i_es_to_ds_gpr_rd == rs2 || (ebreak_sel ? i_es_to_ds_gpr_rd == 5'd10 : 0)))
                               || (i_ms_to_ds_gpr_rd != 0 && (i_ms_to_ds_gpr_rd == rs1 || i_ms_to_ds_gpr_rd == rs2 || (ebreak_sel ? i_es_to_ds_gpr_rd == 5'd10 : 0)))
-                              || (i_ws_to_ds_gpr_rd != 0 && (i_ws_to_ds_gpr_rd == rs1 || i_ws_to_ds_gpr_rd == rs2))
+                              || (i_ws_to_ds_gpr_rd != 0 && (i_ws_to_ds_gpr_rd == rs1 || i_ws_to_ds_gpr_rd == rs2 || (ebreak_sel ? i_es_to_ds_gpr_rd == 5'd10 : 0)))
                               || (i_es_to_ds_csr_rd != 0 && i_es_to_ds_csr_rd == csr)
                               || (i_ms_to_ds_csr_rd != 0 && i_ms_to_ds_csr_rd == csr)
                               || (i_ws_to_ds_csr_rd != 0 && i_ws_to_ds_csr_rd == csr));
