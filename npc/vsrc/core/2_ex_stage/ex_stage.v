@@ -135,6 +135,7 @@ module ysyx_22050710_ex_stage #(
     .CSR_WD                   (CSR_WD                       ),
     .IMM_WD                   (IMM_WD                       )
   ) u_exu (
+    .i_es_valid               (es_valid                     ),
     // oprand
     .i_rs1data                (es_rs1data                   ),
     .i_rs2data                (es_rs2data                   ),

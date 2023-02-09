@@ -10,6 +10,7 @@ module ysyx_22050710_exu #(
   parameter CSR_WD                                           ,
   parameter IMM_WD
 ) (
+  input                        i_es_valid                    ,
   // oprand
   input  [GPR_WD-1:0         ] i_rs1data                     ,
   input  [GPR_WD-1:0         ] i_rs2data                     ,
@@ -78,13 +79,13 @@ module ysyx_22050710_exu #(
   );
 
   always @(*) begin
-    if (i_ebreak_sel) begin
+    if (i_es_valid && i_ebreak_sel) begin
       set_state_end(); // ebreak
     end
   end
 
   always @(i_invalid_inst_sel) begin // 敏感变量只有 i_is_invalid_inst, reset(10) 因此只处理一次
-    if (i_invalid_inst_sel) set_state_abort(); // invalid inst
+    if (i_es_valid && i_invalid_inst_sel) set_state_abort(); // invalid inst
   end
 
 endmodule
