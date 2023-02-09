@@ -5,7 +5,8 @@ extern "C" {
   #include <cpu/difftest.h>
   #include <memory/paddr.h>
 }
-static int cpu_starting = 0;
+
+extern int a_inst_executed; // 用于流水线npc通知仿真环境一条指令完全执行完毕, 状态机改变
 static vaddr_t snpc; // use at IRINGTRACE and difftest 现在指上一状态 刚执行过的指令的PC
 #ifdef CONFIG_WATCHPOINT
 extern "C" void diff_watchpoint_value();
@@ -205,7 +206,10 @@ void exec_once() {
   last_inst = cpu.inst;
 #endif
   snpc = cpu.pc;
-  single_cycle(0);
+  while (a_inst_executed == 0){
+    single_cycle(0);
+  }
+  a_inst_executed = 0;
   cpu.pc = *npcpc;
   trace_and_difftest(cpu.pc);
 }
@@ -236,14 +240,6 @@ void assert_fail_msg() {
 
 /* Simulate how the CPU works. */
 void cpu_exec(uint64_t n) {
-  if (cpu_starting == 0) {
-    cpu_starting = 1;
-    single_cycle(0);
-    single_cycle(0);
-    single_cycle(0);
-    single_cycle(0);
-    single_cycle(0);
-  }
   g_print_step = (n < MAX_INST_TO_PRINT);
   IFDEF(CONFIG_FTRACE, init_func_sym_str_table();)
   switch (npc_state.state) {
