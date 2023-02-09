@@ -61,8 +61,6 @@ void init_monitor(int argc, char *argv[]) {
   /* Initialize memory. */
   init_mem();
 
-  init_sim();
-
   /* Initialize devices. */
   IFDEF(CONFIG_DEVICE, init_device());
 
@@ -78,6 +76,8 @@ void init_monitor(int argc, char *argv[]) {
   if (argc > 2) {
     IFDEF(CONFIG_FTRACE, init_elf(argv[2]));
   }
+
+  init_sim();
 
   /* Initialize the simple debugger. */
   init_sdb();
