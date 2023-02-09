@@ -205,7 +205,6 @@ void exec_once() {
 #endif
   snpc = cpu.pc;
   single_cycle(0);
-  single_cycle(0);
   cpu.pc = *npcpc;
   trace_and_difftest(cpu.pc);
 }
@@ -248,6 +247,10 @@ void cpu_exec(uint64_t n) {
     npc_state.state = NPC_RUNNING;
   }
 
+  single_cycle(0);
+  single_cycle(0);
+  single_cycle(0);
+  single_cycle(0);
   execute(n);
 
   switch (npc_state.state) {
