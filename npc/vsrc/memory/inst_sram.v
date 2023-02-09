@@ -15,6 +15,9 @@ module ysyx_22050710_inst_sram #(
     if (i_ren) begin
       npc_pmem_read({32'b0, i_addr}, o_rdata);
     end
+    else begin
+      o_rdata <= 64'b0;
+    end
   end
 
 endmodule
