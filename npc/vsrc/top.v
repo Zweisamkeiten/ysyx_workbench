@@ -71,7 +71,6 @@ module ysyx_22050710_top #(
     .SRAM_DATA_WD            (SRAM_DATA_WD                  )
   ) u_inst_ram (
     .i_clk                   (i_clk                         ),
-    .i_rst                   (i_rst                         ),
     .i_ren                   (cpu_inst_ren                  ),
     .i_addr                  (cpu_inst_addr                 ),
     .o_rdata                 (cpu_inst_rdata                )   //63:0
@@ -84,7 +83,6 @@ module ysyx_22050710_top #(
     .SRAM_DATA_WD            (SRAM_DATA_WD                  )
   ) u_data_ram (
     .i_clk                   (i_clk                         ),
-    .i_rst                   (i_rst                         ),
     .i_addr                  (cpu_data_addr                 ),
     .i_ren                   (cpu_data_ren                  ),
     .o_rdata                 (cpu_data_rdata                ),  //63:0

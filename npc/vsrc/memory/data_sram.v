@@ -6,7 +6,6 @@ module ysyx_22050710_data_sram #(
   parameter SRAM_DATA_WD
 ) (
   input                        i_clk                         ,
-  input                        i_rst                         ,
 
   input  [SRAM_ADDR_WD-1:0   ] i_addr                        ,  // 单端口用于读写地址
   // read port
@@ -31,10 +30,6 @@ module ysyx_22050710_data_sram #(
 
   // read port
   always @(posedge i_clk) begin                                 // 改为 同步接口 延迟一周期返回
-    if (i_rst) begin
-      o_rdata <= rdata;
-    end
-
     if (i_ren) begin
       o_rdata <= rdata;
     end
