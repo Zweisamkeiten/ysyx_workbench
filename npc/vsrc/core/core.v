@@ -177,7 +177,7 @@ module ysyx_22050710_core #(
     .o_ms_to_ws_valid         (ms_to_ws_valid               ),
     .o_ms_to_ws_bus           (ms_to_ws_bus                 ),
     // from data-sram
-    .i_data_sram_rdata        (i_data_sram_rdata            )  // data ram 读数据返回 进入 lsu 进行处理
+    .i_data_sram_rdata        (i_data_sram_rdata            ), // data ram 读数据返回 进入 lsu 进行处理
     // 目的寄存器
     .o_ms_to_ds_gpr_rd        (ms_to_ds_gpr_rd              ),
     .o_ms_to_ds_csr_rd        (ms_to_ds_csr_rd              )
@@ -200,7 +200,7 @@ module ysyx_22050710_core #(
     .i_ms_to_ws_valid         (ms_to_ws_valid               ),
     .i_ms_to_ws_bus           (ms_to_ws_bus                 ),
     // to rf
-    .o_ws_to_rf_bus           (ws_to_rf_bus                 )
+    .o_ws_to_rf_bus           (ws_to_rf_bus                 ),
     // 目的寄存器
     .o_ws_to_ds_gpr_rd        (ws_to_ds_gpr_rd              ),
     .o_ws_to_ds_csr_rd        (ws_to_ds_csr_rd              )
