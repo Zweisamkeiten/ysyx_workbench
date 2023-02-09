@@ -162,7 +162,7 @@ module ysyx_22050710_id_stage #(
   };
 
   always @(posedge i_clk) begin
-    if (gpr_rf_wen) begin
+    if (ds_ready_go) begin
       state_machine_change();
     end
   end
