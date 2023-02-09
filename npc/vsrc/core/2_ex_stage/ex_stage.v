@@ -125,7 +125,9 @@ module ysyx_22050710_ex_stage #(
                                 es_alu_result                ,
                                 es_csr_result               };
 
-  assign o_es_to_ds_gpr_rd   = {GPR_ADDR_WD{es_valid}} & {GPR_ADDR_WD{es_gpr_wen}} & es_rd;
+  assign o_es_to_ds_gpr_rd   = {GPR_ADDR_WD{es_valid}}
+                             & {GPR_ADDR_WD{es_gpr_wen}}
+                             & (es_ebreak_sel ? 5'd10 : es_rd); // ebreak a0 gpr[10]
   assign o_es_to_ds_csr_rd   = {CSR_ADDR_WD{es_valid}} & {CSR_ADDR_WD{es_csr_wen}} & es_csr;
 
   ysyx_22050710_exu #(
