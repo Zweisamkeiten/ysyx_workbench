@@ -62,7 +62,7 @@ module ysyx_22050710_if_stage #(
   Reg #(
     .WIDTH                    (SRAM_DATA_WD                 ),
     .RESET_VAL                (0                            )
-  ) u_fs_valid (
+  ) u_fs_inst_sram_rdata (
     .clk                      (i_clk                        ),
     .rst                      (i_rst                        ),
     .din                      (i_inst_sram_rdata            ),
