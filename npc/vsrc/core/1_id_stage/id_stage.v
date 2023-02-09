@@ -40,7 +40,7 @@ module ysyx_22050710_id_stage #(
 
   wire                         ds_valid                      ;
   wire                         ds_ready_go                   ;
-  assign ds_ready_go         = !br_sel && !((i_es_to_ds_gpr_rd != 0 && (ebreak_sel ? i_es_to_ds_gpr_rd == 5'ha : (i_es_to_ds_gpr_rd == rs1 || i_es_to_ds_gpr_rd == rs2)))
+  assign ds_ready_go         = !((i_es_to_ds_gpr_rd != 0 && (ebreak_sel ? i_es_to_ds_gpr_rd == 5'ha : (i_es_to_ds_gpr_rd == rs1 || i_es_to_ds_gpr_rd == rs2)))
                               || (i_ms_to_ds_gpr_rd != 0 && (ebreak_sel ? i_ms_to_ds_gpr_rd == 5'ha : (i_ms_to_ds_gpr_rd == rs1 || i_ms_to_ds_gpr_rd == rs2)))
                               || (i_ws_to_ds_gpr_rd != 0 && (ebreak_sel ? i_ws_to_ds_gpr_rd == 5'ha : (i_ws_to_ds_gpr_rd == rs1 || i_ws_to_ds_gpr_rd == rs2)))
                               || (i_es_to_ds_csr_rd != 0 && i_es_to_ds_csr_rd == csr)
@@ -72,7 +72,7 @@ module ysyx_22050710_id_stage #(
     .rst                      (i_rst                        ),
     .din                      (i_fs_to_ds_bus               ),
     .dout                     (fs_to_ds_bus_r               ),
-    .wen                      (i_fs_to_ds_valid&&o_ds_allowin)
+    .wen                      (i_fs_to_ds_valid&&o_ds_allowin&&!br_sel)
   );
 
   wire [INST_WD-1:0          ] ds_inst                       ;
