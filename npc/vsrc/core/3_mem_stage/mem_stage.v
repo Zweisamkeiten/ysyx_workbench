@@ -98,7 +98,7 @@ module ysyx_22050710_mem_stage #(
                                 ms_csr_final_result          };
 
   assign o_ms_to_ds_gpr_rd   = {GPR_ADDR_WD{ms_valid}} & {GPR_ADDR_WD{ms_gpr_wen}} & ms_rd;
-  assign o_ms_to_ds_csr_rd   = {GPR_ADDR_WD{ms_valid}} & {GPR_ADDR_WD{ms_csr_wen}} & ms_csr;
+  assign o_ms_to_ds_csr_rd   = {CSR_ADDR_WD{ms_valid}} & {CSR_ADDR_WD{ms_csr_wen}} & ms_csr;
 
   ysyx_22050710_lsu_load #(
     .WORD_WD                  (WORD_WD                      ),
