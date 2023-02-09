@@ -115,6 +115,10 @@ extern "C" void init_sim() {
   cpu.csr = csr;
 
   cpu.pc = *npcpc;
+  single_cycle(0);
+  single_cycle(0);
+  single_cycle(0);
+  single_cycle(0);
 }
 
 extern "C" void end_sim() {
