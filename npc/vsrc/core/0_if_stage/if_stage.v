@@ -44,7 +44,7 @@ module ysyx_22050710_if_stage #(
   assign o_fs_to_ds_valid    = fs_valid && fs_ready_go       ;
 
   wire [INST_WD-1:0          ] fs_inst                       ;
-  wire [PC_WD-1:0            ] fs_pc                         ;
+  reg [PC_WD-1:0            ] fs_pc                         ;
   assign o_fs_to_ds_bus      = {fs_inst, fs_pc}              ;
 
   /* Reg #( */
@@ -72,7 +72,7 @@ module ysyx_22050710_if_stage #(
       end
 
       if (i_rst) begin
-          fs_pc <= 64'h7ffffffc;
+          fs_pc <= PC_RESETVAL;
       end
       else if (to_fs_valid && fs_allowin) begin
           fs_pc <= nextpc;
