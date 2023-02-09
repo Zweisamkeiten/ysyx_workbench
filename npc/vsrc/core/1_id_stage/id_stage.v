@@ -30,9 +30,9 @@ module ysyx_22050710_id_stage #(
   // from ws to rf: for write back
   input  [WS_TO_RF_BUS_WD-1:0] i_ws_to_rf_bus                ,
   // 阻塞解决数据相关性冲突: es, ms, ws 目的寄存器比较
-  input  [GPR_WD-1:0         ] i_es_to_ds_gpr_rd             ,
-  input  [GPR_WD-1:0         ] i_ms_to_ds_gpr_rd             ,
-  input  [GPR_WD-1:0         ] i_ws_to_ds_gpr_rd             ,
+  input  [GPR_ADDR_WD-1:0    ] i_es_to_ds_gpr_rd             ,
+  input  [GPR_ADDR_WD-1:0    ] i_ms_to_ds_gpr_rd             ,
+  input  [GPR_ADDR_WD-1:0    ] i_ws_to_ds_gpr_rd             ,
   input  [CSR_ADDR_WD-1:0    ] i_es_to_ds_csr_rd             ,
   input  [CSR_ADDR_WD-1:0    ] i_ms_to_ds_csr_rd             ,
   input  [CSR_ADDR_WD-1:0    ] i_ws_to_ds_csr_rd
