@@ -104,7 +104,6 @@ extern "C" void init_sim() {
   single_cycle(0);
   single_cycle(0);
   single_cycle(0);
-  single_cycle(0);
 
   npc_state.state = NPC_RUNNING;
 
