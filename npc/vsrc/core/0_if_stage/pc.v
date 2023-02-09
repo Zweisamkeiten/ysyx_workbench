@@ -30,7 +30,7 @@ module ysyx_22050710_pc #(
    * inst sram 的输出是在 if stage 完成
    */
   assign o_inst_sram_ren     = i_load                        ;
-  assign o_inst_sram_addr    = i_load ? dnpc[31:0] : pc[31:0];
+  assign o_inst_sram_addr    = dnpc[31:0]                    ;
 
 
   // 位宽为64bits, 复位值为64'h80000000, 写使能为i_load;
