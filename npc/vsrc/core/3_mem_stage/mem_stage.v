@@ -26,7 +26,7 @@ module ysyx_22050710_mem_stage #(
   wire                         ms_valid                      ;
   wire                         ms_ready_go                   ;
   assign ms_ready_go         = 1'b1                          ;
-  assign o_ms_allowin        = !ms_valid || ms_ready_go && i_ws_allowin;
+  assign o_ms_allowin        = (!ms_valid) || (ms_ready_go && i_ws_allowin);
   assign o_ms_to_ws_valid    = ms_valid && ms_ready_go       ;
 
   Reg #(

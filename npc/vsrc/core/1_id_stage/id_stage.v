@@ -34,7 +34,7 @@ module ysyx_22050710_id_stage #(
   wire                         ds_valid                      ;
   wire                         ds_ready_go                   ;
   assign ds_ready_go         = 1'b1                          ;
-  assign o_ds_allowin        = !ds_valid || ds_ready_go && i_es_allowin;
+  assign o_ds_allowin        = (!ds_valid) || (ds_ready_go && i_es_allowin);
   assign o_ds_to_es_valid    = ds_valid && ds_ready_go       ;
 
   Reg #(

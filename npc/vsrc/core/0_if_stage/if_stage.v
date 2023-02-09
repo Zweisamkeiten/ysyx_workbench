@@ -37,7 +37,7 @@ module ysyx_22050710_if_stage #(
   wire                         fs_allowin                    ;
 
   assign fs_ready_go         = 1'b1                          ;
-  assign fs_allowin          = !fs_valid || fs_ready_go && i_ds_allowin; // 或条件1: cpu rst后的初始状态, 每个stage都为空闲
+  assign fs_allowin          = (!fs_valid) || (fs_ready_go && i_ds_allowin); // 或条件1: cpu rst后的初始状态, 每个stage都为空闲
                                                                              // 或条件2: stage 直接相互依赖, 当后续设计使得当前
                                                                              // stage 无法在一周期内完成, ready_go 信号会变得复杂
                                                                              // 现在暂时不需要考虑, 因为每个 stage 都能在一周期完成
@@ -56,6 +56,18 @@ module ysyx_22050710_if_stage #(
     .din                      (to_fs_valid                  ), // ~reset
     .dout                     (fs_valid                     ),
     .wen                      (fs_allowin                   )
+  );
+
+  wire [SRAM_DATA_WD-1:0      ] fs_inst_sram_rdata           ;
+  Reg #(
+    .WIDTH                    (SRAM_DATA_WD                 ),
+    .RESET_VAL                (0                            )
+  ) u_fs_valid (
+    .clk                      (i_clk                        ),
+    .rst                      (i_rst                        ),
+    .din                      (i_inst_sram_rdata            ),
+    .dout                     (fs_inst_sram_rdata           ),
+    .wen                      (to_fs_valid && fs_allowin    )
   );
 
   ysyx_22050710_pc #(
@@ -80,7 +92,7 @@ module ysyx_22050710_if_stage #(
     .i_pc_align               (fs_pc[2]                     ), // 取指访问指令sram 64位对齐 根据 pc[2] 选择前32bits还是后32bits
     .o_inst                   (fs_inst                      ),
     // inst sram interface
-    .i_inst_sram_rdata        (i_inst_sram_rdata            )
+    .i_inst_sram_rdata        (fs_inst_sram_rdata           )
   );
 
 endmodule
