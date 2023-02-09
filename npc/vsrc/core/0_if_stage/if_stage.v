@@ -80,7 +80,7 @@ module ysyx_22050710_if_stage #(
     .i_pc_align               (fs_pc[2]                     ), // 取指访问指令sram 64位对齐 根据 pc[2] 选择前32bits还是后32bits
     .o_inst                   (fs_inst                      ),
     // inst sram interface
-    .i_inst_sram_rdata        (i_fs_inst_sram_rdata           )
+    .i_inst_sram_rdata        (i_inst_sram_rdata           )
   );
 
 endmodule
