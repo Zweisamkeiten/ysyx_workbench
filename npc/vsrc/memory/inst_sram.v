@@ -5,6 +5,7 @@ module ysyx_22050710_inst_sram #(
   parameter SRAM_DATA_WD
 ) (
   input                        i_clk                         ,
+  input                        i_rst                         ,
 
   input                        i_ren                         ,
   input  [SRAM_ADDR_WD-1:0   ] i_addr                        ,
@@ -18,6 +19,10 @@ module ysyx_22050710_inst_sram #(
   end
 
   always @(posedge i_clk) begin
+    if (i_rst) begin
+      o_rdata <= rdata;
+    end
+
     if (i_ren) begin
       o_rdata <= rdata;
     end
