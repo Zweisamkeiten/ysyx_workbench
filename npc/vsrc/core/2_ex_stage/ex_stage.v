@@ -36,7 +36,7 @@ module ysyx_22050710_ex_stage #(
   wire                         es_valid                      ;
   wire                         es_ready_go                   ;
   assign es_ready_go         = 1'b1                          ;
-  assign o_es_allowin        = (!es_valid) || (es_ready_go && i_ms_allowin);
+  assign o_es_allowin        = !es_valid || es_ready_go && i_ms_allowin;
   assign o_es_to_ms_valid    = es_valid && es_ready_go       ;
 
   Reg #(

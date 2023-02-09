@@ -23,7 +23,7 @@ module ysyx_22050710_wb_stage #(
   wire                         ws_valid                      ;
   wire                         ws_ready_go                   ;
   assign ws_ready_go         = 1'b1                          ;
-  assign o_ws_allowin        = (!ws_valid) || (ws_ready_go)  ;
+  assign o_ws_allowin        = !ws_valid || ws_ready_go  ;
 
   Reg #(
     .WIDTH                    (1                            ),
