@@ -34,7 +34,7 @@ module ysyx_22050710_if_stage #(
     .rst                      (i_rst                        ),
     .din                      (fs_allowin                   ),
     .dout                     (to_fs_valid                  ),
-    .wen                      (fs_allowin                   )
+    .wen                      (1'b1                         )
   );
   wire                         br_sel                        ;
   wire [PC_WD-1:0            ] br_target                     ;
@@ -64,7 +64,7 @@ module ysyx_22050710_if_stage #(
     .rst                      (i_rst                        ),
     .din                      (to_fs_valid                  ), // ~reset
     .dout                     (fs_valid                     ),
-    .wen                      (1'b1                         )
+    .wen                      (fs_allowin                   )
   );
 
   ysyx_22050710_pc #(
