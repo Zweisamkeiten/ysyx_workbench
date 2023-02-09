@@ -58,6 +58,18 @@ module ysyx_22050710_if_stage #(
     .wen                      (fs_allowin                   )
   );
 
+  wire [SRAM_DATA_WD-1:0      ] fs_inst_sram_rdata           ;
+  Reg #(
+    .WIDTH                    (SRAM_DATA_WD                 ),
+    .RESET_VAL                (0                            )
+  ) u_fs_inst_sram_rdata (
+    .clk                      (i_clk                        ),
+    .rst                      (i_rst                        ),
+    .din                      (i_inst_sram_rdata            ),
+    .dout                     (fs_inst_sram_rdata           ),
+    .wen                      (to_fs_valid && fs_allowin    )
+  );
+
   ysyx_22050710_pc #(
     .PC_RESETVAL              (PC_RESETVAL                  ),
     .PC_WD                    (PC_WD                        ),
@@ -80,7 +92,7 @@ module ysyx_22050710_if_stage #(
     .i_pc_align               (fs_pc[2]                     ), // 取指访问指令sram 64位对齐 根据 pc[2] 选择前32bits还是后32bits
     .o_inst                   (fs_inst                      ),
     // inst sram interface
-    .i_inst_sram_rdata        (i_inst_sram_rdata           )
+    .i_inst_sram_rdata        (fs_inst_sram_rdata           )
   );
 
 endmodule
