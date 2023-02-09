@@ -18,9 +18,7 @@ module ysyx_22050710_inst_sram #(
   end
 
   always @(posedge i_clk) begin
-    if (i_ren) begin
       o_rdata <= rdata;
-    end
   end
 
 endmodule
