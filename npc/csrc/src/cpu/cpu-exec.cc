@@ -247,10 +247,6 @@ void cpu_exec(uint64_t n) {
     npc_state.state = NPC_RUNNING;
   }
 
-  single_cycle(0);
-  single_cycle(0);
-  single_cycle(0);
-  single_cycle(0);
   execute(n);
 
   switch (npc_state.state) {
