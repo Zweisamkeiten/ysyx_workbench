@@ -161,12 +161,6 @@ module ysyx_22050710_id_stage #(
                                 invalid_inst_sel                //   0:0
   };
 
-  always @(posedge i_clk) begin
-    if (gpr_rf_wen) begin
-      state_machine_change();
-    end
-  end
-
   ysyx_22050710_gpr #(
     .ADDR_WIDTH               (GPR_ADDR_WD                  ),
     .DATA_WIDTH               (GPR_WD                       )

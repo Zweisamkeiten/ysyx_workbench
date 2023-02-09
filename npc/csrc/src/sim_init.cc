@@ -14,11 +14,6 @@ VerilatedVcdC *tfp = NULL;
 #endif
 uint64_t * npcpc;
 
-int a_inst_executed = 0; // 用于流水线npc通知仿真环境一条指令完全执行完毕, 状态机改变
-void state_machine_change() {
-  a_inst_executed = 1;
-}
-
 void set_state_end() {
   npc_state.state = NPC_END;
   npc_state.halt_pc = *npcpc;

@@ -19,7 +19,7 @@ int main(int argc, char **argv, char **env) {
   end_sim();
 
   switch (npc_state.state) {
-    case NPC_END: 
+    case NPC_END:
       if (npc_state.halt_ret == 0) {
         printf(ANSI_FMT( "Successful exit.\n", ANSI_FG_GREEN));
         break;
