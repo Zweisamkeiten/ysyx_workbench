@@ -14,7 +14,7 @@ module ysyx_22050710_inst_sram #(
   wire  [SRAM_DATA_WD-1:0     ] rdata                         ;  // address register for pmem read.
 
   always @(*) begin
-    npc_pmem_read(64'h80000000, rdata);
+    npc_pmem_read({32'b0, i_addr}, rdata);
   end
 
   always @(posedge i_clk) begin
