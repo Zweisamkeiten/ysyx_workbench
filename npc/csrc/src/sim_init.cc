@@ -100,7 +100,7 @@ extern "C" void init_sim() {
   tfp->open("dump.vcd");
 #endif
 
-  reset(1);
+  reset(2);
 
   npc_state.state = NPC_RUNNING;
 
