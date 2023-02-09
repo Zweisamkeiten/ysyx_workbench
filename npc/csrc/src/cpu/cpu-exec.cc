@@ -209,7 +209,6 @@ void exec_once() {
   while (a_inst_executed == 0){
     single_cycle(0);
   }
-  single_cycle(0);
   a_inst_executed = 0;
   cpu.pc = *npcpc;
   trace_and_difftest(cpu.pc);
