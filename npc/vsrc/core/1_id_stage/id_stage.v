@@ -161,7 +161,7 @@ module ysyx_22050710_id_stage #(
                                 invalid_inst_sel                //   0:0
   };
 
-  always @(posedge i_clk) begin
+  always @(negedge i_clk) begin
     if (gpr_rf_wen) begin
       state_machine_change();
     end
