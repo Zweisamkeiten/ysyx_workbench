@@ -20,7 +20,7 @@ module ysyx_22050710_inst_sram #(
         rdata <= 64'h000091170000413;
       end
       else if (i_addr == 32'h80000008 || i_addr == 32'h8000000c) begin
-        rdata <= 64'h00c00efffc19113;
+        rdata <= 64'h00c00efffc10113;
       end
     end
   end
