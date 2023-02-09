@@ -10,7 +10,7 @@ module ysyx_22050710_data_sram #(
   input  [SRAM_ADDR_WD-1:0   ] i_addr                        ,  // 单端口用于读写地址
   // read port
   input                        i_ren                         ,
-  output [SRAM_DATA_WD-1:0   ] o_rdata                       ,
+  output reg [SRAM_DATA_WD-1:0   ] o_rdata                       ,
   // write port
   input                        i_wen                         ,
   input  [SRAM_WMASK_WD-1:0  ] i_wmask                       ,
@@ -22,12 +22,16 @@ module ysyx_22050710_data_sram #(
   assign raddr               = i_addr;
   assign waddr               = i_addr;
 
-  reg  [SRAM_DATA_WD-1:0     ] rdata                         ;  // read register for pmem read.
+  wire  [SRAM_DATA_WD-1:0     ] rdata                         ;  // read register for pmem read.
+
+  always @(*) begin
+    npc_pmem_read({32'b0, raddr}, rdata);
+  end
 
   // read port
   always @(posedge i_clk) begin                                 // 改为 同步接口 延迟一周期返回
     if (i_ren) begin
-      npc_pmem_read({32'b0, raddr}, rdata);
+      o_rdata <= rdata;
     end
   end
 
@@ -37,7 +41,5 @@ module ysyx_22050710_data_sram #(
       npc_pmem_write({32'b0, waddr}, i_wdata, i_wmask);
     end
   end
-
-  assign o_rdata             = i_ren ? rdata : 0             ;
 
 endmodule
