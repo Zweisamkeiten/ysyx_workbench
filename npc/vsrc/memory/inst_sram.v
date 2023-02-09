@@ -17,10 +17,10 @@ module ysyx_22050710_inst_sram #(
     if (i_ren) begin
       /* npc_pmem_read({32'b0, i_addr}, rdata); */
       if (i_addr == 32'h80000000 || i_addr == 32'h80000004) begin
-        rdata <= 64'h000091170000413;
+        rdata <= 64'h0000911700000413;
       end
       else if (i_addr == 32'h80000008 || i_addr == 32'h8000000c) begin
-        rdata <= 64'h00c00efffc10113;
+        rdata <= 64'h000c00efffc10113;
       end
     end
   end
