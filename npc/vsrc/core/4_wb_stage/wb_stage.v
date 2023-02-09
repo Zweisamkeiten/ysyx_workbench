@@ -17,7 +17,10 @@ module ysyx_22050710_wb_stage #(
   input                        i_ms_to_ws_valid              ,
   input  [MS_TO_WS_BUS_WD-1:0] i_ms_to_ws_bus                ,
   // to rf
-  output [WS_TO_RF_BUS_WD-1:0] o_ws_to_rf_bus
+  output [WS_TO_RF_BUS_WD-1:0] o_ws_to_rf_bus                ,
+  // 阻塞解决数据相关性冲突: es, ms, ws 目的寄存器比较
+  output [GPR_ADDR_WD-1:0    ] o_ws_to_ds_gpr_rd             ,
+  output [CSR_ADDR_WD-1:0    ] o_ws_to_ds_csr_rd
 );
 
   wire                         ws_valid                      ;
@@ -63,6 +66,9 @@ module ysyx_22050710_wb_stage #(
           ws_csr                                             ,
           ws_csr_final_result
           }                  = ms_to_ws_bus_r                ;
+
+  assign o_ws_to_ds_gpr_rd   = {GPR_ADDR_WD{ws_valid}} & {GPR_ADDR_WD{ws_gpr_wen}} & ws_rd;
+  assign o_ws_to_ds_csr_rd   = {GPR_ADDR_WD{ws_valid}} & {GPR_ADDR_WD{ws_csr_wen}} & ws_csr;
 
   ysyx_22050710_wbu #(
     .GPR_ADDR_WD              (GPR_ADDR_WD                  ),

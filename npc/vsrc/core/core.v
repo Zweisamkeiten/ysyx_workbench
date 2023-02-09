@@ -52,6 +52,13 @@ module ysyx_22050710_core #(
   wire [WS_TO_RF_BUS_WD -1:0 ] ws_to_rf_bus                  ;
   wire [BR_BUS_WD-1:0        ] br_bus                        ;
 
+  wire [GPR_ADDR_WD-1:0      ] es_to_ds_gpr_rd               ;
+  wire [GPR_ADDR_WD-1:0      ] ms_to_ds_gpr_rd               ;
+  wire [GPR_ADDR_WD-1:0      ] ws_to_ds_gpr_rd               ;
+  wire [CSR_ADDR_WD-1:0      ] es_to_ds_csr_rd               ;
+  wire [CSR_ADDR_WD-1:0      ] ms_to_ds_csr_rd               ;
+  wire [CSR_ADDR_WD-1:0      ] ws_to_ds_csr_rd               ;
+
   ysyx_22050710_if_stage #(
     .INST_WD                  (INST_WD                      ),
     .PC_RESETVAL              (PC_RESETVAL                  ),
@@ -104,7 +111,14 @@ module ysyx_22050710_core #(
     // to fs
     .o_br_bus                 (br_bus                       ),
     // from ws to rf: for write back
-    .i_ws_to_rf_bus           (ws_to_rf_bus                 )
+    .i_ws_to_rf_bus           (ws_to_rf_bus                 ),
+    // 阻塞解决数据相关性冲突: es, ms, ws 目的寄存器比较
+    .i_es_to_ds_gpr_rd        (es_to_ds_gpr_rd              ),
+    .i_ms_to_ds_gpr_rd        (ms_to_ds_gpr_rd              ),
+    .i_ws_to_ds_gpr_rd        (ws_to_ds_gpr_rd              ),
+    .i_es_to_ds_csr_rd        (es_to_ds_csr_rd              ),
+    .i_ms_to_ds_csr_rd        (ms_to_ds_csr_rd              ),
+    .i_ws_to_ds_csr_rd        (ws_to_ds_csr_rd              )
   );
 
   ysyx_22050710_ex_stage #(
@@ -137,7 +151,10 @@ module ysyx_22050710_core #(
     .o_data_sram_ren          (o_data_sram_ren              ), // data ram 读请求或写请求是在 ex stage 发出
     .o_data_sram_wen          (o_data_sram_wen              ), // data ram 的读数据在mem stage 返回
     .o_data_sram_wmask        (o_data_sram_wmask            ),
-    .o_data_sram_wdata        (o_data_sram_wdata            )
+    .o_data_sram_wdata        (o_data_sram_wdata            ),
+    // 目的寄存器
+    .o_es_to_ds_gpr_rd        (es_to_ds_gpr_rd              ),
+    .o_es_to_ds_csr_rd        (es_to_ds_csr_rd              )
   );
 
   ysyx_22050710_mem_stage #(
@@ -161,6 +178,9 @@ module ysyx_22050710_core #(
     .o_ms_to_ws_bus           (ms_to_ws_bus                 ),
     // from data-sram
     .i_data_sram_rdata        (i_data_sram_rdata            )  // data ram 读数据返回 进入 lsu 进行处理
+    // 目的寄存器
+    .o_ms_to_ds_gpr_rd        (ms_to_ds_gpr_rd              ),
+    .o_ms_to_ds_csr_rd        (ms_to_ds_csr_rd              )
   );
 
   ysyx_22050710_wb_stage #(
@@ -181,6 +201,9 @@ module ysyx_22050710_core #(
     .i_ms_to_ws_bus           (ms_to_ws_bus                 ),
     // to rf
     .o_ws_to_rf_bus           (ws_to_rf_bus                 )
+    // 目的寄存器
+    .o_ws_to_ds_gpr_rd        (ws_to_ds_gpr_rd              ),
+    .o_ws_to_ds_csr_rd        (ws_to_ds_csr_rd              )
   );
 
 endmodule
