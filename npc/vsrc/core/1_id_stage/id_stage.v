@@ -78,7 +78,7 @@ module ysyx_22050710_id_stage #(
     .rst                      (i_rst                        ),
     .din                      (i_fs_to_ds_bus               ),
     .dout                     (fs_to_ds_bus_r               ),
-    .wen                      (i_fs_to_ds_valid&&o_ds_allowin&& (bren ? br_target == fs_pc : 0 ))
+    .wen                      (i_fs_to_ds_valid&&o_ds_allowin&& (bren ? br_target == fs_pc : 1 ))
   );
 
   wire [INST_WD-1:0          ] ds_inst                       ;
