@@ -21,6 +21,7 @@ void finish_handle(long long pc, long long inst) {
   last_pc = pc;
   cpu.inst = inst;
   a_inst_finished = 1;
+  printf("clk %d\n", top->i_clk);
   printf("cycle: %d, pc: %lx, inst: %lx\n", cycle, (word_t)pc, (word_t)inst);
 }
 
