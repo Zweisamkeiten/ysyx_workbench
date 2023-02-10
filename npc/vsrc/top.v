@@ -20,7 +20,9 @@ module ysyx_22050710_top #(
   parameter SRAM_DATA_WD     = `ysyx_22050710_SRAM_DATA_WD
 ) (
   input                        i_clk                         ,
-  input                        i_rst
+  input                        i_rst                         ,
+  output [PC_WD-1:0          ] o_debug_pc                    ,
+  output [INST_WD-1:0        ] o_debug_inst
 );
 
   // cpu inst sram
