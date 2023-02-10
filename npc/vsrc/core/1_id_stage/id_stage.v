@@ -281,6 +281,7 @@ module ysyx_22050710_id_stage #(
   wire [PC_WD-1:0            ] wb_pc                         ;
   wire [INST_WD-1:0          ] wb_inst                       ;
   reg                          debug_valid_delay0            ;
+  reg                          debug_valid_delay1            ;
 
   always @(posedge i_clk) begin
     if (i_rst) begin
@@ -288,6 +289,7 @@ module ysyx_22050710_id_stage #(
     end
     else begin
       debug_valid_delay0 <= wb_valid;
+      debug_valid_delay1 <= debug_valid_delay0;
     end
   end
 
