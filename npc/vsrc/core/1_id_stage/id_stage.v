@@ -294,10 +294,10 @@ module ysyx_22050710_id_stage #(
   end
 
 
-  always @(posedge i_clk) begin
+  always @(*) begin
     $display(wb_valid);
     $display(debug_valid_delay0);
-    if (debug_valid_delay0 & ds_ready_go) begin
+    if (debug_valid_delay0) begin
       finish_handle(wb_pc, {32'b0, wb_inst});
     end
   end
