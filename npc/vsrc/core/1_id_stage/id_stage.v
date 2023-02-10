@@ -285,7 +285,8 @@ module ysyx_22050710_id_stage #(
   reg [PC_WD-1:0             ] debug_pc1                     ;
   reg [INST_WD-1:0           ] debug_inst0                   ;
   reg [INST_WD-1:0           ] debug_inst1                   ;
-  always *(posedge i_clk) begin
+
+  always @(posedge i_clk) begin
     if (i_rst) begin
       debug_valid_delay0 <= 0;
       debug_valid_delay1 <= 0;
