@@ -1,4 +1,5 @@
 // ysyx_22050710 Id stage
+import "DPI-C" function void inst_finish_handle();
 
 module ysyx_22050710_id_stage #(
   parameter WORD_WD                                          ,
@@ -158,6 +159,12 @@ module ysyx_22050710_id_stage #(
                                 ebreak_sel                   ,  //   1:1
                                 invalid_inst_sel                //   0:0
   };
+
+  always @(*) begin
+    if (gpr_rf_wen) begin
+      inst_finish_handle();
+    end
+  end
 
   ysyx_22050710_gpr #(
     .ADDR_WIDTH               (GPR_ADDR_WD                  ),
