@@ -142,7 +142,8 @@ module ysyx_22050710_id_stage #(
   assign o_br_bus            = {br_sel, br_target           };
 
   // id stage to ex stage
-  assign o_ds_to_es_bus      = {ds_inst                      ,  // 390:359
+  assign o_ds_to_es_bus      = {ds_ready_go                  ,  // 391:391 debug
+                                ds_inst                      ,  // 390:359 debug
                                 rs1data                      ,  // 358:295
                                 rs2data                      ,  // 294:231
                                 csrrdata                     ,  // 230:167

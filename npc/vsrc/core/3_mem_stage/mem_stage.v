@@ -72,9 +72,11 @@ module ysyx_22050710_mem_stage #(
 
   // debug
   wire [PC_WD-1:0            ] ms_pc                         ;
-  wire [INST_WD-1:0          ] ms_inst                         ;
+  wire [INST_WD-1:0          ] ms_inst                       ;
+  wire                         ms_debug_valid                ;
 
-  assign {ms_inst                                            , // debug
+  assign {ms_debug_valid                                     , // debug
+          ms_inst                                            , // debug
           ms_pc                                              , // debug
           ms_rd                                              ,
           ms_csr                                             ,
@@ -98,7 +100,8 @@ module ysyx_22050710_mem_stage #(
 
   assign ms_csr_final_result  = ms_csr_result                 ;
 
-  assign o_ms_to_ws_bus      = {ms_inst                      ,
+  assign o_ms_to_ws_bus      = {ms_debug_valid               ,
+                                ms_inst                      ,
                                 ms_pc                        ,
                                 ms_gpr_wen                   ,
                                 ms_rd                        ,
