@@ -80,7 +80,7 @@ extern "C" void npc_pmem_write(long long waddr, long long wdata, char wmask) {
 extern "C" void single_cycle(int rst) {
 #ifdef CONFIG_VCD_TRACE
   cycle ++;
-  printf("cycle: %d\n", cycle);
+  // printf("cycle: %d\n", cycle);
 #endif
   top->i_clk = 0;
   top->i_rst = rst;
