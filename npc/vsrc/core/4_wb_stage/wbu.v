@@ -16,10 +16,17 @@ module ysyx_22050710_wbu #(
   input  [CSR_ADDR_WD-1:0    ] i_csr_waddr                   ,
   input  [CSR_WD-1:0         ] i_csr_wdata                   ,
   // output to rf bus
-  output [WS_TO_RF_BUS_WD-1:0] o_to_rf_bus
+  output [WS_TO_RF_BUS_WD-1:0] o_to_rf_bus                   ,
+  // debug interface
+  input                        i_debug_valid                 ,
+  input  [PC_WD-1:0          ] i_debug_pc                    ,
+  input  [INST_WD-1:0        ] i_debug_inst
 );
 
-  assign o_to_rf_bus         = {i_gpr_wen                    ,
+  assign o_to_rf_bus         = {i_debug_valid                ,
+                                i_debug_pc                   ,
+                                i_debug_inst                 ,
+                                i_gpr_wen                    ,
                                 i_gpr_waddr                  ,
                                 i_gpr_wdata                  ,
                                 i_csr_wen                    ,

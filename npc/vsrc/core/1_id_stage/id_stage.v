@@ -1,5 +1,7 @@
 // ysyx_22050710 Id stage
 
+import "DPI-C" function void finish_handle(input longint pc, input longint inst);
+
 module ysyx_22050710_id_stage #(
   parameter WORD_WD                                          ,
   parameter INST_WD                                          ,
@@ -117,7 +119,15 @@ module ysyx_22050710_id_stage #(
   wire [CSR_ADDR_WD-1:0      ] csr_rf_waddr                  ;
   wire [CSR_WD-1:0           ] csr_rf_wdata                  ;
 
-  assign {gpr_rf_wen                                         ,  // 146:146
+  // debug
+  wire                         debug_valid                   ;
+  wire [PC_WD-1:0            ] debug_pc                      ;
+  wire [INST_WD-1:0          ] debug_inst                    ;
+
+  assign {debug_valid                                        ,
+          debug_pc                                           ,
+          debug_inst                                         ,  // 146:146
+          gpr_rf_wen                                         ,  // 146:146
           gpr_rf_waddr                                       ,  // 145:141
           gpr_rf_wdata                                       ,  // 140:77
           csr_rf_wen                                         ,  // 76 :76
@@ -269,5 +279,46 @@ module ysyx_22050710_id_stage #(
     // invalid inst
     .o_invalid_inst_sel       (invalid_inst_sel             )
   );
+
+  wire                         debug_valid_delay             ;
+  Reg #(
+    .WIDTH                    (1                            ),
+    .RESET_VAL                (0                            )
+  ) u_debug_valid_delay_r (
+    .clk                      (i_clk                        ),
+    .rst                      (i_rst                        ),
+    .din                      (debug_valid                  ),
+    .dout                     (debug_valid_delay            ),
+    .wen                      (debug_valid                  )
+  );
+
+  wire [PC_WD-1:0             ] debug_pc                      ;
+  wire [INST_WD-1:0           ] debug_inst                    ;
+  Reg #(
+    .WIDTH                    (PC_WD                        ),
+    .RESET_VAL                (0                            )
+  ) u_debug_pc_r (
+    .clk                      (i_clk                        ),
+    .rst                      (i_rst                        ),
+    .din                      (ws_pc                        ),
+    .dout                     (debug_pc                     ),
+    .wen                      (debug_valid                  )
+  );
+  Reg #(
+    .WIDTH                    (INST_WD                      ),
+    .RESET_VAL                (0                            )
+  ) u_debug_inst_r (
+    .clk                      (i_clk                        ),
+    .rst                      (i_rst                        ),
+    .din                      (ws_inst                      ),
+    .dout                     (debug_inst                   ),
+    .wen                      (debug_valid                  )
+  );
+
+  always @(posedge i_clk) begin
+    if (debug_valid_delay && ds_ready_go) begin
+      finish_handle(debug_pc, {32'b0, debug_inst});
+    end
+  end
 
 endmodule

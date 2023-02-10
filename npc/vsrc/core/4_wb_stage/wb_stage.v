@@ -1,7 +1,5 @@
 // ysyx_22050710 Write Back Stage
 
-import "DPI-C" function void finish_handle(input longint pc, input longint inst);
-
 module ysyx_22050710_wb_stage #(
   parameter WORD_WD                                          ,
   parameter PC_WD                                            ,
@@ -56,47 +54,6 @@ module ysyx_22050710_wb_stage #(
     .wen                      (i_ms_to_ws_valid&&o_ws_allowin)
   );
 
-  wire                         debug_valid                   ;
-  Reg #(
-    .WIDTH                    (1                            ),
-    .RESET_VAL                (0                            )
-  ) u_debug_valid_r (
-    .clk                      (i_clk                        ),
-    .rst                      (i_rst                        ),
-    .din                      (1'b1                         ),
-    .dout                     (debug_valid                  ),
-    .wen                      (i_ms_to_ws_valid&&o_ws_allowin)
-  );
-
-  wire [PC_WD-1:0             ] debug_pc                      ;
-  wire [INST_WD-1:0           ] debug_inst                    ;
-  Reg #(
-    .WIDTH                    (PC_WD                        ),
-    .RESET_VAL                (0                            )
-  ) u_debug_pc_r (
-    .clk                      (i_clk                        ),
-    .rst                      (i_rst                        ),
-    .din                      (ws_pc                        ),
-    .dout                     (debug_pc                     ),
-    .wen                      (i_ms_to_ws_valid&&o_ws_allowin)
-  );
-  Reg #(
-    .WIDTH                    (INST_WD                      ),
-    .RESET_VAL                (0                            )
-  ) u_debug_inst_r (
-    .clk                      (i_clk                        ),
-    .rst                      (i_rst                        ),
-    .din                      (ws_inst                      ),
-    .dout                     (debug_inst                   ),
-    .wen                      (i_ms_to_ws_valid&&o_ws_allowin)
-  );
-
-  always @(posedge i_clk) begin
-    if (debug_valid) begin
-      finish_handle(debug_pc, {32'b0, debug_inst});
-    end
-  end
-
   wire [GPR_ADDR_WD-1:0      ] ws_rd                         ;
   wire [CSR_ADDR_WD-1:0      ] ws_csr                        ;
   wire                         ws_gpr_wen                    ; // gpr 写使能
@@ -137,7 +94,11 @@ module ysyx_22050710_wb_stage #(
     .i_csr_waddr              (ws_csr                       ),
     .i_csr_wdata              (ws_csr_final_result          ),
     // output to rf bus
-    .o_to_rf_bus              (o_ws_to_rf_bus               )
+    .o_to_rf_bus              (o_ws_to_rf_bus               ),
+    // debug interface
+    .i_debug_valid            (i_ms_to_ws_valid&&o_ws_allowin),
+    .i_debug_pc               (ws_pc                        ),
+    .i_debug_inst             (ws_inst                      )
   );
 
 endmodule
