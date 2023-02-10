@@ -120,12 +120,14 @@ module ysyx_22050710_id_stage #(
   wire [CSR_WD-1:0           ] csr_rf_wdata                  ;
 
   // debug
+  wire [PC_WD-1:0            ] wb_pc                         ;
+  wire [INST_WD-1:0          ] wb_inst                       ;
   wire                         debug_valid                   ;
   wire [PC_WD-1:0            ] debug_pc                      ;
   wire [INST_WD-1:0          ] debug_inst                    ;
 
-  assign {debug_valid                                        ,
-          debug_pc                                           ,
+  assign {wb_pc                                              ,
+          wb_inst                                            ,
           debug_inst                                         ,  // 146:146
           gpr_rf_wen                                         ,  // 146:146
           gpr_rf_waddr                                       ,  // 145:141
@@ -300,7 +302,7 @@ module ysyx_22050710_id_stage #(
   ) u_debug_pc_r (
     .clk                      (i_clk                        ),
     .rst                      (i_rst                        ),
-    .din                      (ws_pc                        ),
+    .din                      (wb_pc                        ),
     .dout                     (debug_pc                     ),
     .wen                      (debug_valid                  )
   );
@@ -310,7 +312,7 @@ module ysyx_22050710_id_stage #(
   ) u_debug_inst_r (
     .clk                      (i_clk                        ),
     .rst                      (i_rst                        ),
-    .din                      (ws_inst                      ),
+    .din                      (wb_inst                      ),
     .dout                     (debug_inst                   ),
     .wen                      (debug_valid                  )
   );
