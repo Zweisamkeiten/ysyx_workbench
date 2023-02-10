@@ -123,6 +123,9 @@ module ysyx_22050710_id_stage #(
   wire                         wb_valid                      ;
   wire [PC_WD-1:0            ] wb_pc                         ;
   wire [INST_WD-1:0          ] wb_inst                       ;
+  wire                         debug_valid                   ;
+  wire [PC_WD-1:0            ] debug_pc                      ;
+  wire [INST_WD-1:0          ] debug_inst                    ;
 
   assign {wb_valid                                           ,
           wb_pc                                              ,
@@ -280,9 +283,43 @@ module ysyx_22050710_id_stage #(
     .o_invalid_inst_sel       (invalid_inst_sel             )
   );
 
+  Reg #(
+    .WIDTH                    (1                            ),
+    .RESET_VAL                (0                            )
+  ) u_debug_valid_r (
+    .clk                      (i_clk                        ),
+    .rst                      (i_rst                        ),
+    .din                      (ds_ready_go                  ),
+    .dout                     (debug_valid                  ),
+    .wen                      (wb_valid                     )
+  );
+
+  wire [PC_WD-1:0            ] debug_pc                      ;
+  wire [INST_WD-1:0          ] debug_inst                    ;
+  Reg #(
+    .WIDTH                    (PC_WD                        ),
+    .RESET_VAL                (0                            )
+  ) u_debug_pc_r (
+    .clk                      (i_clk                        ),
+    .rst                      (i_rst                        ),
+    .din                      (wb_pc                        ),
+    .dout                     (debug_pc                     ),
+    .wen                      (wb_valid                     )
+  );
+  Reg #(
+    .WIDTH                    (INST_WD                      ),
+    .RESET_VAL                (0                            )
+  ) u_debug_inst_r (
+    .clk                      (i_clk                        ),
+    .rst                      (i_rst                        ),
+    .din                      (wb_inst                      ),
+    .dout                     (debug_inst                   ),
+    .wen                      (wb_valid                     )
+  );
+
   always @(posedge i_clk) begin
-    if (wb_valid && ds_ready_go) begin
-      finish_handle(wb_pc, {32'b0, wb_inst});
+    if (debug_valid && ds_ready_go) begin
+      finish_handle(debug_pc, {32'b0, debug_inst});
     end
   end
 
