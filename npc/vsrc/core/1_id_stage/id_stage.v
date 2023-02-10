@@ -319,7 +319,7 @@ module ysyx_22050710_id_stage #(
 
   always @(*) begin
     $display(debug_valid);
-    $display("%x", debug_pc);
+    $display("%x, %x", debug_pc, wb_pc);
     if (debug_valid && o_ds_to_es_valid) begin
       finish_handle(debug_pc, {32'b0, debug_inst});
     end
