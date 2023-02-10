@@ -189,8 +189,8 @@ module ysyx_22050710_id_stage #(
          }                   = debug_ws_to_rf_bus_r          ;
 
   assign o_debug_ds_to_es_bus= {ds_ready_go                  ,  // blocking
-                                ds_pc                        ,
-                                ds_inst
+                                ds_inst                      ,
+                                ds_pc
   };
 
   always @(*) begin
