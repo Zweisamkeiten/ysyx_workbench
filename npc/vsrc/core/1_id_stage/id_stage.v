@@ -119,10 +119,7 @@ module ysyx_22050710_id_stage #(
   wire [CSR_ADDR_WD-1:0      ] csr_rf_waddr                  ;
   wire [CSR_WD-1:0           ] csr_rf_wdata                  ;
 
-  assign {wb_valid                                           ,
-          wb_pc                                              ,
-          wb_inst                                            ,
-          gpr_rf_wen                                         ,  // 146:146
+  assign {gpr_rf_wen                                         ,  // 146:146
           gpr_rf_waddr                                       ,  // 145:141
           gpr_rf_wdata                                       ,  // 140:77
           csr_rf_wen                                         ,  // 76 :76
@@ -142,9 +139,7 @@ module ysyx_22050710_id_stage #(
   assign o_br_bus            = {br_sel, br_target           };
 
   // id stage to ex stage
-  assign o_ds_to_es_bus      = {ds_ready_go                  ,  // 391:391 debug
-                                ds_inst                      ,  // 390:359 debug
-                                rs1data                      ,  // 358:295
+  assign o_ds_to_es_bus      = {rs1data                      ,  // 358:295
                                 rs2data                      ,  // 294:231
                                 csrrdata                     ,  // 230:167
                                 imm                          ,  // 166:103

@@ -66,10 +66,7 @@ module ysyx_22050710_wb_stage #(
   wire [PC_WD-1:0            ] ws_pc                         ;
   wire [INST_WD-1:0          ] ws_inst                       ;
 
-  assign {ws_debug_valid                                     ,
-          ws_inst                                            ,
-          ws_pc                                              ,
-          ws_gpr_wen                                         ,
+  assign {ws_gpr_wen                                         ,
           ws_rd                                              ,
           ws_gpr_final_result                                ,
           ws_csr_wen                                         ,
@@ -98,11 +95,7 @@ module ysyx_22050710_wb_stage #(
     .i_csr_waddr              (ws_csr                       ),
     .i_csr_wdata              (ws_csr_final_result          ),
     // output to rf bus
-    .o_to_rf_bus              (o_ws_to_rf_bus               ),
-    // debug interface
-    .i_debug_valid            (ws_debug_valid               ),
-    .i_debug_pc               (ws_pc                        ),
-    .i_debug_inst             (ws_inst                      )
+    .o_to_rf_bus              (o_ws_to_rf_bus               )
   );
 
 endmodule
