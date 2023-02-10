@@ -200,7 +200,6 @@ void exec_once() {
   while (a_inst_finished == 0) {
     single_cycle(0);
   }
-  // single_cycle(0);
   a_inst_finished = 0;
 #ifdef CONFIG_ITRACE
   // cpu.inst = paddr_read(last_pc, 4);
