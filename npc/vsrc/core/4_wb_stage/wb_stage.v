@@ -1,6 +1,6 @@
 // ysyx_22050710 Write Back Stage
 
-import "DPI-C" function void finish_handle(input longint pc, output longint inst);
+import "DPI-C" function void finish_handle(input longint pc, input longint inst);
 
 module ysyx_22050710_wb_stage #(
   parameter WORD_WD                                          ,
