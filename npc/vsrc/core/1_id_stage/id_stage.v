@@ -166,7 +166,7 @@ module ysyx_22050710_id_stage #(
   };
 
   // debug
-  wire [DS_TO_ES_BUS_WD-1:0  ] debug_ws_to_rf_bus_r          ;
+  wire [DEBUG_BUS_WD-1:0     ] debug_ws_to_rf_bus_r          ;
 
   Reg #(
     .WIDTH                    (DEBUG_BUS_WD                 ),
