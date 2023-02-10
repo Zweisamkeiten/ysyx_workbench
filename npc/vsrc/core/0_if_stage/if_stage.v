@@ -26,7 +26,7 @@ module ysyx_22050710_if_stage #(
 
   // pre if stage
   wire                         to_fs_valid                   ;
-  assign to_fs_valid         = ~i_rst;
+  assign to_fs_valid         = ~i_rst && ~br_sel              ;
   wire                         br_sel                        ;
   wire [PC_WD-1:0            ] br_target                     ;
   assign {br_sel, br_target} = i_br_bus                      ;
@@ -58,18 +58,6 @@ module ysyx_22050710_if_stage #(
     .wen                      (fs_allowin                   )
   );
 
-  wire [SRAM_DATA_WD-1:0      ] fs_inst_sram_rdata           ;
-  Reg #(
-    .WIDTH                    (SRAM_DATA_WD                 ),
-    .RESET_VAL                (0                            )
-  ) u_fs_inst_sram_rdata (
-    .clk                      (i_clk                        ),
-    .rst                      (i_rst                        ),
-    .din                      (i_inst_sram_rdata            ),
-    .dout                     (fs_inst_sram_rdata           ),
-    .wen                      (to_fs_valid && fs_allowin    )
-  );
-
   ysyx_22050710_pc #(
     .PC_RESETVAL              (PC_RESETVAL                  ),
     .PC_WD                    (PC_WD                        ),
@@ -77,7 +65,7 @@ module ysyx_22050710_if_stage #(
   ) u_pc (
     .i_clk                    (i_clk                        ),
     .i_rst                    (i_rst                        ),
-    .i_load                   (to_fs_valid && fs_allowin    ), // if stage 无数据 ds stage 允许写入 准备下一条指令取指
+    .i_load                   (to_fs_valid && fs_allowin || br_sel), // if stage 无数据 ds stage 允许写入 准备下一条指令取指
     .i_br_sel                 (br_sel                       ), // bru 控制指令的跳转在 id stage 完成 直接回到此处改变 pc
     .i_br_target              (br_target                    ), // 避免控制指令冲突问题
     .o_pc                     (fs_pc                        ),
@@ -92,7 +80,7 @@ module ysyx_22050710_if_stage #(
     .i_pc_align               (fs_pc[2]                     ), // 取指访问指令sram 64位对齐 根据 pc[2] 选择前32bits还是后32bits
     .o_inst                   (fs_inst                      ),
     // inst sram interface
-    .i_inst_sram_rdata        (fs_inst_sram_rdata           )
+    .i_inst_sram_rdata        (i_inst_sram_rdata            )
   );
 
 endmodule

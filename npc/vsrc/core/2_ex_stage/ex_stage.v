@@ -3,6 +3,7 @@
 module ysyx_22050710_ex_stage #(
   parameter WORD_WD                                          ,
   parameter PC_WD                                            ,
+  parameter INST_WD                                          ,
   parameter GPR_WD                                           ,
   parameter GPR_ADDR_WD                                      ,
   parameter CSR_WD                                           ,
@@ -12,7 +13,8 @@ module ysyx_22050710_ex_stage #(
   parameter ES_TO_MS_BUS_WD                                  ,
   parameter SRAM_ADDR_WD                                     ,
   parameter SRAM_WMASK_WD                                    ,
-  parameter SRAM_DATA_WD
+  parameter SRAM_DATA_WD                                     ,
+  parameter DEBUG_BUS_WD
 ) (
   input                        i_clk                         ,
   input                        i_rst                         ,
@@ -30,7 +32,13 @@ module ysyx_22050710_ex_stage #(
   output                       o_data_sram_ren               ,  // data ram 的读数据在mem stage 返回
   output                       o_data_sram_wen               ,
   output [SRAM_WMASK_WD-1:0  ] o_data_sram_wmask             ,
-  output [SRAM_DATA_WD-1:0   ] o_data_sram_wdata
+  output [SRAM_DATA_WD-1:0   ] o_data_sram_wdata             ,
+  // 阻塞解决数据相关性冲突: es, ms, ws 目的寄存器比较
+  output [GPR_ADDR_WD-1:0    ] o_es_to_ds_gpr_rd             ,
+  output [CSR_ADDR_WD-1:0    ] o_es_to_ds_csr_rd             ,
+  // debug
+  input  [DEBUG_BUS_WD-1:0   ] i_debug_ds_to_es_bus          ,
+  output [DEBUG_BUS_WD-1:0   ] o_debug_es_to_ms_bus
 );
 
   wire                         es_valid                      ;
@@ -109,6 +117,34 @@ module ysyx_22050710_ex_stage #(
           es_invalid_inst_sel                                   //   0:0
           }                   = ds_to_es_bus_r               ;
 
+  // debug
+  wire [DEBUG_BUS_WD-1:0     ] debug_ds_to_es_bus_r         ;
+
+  Reg #(
+    .WIDTH                    (DEBUG_BUS_WD                 ),
+    .RESET_VAL                (0                            )
+  ) u_debug_ds_to_es_bus_r (
+    .clk                      (i_clk                        ),
+    .rst                      (i_rst                        ),
+    .din                      (i_debug_ds_to_es_bus         ),
+    .dout                     (debug_ds_to_es_bus_r         ),
+    .wen                      (1'b1                         )
+  );
+
+  wire                         es_debug_valid                ;
+  wire [INST_WD-1:0          ] es_debug_inst                 ;
+  wire [PC_WD-1:0            ] es_debug_pc                   ;
+
+  assign {es_debug_valid                                     ,
+          es_debug_inst                                      ,
+          es_debug_pc
+         }                   = debug_ds_to_es_bus_r          ;
+
+  assign o_debug_es_to_ms_bus= {es_debug_valid               ,
+                                es_debug_inst                ,
+                                es_debug_pc
+                                                             };
+
   wire [WORD_WD-1:0          ] es_alu_result                 ;
   wire [WORD_WD-1:0          ] es_csr_result                 ;
   assign o_es_to_ms_bus      = {es_rd                        ,
@@ -122,6 +158,9 @@ module ysyx_22050710_ex_stage #(
                                 es_alu_result                ,
                                 es_csr_result               };
 
+  assign o_es_to_ds_gpr_rd   = {GPR_ADDR_WD{es_valid}} & {GPR_ADDR_WD{es_gpr_wen}} & es_rd;
+  assign o_es_to_ds_csr_rd   = {CSR_ADDR_WD{es_valid}} & {CSR_ADDR_WD{es_csr_wen}} & es_csr;
+
   ysyx_22050710_exu #(
     .WORD_WD                  (WORD_WD                      ),
     .PC_WD                    (PC_WD                        ),
@@ -129,6 +168,7 @@ module ysyx_22050710_ex_stage #(
     .CSR_WD                   (CSR_WD                       ),
     .IMM_WD                   (IMM_WD                       )
   ) u_exu (
+    .i_clk                    (i_clk                        ),
     // oprand
     .i_rs1data                (es_rs1data                   ),
     .i_rs2data                (es_rs2data                   ),
@@ -163,7 +203,6 @@ module ysyx_22050710_ex_stage #(
     .o_wdata                  (o_data_sram_wdata            )
   );
 
-  always @* $display(es_mem_wen);
   assign o_data_sram_ren     = es_mem_ren                    ;
   assign o_data_sram_wen     = es_mem_wen && es_valid        ;
   assign o_data_sram_addr    = es_alu_result[31:0]           ; // x[rs1] + imm

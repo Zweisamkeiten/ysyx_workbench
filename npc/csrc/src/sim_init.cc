@@ -11,8 +11,20 @@ Vtop *top;
 #ifdef CONFIG_VCD_TRACE
 VerilatedContext *contextp = NULL;
 VerilatedVcdC *tfp = NULL;
+int cycle = 0;
 #endif
 uint64_t * npcpc;
+
+void finish_handle(long long pc, long long inst) {
+  extern vaddr_t last_pc;
+  extern int a_inst_finished;
+  last_pc = pc;
+  cpu.inst = inst;
+  a_inst_finished = 1;
+#ifdef CONFIG_VCD_TRACE
+  printf("cycle: %d, pc: %lx, inst: %lx\n", cycle, (word_t)pc, (word_t)inst);
+#endif
+}
 
 void set_state_end() {
   npc_state.state = NPC_END;
@@ -66,6 +78,10 @@ extern "C" void npc_pmem_write(long long waddr, long long wdata, char wmask) {
 }
 
 extern "C" void single_cycle(int rst) {
+#ifdef CONFIG_VCD_TRACE
+  cycle ++;
+  // printf("cycle: %d\n", cycle);
+#endif
   top->i_clk = 0;
   top->i_rst = rst;
   top->eval();
