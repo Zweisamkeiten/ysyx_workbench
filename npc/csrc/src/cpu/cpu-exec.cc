@@ -146,7 +146,7 @@ static uint32_t last_inst;
 void print_iringbuf() {
   printf(ANSI_FMT("INSTRUCTIONS RING STRACE:\n", ANSI_FG_RED));
   char logbuf[128];
-  disassemble_inst_to_buf(logbuf, 128, (uint8_t *)&last_inst, cpu.pc, snpc);
+  disassemble_inst_to_buf(logbuf, 128, (uint8_t *)&last_inst, cpu.pc, last_pc);
   int arrow_len = strlen(" --> ");
   iringbuf[iringbuf_index] = (char *)realloc(iringbuf[iringbuf_index], arrow_len + strlen(logbuf) + 1);
   char *p = iringbuf[iringbuf_index];
@@ -190,7 +190,7 @@ static void trace_and_difftest(vaddr_t dnpc) {
   }
 #endif
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(itrace_logbuf)); }
-  IFDEF(CONFIG_DIFFTEST, difftest_step(snpc, dnpc));
+  IFDEF(CONFIG_DIFFTEST, difftest_step(last_pc, dnpc));
   IFDEF(CONFIG_WATCHPOINT, diff_watchpoint_value());
 }
 
