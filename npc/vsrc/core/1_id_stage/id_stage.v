@@ -53,7 +53,7 @@ module ysyx_22050710_id_stage #(
                               || (i_ms_to_ds_csr_rd != 0 && i_ms_to_ds_csr_rd == csr)
                               || (i_ws_to_ds_csr_rd != 0 && i_ws_to_ds_csr_rd == csr));
   assign o_ds_allowin        = (!ds_valid) || (ds_ready_go && i_es_allowin);
-  assign o_ds_to_es_valid    = ds_valid && ds_ready_go && ~bren;
+  assign o_ds_to_es_valid    = ds_valid && ds_ready_go       ;
 
   Reg #(
     .WIDTH                    (1                            ),
@@ -143,7 +143,7 @@ module ysyx_22050710_id_stage #(
   assign o_br_bus            = {br_sel, br_target           };
 
   // id stage to ex stage
-  assign o_ds_to_es_bus      = {rs1data                      ,  // 358:295
+  assign o_ds_to_es_bus      = bren ? {DS_TO_ES_BUS_WD{1'b0}} :{rs1data                      ,  // 358:295
                                 rs2data                      ,  // 294:231
                                 csrrdata                     ,  // 230:167
                                 imm                          ,  // 166:103
