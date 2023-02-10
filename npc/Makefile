@@ -11,7 +11,7 @@ else
 export VERILATOR_ROOT
 VERILATOR = $(VERILATOR_ROOT)/bin/verilator
 endif
-VERILATOR_CFLAGS += --compiler clang --build -cc -j $(shell nproc) -Wall -Wno-DECLFILENAME -O3 --x-assign fast --x-initial fast --noassert --trace -I./vsrc -CFLAGS -O3 -LDFLAGS -flto #-O0
+VERILATOR_CFLAGS += --compiler clang --build -cc -j $(shell nproc) -Wall -Wno-DECLFILENAME -O3 --x-assign fast --x-initial fast --noassert --trace -I./vsrc -CFLAGS -march=native -CFLAGS -O3 -LDFLAGS -flto #-O0
 
 remove_quote = $(patsubst "%",%,$(1))
 
