@@ -297,7 +297,7 @@ module ysyx_22050710_id_stage #(
       debug_inst1        <= 0;
     end
     else begin
-      debug_valid_delay0 <= wb_valid;
+      debug_valid_delay0 <= wb_valid & ds_ready_go;
       debug_valid_delay1 <= debug_valid_delay0;
 
       debug_pc0          <= wb_pc;
