@@ -300,6 +300,7 @@ module ysyx_22050710_id_stage #(
 
 
   always @(*) begin
+    $display(debug_valid_delay0);
     if (debug_valid_delay0 && o_ds_to_es_valid) begin
       finish_handle(debug_pc0, {32'b0, debug_inst0});
     end
