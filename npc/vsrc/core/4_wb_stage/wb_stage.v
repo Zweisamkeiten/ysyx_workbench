@@ -94,7 +94,6 @@ module ysyx_22050710_wb_stage #(
   always @(posedge i_clk) begin
     if (debug_valid) begin
       finish_handle(debug_pc, {32'b0, debug_inst});
-      debug_valid <= 0;
     end
   end
 
