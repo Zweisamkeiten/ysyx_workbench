@@ -281,21 +281,13 @@ module ysyx_22050710_id_stage #(
   wire [PC_WD-1:0            ] wb_pc                         ;
   wire [INST_WD-1:0          ] wb_inst                       ;
   reg                          debug_valid_delay0            ;
-  reg [PC_WD-1:0             ] debug_pc0                     ;
-  reg [INST_WD-1:0           ] debug_inst0                   ;
 
   always @(posedge i_clk) begin
     if (i_rst) begin
       debug_valid_delay0 <= 0;
-      debug_pc0          <= 0;
-      debug_inst0        <= 0;
     end
     else begin
       debug_valid_delay0 <= wb_valid;
-
-      debug_pc0          <= wb_pc;
-
-      debug_inst0        <= wb_inst;
     end
   end
 
@@ -304,7 +296,7 @@ module ysyx_22050710_id_stage #(
     $display(wb_valid);
     $display(debug_valid_delay0);
     if (debug_valid_delay0) begin
-      finish_handle(debug_pc0, {32'b0, debug_inst0});
+      finish_handle(ws_pc, {32'b0, ws_inst});
     end
   end
 
