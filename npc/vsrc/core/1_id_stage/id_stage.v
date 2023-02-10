@@ -123,7 +123,6 @@ module ysyx_22050710_id_stage #(
   wire                         wb_valid                      ;
   wire [PC_WD-1:0            ] wb_pc                         ;
   wire [INST_WD-1:0          ] wb_inst                       ;
-  wire                         debug_valid                   ;
   wire [PC_WD-1:0            ] debug_pc                      ;
   wire [INST_WD-1:0          ] debug_inst                    ;
 
@@ -283,17 +282,6 @@ module ysyx_22050710_id_stage #(
     .o_invalid_inst_sel       (invalid_inst_sel             )
   );
 
-  Reg #(
-    .WIDTH                    (1                            ),
-    .RESET_VAL                (0                            )
-  ) u_debug_valid_r (
-    .clk                      (i_clk                        ),
-    .rst                      (i_rst                        ),
-    .din                      (wb_valid                     ),
-    .dout                     (debug_valid                  ),
-    .wen                      (wb_valid                     )
-  );
-
   wire [PC_WD-1:0            ] debug_pc                      ;
   wire [INST_WD-1:0          ] debug_inst                    ;
   Reg #(
@@ -318,7 +306,7 @@ module ysyx_22050710_id_stage #(
   );
 
   always @(posedge i_clk) begin
-    if (debug_valid && ds_ready_go) begin
+    if (wb_valid && ds_ready_go) begin
       finish_handle(debug_pc, {32'b0, debug_inst});
     end
   end
