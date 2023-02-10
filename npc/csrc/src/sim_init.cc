@@ -13,6 +13,7 @@ VerilatedContext *contextp = NULL;
 VerilatedVcdC *tfp = NULL;
 #endif
 uint64_t * npcpc;
+int cycle = 0;
 
 void finish_handle(long long pc, long long inst) {
   extern vaddr_t last_pc;
@@ -87,6 +88,8 @@ extern "C" void single_cycle(int rst) {
   contextp->timeInc(1);
   tfp->dump(contextp->time());
 #endif
+  cycle ++;
+  printf("cycle: %d\n", cycle);
 }
 
 static void reset(int n) {
