@@ -205,7 +205,7 @@ module ysyx_22050710_id_stage #(
                                 ds_pc
   };
 
-  always @(posedge i_clk) begin
+  always @(*) begin
     $display(debug_valid);
     $display(rf_debug_valid);
     if (rf_debug_valid) begin
