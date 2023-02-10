@@ -197,10 +197,11 @@ static void trace_and_difftest(vaddr_t dnpc) {
 void exec_once() {
   cpu.pc = *npcpc;
   // printf("%lx\n", top->o_pc);
-  // while (a_inst_finished == 0) {
+  while (a_inst_finished == 0) {
     single_cycle(0);
-  // }
-  // a_inst_finished = 0;
+  }
+  single_cycle(0);
+  a_inst_finished = 0;
 #ifdef CONFIG_ITRACE
   // cpu.inst = paddr_read(last_pc, 4);
   disassemble_inst_to_buf(itrace_logbuf, 128, (uint8_t *)&(cpu.inst), last_pc, last_pc + 4);
