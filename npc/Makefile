@@ -11,7 +11,7 @@ else
 export VERILATOR_ROOT
 VERILATOR = $(VERILATOR_ROOT)/bin/verilator
 endif
-VERILATOR_CFLAGS += --compiler clang --build -cc -j $(shell nproc) -Wall -Wno-DECLFILENAME -O3 --x-assign fast --x-initial fast --noassert --trace  -I./vsrc --CFLAGS -O3 -march=native --LDFLAGS -flto #-O0
+VERILATOR_CFLAGS += --compiler clang --build -cc -j $(shell nproc) -Wall -Wno-DECLFILENAME -O3 --x-assign fast --x-initial fast --noassert --trace -I./vsrc -CFLAGS -O3 -march=native --LDFLAGS -flto #-O0
 
 remove_quote = $(patsubst "%",%,$(1))
 
@@ -41,7 +41,7 @@ CFLAGS_BUILD += $(if $(CONFIG_CC_DEBUG),-Og -ggdb3,)
 CFLAGS_TRACE += -DITRACE_COND=$(if $(CONFIG_ITRACE_COND),$(call remove_quote,$(CONFIG_ITRACE_COND)),true)
 CFLAGS_TRACE += -DIRINGTRACE_COND=$(if $(CONFIG_IRINGTRACE_COND),$(call remove_quote,$(CONFIG_IRINGTRACE_COND)),true)
 CFLAGS_TRACE += -DFTRACE_COND=$(if $(CONFIG_FTRACE_COND),$(call remove_quote,$(CONFIG_FTRACE_COND)),true)
-CFLAGS  += $(CFLAGS_BUILD) $(CFLAGS_TRACE)
+CFLAGS  += $(CFLAGS_BUILD) $(CFLAGS_TRACE) -march=native
 LDFLAGS += $(CFLAGS_BUILD) -latomic
 
 # Include rules for menuconfig
