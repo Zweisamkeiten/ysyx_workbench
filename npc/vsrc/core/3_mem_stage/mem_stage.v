@@ -63,7 +63,7 @@ module ysyx_22050710_mem_stage #(
   );
 
   // debug
-  wire [DS_TO_ES_BUS_WD-1:0  ] debug_es_to_ms_bus_r          ;
+  wire [DEBUG_BUS_WD-1:0     ] debug_es_to_ms_bus_r          ;
 
   Reg #(
     .WIDTH                    (DEBUG_BUS_WD                 ),

@@ -118,7 +118,7 @@ module ysyx_22050710_ex_stage #(
           }                   = ds_to_es_bus_r               ;
 
   // debug
-  wire [DS_TO_ES_BUS_WD-1:0  ] debug_ds_to_es_bus_r          ;
+  wire [DEBUG_BUS_WD-1:0     ] debug_ds_to_es_bus_r         ;
 
   Reg #(
     .WIDTH                    (DEBUG_BUS_WD                 ),
