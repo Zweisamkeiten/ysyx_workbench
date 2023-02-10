@@ -317,7 +317,7 @@ module ysyx_22050710_id_stage #(
     .wen                      (wb_valid                     )
   );
 
-  always @(posedge i_clk) begin
+  always @(negedge i_clk) begin
     $display(debug_valid);
     $display(wb_valid);
     $display(wb_valid);
