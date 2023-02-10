@@ -294,7 +294,7 @@ module ysyx_22050710_id_stage #(
 
   always @(*) begin
     $display(wb_valid);
-    $display(debug_valid_delay0);
+    /* $display(debug_valid_delay0); */
     if (wb_valid) begin
       finish_handle(wb_pc, {32'b0, wb_inst});
     end
