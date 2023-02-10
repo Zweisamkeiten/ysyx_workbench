@@ -46,7 +46,7 @@ module ysyx_22050710_id_stage #(
 
   wire                         ds_valid                      ;
   wire                         ds_ready_go                   ;
-  assign ds_ready_go         = (bren ? brfunc == 3'b000) : 0 || !((i_es_to_ds_gpr_rd != 0 && (ebreak_sel ? i_es_to_ds_gpr_rd == 5'ha : (i_es_to_ds_gpr_rd == rs1 || i_es_to_ds_gpr_rd == rs2)))
+  assign ds_ready_go         = (bren ? brfunc == 3'b000 : 0) || !((i_es_to_ds_gpr_rd != 0 && (ebreak_sel ? i_es_to_ds_gpr_rd == 5'ha : (i_es_to_ds_gpr_rd == rs1 || i_es_to_ds_gpr_rd == rs2)))
                               || (i_ms_to_ds_gpr_rd != 0 && (ebreak_sel ? i_ms_to_ds_gpr_rd == 5'ha : (i_ms_to_ds_gpr_rd == rs1 || i_ms_to_ds_gpr_rd == rs2)))
                               || (i_ws_to_ds_gpr_rd != 0 && (ebreak_sel ? i_ws_to_ds_gpr_rd == 5'ha : (i_ws_to_ds_gpr_rd == rs1 || i_ws_to_ds_gpr_rd == rs2)))
                               || (i_es_to_ds_csr_rd != 0 && i_es_to_ds_csr_rd == csr)
