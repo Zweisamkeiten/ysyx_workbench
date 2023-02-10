@@ -51,7 +51,8 @@ module ysyx_22050710_id_stage #(
                               || (i_ws_to_ds_gpr_rd != 0 && (ebreak_sel ? i_ws_to_ds_gpr_rd == 5'ha : (i_ws_to_ds_gpr_rd == rs1 || i_ws_to_ds_gpr_rd == rs2)))
                               || (i_es_to_ds_csr_rd != 0 && i_es_to_ds_csr_rd == csr)
                               || (i_ms_to_ds_csr_rd != 0 && i_ms_to_ds_csr_rd == csr)
-                              || (i_ws_to_ds_csr_rd != 0 && i_ws_to_ds_csr_rd == csr));
+                              || (i_ws_to_ds_csr_rd != 0 && i_ws_to_ds_csr_rd == csr))
+                              && (br_sel ? br_target == fs_pc : 1);
   assign o_ds_allowin        = (!ds_valid) || (ds_ready_go && i_es_allowin);
   assign o_ds_to_es_valid    = ds_valid && ds_ready_go       ;
 
