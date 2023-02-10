@@ -15,14 +15,14 @@ VerilatedVcdC *tfp = NULL;
 uint64_t * npcpc;
 int cycle = 0;
 
-void finish_handle(long long pc, long long inst) {
-  extern vaddr_t last_pc;
-  extern int a_inst_finished;
-  last_pc = pc;
-  cpu.inst = inst;
-  a_inst_finished = 1;
-  printf("cycle: %d, pc: %lx, inst: %lx\n", cycle, (word_t)pc, (word_t)inst);
-}
+// void finish_handle(long long pc, long long inst) {
+//   extern vaddr_t last_pc;
+//   extern int a_inst_finished;
+//   last_pc = pc;
+//   cpu.inst = inst;
+//   a_inst_finished = 1;
+//   printf("cycle: %d, pc: %lx, inst: %lx\n", cycle, (word_t)pc, (word_t)inst);
+// }
 
 void set_state_end() {
   npc_state.state = NPC_END;
