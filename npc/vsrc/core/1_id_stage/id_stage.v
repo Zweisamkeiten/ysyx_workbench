@@ -194,6 +194,7 @@ module ysyx_22050710_id_stage #(
   };
 
   always @(*) begin
+    $display(rf_debug_valid);
     if (rf_debug_valid) begin
       finish_handle(rf_debug_pc, {32'b0, rf_debug_inst});
     end
