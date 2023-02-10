@@ -202,7 +202,7 @@ module ysyx_22050710_id_stage #(
 
   // blocking
   assign o_debug_ds_to_es_bus= {o_ds_to_es_valid & debug_valid
-                            || (|ds_inst != 0 ? (o_ds_to_es_valid == 1 && debug_valid == 0) : 0), // 阻塞恢复
+                            || (|ds_inst != 0 ? (o_ds_to_es_valid ^ debug_valid) : 0), // 阻塞恢复
                                 ds_inst                      ,
                                 ds_pc
   };
