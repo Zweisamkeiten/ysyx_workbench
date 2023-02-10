@@ -318,6 +318,7 @@ module ysyx_22050710_id_stage #(
   );
 
   always @(posedge i_clk) begin
+    $display(ds_ready_go);
     if (debug_valid) begin
       finish_handle(debug_pc, {32'b0, debug_inst});
     end
