@@ -14,6 +14,14 @@ VerilatedVcdC *tfp = NULL;
 #endif
 uint64_t * npcpc;
 
+void finish_handle(long long pc, long long inst) {
+  extern vaddr_t last_pc;
+  extern int a_inst_finished;
+  last_pc = pc;
+  cpu.inst = inst;
+  a_inst_finished = 1;
+}
+
 void set_state_end() {
   npc_state.state = NPC_END;
   npc_state.halt_pc = *npcpc;

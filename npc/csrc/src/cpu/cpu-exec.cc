@@ -5,7 +5,8 @@ extern "C" {
   #include <cpu/difftest.h>
   #include <memory/paddr.h>
 }
-static vaddr_t snpc; // use at IRINGTRACE and difftest 现在指上一状态 刚执行过的指令的PC
+int a_inst_finished = 0;
+vaddr_t last_pc; // use at IRINGTRACE and difftest 现在指上一状态 刚执行过的指令的PC
 #ifdef CONFIG_WATCHPOINT
 extern "C" void diff_watchpoint_value();
 #endif
@@ -196,15 +197,17 @@ static void trace_and_difftest(vaddr_t dnpc) {
 void exec_once() {
   cpu.pc = *npcpc;
   // printf("%lx\n", top->o_pc);
+  while (a_inst_finished == 0) {
+    single_cycle(0);
+  }
+  a_inst_finished = 0;
 #ifdef CONFIG_ITRACE
-  cpu.inst = paddr_read(cpu.pc, 4);
-  disassemble_inst_to_buf(itrace_logbuf, 128, (uint8_t *)&(cpu.inst), cpu.pc, cpu.pc + 4);
+  // cpu.inst = paddr_read(last_pc, 4);
+  disassemble_inst_to_buf(itrace_logbuf, 128, (uint8_t *)&(cpu.inst), last_pc, last_pc + 4);
 #endif
 #ifdef CONFIG_IRINGTRACE
   last_inst = cpu.inst;
 #endif
-  snpc = cpu.pc;
-  single_cycle(0);
   cpu.pc = *npcpc;
   trace_and_difftest(cpu.pc);
 }
@@ -262,7 +265,7 @@ void cpu_exec(uint64_t n) {
              : (npc_state.halt_ret == 0
                     ? ANSI_FMT("HIT GOOD TRAP", ANSI_FG_GREEN)
                     : ANSI_FMT("HIT BAD TRAP", ANSI_FG_RED))),
-        snpc);
+        last_pc);
     // fall through
   case NPC_QUIT: break;
   }

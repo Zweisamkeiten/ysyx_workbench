@@ -1,5 +1,7 @@
 // ysyx_22050710 Write Back Stage
 
+import "DPI-C" function void finish_handle(input longint pc, output longint inst);
+
 module ysyx_22050710_wb_stage #(
   parameter WORD_WD                                          ,
   parameter PC_WD                                            ,
@@ -22,10 +24,7 @@ module ysyx_22050710_wb_stage #(
   output [WS_TO_RF_BUS_WD-1:0] o_ws_to_rf_bus                ,
   // 阻塞解决数据相关性冲突: es, ms, ws 目的寄存器比较
   output [GPR_ADDR_WD-1:0    ] o_ws_to_ds_gpr_rd             ,
-  output [CSR_ADDR_WD-1:0    ] o_ws_to_ds_csr_rd             ,
-  // debug insterface
-  output [PC_WD-1:0          ] o_debug_pc                    ,
-  output [INST_WD-1:0        ] o_debug_inst
+  output [CSR_ADDR_WD-1:0    ] o_ws_to_ds_csr_rd
 );
 
   wire                         ws_valid                      ;
@@ -56,6 +55,47 @@ module ysyx_22050710_wb_stage #(
     .dout                     (ms_to_ws_bus_r               ),
     .wen                      (i_ms_to_ws_valid&&o_ws_allowin)
   );
+
+  wire                         debug_valid                   ;
+  Reg #(
+    .WIDTH                    (1                            ),
+    .RESET_VAL                (0                            )
+  ) u_debug_valid_r (
+    .clk                      (i_clk                        ),
+    .rst                      (i_rst                        ),
+    .din                      (1'b1                         ),
+    .dout                     (debug_valid                  ),
+    .wen                      (i_ms_to_ws_valid&&o_ws_allowin)
+  );
+
+  wire [PC_WD-1:0             ] debug_pc                      ;
+  wire [INST_WD-1:0           ] debug_inst                    ;
+  Reg #(
+    .WIDTH                    (PC_WD                        ),
+    .RESET_VAL                (0                            )
+  ) u_debug_pc_r (
+    .clk                      (i_clk                        ),
+    .rst                      (i_rst                        ),
+    .din                      (ws_pc                        ),
+    .dout                     (debug_pc                     ),
+    .wen                      (i_ms_to_ws_valid&&o_ws_allowin)
+  );
+  Reg #(
+    .WIDTH                    (PC_WD                        ),
+    .RESET_VAL                (0                            )
+  ) u_debug_inst_r (
+    .clk                      (i_clk                        ),
+    .rst                      (i_rst                        ),
+    .din                      (ws_inst                      ),
+    .dout                     (debug_inst                   ),
+    .wen                      (i_ms_to_ws_valid&&o_ws_allowin)
+  );
+
+  always @(posedge i_clk) begin
+    if (debug_valid) begin
+      finish_handle(debug_pc, {32'b0, debug_inst});
+    end
+  end
 
   wire [GPR_ADDR_WD-1:0      ] ws_rd                         ;
   wire [CSR_ADDR_WD-1:0      ] ws_csr                        ;
@@ -99,8 +139,5 @@ module ysyx_22050710_wb_stage #(
     // output to rf bus
     .o_to_rf_bus              (o_ws_to_rf_bus               )
   );
-
-  assign o_debug_pc          = ws_pc                         ;
-  assign o_debug_inst        = ws_inst                       ;
 
 endmodule
