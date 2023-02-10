@@ -81,7 +81,7 @@ module ysyx_22050710_wb_stage #(
     .wen                      (i_ms_to_ws_valid&&o_ws_allowin)
   );
   Reg #(
-    .WIDTH                    (PC_WD                        ),
+    .WIDTH                    (INST_WD                      ),
     .RESET_VAL                (0                            )
   ) u_debug_inst_r (
     .clk                      (i_clk                        ),
