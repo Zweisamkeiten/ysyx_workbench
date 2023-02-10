@@ -2,6 +2,8 @@
 
 module ysyx_22050710_mem_stage #(
   parameter WORD_WD                                          ,
+  parameter PC_WD                                            ,
+  parameter INST_WD                                          ,
   parameter GPR_ADDR_WD                                      ,
   parameter CSR_ADDR_WD                                      ,
   parameter ES_TO_MS_BUS_WD                                  ,
@@ -68,7 +70,13 @@ module ysyx_22050710_mem_stage #(
   wire [WORD_WD-1:0          ] ms_alu_result                 ;
   wire [WORD_WD-1:0          ] ms_csr_result                 ;
 
-  assign {ms_rd                                              ,
+  // debug
+  wire [PC_WD-1:0            ] ms_pc                         ;
+  wire [INST_WD-1:0          ] ms_inst                         ;
+
+  assign {ms_inst                                            , // debug
+          ms_pc                                              , // debug
+          ms_rd                                              ,
           ms_csr                                             ,
           ms_gpr_wen                                         ,
           ms_csr_wen                                         ,
@@ -90,7 +98,9 @@ module ysyx_22050710_mem_stage #(
 
   assign ms_csr_final_result  = ms_csr_result                 ;
 
-  assign o_ms_to_ws_bus      = {ms_gpr_wen                   ,
+  assign o_ms_to_ws_bus      = {ms_inst                      ,
+                                ms_pc                        ,
+                                ms_gpr_wen                   ,
                                 ms_rd                        ,
                                 ms_gpr_final_result          ,
                                 ms_csr_wen                   ,

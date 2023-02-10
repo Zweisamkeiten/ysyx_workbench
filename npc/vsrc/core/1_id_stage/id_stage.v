@@ -1,6 +1,4 @@
 // ysyx_22050710 Id stage
-import "DPI-C" function void inst_finish_handle();
-
 module ysyx_22050710_id_stage #(
   parameter WORD_WD                                          ,
   parameter INST_WD                                          ,
@@ -138,7 +136,8 @@ module ysyx_22050710_id_stage #(
   assign o_br_bus            = {br_sel, br_target           };
 
   // id stage to ex stage
-  assign o_ds_to_es_bus      = {rs1data                      ,  // 358:295
+  assign o_ds_to_es_bus      = {ds_inst                      ,  // 390:359
+                                rs1data                      ,  // 358:295
                                 rs2data                      ,  // 294:231
                                 csrrdata                     ,  // 230:167
                                 imm                          ,  // 166:103
@@ -159,12 +158,6 @@ module ysyx_22050710_id_stage #(
                                 ebreak_sel                   ,  //   1:1
                                 invalid_inst_sel                //   0:0
   };
-
-  always @(*) begin
-    if (gpr_rf_wen) begin
-      inst_finish_handle();
-    end
-  end
 
   ysyx_22050710_gpr #(
     .ADDR_WIDTH               (GPR_ADDR_WD                  ),

@@ -2,6 +2,8 @@
 
 module ysyx_22050710_wb_stage #(
   parameter WORD_WD                                          ,
+  parameter PC_WD                                            ,
+  parameter INST_WD                                          ,
   parameter GPR_ADDR_WD                                      ,
   parameter GPR_WD                                           ,
   parameter CSR_ADDR_WD                                      ,
@@ -20,7 +22,10 @@ module ysyx_22050710_wb_stage #(
   output [WS_TO_RF_BUS_WD-1:0] o_ws_to_rf_bus                ,
   // 阻塞解决数据相关性冲突: es, ms, ws 目的寄存器比较
   output [GPR_ADDR_WD-1:0    ] o_ws_to_ds_gpr_rd             ,
-  output [CSR_ADDR_WD-1:0    ] o_ws_to_ds_csr_rd
+  output [CSR_ADDR_WD-1:0    ] o_ws_to_ds_csr_rd             ,
+  // debug insterface
+  output [PC_WD-1:0          ] o_debug_pc                    ,
+  output [INST_WD-1:0        ] o_debug_inst
 );
 
   wire                         ws_valid                      ;
@@ -59,7 +64,13 @@ module ysyx_22050710_wb_stage #(
   wire [WORD_WD-1:0          ] ws_gpr_final_result           ;
   wire [WORD_WD-1:0          ] ws_csr_final_result           ;
 
-  assign {ws_gpr_wen                                         ,
+  // debug
+  wire [PC_WD-1:0            ] ws_pc                         ;
+  wire [INST_WD-1:0          ] ws_inst                       ;
+
+  assign {ws_inst                                            ,
+          ws_pc                                              ,
+          ws_gpr_wen                                         ,
           ws_rd                                              ,
           ws_gpr_final_result                                ,
           ws_csr_wen                                         ,
@@ -88,5 +99,8 @@ module ysyx_22050710_wb_stage #(
     // output to rf bus
     .o_to_rf_bus              (o_ws_to_rf_bus               )
   );
+
+  assign o_debug_pc          = ws_pc                         ;
+  assign o_debug_inst        = ws_inst                       ;
 
 endmodule

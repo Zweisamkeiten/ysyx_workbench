@@ -31,7 +31,7 @@
   `define YSYX_22050710_MYCPU_STAGE_BUS_H
   // Bus width
   `define ysyx_22050710_FS_TO_DS_BUS_WD             96  // {fs_inst[31:0], fs_pc[63:0]} 32 + 64
-  `define ysyx_22050710_DS_TO_ES_BUS_WD             359
+  `define ysyx_22050710_DS_TO_ES_BUS_WD             391
   `define ysyx_22050710_ES_TO_MS_BUS_WD             216
   `define ysyx_22050710_MS_TO_WS_BUS_WD             147
   `define ysyx_22050710_WS_TO_RF_BUS_WD             147  // {gpr_rf_wen[0:0], gpr_rf_waddr[4:0], gpr_rf_wdata[63:0]

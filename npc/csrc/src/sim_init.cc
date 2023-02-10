@@ -14,11 +14,6 @@ VerilatedVcdC *tfp = NULL;
 #endif
 uint64_t * npcpc;
 
-void inst_finish_handle() {
-  extern int a_inst_finish;
-  a_inst_finish = 1;
-}
-
 void set_state_end() {
   npc_state.state = NPC_END;
   npc_state.halt_pc = *npcpc;

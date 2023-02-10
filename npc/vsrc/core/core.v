@@ -34,7 +34,10 @@ module ysyx_22050710_core #(
   input  [SRAM_DATA_WD-1:0   ] i_data_sram_rdata             ,
   output                       o_data_sram_wen               ,
   output [SRAM_WMASK_WD-1:0  ] o_data_sram_wmask             ,
-  output [SRAM_DATA_WD-1:0   ] o_data_sram_wdata
+  output [SRAM_DATA_WD-1:0   ] o_data_sram_wdata             ,
+  // debug interface
+  output [PC_WD-1:0          ] o_debug_pc                    ,
+  output [INST_WD-1:0        ] o_debug_inst
 );
 
   wire                         ds_allowin                    ;
@@ -124,6 +127,7 @@ module ysyx_22050710_core #(
   ysyx_22050710_ex_stage #(
     .WORD_WD                  (WORD_WD                      ),
     .PC_WD                    (PC_WD                        ),
+    .INST_WD                  (INST_WD                      ),
     .GPR_WD                   (GPR_WD                       ),
     .GPR_ADDR_WD              (GPR_ADDR_WD                  ),
     .IMM_WD                   (IMM_WD                       ),
@@ -159,6 +163,8 @@ module ysyx_22050710_core #(
 
   ysyx_22050710_mem_stage #(
     .WORD_WD                  (WORD_WD                      ),
+    .PC_WD                    (PC_WD                        ),
+    .INST_WD                  (INST_WD                      ),
     .GPR_ADDR_WD              (GPR_ADDR_WD                  ),
     .CSR_ADDR_WD              (CSR_ADDR_WD                  ),
     .ES_TO_MS_BUS_WD          (ES_TO_MS_BUS_WD              ),
@@ -185,6 +191,8 @@ module ysyx_22050710_core #(
 
   ysyx_22050710_wb_stage #(
     .WORD_WD                  (WORD_WD                      ),
+    .PC_WD                    (PC_WD                        ),
+    .INST_WD                  (INST_WD                      ),
     .GPR_ADDR_WD              (GPR_ADDR_WD                  ),
     .GPR_WD                   (GPR_WD                       ),
     .CSR_ADDR_WD              (CSR_ADDR_WD                  ),
@@ -203,7 +211,10 @@ module ysyx_22050710_core #(
     .o_ws_to_rf_bus           (ws_to_rf_bus                 ),
     // 目的寄存器
     .o_ws_to_ds_gpr_rd        (ws_to_ds_gpr_rd              ),
-    .o_ws_to_ds_csr_rd        (ws_to_ds_csr_rd              )
+    .o_ws_to_ds_csr_rd        (ws_to_ds_csr_rd              ),
+    // debug interface
+    .o_debug_pc               (o_debug_pc                   ),
+    .o_debug_inst             (o_debug_inst                 )
   );
 
 endmodule

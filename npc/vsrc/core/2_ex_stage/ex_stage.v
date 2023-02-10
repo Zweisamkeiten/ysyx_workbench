@@ -3,6 +3,7 @@
 module ysyx_22050710_ex_stage #(
   parameter WORD_WD                                          ,
   parameter PC_WD                                            ,
+  parameter INST_WD                                          ,
   parameter GPR_WD                                           ,
   parameter GPR_ADDR_WD                                      ,
   parameter CSR_WD                                           ,
@@ -89,8 +90,10 @@ module ysyx_22050710_ex_stage #(
   wire [2:0                  ] es_csr_op                     ; // csr 相关逻辑运算操作
   wire                         es_ebreak_sel                 ; // 环境断点 用于结束运行
   wire                         es_invalid_inst_sel           ; // 译码错误 非法指令
+  wire [INST_WD-1:0          ] es_inst                       ;
   
-  assign {es_rs1data                                         ,  // 358:295
+  assign {es_inst                                            ,  // 390:359 for debug
+          es_rs1data                                         ,  // 358:295
           es_rs2data                                         ,  // 294:231
           es_csrrdata                                        ,  // 230:167
           es_imm                                             ,  // 166:103
@@ -114,7 +117,9 @@ module ysyx_22050710_ex_stage #(
 
   wire [WORD_WD-1:0          ] es_alu_result                 ;
   wire [WORD_WD-1:0          ] es_csr_result                 ;
-  assign o_es_to_ms_bus      = {es_rd                        ,
+  assign o_es_to_ms_bus      = {es_inst                      , // debug
+                                es_pc                        , // debug
+                                es_rd                        ,
                                 es_csr                       ,
                                 es_gpr_wen                   ,
                                 es_csr_wen                   ,
