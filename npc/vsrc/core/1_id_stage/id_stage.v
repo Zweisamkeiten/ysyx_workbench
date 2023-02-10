@@ -119,14 +119,6 @@ module ysyx_22050710_id_stage #(
   wire [CSR_ADDR_WD-1:0      ] csr_rf_waddr                  ;
   wire [CSR_WD-1:0           ] csr_rf_wdata                  ;
 
-  // debug
-  wire                         wb_valid                      ;
-  wire [PC_WD-1:0            ] wb_pc                         ;
-  wire [INST_WD-1:0          ] wb_inst                       ;
-  wire                         debug_valid                   ;
-  wire [PC_WD-1:0            ] debug_pc                      ;
-  wire [INST_WD-1:0          ] debug_inst                    ;
-
   assign {wb_valid                                           ,
           wb_pc                                              ,
           wb_inst                                            ,
@@ -283,47 +275,41 @@ module ysyx_22050710_id_stage #(
     .o_invalid_inst_sel       (invalid_inst_sel             )
   );
 
-  Reg #(
-    .WIDTH                    (1                            ),
-    .RESET_VAL                (0                            )
-  ) u_debug_valid_r (
-    .clk                      (i_clk                        ),
-    .rst                      (i_rst                        ),
-    .din                      (ds_ready_go                  ),
-    .dout                     (debug_valid                  ),
-    .wen                      (wb_valid                     )
-  );
+  // debug
+  wire                         wb_valid                      ;
+  wire [PC_WD-1:0            ] wb_pc                         ;
+  wire [INST_WD-1:0          ] wb_inst                       ;
+  reg                          debug_valid_delay0            ;
+  reg                          debug_valid_delay1            ;
+  reg [PC_WD-1:0             ] debug_pc0                     ;
+  reg [PC_WD-1:0             ] debug_pc1                     ;
+  reg [INST_WD-1:0           ] debug_inst0                   ;
+  reg [INST_WD-1:0           ] debug_inst1                   ;
+  always *(posedge i_clk) begin
+    if (i_rst) begin
+      debug_valid_delay0 <= 0;
+      debug_valid_delay1 <= 0;
+      debug_pc0          <= 0;
+      debug_pc1          <= 0;
+      debug_inst0        <= 0;
+      debug_inst1        <= 0;
+    end
+    else begin
+      debug_valid_delay0 <= wb_valid;
+      debug_valid_delay1 <= debug_valid_delay0;
 
-  wire [PC_WD-1:0            ] debug_pc                      ;
-  wire [INST_WD-1:0          ] debug_inst                    ;
-  Reg #(
-    .WIDTH                    (PC_WD                        ),
-    .RESET_VAL                (0                            )
-  ) u_debug_pc_r (
-    .clk                      (i_clk                        ),
-    .rst                      (i_rst                        ),
-    .din                      (wb_pc                        ),
-    .dout                     (debug_pc                     ),
-    .wen                      (wb_valid                     )
-  );
-  Reg #(
-    .WIDTH                    (INST_WD                      ),
-    .RESET_VAL                (0                            )
-  ) u_debug_inst_r (
-    .clk                      (i_clk                        ),
-    .rst                      (i_rst                        ),
-    .din                      (wb_inst                      ),
-    .dout                     (debug_inst                   ),
-    .wen                      (wb_valid                     )
-  );
+      debug_pc0          <= wb_pc;
+      debug_pc1          <= debug_pc0;
 
-  always @(negedge i_clk) begin
-    $display(debug_valid);
-    $display(wb_valid);
-    $display(wb_valid);
-    $display("%x, %x, %x", debug_pc, wb_pc, wb_inst);
-    if (debug_valid) begin
-      finish_handle(debug_pc, {32'b0, debug_inst});
+      debug_inst0        <= wb_inst;
+      debug_inst1        <= debug_inst0;
+    end
+  end
+
+
+  always @(*) begin
+    if (debug_valid_delay1) begin
+      finish_handle(debug_pc1, {32'b0, debug_inst1});
     end
   end
 
