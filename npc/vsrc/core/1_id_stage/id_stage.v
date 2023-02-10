@@ -1,6 +1,6 @@
 // ysyx_22050710 Id stage
 
-/* import "DPI-C" function void finish_handle(input longint pc, input longint inst); */
+import "DPI-C" function void finish_handle(input longint pc, input longint inst);
 
 module ysyx_22050710_id_stage #(
   parameter WORD_WD                                          ,
@@ -14,7 +14,8 @@ module ysyx_22050710_id_stage #(
   parameter FS_TO_DS_BUS_WD                                  ,
   parameter DS_TO_ES_BUS_WD                                  ,
   parameter BR_BUS_WD                                        ,
-  parameter WS_TO_RF_BUS_WD
+  parameter WS_TO_RF_BUS_WD                                  ,
+  parameter DEBUG_BUS_WD
 ) (
   input                        i_clk                         ,
   input                        i_rst                         ,
@@ -37,7 +38,10 @@ module ysyx_22050710_id_stage #(
   input  [GPR_ADDR_WD-1:0    ] i_ws_to_ds_gpr_rd             ,
   input  [CSR_ADDR_WD-1:0    ] i_es_to_ds_csr_rd             ,
   input  [CSR_ADDR_WD-1:0    ] i_ms_to_ds_csr_rd             ,
-  input  [CSR_ADDR_WD-1:0    ] i_ws_to_ds_csr_rd
+  input  [CSR_ADDR_WD-1:0    ] i_ws_to_ds_csr_rd             ,
+  // debug
+  input  [DEBUG_BUS_WD-1:0   ] i_debug_ws_to_rf_bus          ,
+  output [DEBUG_BUS_WD-1:0   ] o_debug_ds_to_es_bus
 );
 
   wire                         ds_valid                      ;
@@ -160,6 +164,40 @@ module ysyx_22050710_id_stage #(
                                 ebreak_sel                   ,  //   1:1
                                 invalid_inst_sel                //   0:0
   };
+
+  // debug
+  wire [DS_TO_ES_BUS_WD-1:0  ] debug_ws_to_rf_bus_r          ;
+
+  Reg #(
+    .WIDTH                    (DEBUG_BUS_WD                 ),
+    .RESET_VAL                (0                            )
+  ) u_debug_ws_to_rf_bus_r (
+    .clk                      (i_clk                        ),
+    .rst                      (i_rst                        ),
+    .din                      (i_debug_ws_to_rf_bus         ),
+    .dout                     (debug_ws_to_rf_bus_r         ),
+    .wen                      (1'b1                         )
+  );
+
+  wire                         rf_debug_valid                ;
+  wire [INST_WD-1:0          ] rf_debug_inst                 ;
+  wire [PC_WD-1:0            ] rf_debug_pc                   ;
+
+  assign {rf_debug_valid                                     ,
+          rf_debug_inst                                      ,
+          rf_debug_pc
+         }                   = debug_ws_to_rf_bus_r          ;
+
+  assign o_debug_ds_to_es_bus= {ds_ready_go                  ,  // blocking
+                                ds_pc                        ,
+                                ds_inst
+  };
+
+  always @(*) begin
+    if (rf_debug_valid) begin
+      finish_handle(rf_debug_pc, {32'b0, rf_debug_inst});
+    end
+  end
 
   ysyx_22050710_gpr #(
     .ADDR_WIDTH               (GPR_ADDR_WD                  ),

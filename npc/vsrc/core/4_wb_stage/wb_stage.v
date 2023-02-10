@@ -9,7 +9,8 @@ module ysyx_22050710_wb_stage #(
   parameter CSR_ADDR_WD                                      ,
   parameter CSR_WD                                           ,
   parameter MS_TO_WS_BUS_WD                                  ,
-  parameter WS_TO_RF_BUS_WD
+  parameter WS_TO_RF_BUS_WD                                  ,
+  parameter DEBUG_BUS_WD
 ) (
   input                        i_clk                         ,
   input                        i_rst                         ,
@@ -22,7 +23,10 @@ module ysyx_22050710_wb_stage #(
   output [WS_TO_RF_BUS_WD-1:0] o_ws_to_rf_bus                ,
   // 阻塞解决数据相关性冲突: es, ms, ws 目的寄存器比较
   output [GPR_ADDR_WD-1:0    ] o_ws_to_ds_gpr_rd             ,
-  output [CSR_ADDR_WD-1:0    ] o_ws_to_ds_csr_rd
+  output [CSR_ADDR_WD-1:0    ] o_ws_to_ds_csr_rd             ,
+  // debug
+  input  [DEBUG_BUS_WD-1:0   ] i_debug_ms_to_ws_bus          ,
+  output [DEBUG_BUS_WD-1:0   ] o_debug_ws_to_rf_bus
 );
 
   wire                         ws_valid                      ;
@@ -53,6 +57,34 @@ module ysyx_22050710_wb_stage #(
     .dout                     (ms_to_ws_bus_r               ),
     .wen                      (i_ms_to_ws_valid&&o_ws_allowin)
   );
+
+  // debug
+  wire [DS_TO_ES_BUS_WD-1:0  ] debug_ms_to_ws_bus_r          ;
+
+  Reg #(
+    .WIDTH                    (DEBUG_BUS_WD                 ),
+    .RESET_VAL                (0                            )
+  ) u_debug_ms_to_ws_bus_r (
+    .clk                      (i_clk                        ),
+    .rst                      (i_rst                        ),
+    .din                      (i_debug_ms_to_ws_bus         ),
+    .dout                     (debug_ms_to_ws_bus_r         ),
+    .wen                      (1'b1                         )
+  );
+
+  wire                         ws_debug_valid                ;
+  wire [INST_WD-1:0          ] ws_debug_inst                 ;
+  wire [PC_WD-1:0            ] ws_debug_pc                   ;
+
+  assign {ws_debug_valid                                     ,
+          ws_debug_inst                                      ,
+          ws_debug_pc
+         }                   = debug_ms_to_ws_bus_r          ;
+
+  assign o_debug_ws_to_rf_bus= {ws_debug_valid               ,
+                                ws_debug_inst                ,
+                                ws_debug_pc
+                                                             };
 
   wire [GPR_ADDR_WD-1:0      ] ws_rd                         ;
   wire [CSR_ADDR_WD-1:0      ] ws_csr                        ;

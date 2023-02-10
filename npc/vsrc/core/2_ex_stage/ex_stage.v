@@ -13,7 +13,8 @@ module ysyx_22050710_ex_stage #(
   parameter ES_TO_MS_BUS_WD                                  ,
   parameter SRAM_ADDR_WD                                     ,
   parameter SRAM_WMASK_WD                                    ,
-  parameter SRAM_DATA_WD
+  parameter SRAM_DATA_WD                                     ,
+  parameter DEBUG_BUS_WD
 ) (
   input                        i_clk                         ,
   input                        i_rst                         ,
@@ -35,6 +36,9 @@ module ysyx_22050710_ex_stage #(
   // 阻塞解决数据相关性冲突: es, ms, ws 目的寄存器比较
   output [GPR_ADDR_WD-1:0    ] o_es_to_ds_gpr_rd             ,
   output [CSR_ADDR_WD-1:0    ] o_es_to_ds_csr_rd
+  // debug
+  input  [DEBUG_BUS_WD-1:0   ] i_debug_ds_to_es_bus          ,
+  output [DEBUG_BUS_WD-1:0   ] o_debug_es_to_ms_bus
 );
 
   wire                         es_valid                      ;
@@ -90,8 +94,6 @@ module ysyx_22050710_ex_stage #(
   wire [2:0                  ] es_csr_op                     ; // csr 相关逻辑运算操作
   wire                         es_ebreak_sel                 ; // 环境断点 用于结束运行
   wire                         es_invalid_inst_sel           ; // 译码错误 非法指令
-  wire [INST_WD-1:0          ] es_inst                       ;
-  wire                         es_debug_valid                ;
   
   assign {es_rs1data                                         ,  // 358:295
           es_rs2data                                         ,  // 294:231
@@ -114,6 +116,34 @@ module ysyx_22050710_ex_stage #(
           es_ebreak_sel                                      ,  //   1:1
           es_invalid_inst_sel                                   //   0:0
           }                   = ds_to_es_bus_r               ;
+
+  // debug
+  wire [DS_TO_ES_BUS_WD-1:0  ] debug_ds_to_es_bus_r          ;
+
+  Reg #(
+    .WIDTH                    (DEBUG_BUS_WD                 ),
+    .RESET_VAL                (0                            )
+  ) u_debug_ds_to_es_bus_r (
+    .clk                      (i_clk                        ),
+    .rst                      (i_rst                        ),
+    .din                      (i_debug_ds_to_es_bus         ),
+    .dout                     (debug_ds_to_es_bus_r         ),
+    .wen                      (1'b1                         )
+  );
+
+  wire                         es_debug_valid                ;
+  wire [INST_WD-1:0          ] es_debug_inst                 ;
+  wire [PC_WD-1:0            ] es_debug_pc                   ;
+
+  assign {es_debug_valid                                     ,
+          es_debug_inst                                      ,
+          es_debug_pc
+         }                   = debug_ds_to_es_bus_r          ;
+
+  assign o_debug_es_to_ms_bus= {es_debug_valid               ,
+                                es_debug_inst                ,
+                                es_debug_pc
+                                                             };
 
   wire [WORD_WD-1:0          ] es_alu_result                 ;
   wire [WORD_WD-1:0          ] es_csr_result                 ;
