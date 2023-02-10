@@ -166,6 +166,18 @@ module ysyx_22050710_id_stage #(
   };
 
   // debug
+  wire                         debug_valid                   ;
+  Reg #(
+    .WIDTH                    (1                            ),
+    .RESET_VAL                (0                            )
+  ) u_debug_valid_r (
+    .clk                      (i_clk                        ),
+    .rst                      (i_rst                        ),
+    .din                      (o_ds_to_es_valid             ),
+    .dout                     (debug_valid                  ),
+    .wen                      (1'b1                         )
+  );
+
   wire [DEBUG_BUS_WD-1:0     ] debug_ws_to_rf_bus_r          ;
 
   Reg #(
@@ -188,7 +200,7 @@ module ysyx_22050710_id_stage #(
           rf_debug_pc
          }                   = debug_ws_to_rf_bus_r          ;
 
-  assign o_debug_ds_to_es_bus= {o_ds_to_es_valid                  ,  // blocking
+  assign o_debug_ds_to_es_bus= {debug_valid                  ,  // blocking
                                 ds_inst                      ,
                                 ds_pc
   };
