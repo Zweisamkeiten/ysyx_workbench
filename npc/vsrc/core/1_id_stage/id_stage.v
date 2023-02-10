@@ -289,7 +289,7 @@ module ysyx_22050710_id_stage #(
   ) u_debug_valid_r (
     .clk                      (i_clk                        ),
     .rst                      (i_rst                        ),
-    .din                      (wb_valid                     ),
+    .din                      (wb_valid & o_ds_to_es_valid  ),
     .dout                     (debug_valid                  ),
     .wen                      (wb_valid                     )
   );
