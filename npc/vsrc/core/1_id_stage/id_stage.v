@@ -167,18 +167,6 @@ module ysyx_22050710_id_stage #(
   };
 
   // debug
-  wire                         debug_valid                   ;
-  Reg #(
-    .WIDTH                    (1                            ),
-    .RESET_VAL                (0                            )
-  ) u_debug_valid_r (
-    .clk                      (i_clk                        ),
-    .rst                      (i_rst                        ),
-    .din                      (o_ds_to_es_valid             ),
-    .dout                     (debug_valid                  ),
-    .wen                      (1'b1                         )
-  );
-
   wire [DEBUG_BUS_WD-1:0     ] debug_ws_to_rf_bus_r          ;
 
   Reg #(
@@ -207,8 +195,6 @@ module ysyx_22050710_id_stage #(
   };
 
   always @(*) begin
-    $display(debug_valid);
-    $display(rf_debug_valid);
     if (rf_debug_valid) begin
       finish_handle(rf_debug_pc, {32'b0, rf_debug_inst});
     end
