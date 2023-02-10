@@ -76,6 +76,8 @@ extern "C" void npc_pmem_write(long long waddr, long long wdata, char wmask) {
 }
 
 extern "C" void single_cycle(int rst) {
+  cycle ++;
+  printf("cycle: %d\n", cycle);
   top->i_clk = 0;
   top->i_rst = rst;
   top->eval();
@@ -89,8 +91,6 @@ extern "C" void single_cycle(int rst) {
   contextp->timeInc(1);
   tfp->dump(contextp->time());
 #endif
-  cycle ++;
-  printf("cycle: %d\n", cycle);
 }
 
 static void reset(int n) {
