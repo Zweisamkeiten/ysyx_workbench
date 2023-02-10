@@ -200,7 +200,7 @@ module ysyx_22050710_id_stage #(
           rf_debug_pc
          }                   = debug_ws_to_rf_bus_r          ;
 
-  assign o_debug_ds_to_es_bus= {debug_valid                  ,  // blocking
+  assign o_debug_ds_to_es_bus= {ds_ready_go ? debug_valid : 1'b0,  // blocking
                                 ds_inst                      ,
                                 ds_pc
   };
