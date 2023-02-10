@@ -20,7 +20,7 @@ void finish_handle(long long pc, long long inst) {
   extern int a_inst_finished;
   last_pc = pc;
   cpu.inst = inst;
-  a_inst_finished = 1;
+  // a_inst_finished = 1;
   printf("pc: %lx, inst: %lx\n", (word_t)pc, (word_t)inst);
 }
 
