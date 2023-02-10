@@ -168,12 +168,6 @@ module ysyx_22050710_id_stage #(
   // debug
   wire [DEBUG_BUS_WD-1:0     ] debug_ws_to_rf_bus_r          ;
 
-  always @(posedge i_clk) begin
-    if (rf_debug_valid) begin
-      finish_handle(rf_debug_pc, {32'b0, rf_debug_inst});
-    end
-  end
-
   Reg #(
     .WIDTH                    (DEBUG_BUS_WD                 ),
     .RESET_VAL                (0                            )
@@ -198,6 +192,12 @@ module ysyx_22050710_id_stage #(
                                 ds_inst                      ,
                                 ds_pc
   };
+
+  always @(*) begin
+    if (rf_debug_valid) begin
+      finish_handle(rf_debug_pc, {32'b0, rf_debug_inst});
+    end
+  end
 
   ysyx_22050710_gpr #(
     .ADDR_WIDTH               (GPR_ADDR_WD                  ),
