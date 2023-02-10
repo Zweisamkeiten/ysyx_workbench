@@ -2,8 +2,6 @@
 
 module ysyx_22050710_wb_stage #(
   parameter WORD_WD                                          ,
-  parameter PC_WD                                            ,
-  parameter INST_WD                                          ,
   parameter GPR_ADDR_WD                                      ,
   parameter GPR_WD                                           ,
   parameter CSR_ADDR_WD                                      ,
