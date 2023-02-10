@@ -292,7 +292,7 @@ module ysyx_22050710_id_stage #(
   end
 
 
-  always @(negedge i_clk) begin
+  always @(*) begin
     $display(wb_valid);
     $display(debug_valid_delay0);
     if (debug_valid_delay0) begin
