@@ -297,7 +297,7 @@ module ysyx_22050710_id_stage #(
       /* debug_inst1        <= 0; */
     end
     else begin
-      debug_valid_delay0 <= wb_valid;
+      debug_valid_delay0 <= wb_valid & ds_ready_go;
       /* debug_valid_delay1 <= debug_valid_delay0; */
 
       debug_pc0          <= wb_pc;
@@ -311,7 +311,7 @@ module ysyx_22050710_id_stage #(
 
   always @(posedge i_clk) begin
     $display(wb_valid);
-    /* $display(debug_valid_delay1); */
+    $display(debug_valid_delay0);
     if (debug_valid_delay0) begin
       finish_handle(debug_pc0, {32'b0, debug_inst0});
     end
