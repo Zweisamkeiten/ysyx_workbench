@@ -79,6 +79,8 @@ module ysyx_22050710_wb_stage #(
   assign o_ws_to_ds_csr_rd   = {CSR_ADDR_WD{ws_valid}} & {CSR_ADDR_WD{ws_csr_wen}} & ws_csr;
 
   ysyx_22050710_wbu #(
+    .PC_WD                    (PC_WD                        ),
+    .INST_WD                  (INST_WD                      ),
     .GPR_ADDR_WD              (GPR_ADDR_WD                  ),
     .GPR_WD                   (GPR_WD                       ),
     .CSR_ADDR_WD              (CSR_ADDR_WD                  ),

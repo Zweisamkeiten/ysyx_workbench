@@ -1,6 +1,8 @@
 // ysyx_22050710 Write back unit
 
 module ysyx_22050710_wbu #(
+  parameter PC_WD                                            ,
+  parameter INST_WD                                          ,
   parameter GPR_ADDR_WD                                      ,
   parameter GPR_WD                                           ,
   parameter CSR_ADDR_WD                                      ,
