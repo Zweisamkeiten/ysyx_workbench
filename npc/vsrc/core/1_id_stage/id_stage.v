@@ -291,7 +291,7 @@ module ysyx_22050710_id_stage #(
     .rst                      (i_rst                        ),
     .din                      (ds_ready_go & wb_valid       ),
     .dout                     (debug_valid                  ),
-    .wen                      (wb_valid                     )
+    .wen                      (1'b1                     )
   );
 
   wire [PC_WD-1:0            ] debug_pc                      ;
