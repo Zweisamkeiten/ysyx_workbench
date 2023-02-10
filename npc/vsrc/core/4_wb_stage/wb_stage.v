@@ -93,11 +93,6 @@ module ysyx_22050710_wb_stage #(
   wire [WORD_WD-1:0          ] ws_gpr_final_result           ;
   wire [WORD_WD-1:0          ] ws_csr_final_result           ;
 
-  // debug
-  wire                         ws_debug_valid                ;
-  wire [PC_WD-1:0            ] ws_pc                         ;
-  wire [INST_WD-1:0          ] ws_inst                       ;
-
   assign {ws_gpr_wen                                         ,
           ws_rd                                              ,
           ws_gpr_final_result                                ,
