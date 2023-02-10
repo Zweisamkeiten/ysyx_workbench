@@ -307,7 +307,7 @@ module ysyx_22050710_id_stage #(
 
   always @(posedge i_clk) begin
     if (wb_valid && ds_ready_go) begin
-      finish_handle(debug_pc, {32'b0, debug_inst});
+      finish_handle(wb_pc, {32'b0, wb_inst});
     end
   end
 
