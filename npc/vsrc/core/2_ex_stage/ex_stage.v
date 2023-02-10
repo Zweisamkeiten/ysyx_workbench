@@ -35,7 +35,7 @@ module ysyx_22050710_ex_stage #(
   output [SRAM_DATA_WD-1:0   ] o_data_sram_wdata             ,
   // 阻塞解决数据相关性冲突: es, ms, ws 目的寄存器比较
   output [GPR_ADDR_WD-1:0    ] o_es_to_ds_gpr_rd             ,
-  output [CSR_ADDR_WD-1:0    ] o_es_to_ds_csr_rd
+  output [CSR_ADDR_WD-1:0    ] o_es_to_ds_csr_rd             ,
   // debug
   input  [DEBUG_BUS_WD-1:0   ] i_debug_ds_to_es_bus          ,
   output [DEBUG_BUS_WD-1:0   ] o_debug_es_to_ms_bus
