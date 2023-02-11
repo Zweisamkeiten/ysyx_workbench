@@ -140,6 +140,7 @@ module ysyx_22050710_id_stage #(
   wire [PC_WD-1:0            ] epnpc                         ;
 
   // bru 产生 跳转使能 以及目标地址 to if stage
+  wire                         br_stall                      ;
   wire                         br_sel                        ;
   wire [PC_WD-1:0            ] br_target                     ;
   assign br_stall            = br_sel ? (ds_wb_not_finish ? 1 : br_target != fs_pc) : 0;
