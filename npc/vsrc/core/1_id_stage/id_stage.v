@@ -46,14 +46,14 @@ module ysyx_22050710_id_stage #(
 
   wire                         ds_valid                      ;
   wire                         ds_ready_go                   ;
-  wire                         ds_wb_finish                  ;
-  assign ds_wb_finish        = !((i_es_to_ds_gpr_rd != 0 && (ebreak_sel ? i_es_to_ds_gpr_rd == 5'ha : (i_es_to_ds_gpr_rd == rs1 || i_es_to_ds_gpr_rd == rs2)))
+  wire                         ds_wb_not_finish                  ;
+  assign ds_wb_not_finish        = ((i_es_to_ds_gpr_rd != 0 && (ebreak_sel ? i_es_to_ds_gpr_rd == 5'ha : (i_es_to_ds_gpr_rd == rs1 || i_es_to_ds_gpr_rd == rs2)))
                               || (i_ms_to_ds_gpr_rd != 0 && (ebreak_sel ? i_ms_to_ds_gpr_rd == 5'ha : (i_ms_to_ds_gpr_rd == rs1 || i_ms_to_ds_gpr_rd == rs2)))
                               || (i_ws_to_ds_gpr_rd != 0 && (ebreak_sel ? i_ws_to_ds_gpr_rd == 5'ha : (i_ws_to_ds_gpr_rd == rs1 || i_ws_to_ds_gpr_rd == rs2)))
                               || (i_es_to_ds_csr_rd != 0 && i_es_to_ds_csr_rd == csr)
                               || (i_ms_to_ds_csr_rd != 0 && i_ms_to_ds_csr_rd == csr)
                               || (i_ws_to_ds_csr_rd != 0 && i_ws_to_ds_csr_rd == csr));
-  assign ds_ready_go         = ds_wb_finish && ~br_stall;
+  assign ds_ready_go         = ~ds_wb_not_finish && ~br_stall;
   assign o_ds_allowin        = (!ds_valid) || (ds_ready_go && i_es_allowin);
   assign o_ds_to_es_valid    = ds_valid && ds_ready_go       ;
 
@@ -143,7 +143,7 @@ module ysyx_22050710_id_stage #(
   wire                         br_stall                      ;
   wire                         br_sel                        ;
   wire [PC_WD-1:0            ] br_target                     ;
-  assign br_stall            = br_sel &&  br_target != fs_pc || ~ds_wb_finish;
+  assign br_stall            = br_sel &&  br_target != fs_pc && ds_wb_not_finish;
   assign o_br_bus            = {br_stall, br_sel, br_target };
 
   // id stage to ex stage
