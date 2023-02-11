@@ -45,7 +45,7 @@ module ysyx_22050710_pc #(
     .rst                      (i_rst                        ),
     .din                      (dnpc                         ),
     .dout                     (pc                           ),
-    .wen                      (i_load                       )
+    .wen                      (i_load  || i_br_stall ? 0 :i_br_sel)
   );
 
 endmodule
