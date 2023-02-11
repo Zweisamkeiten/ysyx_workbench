@@ -78,7 +78,7 @@ module ysyx_22050710_id_stage #(
   ) u_fs_to_ds_bus_r (
     .clk                      (i_clk                        ),
     .rst                      (i_rst                        ),
-    .din                      (br_stall ? 64'b0 : i_fs_to_ds_bus),
+    .din                      (i_fs_to_ds_bus               ),
     .dout                     (fs_to_ds_bus_r               ),
     .wen                      (i_fs_to_ds_valid&&o_ds_allowin)
   );
@@ -144,7 +144,7 @@ module ysyx_22050710_id_stage #(
   wire                         br_sel                        ;
   wire [PC_WD-1:0            ] br_target                     ;
   assign br_stall            = br_sel ? (ds_wb_not_finish ? 1 : br_target != fs_pc) : 0;
-  assign o_br_bus            = { br_sel, br_target };
+  assign o_br_bus            = {br_stall, br_sel, br_target };
 
   // id stage to ex stage
   assign o_ds_to_es_bus      = {rs1data                      ,  // 358:295

@@ -27,9 +27,10 @@ module ysyx_22050710_if_stage #(
   // pre if stage
   wire                         to_fs_valid                   ;
   assign to_fs_valid         = ~i_rst                        ;
+  wire                         br_stall                        ;
   wire                         br_sel                        ;
   wire [PC_WD-1:0            ] br_target                     ;
-  assign {
+  assign {br_stall,
           br_sel,
           br_target
          }                   = i_br_bus                      ;
@@ -48,7 +49,7 @@ module ysyx_22050710_if_stage #(
 
   wire [INST_WD-1:0          ] fs_inst                       ;
   wire [PC_WD-1:0            ] fs_pc                         ;
-  assign o_fs_to_ds_bus      = {fs_inst, fs_pc}              ;
+  assign o_fs_to_ds_bus      = {br_stall ? {INST_WD{1'b0}}, fs_inst, fs_pc}              ;
 
   Reg #(
     .WIDTH                    (1                            ),
