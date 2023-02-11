@@ -143,7 +143,7 @@ module ysyx_22050710_id_stage #(
   wire                         br_stall                      ;
   wire                         br_sel                        ;
   wire [PC_WD-1:0            ] br_target                     ;
-  assign br_stall            = br_sel ? (ds_wb_not_finish ? 1 : br_target != fs_pc) : 0;
+  assign br_stall            = br_sel ? (br_target != fs_pc) : 0;
   assign o_br_bus            = {br_stall, br_sel, br_target };
 
   // id stage to ex stage
