@@ -26,7 +26,8 @@ module ysyx_22050710_if_stage #(
 
   // pre if stage
   wire                         to_fs_valid                   ;
-  assign to_fs_valid         = ~i_rst                        ;
+  assign to_fs_valid         = ~i_rst && ~br_sel             ;
+  wire                         br_stall                      ; // 流水线停顿 br 相关寄存器是否写回
   wire                         br_sel                        ;
   wire [PC_WD-1:0            ] br_target                     ;
   assign {br_sel, br_target} = i_br_bus                      ;
@@ -41,7 +42,7 @@ module ysyx_22050710_if_stage #(
                                                                              // 或条件2: stage 直接相互依赖, 当后续设计使得当前
                                                                              // stage 无法在一周期内完成, ready_go 信号会变得复杂
                                                                              // 现在暂时不需要考虑, 因为每个 stage 都能在一周期完成
-  assign o_fs_to_ds_valid    = fs_valid && fs_ready_go && ~br_sel;
+  assign o_fs_to_ds_valid    = fs_valid && fs_ready_go       ;
 
   wire [INST_WD-1:0          ] fs_inst                       ;
   wire [PC_WD-1:0            ] fs_pc                         ;
@@ -65,7 +66,8 @@ module ysyx_22050710_if_stage #(
   ) u_pc (
     .i_clk                    (i_clk                        ),
     .i_rst                    (i_rst                        ),
-    .i_load                   (to_fs_valid && fs_allowin || br_sel), // if stage 无数据 ds stage 允许写入 准备下一条指令取指
+    .i_load                   (to_fs_valid && fs_allowin
+                              || (br_stall ? br_sel : 0)    ), // if stage 无数据 ds stage 允许写入 准备下一条指令取指
     .i_br_sel                 (br_sel                       ), // bru 控制指令的跳转在 id stage 完成 直接回到此处改变 pc
     .i_br_target              (br_target                    ), // 避免控制指令冲突问题
     .o_pc                     (fs_pc                        ),
