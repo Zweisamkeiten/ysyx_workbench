@@ -63,7 +63,7 @@ void _exit(int status) {
 }
 
 int _open(const char *path, int flags, mode_t mode) {
-  printf("1233333333\n");
+  assert(0);
   return _syscall_(SYS_open, (intptr_t)path, flags, mode);
 }
 
