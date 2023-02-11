@@ -8,7 +8,7 @@ module ysyx_22050710_pc #(
   input                        i_clk                         ,
   input                        i_rst                         ,
   input                        i_load                        ,
-  input                        i_br_stall                    ,
+  input                        i_br_taken                    ,
   input                        i_br_sel                      ,
   input  [PC_WD-1:0          ] i_br_target                   ,
   output [PC_WD-1:0          ] o_pc                          ,
@@ -23,7 +23,9 @@ module ysyx_22050710_pc #(
 
   assign o_pc                = pc;
   assign snpc                = pc + 4;
-  assign dnpc                = (i_br_stall & i_br_sel) ? i_br_target : snpc ;
+  assign dnpc                = (i_br_taken & i_br_sel)
+                             ? i_br_target
+                             : snpc                          ; // 因为分支指令如果依赖的寄存器未写回, 被阻塞在id stage, br_target不是最终的正确跳转地址, 需要增加taken发生
 
   /* 取指下一周期pc指向的指令
    * bru 控制指令的跳转在 id stage 完成, 使用组合逻辑产生的dnpc
