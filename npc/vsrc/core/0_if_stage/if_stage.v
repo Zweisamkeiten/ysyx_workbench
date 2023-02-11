@@ -26,7 +26,7 @@ module ysyx_22050710_if_stage #(
 
   // pre if stage
   wire                         to_fs_valid                   ;
-  assign to_fs_valid         = ~i_rst           ;
+  assign to_fs_valid         = ~i_rst                        ;
   wire                         br_stall                      ;
   wire                         br_sel                        ;
   wire [PC_WD-1:0            ] br_target                     ;
@@ -70,7 +70,6 @@ module ysyx_22050710_if_stage #(
     .i_clk                    (i_clk                        ),
     .i_rst                    (i_rst                        ),
     .i_load                   (to_fs_valid && fs_allowin    ), // if stage 无数据 ds stage 允许写入 准备下一条指令取指
-    .i_br_stall               (br_stall                     ), // bru 控制指令的跳转在 id stage 完成 直接回到此处改变 pc
     .i_br_sel                 (br_sel                       ), // bru 控制指令的跳转在 id stage 完成 直接回到此处改变 pc
     .i_br_target              (br_target                    ), // 避免控制指令冲突问题
     .o_pc                     (fs_pc                        ),
