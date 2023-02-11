@@ -53,7 +53,7 @@ module ysyx_22050710_id_stage #(
                               || (i_es_to_ds_csr_rd != 0 && i_es_to_ds_csr_rd == csr)
                               || (i_ms_to_ds_csr_rd != 0 && i_ms_to_ds_csr_rd == csr)
                               || (i_ws_to_ds_csr_rd != 0 && i_ws_to_ds_csr_rd == csr));
-  assign ds_ready_go         = ~ds_wb_not_finish && ~br_stall;
+  assign ds_ready_go         = ~ds_wb_not_finish;
   assign o_ds_allowin        = (!ds_valid) || (ds_ready_go && i_es_allowin);
   assign o_ds_to_es_valid    = ds_valid && ds_ready_go       ;
 
