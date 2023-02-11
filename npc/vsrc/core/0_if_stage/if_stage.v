@@ -59,7 +59,7 @@ module ysyx_22050710_if_stage #(
     .rst                      (i_rst                        ),
     .din                      (to_fs_valid                  ), // ~reset
     .dout                     (fs_valid                     ),
-    .wen                      (fs_allowin                   )
+    .wen                      (fs_allowin || br_stall       )
   );
 
   ysyx_22050710_pc #(
