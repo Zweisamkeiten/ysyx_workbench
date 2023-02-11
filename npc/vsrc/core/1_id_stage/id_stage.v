@@ -78,7 +78,7 @@ module ysyx_22050710_id_stage #(
   ) u_fs_to_ds_bus_r (
     .clk                      (i_clk                        ),
     .rst                      (i_rst                        ),
-    .din                      (br_stall ? 0 : i_fs_to_ds_bus               ),
+    .din                      (br_taken ? 0 : i_fs_to_ds_bus), // br taken 发生, 将已经if stage 取来的+4地址的指令清空为nop指令
     .dout                     (fs_to_ds_bus_r               ),
     .wen                      (i_fs_to_ds_valid&&o_ds_allowin)
   );
@@ -140,11 +140,13 @@ module ysyx_22050710_id_stage #(
   wire [PC_WD-1:0            ] epnpc                         ;
 
   // bru 产生 跳转使能 以及目标地址 to if stage
-  wire                         br_stall                      ;
+  wire                         br_taken                      ;
   wire                         br_sel                        ;
   wire [PC_WD-1:0            ] br_target                     ;
-  assign br_stall            = (br_sel & ~ds_wb_not_finish) ? (br_target != fs_pc) : 0;
-  assign o_br_bus            = {br_stall, br_sel, br_target };
+  assign br_taken            = (br_sel & ~ds_wb_not_finish)
+                             ? (br_target != fs_pc)
+                             : 0                             ;
+  assign o_br_bus            = {br_taken, br_sel, br_target };
 
   // id stage to ex stage
   assign o_ds_to_es_bus      = {rs1data                      ,  // 358:295
@@ -192,7 +194,7 @@ module ysyx_22050710_id_stage #(
           rf_debug_pc
          }                   = debug_ws_to_rf_bus_r          ;
 
-  assign o_debug_ds_to_es_bus= {o_ds_to_es_valid,  // blocking
+  assign o_debug_ds_to_es_bus= {o_ds_to_es_valid             ,  // blocking
                                 ds_inst                      ,
                                 ds_pc
   };
