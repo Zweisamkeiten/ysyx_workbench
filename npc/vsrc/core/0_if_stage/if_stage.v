@@ -26,7 +26,7 @@ module ysyx_22050710_if_stage #(
 
   // pre if stage
   wire                         to_fs_valid                   ;
-  assign to_fs_valid         = ~i_rst  && ~br_stall           ;
+  assign to_fs_valid         = ~i_rst                        ;
   wire                         br_stall                      ;
   wire                         br_sel                        ;
   wire [PC_WD-1:0            ] br_target                     ;
@@ -59,7 +59,7 @@ module ysyx_22050710_if_stage #(
     .rst                      (i_rst                        ),
     .din                      (to_fs_valid                  ), // ~reset
     .dout                     (fs_valid                     ),
-    .wen                      (fs_allowin || br_stall       )
+    .wen                      (fs_allowin                   )
   );
 
   ysyx_22050710_pc #(
