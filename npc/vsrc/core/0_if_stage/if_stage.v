@@ -26,7 +26,7 @@ module ysyx_22050710_if_stage #(
 
   // pre if stage
   wire                         to_fs_valid                   ;
-  assign to_fs_valid         = ~i_rst && (br_stall ? ~br_sel : 1)           ;
+  assign to_fs_valid         = ~i_rst     ;
   wire                         br_stall                      ; // 流水线停顿 br 相关寄存器是否写回
   wire                         br_sel                        ;
   wire [PC_WD-1:0            ] br_target                     ;
