@@ -47,7 +47,6 @@ extern uint8_t _end;
 void *program_break = &_end;
 
 intptr_t _syscall_(intptr_t type, intptr_t a0, intptr_t a1, intptr_t a2) {
-  assert(0);
   register intptr_t _gpr1 asm (GPR1) = type;
   register intptr_t _gpr2 asm (GPR2) = a0;
   register intptr_t _gpr3 asm (GPR3) = a1;
@@ -64,6 +63,7 @@ void _exit(int status) {
 }
 
 int _open(const char *path, int flags, mode_t mode) {
+  assert(0);
   return _syscall_(SYS_open, (intptr_t)path, flags, mode);
 }
 
