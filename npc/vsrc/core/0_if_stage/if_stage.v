@@ -30,7 +30,10 @@ module ysyx_22050710_if_stage #(
   wire                         br_stall                      ; // 流水线停顿 br 相关寄存器是否写回
   wire                         br_sel                        ;
   wire [PC_WD-1:0            ] br_target                     ;
-  assign {br_sel, br_target} = i_br_bus                      ;
+  assign {br_stall,
+          br_sel,
+          br_target
+         }                   = i_br_bus                      ;
 
   // if stage
   wire                         fs_valid                      ;
