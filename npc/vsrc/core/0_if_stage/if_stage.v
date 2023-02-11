@@ -27,10 +27,9 @@ module ysyx_22050710_if_stage #(
   // pre if stage
   wire                         to_fs_valid                   ;
   assign to_fs_valid         = ~i_rst                        ;
-  wire                         br_stall                      ;
   wire                         br_sel                        ;
   wire [PC_WD-1:0            ] br_target                     ;
-  assign {br_stall,
+  assign {
           br_sel,
           br_target
          }                   = i_br_bus                      ;
@@ -84,7 +83,7 @@ module ysyx_22050710_if_stage #(
     .i_pc_align               (fs_pc[2]                     ), // 取指访问指令sram 64位对齐 根据 pc[2] 选择前32bits还是后32bits
     .o_inst                   (fs_inst                      ),
     // inst sram interface
-    .i_inst_sram_rdata        (br_stall ? i_inst_sram_rdata : 64'b0)
+    .i_inst_sram_rdata        (i_inst_sram_rdata            )
   );
 
 endmodule
