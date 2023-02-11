@@ -46,13 +46,14 @@ module ysyx_22050710_id_stage #(
 
   wire                         ds_valid                      ;
   wire                         ds_ready_go                   ;
-  assign ds_ready_go         = !((i_es_to_ds_gpr_rd != 0 && (ebreak_sel ? i_es_to_ds_gpr_rd == 5'ha : (i_es_to_ds_gpr_rd == rs1 || i_es_to_ds_gpr_rd == rs2)))
+  wire                         ds_wb_not_finish              ;
+  assign ds_wb_not_finish    = ( (i_es_to_ds_gpr_rd != 0 && (ebreak_sel ? i_es_to_ds_gpr_rd == 5'ha : (i_es_to_ds_gpr_rd == rs1 || i_es_to_ds_gpr_rd == rs2)))
                               || (i_ms_to_ds_gpr_rd != 0 && (ebreak_sel ? i_ms_to_ds_gpr_rd == 5'ha : (i_ms_to_ds_gpr_rd == rs1 || i_ms_to_ds_gpr_rd == rs2)))
                               || (i_ws_to_ds_gpr_rd != 0 && (ebreak_sel ? i_ws_to_ds_gpr_rd == 5'ha : (i_ws_to_ds_gpr_rd == rs1 || i_ws_to_ds_gpr_rd == rs2)))
                               || (i_es_to_ds_csr_rd != 0 && i_es_to_ds_csr_rd == csr)
                               || (i_ms_to_ds_csr_rd != 0 && i_ms_to_ds_csr_rd == csr)
-                              || (i_ws_to_ds_csr_rd != 0 && i_ws_to_ds_csr_rd == csr))
-                              && (br_sel ? br_target == fs_pc : 1); // 预测失败
+                              || (i_ws_to_ds_csr_rd != 0 && i_ws_to_ds_csr_rd == csr));
+  assign ds_ready_go         = ~ds_wb_not_finish;
   assign o_ds_allowin        = (!ds_valid) || (ds_ready_go && i_es_allowin);
   assign o_ds_to_es_valid    = ds_valid && ds_ready_go       ;
 
@@ -77,7 +78,7 @@ module ysyx_22050710_id_stage #(
   ) u_fs_to_ds_bus_r (
     .clk                      (i_clk                        ),
     .rst                      (i_rst                        ),
-    .din                      (i_fs_to_ds_bus               ),
+    .din                      (br_stall ? 0 : i_fs_to_ds_bus               ),
     .dout                     (fs_to_ds_bus_r               ),
     .wen                      (i_fs_to_ds_valid&&o_ds_allowin)
   );
@@ -139,9 +140,11 @@ module ysyx_22050710_id_stage #(
   wire [PC_WD-1:0            ] epnpc                         ;
 
   // bru 产生 跳转使能 以及目标地址 to if stage
+  wire                         br_stall                      ;
   wire                         br_sel                        ;
   wire [PC_WD-1:0            ] br_target                     ;
-  assign o_br_bus            = {br_sel, br_target           };
+  assign br_stall            = (br_sel & ~ds_wb_not_finish) ? (br_target != fs_pc) : 0;
+  assign o_br_bus            = {br_stall, br_sel, br_target };
 
   // id stage to ex stage
   assign o_ds_to_es_bus      = {rs1data                      ,  // 358:295
@@ -195,7 +198,7 @@ module ysyx_22050710_id_stage #(
   };
 
   always @(*) begin
-    if (rf_debug_valid) begin
+    if (rf_debug_valid && rf_debug_inst != 0) begin
       finish_handle(rf_debug_pc, {32'b0, rf_debug_inst});
     end
   end
