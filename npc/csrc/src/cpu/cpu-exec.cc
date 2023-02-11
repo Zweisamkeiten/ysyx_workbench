@@ -5,8 +5,7 @@ extern "C" {
   #include <cpu/difftest.h>
   #include <memory/paddr.h>
 }
-int a_inst_finished = 0;
-vaddr_t last_pc; // use at IRINGTRACE and difftest 现在指上一状态 刚执行过的指令的PC
+static vaddr_t snpc; // use at IRINGTRACE and difftest
 #ifdef CONFIG_WATCHPOINT
 extern "C" void diff_watchpoint_value();
 #endif
@@ -146,7 +145,7 @@ static uint32_t last_inst;
 void print_iringbuf() {
   printf(ANSI_FMT("INSTRUCTIONS RING STRACE:\n", ANSI_FG_RED));
   char logbuf[128];
-  disassemble_inst_to_buf(logbuf, 128, (uint8_t *)&last_inst, cpu.pc, last_pc);
+  disassemble_inst_to_buf(logbuf, 128, (uint8_t *)&last_inst, cpu.pc, snpc);
   int arrow_len = strlen(" --> ");
   iringbuf[iringbuf_index] = (char *)realloc(iringbuf[iringbuf_index], arrow_len + strlen(logbuf) + 1);
   char *p = iringbuf[iringbuf_index];
@@ -190,25 +189,22 @@ static void trace_and_difftest(vaddr_t dnpc) {
   }
 #endif
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(itrace_logbuf)); }
-  IFDEF(CONFIG_DIFFTEST, difftest_step(last_pc, dnpc));
+  IFDEF(CONFIG_DIFFTEST, difftest_step(snpc, dnpc));
   IFDEF(CONFIG_WATCHPOINT, diff_watchpoint_value());
 }
 
 void exec_once() {
   cpu.pc = *npcpc;
   // printf("%lx\n", top->o_pc);
-  while (a_inst_finished == 0) {
-    single_cycle(0);
-  }
-  // single_cycle(0);
-  a_inst_finished = 0;
 #ifdef CONFIG_ITRACE
-  // cpu.inst = paddr_read(last_pc, 4);
-  disassemble_inst_to_buf(itrace_logbuf, 128, (uint8_t *)&(cpu.inst), last_pc, last_pc + 4);
+  cpu.inst = paddr_read(cpu.pc, 4);
+  disassemble_inst_to_buf(itrace_logbuf, 128, (uint8_t *)&(cpu.inst), cpu.pc, cpu.pc + 4);
 #endif
 #ifdef CONFIG_IRINGTRACE
   last_inst = cpu.inst;
 #endif
+  snpc = cpu.pc;
+  single_cycle();
   cpu.pc = *npcpc;
   trace_and_difftest(cpu.pc);
 }
@@ -266,7 +262,7 @@ void cpu_exec(uint64_t n) {
              : (npc_state.halt_ret == 0
                     ? ANSI_FMT("HIT GOOD TRAP", ANSI_FG_GREEN)
                     : ANSI_FMT("HIT BAD TRAP", ANSI_FG_RED))),
-        last_pc);
+        snpc);
     // fall through
   case NPC_QUIT: break;
   }

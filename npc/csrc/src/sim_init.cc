@@ -4,27 +4,14 @@
 #include <memory/host.h>
 extern "C" {
   #include <memory/paddr.h>
-  #include "../local-include/reg.h"
 }
 
 Vtop *top;
 #ifdef CONFIG_VCD_TRACE
 VerilatedContext *contextp = NULL;
 VerilatedVcdC *tfp = NULL;
-int cycle = 0;
 #endif
 uint64_t * npcpc;
-
-void finish_handle(long long pc, long long inst) {
-  extern vaddr_t last_pc;
-  extern int a_inst_finished;
-  last_pc = pc;
-  cpu.inst = inst;
-  a_inst_finished = 1;
-#ifdef CONFIG_VCD_TRACE
-  printf("cycle: %d, pc: %lx, inst: %lx\n", cycle, (word_t)pc, (word_t)inst);
-#endif
-}
 
 void set_state_end() {
   npc_state.state = NPC_END;
@@ -52,6 +39,10 @@ extern "C" void set_gpr_ptr(const svOpenArrayHandle r) {
   cpu.gpr = (uint64_t *)(((VerilatedDpiOpenVar*)r)->datap());
 }
 
+extern "C" void set_csr_ptr(const svOpenArrayHandle r) {
+  cpu.csr = (uint64_t *)(((VerilatedDpiOpenVar*)r)->datap());
+}
+
 extern "C" void npc_pmem_read(long long raddr, long long *rdata) {
   // 总是读取地址为`raddr & ~0x7ull`的8字节返回给`rdata`
   word_t addr;
@@ -77,13 +68,8 @@ extern "C" void npc_pmem_write(long long waddr, long long wdata, char wmask) {
   }
 }
 
-extern "C" void single_cycle(int rst) {
-#ifdef CONFIG_VCD_TRACE
-  cycle ++;
-  // printf("cycle: %d\n", cycle);
-#endif
+extern "C" void single_cycle() {
   top->i_clk = 0;
-  top->i_rst = rst;
   top->eval();
 #ifdef CONFIG_VCD_TRACE
   contextp->timeInc(1);
@@ -98,9 +84,11 @@ extern "C" void single_cycle(int rst) {
 }
 
 static void reset(int n) {
+  top->i_rst = 1;
   while (n-- > 0) {
-    single_cycle(1); // always reset
+    single_cycle();
   }
+  top->i_rst = 0;
 }
 
 extern "C" void init_sim() {
@@ -116,25 +104,15 @@ extern "C" void init_sim() {
   tfp->open("dump.vcd");
 #endif
 
-  reset(2);
+  reset(10);
 
   npc_state.state = NPC_RUNNING;
 
-  npcpc = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__u_if_stage__DOT__u_pc__DOT__pc);
-
-  QData ** csr = (QData **)malloc(NR_CSREGS * sizeof(uint64_t *));
-  csr[MSTATUS] = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__u_id_stage__DOT__u_csrs__DOT__mstatus);
-  csr[MTVEC] = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__u_id_stage__DOT__u_csrs__DOT__mtvec);
-  csr[MEPC] = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__u_id_stage__DOT__u_csrs__DOT__mepc);
-  csr[MCAUSE] = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__u_id_stage__DOT__u_csrs__DOT__mcause);
-
-  cpu.csr = csr;
-
+  npcpc = &(top->rootp->ysyx_22050710_npc__DOT__pc);
   cpu.pc = *npcpc;
 }
 
 extern "C" void end_sim() {
-  free(cpu.csr);
   top->final();
   delete top;
 #ifdef CONFIG_VCD_TRACE
