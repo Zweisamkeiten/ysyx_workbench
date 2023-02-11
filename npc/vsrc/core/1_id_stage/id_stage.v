@@ -78,7 +78,7 @@ module ysyx_22050710_id_stage #(
   ) u_fs_to_ds_bus_r (
     .clk                      (i_clk                        ),
     .rst                      (i_rst                        ),
-    .din                      (i_fs_to_ds_bus               ),
+    .din                      (br_stall ? 0 : i_fs_to_ds_bus               ),
     .dout                     (fs_to_ds_bus_r               ),
     .wen                      (i_fs_to_ds_valid&&o_ds_allowin)
   );
