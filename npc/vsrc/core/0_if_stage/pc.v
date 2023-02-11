@@ -8,7 +8,6 @@ module ysyx_22050710_pc #(
   input                        i_clk                         ,
   input                        i_rst                         ,
   input                        i_load                        ,
-  input                        i_br_stall                    ,
   input                        i_br_sel                      ,
   input  [PC_WD-1:0          ] i_br_target                   ,
   output [PC_WD-1:0          ] o_pc                          ,
