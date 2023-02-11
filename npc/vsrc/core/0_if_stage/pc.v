@@ -8,6 +8,7 @@ module ysyx_22050710_pc #(
   input                        i_clk                         ,
   input                        i_rst                         ,
   input                        i_load                        ,
+  input                        i_br_stall                    ,
   input                        i_br_sel                      ,
   input  [PC_WD-1:0          ] i_br_target                   ,
   output [PC_WD-1:0          ] o_pc                          ,
@@ -22,14 +23,16 @@ module ysyx_22050710_pc #(
 
   assign o_pc                = pc;
   assign snpc                = pc + 4;
-  assign dnpc                = i_br_sel ? i_br_target : snpc ;
+  assign dnpc                = i_br_stall
+                             ? snpc
+                             : (i_br_sel ? i_br_target : snpc) ;
 
   /* 取指下一周期pc指向的指令
    * bru 控制指令的跳转在 id stage 完成, 使用组合逻辑产生的dnpc
    * 即在本周期"更新 PC 的阶段"就发起对 inst sram 的请求
    * inst sram 的输出是在 if stage 完成
    */
-  assign o_inst_sram_ren     = i_load                        ;
+  assign o_inst_sram_ren     = i_load & ~i_br_stall          ;
   assign o_inst_sram_addr    = dnpc[31:0]                    ;
 
 
