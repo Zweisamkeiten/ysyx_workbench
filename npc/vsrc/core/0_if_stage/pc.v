@@ -23,9 +23,7 @@ module ysyx_22050710_pc #(
 
   assign o_pc                = pc;
   assign snpc                = pc + 4;
-  assign dnpc                = i_br_stall
-                             ? snpc
-                             : (i_br_sel ? i_br_target : snpc) ;
+  assign dnpc                = (i_br_sel ? i_br_target : snpc) ;
 
   /* 取指下一周期pc指向的指令
    * bru 控制指令的跳转在 id stage 完成, 使用组合逻辑产生的dnpc
