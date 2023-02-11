@@ -43,7 +43,7 @@ module ysyx_22050710_pc #(
     .rst                      (i_rst                        ),
     .din                      (dnpc                         ),
     .dout                     (pc                           ),
-    .wen                      (i_load                       )
+    .wen                      (i_load ? 1'b1 : ~i_br_stall  )
   );
 
 endmodule
