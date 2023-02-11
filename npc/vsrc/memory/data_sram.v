@@ -10,7 +10,7 @@ module ysyx_22050710_data_sram #(
   input  [SRAM_ADDR_WD-1:0   ] i_addr                        ,  // 单端口用于读写地址
   // read port
   input                        i_ren                         ,
-  output reg [SRAM_DATA_WD-1:0   ] o_rdata                       ,
+  output reg [SRAM_DATA_WD-1:0] o_rdata                      ,
   // write port
   input                        i_wen                         ,
   input  [SRAM_WMASK_WD-1:0  ] i_wmask                       ,
