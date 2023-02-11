@@ -60,7 +60,7 @@ void init_fs() {
 int fs_open(const char *pathname, int flags, int mode) {
   for (int i = 0; i < NR_FILES; i++) {
     if (strcmp(pathname, file_table[i].name) == 0) {
-      printf("%s\n", i);
+      printf("%s\n", pathname);
       return i;
     }
   }
