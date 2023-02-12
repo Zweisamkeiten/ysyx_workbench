@@ -1,6 +1,6 @@
 // ysyx_22050710 Id stage
 
-import "DPI-C" function void finish_handle(input longint pc, input longint dnpc, input longint inst, input int memen);
+import "DPI-C" function void finish_handle(input longint pc, input longint dnpc, input longint inst, input logic memen);
 
 module ysyx_22050710_id_stage #(
   parameter WORD_WD                                          ,

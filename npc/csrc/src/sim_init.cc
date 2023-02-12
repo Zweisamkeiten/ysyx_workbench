@@ -14,7 +14,7 @@ VerilatedVcdC *tfp = NULL;
 int cycle = 0;
 #endif
 
-void finish_handle(long long pc, long long dnpc, long long inst, bool memen) {
+void finish_handle(long long pc, long long dnpc, long long inst, int memen) {
   extern vaddr_t last_pc;
   extern int a_inst_finished;
   last_pc = pc;
