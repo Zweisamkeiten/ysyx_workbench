@@ -120,7 +120,7 @@ extern "C" void init_sim() {
 
   npc_state.state = NPC_RUNNING;
 
-  npcpc = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__u_if_stage__DOT__u_pc__DOT__pc);
+  npcpc = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__u_if_stage__DOT__u_pc__DOT__dnpc);
 
   QData ** csr = (QData **)malloc(NR_CSREGS * sizeof(uint64_t *));
   csr[MSTATUS] = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__u_id_stage__DOT__u_csrs__DOT__mstatus);
