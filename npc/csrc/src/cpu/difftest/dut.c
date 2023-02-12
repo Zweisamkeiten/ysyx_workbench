@@ -43,6 +43,7 @@ void difftest_skip_ref() {
   // will load that memory, we will encounter false negative. But such
   // situation is infrequent.
   skip_dut_nr_inst = 0;
+  printf("111111111111111111111\n");
 }
 
 // this is used to deal with instruction packing in QEMU.
