@@ -52,6 +52,7 @@ void difftest_skip_ref() {
   // 但是接着立即进行difftest的是之前的指令
   // 因此需要将访存阶段传入仿真环境, 当要跳过difftest时就要比较这个skip_dut_pc
   extern uint64_t* ex_stage_pc;
+  printf("ex_stage_pc: %lx\n", *ex_stage_pc);
   skip_dut_pc = *ex_stage_pc;
 }
 
