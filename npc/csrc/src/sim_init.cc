@@ -21,6 +21,7 @@ void finish_handle(long long pc, long long dnpc, long long inst, svLogic memen) 
   cpu.inst = inst;
   cpu.pc = dnpc;
   a_inst_finished = 1;
+  printf("%d\n", memen);
 #ifdef CONFIG_VCD_TRACE
   printf("cycle: %d, pc: %lx, inst: %lx\n", cycle, (word_t)pc, (word_t)inst);
 #endif
