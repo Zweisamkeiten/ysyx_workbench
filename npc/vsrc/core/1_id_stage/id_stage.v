@@ -248,7 +248,7 @@ module ysyx_22050710_id_stage #(
     // epu bus
     .i_ecall_sel              (ecall_sel                    ),
     .i_mret_sel               (mret_sel                     ),
-    .i_epc                    (fs_pc                        ),
+    .i_epc                    (ds_pc                        ),
     .o_mtvec                  (mtvec                        ),
     .o_mepc                   (mepc                         )
   );
