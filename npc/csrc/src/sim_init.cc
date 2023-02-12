@@ -13,13 +13,13 @@ VerilatedContext *contextp = NULL;
 VerilatedVcdC *tfp = NULL;
 int cycle = 0;
 #endif
-uint64_t * npcpc;
 
-void finish_handle(long long pc, long long inst) {
+void finish_handle(long long pc, long long dnpc, long long inst) {
   extern vaddr_t last_pc;
   extern int a_inst_finished;
   last_pc = pc;
   cpu.inst = inst;
+  cpu.pc = dnpc;
   a_inst_finished = 1;
 #ifdef CONFIG_VCD_TRACE
   printf("cycle: %d, pc: %lx, inst: %lx\n", cycle, (word_t)pc, (word_t)inst);
@@ -28,7 +28,7 @@ void finish_handle(long long pc, long long inst) {
 
 void set_state_end() {
   npc_state.state = NPC_END;
-  npc_state.halt_pc = *npcpc;
+  npc_state.halt_pc = cpu.pc;
   npc_state.halt_ret = cpu.gpr[10];
 }
 
@@ -120,8 +120,6 @@ extern "C" void init_sim() {
 
   npc_state.state = NPC_RUNNING;
 
-  npcpc = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__u_if_stage__DOT__u_pc__DOT__dnpc);
-
   QData ** csr = (QData **)malloc(NR_CSREGS * sizeof(uint64_t *));
   csr[MSTATUS] = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__u_id_stage__DOT__u_csrs__DOT__mstatus);
   csr[MTVEC] = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__u_id_stage__DOT__u_csrs__DOT__mtvec);
@@ -129,8 +127,6 @@ extern "C" void init_sim() {
   csr[MCAUSE] = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__u_id_stage__DOT__u_csrs__DOT__mcause);
 
   cpu.csr = csr;
-
-  cpu.pc = *npcpc;
 }
 
 extern "C" void end_sim() {
