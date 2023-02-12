@@ -103,8 +103,7 @@ static void checkregs(NPC_CPU_state *ref, vaddr_t pc) {
 void difftest_step(vaddr_t pc, vaddr_t npc) {
   NPC_CPU_state ref_r;
   ref_r.gpr = (uint64_t *)malloc(DIFFTEST_REG_SIZE - sizeof(cpu.pc));
-  printf("npc pc: %lx\n", cpu.pc);
-  printf("difftest_step\n");
+  printf("difftest step: npc pc: %lx\n", cpu.pc);
 
   if (skip_dut_nr_inst > 0) {
     ref_difftest_regcpy(&ref_r, DIFFTEST_TO_DUT);
