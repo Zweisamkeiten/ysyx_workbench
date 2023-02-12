@@ -78,6 +78,7 @@ typedef struct {
 } Dut_CPU_state;
 
 void isa_diff_set_regs(void* diff_context) {
+  printf("3333333333333333333333333\n");
   Dut_CPU_state * ctx = (Dut_CPU_state *)diff_context;
   for (int i = 1; i < 32; i++) {
     cpu.gpr[i] = ctx->gpr[i];
