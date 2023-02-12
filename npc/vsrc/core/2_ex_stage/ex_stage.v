@@ -136,19 +136,22 @@ module ysyx_22050710_ex_stage #(
   wire [PC_WD-1:0            ] es_debug_pc                   ;
   wire [PC_WD-1:0            ] es_debug_dnpc                 ;
   wire                         es_debug_memen                ;
+  wire [WORD_WD-1:0          ] es_debug_memaddr              ;
 
   assign {es_debug_valid                                     ,
           es_debug_inst                                      ,
           es_debug_pc                                        ,
           es_debug_dnpc                                      ,
-          es_debug_memen
+          es_debug_memen                                     ,
+          es_debug_memaddr
          }                   = debug_ds_to_es_bus_r          ;
 
   assign o_debug_es_to_ms_bus= {es_debug_valid               ,
                                 es_debug_inst                ,
                                 es_debug_pc                  ,
                                 es_debug_dnpc                ,
-                                es_debug_memen
+  1'b1 ? (o_data_sram_ren | o_data_sram_wen) : es_debug_memen,
+                 1'b1 ? (o_data_sram_addr) : es_debug_memaddr,
                                                              };
 
   wire [WORD_WD-1:0          ] es_alu_result                 ;

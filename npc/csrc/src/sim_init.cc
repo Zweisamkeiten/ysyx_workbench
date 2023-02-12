@@ -3,6 +3,8 @@
 #include <isa.h>
 #include <memory/host.h>
 extern "C" {
+  #include <device/map.h>
+  #include <cpu/difftest.h>
   #include <memory/paddr.h>
   #include "../local-include/reg.h"
 }
@@ -14,14 +16,18 @@ VerilatedVcdC *tfp = NULL;
 int cycle = 0;
 #endif
 
-void finish_handle(long long pc, long long dnpc, long long inst, svLogic memen) {
+void finish_handle(long long pc, long long dnpc, long long inst, svLogic memen, long long memaddr) {
   extern vaddr_t last_pc;
   extern int a_inst_finished;
   last_pc = pc;
   cpu.inst = inst;
   cpu.pc = dnpc;
   a_inst_finished = 1;
-  printf("%d\n", memen);
+  if (memen) {
+    if (is_mmio_addr(memaddr)) {
+      difftest_skip_ref();
+    }
+  }
 #ifdef CONFIG_VCD_TRACE
   printf("cycle: %d, pc: %lx, inst: %lx\n", cycle, (word_t)pc, (word_t)inst);
 #endif
