@@ -151,7 +151,7 @@ module ysyx_22050710_ex_stage #(
                                 es_debug_pc                  ,
                                 es_debug_dnpc                ,
   1'b1 ? (o_data_sram_ren | o_data_sram_wen) : es_debug_memen,
-                 1'b1 ? (o_data_sram_addr) : es_debug_memaddr
+        1'b1 ? ({32'b0, o_data_sram_addr}) : es_debug_memaddr
                                                              };
 
   wire [WORD_WD-1:0          ] es_alu_result                 ;
