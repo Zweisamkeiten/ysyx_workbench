@@ -1,4 +1,4 @@
-TOPNAME = ysyx_22050710_npc
+TOPNAME = ysyx_22050710_top
 BUILD_DIR = ./build
 VERILATOR_OBJ_DIR = $(BUILD_DIR)/obj_dir
 BIN = $(BUILD_DIR)/$(TOPNAME)
@@ -11,7 +11,8 @@ else
 export VERILATOR_ROOT
 VERILATOR = $(VERILATOR_ROOT)/bin/verilator
 endif
-VERILATOR_CFLAGS += --build -cc -j $(shell nproc) -Wall -Wno-DECLFILENAME -O3 -CFLAGS -O3 --trace #-O0
+# VERILATOR_CFLAGS += -Wno-UNUSED
+VERILATOR_CFLAGS += --compiler clang --build -cc -j $(shell nproc) -Wall -Wno-DECLFILENAME -O3 --x-assign fast --x-initial fast --noassert --trace -I./vsrc -CFLAGS -march=native -CFLAGS -O3 -LDFLAGS -flto #-O0
 
 remove_quote = $(patsubst "%",%,$(1))
 
@@ -41,8 +42,8 @@ CFLAGS_BUILD += $(if $(CONFIG_CC_DEBUG),-Og -ggdb3,)
 CFLAGS_TRACE += -DITRACE_COND=$(if $(CONFIG_ITRACE_COND),$(call remove_quote,$(CONFIG_ITRACE_COND)),true)
 CFLAGS_TRACE += -DIRINGTRACE_COND=$(if $(CONFIG_IRINGTRACE_COND),$(call remove_quote,$(CONFIG_IRINGTRACE_COND)),true)
 CFLAGS_TRACE += -DFTRACE_COND=$(if $(CONFIG_FTRACE_COND),$(call remove_quote,$(CONFIG_FTRACE_COND)),true)
-CFLAGS  += $(CFLAGS_BUILD) $(CFLAGS_TRACE)
-LDFLAGS += $(CFLAGS_BUILD) -latomic
+CFLAGS  += $(CFLAGS_BUILD) $(CFLAGS_TRACE) -march=native
+LDFLAGS += $(CFLAGS_BUILD) -latomic -flto
 
 # Include rules for menuconfig
 include $(NPC_HOME)/scripts/config.mk
