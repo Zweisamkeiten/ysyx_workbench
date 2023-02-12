@@ -35,7 +35,9 @@ module ysyx_22050710_core #(
   input  [SRAM_DATA_WD-1:0   ] i_data_sram_rdata             ,
   output                       o_data_sram_wen               ,
   output [SRAM_WMASK_WD-1:0  ] o_data_sram_wmask             ,
-  output [SRAM_DATA_WD-1:0   ] o_data_sram_wdata
+  output [SRAM_DATA_WD-1:0   ] o_data_sram_wdata             ,
+  // debug
+  output [PC_WD-1:0          ] o_debug_es_pc
 );
 
   wire                         ds_allowin                    ;
@@ -169,6 +171,7 @@ module ysyx_22050710_core #(
     .o_es_to_ds_gpr_rd        (es_to_ds_gpr_rd              ),
     .o_es_to_ds_csr_rd        (es_to_ds_csr_rd              ),
     // debug
+    .o_debug_es_pc            (o_debug_es_pc                ),
     .i_debug_ds_to_es_bus     (debug_ds_to_es_bus           ),
     .o_debug_es_to_ms_bus     (debug_es_to_ms_bus           )
   );

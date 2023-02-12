@@ -37,6 +37,7 @@ module ysyx_22050710_ex_stage #(
   output [GPR_ADDR_WD-1:0    ] o_es_to_ds_gpr_rd             ,
   output [CSR_ADDR_WD-1:0    ] o_es_to_ds_csr_rd             ,
   // debug
+  output [PC_WD-1:0          ] o_debug_es_pc                 ,
   input  [DEBUG_BUS_WD-1:0   ] i_debug_ds_to_es_bus          ,
   output [DEBUG_BUS_WD-1:0   ] o_debug_es_to_ms_bus
 );
@@ -209,5 +210,7 @@ module ysyx_22050710_ex_stage #(
   assign o_data_sram_ren     = es_mem_ren                    ;
   assign o_data_sram_wen     = es_mem_wen && es_valid        ;
   assign o_data_sram_addr    = es_alu_result[31:0]           ; // x[rs1] + imm
+
+  assign o_debug_es_pc       = es_pc                         ;
 
 endmodule

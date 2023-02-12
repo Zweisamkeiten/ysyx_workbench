@@ -43,7 +43,6 @@ static inline int find_mapid_by_addr(IOMap *maps, int size, paddr_t addr) {
   for (i = 0; i < size; i ++) {
     if (map_inside(maps + i, addr)) {
       IFDEF(CONFIG_DTRACE, dtrace(maps + i, addr));
-      printf("set difftest skip ref: %lx", addr);
       difftest_skip_ref();
       return i;
     }

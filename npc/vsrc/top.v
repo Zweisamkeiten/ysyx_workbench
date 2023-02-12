@@ -20,7 +20,8 @@ module ysyx_22050710_top #(
   parameter SRAM_DATA_WD     = `ysyx_22050710_SRAM_DATA_WD
 ) (
   input                        i_clk                         ,
-  input                        i_rst
+  input                        i_rst                         ,
+  output [PC_WD-1:0          ] o_debug_es_pc
 );
 
   // cpu inst sram
@@ -62,7 +63,8 @@ module ysyx_22050710_top #(
     .i_data_sram_rdata       (cpu_data_rdata                ),
     .o_data_sram_wen         (cpu_data_wen                  ),
     .o_data_sram_wmask       (cpu_data_wmask                ),
-    .o_data_sram_wdata       (cpu_data_wdata                )
+    .o_data_sram_wdata       (cpu_data_wdata                ),
+    .o_debug_es_pc           (o_debug_es_pc                 )
   );
 
   // inst ram

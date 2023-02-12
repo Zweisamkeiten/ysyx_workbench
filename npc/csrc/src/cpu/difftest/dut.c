@@ -30,6 +30,10 @@ void (*ref_difftest_raise_intr)(uint64_t NO) = NULL;
 
 static bool is_skip_ref = false;
 static int skip_dut_nr_inst = 0;
+// 流水线处理时 load store在访存阶段就设置了仿真环境中的is_skip_ref
+// 但是接着立即进行difftest的是之前的指令
+// 因此需要将访存阶段标记该条指令为访存指令传入仿真环境, 当要跳过difftest时就要比较这个
+word_t skip_dut_pc = 0;
 
 // this is used to let ref skip instructions which
 // can not produce consistent behavior with NPC
@@ -43,7 +47,6 @@ void difftest_skip_ref() {
   // will load that memory, we will encounter false negative. But such
   // situation is infrequent.
   skip_dut_nr_inst = 0;
-  printf("111111111111111111111\n");
 }
 
 // this is used to deal with instruction packing in QEMU.
@@ -118,11 +121,11 @@ void difftest_step(vaddr_t pc, vaddr_t npc) {
     return;
   }
 
-  if (is_skip_ref) {
-    printf("is_skip_ref == true\n");
+  if (is_skip_ref && skip_dut_pc == pc) {
     // to skip the checking of an instruction, just copy the reg state to reference design
     ref_difftest_regcpy(&cpu, DIFFTEST_TO_REF);
     is_skip_ref = false;
+    skip_dut_pc = 0;
     return;
   }
 
