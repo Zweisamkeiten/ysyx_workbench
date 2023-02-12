@@ -80,17 +80,20 @@ module ysyx_22050710_mem_stage #(
   wire [INST_WD-1:0          ] ms_debug_inst                 ;
   wire [PC_WD-1:0            ] ms_debug_pc                   ;
   wire [PC_WD-1:0            ] ms_debug_dnpc                 ;
+  wire                         ms_debug_memen                ;
 
   assign {ms_debug_valid                                     ,
           ms_debug_inst                                      ,
           ms_debug_pc                                        ,
-          ms_debug_dnpc
+          ms_debug_dnpc                                      ,
+          ms_debug_memen
          }                   = debug_es_to_ms_bus_r          ;
 
   assign o_debug_ms_to_ws_bus= {ms_debug_valid               ,
                                 ms_debug_inst                ,
                                 ms_debug_pc                  ,
-                                ms_debug_dnpc
+                                ms_debug_dnpc                ,
+                                ms_debug_memen
                                                              };
 
   // result reg dest
