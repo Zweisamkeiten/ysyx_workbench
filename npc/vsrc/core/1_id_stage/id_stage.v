@@ -205,7 +205,7 @@ module ysyx_22050710_id_stage #(
                                 ds_pc                        ,
                                 br_taken ? br_target : fs_pc ,
                                 mem_ren | mem_wen            ,
-                                0
+                                64'b0
   };
 
   always @(*) begin
