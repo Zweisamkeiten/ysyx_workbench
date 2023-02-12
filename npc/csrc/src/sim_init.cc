@@ -21,7 +21,6 @@ void finish_handle(long long pc, long long dnpc, long long inst) {
   cpu.inst = inst;
   cpu.pc = dnpc;
   a_inst_finished = 1;
-  printf("pc: %lx, dnpc: %lx, inst: %lx\n", (word_t)pc, (word_t)dnpc, (word_t)inst);
 #ifdef CONFIG_VCD_TRACE
   printf("cycle: %d, pc: %lx, inst: %lx\n", cycle, (word_t)pc, (word_t)inst);
 #endif
