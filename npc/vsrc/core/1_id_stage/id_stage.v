@@ -142,7 +142,7 @@ module ysyx_22050710_id_stage #(
   wire                         br_taken                      ;
   wire                         br_sel                        ;
   wire [PC_WD-1:0            ] br_target                     ;
-  assign br_taken            = (br_sel & ~ds_wb_not_finish)
+  assign br_taken            = br_sel
                              ? (br_target != fs_pc)
                              : 0                             ;
   assign o_br_bus            = {br_taken, br_sel, br_target };
@@ -154,6 +154,12 @@ module ysyx_22050710_id_stage #(
   wire [GPR_WD-1:0           ] ms_to_ds_gpr_result           ;
   wire [GPR_ADDR_WD-1:0      ] ws_to_ds_gpr_rd               ;
   wire [GPR_WD-1:0           ] ws_to_ds_gpr_result           ;
+  wire [CSR_ADDR_WD-1:0      ] es_to_ds_csr_rd               ;
+  wire [CSR_WD-1:0           ] es_to_ds_csr_result           ;
+  wire [CSR_ADDR_WD-1:0      ] ms_to_ds_csr_rd               ;
+  wire [CSR_WD-1:0           ] ms_to_ds_csr_result           ;
+  wire [CSR_ADDR_WD-1:0      ] ws_to_ds_csr_rd               ;
+  wire [CSR_WD-1:0           ] ws_to_ds_csr_result           ;
 
   assign {es_to_ds_gpr_rd,
           es_to_ds_gpr_result,
