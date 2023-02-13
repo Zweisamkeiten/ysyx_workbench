@@ -324,8 +324,8 @@ module ysyx_22050710_id_stage #(
     .GPR_WD                   (GPR_WD                       ),
     .IMM_WD                   (IMM_WD                       )
   ) u_bru (
-    .i_rs1data                (rs1data                      ),
-    .i_rs2data                (rs2data                      ),
+    .i_rs1data                (ds_rs1data                   ),
+    .i_rs2data                (ds_rs2data                   ),
     .i_pc                     (ds_pc                        ),
     .i_imm                    (imm                          ),
     // br inst
