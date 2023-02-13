@@ -11,6 +11,7 @@ module ysyx_22050710_ex_stage #(
   parameter IMM_WD                                           ,
   parameter DS_TO_ES_BUS_WD                                  ,
   parameter ES_TO_MS_BUS_WD                                  ,
+  parameter BYPASS_BUS_WD                                    ,
   parameter SRAM_ADDR_WD                                     ,
   parameter SRAM_WMASK_WD                                    ,
   parameter SRAM_DATA_WD                                     ,
@@ -33,9 +34,8 @@ module ysyx_22050710_ex_stage #(
   output                       o_data_sram_wen               ,
   output [SRAM_WMASK_WD-1:0  ] o_data_sram_wmask             ,
   output [SRAM_DATA_WD-1:0   ] o_data_sram_wdata             ,
-  // 阻塞解决数据相关性冲突: es, ms, ws 目的寄存器比较
-  output [GPR_ADDR_WD-1:0    ] o_es_to_ds_gpr_rd             ,
-  output [CSR_ADDR_WD-1:0    ] o_es_to_ds_csr_rd             ,
+  // bypass
+  output [BYPASS_BUS_WD-1:0  ] o_es_to_ds_bypass_bus         ,
   // debug
   input  [DEBUG_BUS_WD-1:0   ] i_debug_ds_to_es_bus          ,
   output [DEBUG_BUS_WD-1:0   ] o_debug_es_to_ms_bus
@@ -167,8 +167,12 @@ module ysyx_22050710_ex_stage #(
                                 es_alu_result                ,
                                 es_csr_result               };
 
-  assign o_es_to_ds_gpr_rd   = {GPR_ADDR_WD{es_valid}} & {GPR_ADDR_WD{es_gpr_wen}} & es_rd;
-  assign o_es_to_ds_csr_rd   = {CSR_ADDR_WD{es_valid}} & {CSR_ADDR_WD{es_csr_wen}} & es_csr;
+  assign o_es_to_ds_bypass_bus = {BYPASS_BUS_WD{es_valid}} &
+                                  {({GPR_ADDR_WD{es_gpr_wen}} & es_rd),
+                                   ({GPR_WD{es_gpr_wen}} & es_alu_result),
+                                   ({CSR_ADDR_WD{es_csr_wen}} & es_csr),
+                                   ({CSR_WD{es_csr_wen}} & es_csr_result)
+                                  };
 
   ysyx_22050710_exu #(
     .WORD_WD                  (WORD_WD                      ),

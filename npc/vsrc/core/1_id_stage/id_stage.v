@@ -15,6 +15,7 @@ module ysyx_22050710_id_stage #(
   parameter DS_TO_ES_BUS_WD                                  ,
   parameter BR_BUS_WD                                        ,
   parameter WS_TO_RF_BUS_WD                                  ,
+  parameter BYPASS_BUS_WD                                    ,
   parameter DEBUG_BUS_WD
 ) (
   input                        i_clk                         ,
@@ -32,13 +33,10 @@ module ysyx_22050710_id_stage #(
   output [BR_BUS_WD-1:0      ] o_br_bus                      ,
   // from ws to rf: for write back
   input  [WS_TO_RF_BUS_WD-1:0] i_ws_to_rf_bus                ,
-  // 阻塞解决数据相关性冲突: es, ms, ws 目的寄存器比较
-  input  [GPR_ADDR_WD-1:0    ] i_es_to_ds_gpr_rd             ,
-  input  [GPR_ADDR_WD-1:0    ] i_ms_to_ds_gpr_rd             ,
-  input  [GPR_ADDR_WD-1:0    ] i_ws_to_ds_gpr_rd             ,
-  input  [CSR_ADDR_WD-1:0    ] i_es_to_ds_csr_rd             ,
-  input  [CSR_ADDR_WD-1:0    ] i_ms_to_ds_csr_rd             ,
-  input  [CSR_ADDR_WD-1:0    ] i_ws_to_ds_csr_rd             ,
+  // bypass
+  input  [BYPASS_BUS_WD-1:0  ] i_es_to_ds_bypass_bus         ,
+  input  [BYPASS_BUS_WD-1:0  ] i_ms_to_ds_bypass_bus         ,
+  input  [BYPASS_BUS_WD-1:0  ] i_ws_to_ds_bypass_bus         ,
   // debug
   input  [DEBUG_BUS_WD-1:0   ] i_debug_ws_to_rf_bus          ,
   output [DEBUG_BUS_WD-1:0   ] o_debug_ds_to_es_bus
@@ -46,14 +44,15 @@ module ysyx_22050710_id_stage #(
 
   wire                         ds_valid                      ;
   wire                         ds_ready_go                   ;
-  wire                         ds_wb_not_finish              ;
-  assign ds_wb_not_finish    = ( (i_es_to_ds_gpr_rd != 0 && (ebreak_sel ? i_es_to_ds_gpr_rd == 5'ha : (i_es_to_ds_gpr_rd == rs1 || i_es_to_ds_gpr_rd == rs2)))
-                              || (i_ms_to_ds_gpr_rd != 0 && (ebreak_sel ? i_ms_to_ds_gpr_rd == 5'ha : (i_ms_to_ds_gpr_rd == rs1 || i_ms_to_ds_gpr_rd == rs2)))
-                              || (i_ws_to_ds_gpr_rd != 0 && (ebreak_sel ? i_ws_to_ds_gpr_rd == 5'ha : (i_ws_to_ds_gpr_rd == rs1 || i_ws_to_ds_gpr_rd == rs2)))
-                              || (i_es_to_ds_csr_rd != 0 && i_es_to_ds_csr_rd == csr)
-                              || (i_ms_to_ds_csr_rd != 0 && i_ms_to_ds_csr_rd == csr)
-                              || (i_ws_to_ds_csr_rd != 0 && i_ws_to_ds_csr_rd == csr));
-  assign ds_ready_go         = ~ds_wb_not_finish;
+  wire                         ds_wb_not_finish_for_ebreak   ; // for ebreak inst, must wait until a0 reg write back.
+
+  assign ds_wb_not_finish_for_ebreak
+                             = ebreak_sel &&
+                                ((es_to_ds_gpr_rd == 5'ha)
+                               ||(ms_to_ds_gpr_rd == 5'ha)
+                               ||(ws_to_ds_gpr_rd == 5'ha))  ;
+
+  assign ds_ready_go         = ~ds_wb_not_finish_for_ebreak;
   assign o_ds_allowin        = (!ds_valid) || (ds_ready_go && i_es_allowin);
   assign o_ds_to_es_valid    = ds_valid && ds_ready_go       ;
 
@@ -148,10 +147,56 @@ module ysyx_22050710_id_stage #(
                              : 0                             ;
   assign o_br_bus            = {br_taken, br_sel, br_target };
 
+  // bypass
+  wire [GPR_ADDR_WD-1:0      ] es_to_ds_gpr_rd               ;
+  wire [GPR_WD-1:0           ] es_to_ds_gpr_result           ;
+  wire [GPR_ADDR_WD-1:0      ] ms_to_ds_gpr_rd               ;
+  wire [GPR_WD-1:0           ] ms_to_ds_gpr_result           ;
+  wire [GPR_ADDR_WD-1:0      ] ws_to_ds_gpr_rd               ;
+  wire [GPR_WD-1:0           ] ws_to_ds_gpr_result           ;
+
+  assign {es_to_ds_gpr_rd,
+          es_to_ds_gpr_result,
+          es_to_ds_csr_rd,
+          es_to_ds_csr_result
+         }                   = i_es_to_ds_bypass_bus         ;
+  assign {ms_to_ds_gpr_rd,
+          ms_to_ds_gpr_result,
+          ms_to_ds_csr_rd,
+          ms_to_ds_csr_result
+         }                   = i_ms_to_ds_bypass_bus         ;
+  assign {ws_to_ds_gpr_rd,
+          ws_to_ds_gpr_result,
+          ws_to_ds_csr_rd,
+          ws_to_ds_csr_result
+         }                   = i_ws_to_ds_bypass_bus         ;
+
+  wire [GPR_WD-1:0           ] ds_rs1data                    ;
+  wire [GPR_WD-1:0           ] ds_rs2data                    ;
+  wire [CSR_WD-1:0           ] ds_csrdata                    ;
+
+  assign ds_rs1data          =
+  (es_to_ds_gpr_rd != 0 && rs1 == es_to_ds_gpr_rd) ? es_to_ds_gpr_result :
+  (ms_to_ds_gpr_rd != 0 && rs1 == ms_to_ds_gpr_rd) ? ms_to_ds_csr_result :
+  (ws_to_ds_gpr_rd != 0 && rs1 == ws_to_ds_gpr_rd) ? ws_to_ds_gpr_result :
+                                                     rs1data             ;
+
+  assign ds_rs2data          =
+  (es_to_ds_gpr_rd != 0 && rs2 == es_to_ds_gpr_rd) ? es_to_ds_gpr_result :
+  (ms_to_ds_gpr_rd != 0 && rs2 == ms_to_ds_gpr_rd) ? ms_to_ds_csr_result :
+  (ws_to_ds_gpr_rd != 0 && rs2 == ws_to_ds_gpr_rd) ? ws_to_ds_gpr_result :
+                                                     rs2data             ;
+
+  assign ds_csrdata          =
+  (csr == es_to_ds_csr_rd) ? es_to_ds_gpr_result :
+  (csr == ms_to_ds_csr_rd) ? ms_to_ds_csr_result :
+  (csr == ws_to_ds_csr_rd) ? ws_to_ds_gpr_result :
+                             csrdata                         ;
+
   // id stage to ex stage
-  assign o_ds_to_es_bus      = {rs1data                      ,  // 358:295
-                                rs2data                      ,  // 294:231
-                                csrrdata                     ,  // 230:167
+  assign o_ds_to_es_bus      = {ds_rs1data                   ,  // 358:295
+                                ds_rs2data                   ,  // 294:231
+                                ds_csrdata                   ,  // 230:167
                                 imm                          ,  // 166:103
                                 ds_pc                        ,  // 102:39
                                 alu_src1_sel                 ,  //  38:38
