@@ -8,6 +8,7 @@ module ysyx_22050710_mem_stage #(
   parameter CSR_ADDR_WD                                      ,
   parameter ES_TO_MS_BUS_WD                                  ,
   parameter MS_TO_WS_BUS_WD                                  ,
+  parameter BYPASS_BUS_WD                                    ,
   parameter SRAM_DATA_WD                                     ,
   parameter DEBUG_BUS_WD
 ) (
@@ -24,9 +25,8 @@ module ysyx_22050710_mem_stage #(
   output [MS_TO_WS_BUS_WD-1:0] o_ms_to_ws_bus                ,
   // from data-sram
   input  [SRAM_DATA_WD-1:0   ] i_data_sram_rdata             , // data ram 读数据返回 进入 lsu 进行处理
-  // 阻塞解决数据相关性冲突: es, ms, ws 目的寄存器比较
-  output [GPR_ADDR_WD-1:0    ] o_ms_to_ds_gpr_rd             ,
-  output [CSR_ADDR_WD-1:0    ] o_ms_to_ds_csr_rd             ,
+  // bypass
+  output [BYPASS_BUS_WD-1:0  ] o_ms_to_ds_bypass_bus         ,
   // debug
   input  [DEBUG_BUS_WD-1:0   ] i_debug_es_to_ms_bus          ,
   output [DEBUG_BUS_WD-1:0   ] o_debug_ms_to_ws_bus
@@ -140,8 +140,12 @@ module ysyx_22050710_mem_stage #(
                                 ms_csr                       ,
                                 ms_csr_final_result          };
 
-  assign o_ms_to_ds_gpr_rd   = {GPR_ADDR_WD{ms_valid}} & {GPR_ADDR_WD{ms_gpr_wen}} & ms_rd;
-  assign o_ms_to_ds_csr_rd   = {CSR_ADDR_WD{ms_valid}} & {CSR_ADDR_WD{ms_csr_wen}} & ms_csr;
+  assign o_ms_to_ds_bypass_bus = {BYPASS_BUS_WD{ms_valid}} &
+                                  {({GPR_ADDR_WD{ms_gpr_wen}} & ms_rd),
+                                   ({WORD_WD{ms_gpr_wen}} & ms_gpr_final_result),
+                                   ({CSR_ADDR_WD{ms_csr_wen}} & ms_csr),
+                                   ({WORD_WD{ms_csr_wen}} & ms_csr_final_result)
+                                  };
 
   ysyx_22050710_lsu_load #(
     .WORD_WD                  (WORD_WD                      ),

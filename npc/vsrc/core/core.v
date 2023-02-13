@@ -18,6 +18,7 @@ module ysyx_22050710_core #(
   parameter WS_TO_RF_BUS_WD  = `ysyx_22050710_WS_TO_RF_BUS_WD,
   parameter BR_BUS_WD        = `ysyx_22050710_BR_BUS_WD      ,
   parameter DEBUG_BUS_WD     = `ysyx_22050710_DEBUG_BUS_WD   ,
+  parameter BYPASS_BUS_WD    = `ysyx_22050710_BYPASS_BUS_WD  ,
 
   parameter SRAM_ADDR_WD                                     ,
   parameter SRAM_WMASK_WD                                    ,
@@ -53,12 +54,12 @@ module ysyx_22050710_core #(
   wire [WS_TO_RF_BUS_WD-1:0  ] ws_to_rf_bus                  ;
   wire [BR_BUS_WD-1:0        ] br_bus                        ;
 
-  wire [GPR_ADDR_WD-1:0      ] es_to_ds_gpr_rd               ;
-  wire [GPR_ADDR_WD-1:0      ] ms_to_ds_gpr_rd               ;
-  wire [GPR_ADDR_WD-1:0      ] ws_to_ds_gpr_rd               ;
-  wire [CSR_ADDR_WD-1:0      ] es_to_ds_csr_rd               ;
-  wire [CSR_ADDR_WD-1:0      ] ms_to_ds_csr_rd               ;
-  wire [CSR_ADDR_WD-1:0      ] ws_to_ds_csr_rd               ;
+  wire [BYPASS_BUS_WD-1:0    ] es_to_ds_bypass_bus           ;
+  wire [BYPASS_BUS_WD-1:0    ] ms_to_ds_bypass_bus           ;
+  wire [BYPASS_BUS_WD-1:0    ] ws_to_ds_bypass_bus           ;
+
+  // for load stall
+  wire                         es_to_ds_load_sel             ;
 
   // debug
   wire [DEBUG_BUS_WD-1:0     ] debug_ds_to_es_bus            ;
@@ -103,6 +104,7 @@ module ysyx_22050710_core #(
     .DS_TO_ES_BUS_WD          (DS_TO_ES_BUS_WD              ),
     .BR_BUS_WD                (BR_BUS_WD                    ),
     .WS_TO_RF_BUS_WD          (WS_TO_RF_BUS_WD              ),
+    .BYPASS_BUS_WD            (BYPASS_BUS_WD                ),
     .DEBUG_BUS_WD             (DEBUG_BUS_WD                 )
   ) u_id_stage (
     .i_clk                    (i_clk                        ),
@@ -120,13 +122,13 @@ module ysyx_22050710_core #(
     .o_br_bus                 (br_bus                       ),
     // from ws to rf: for write back
     .i_ws_to_rf_bus           (ws_to_rf_bus                 ),
-    // 阻塞解决数据相关性冲突: es, ms, ws 目的寄存器比较
-    .i_es_to_ds_gpr_rd        (es_to_ds_gpr_rd              ),
-    .i_ms_to_ds_gpr_rd        (ms_to_ds_gpr_rd              ),
-    .i_ws_to_ds_gpr_rd        (ws_to_ds_gpr_rd              ),
-    .i_es_to_ds_csr_rd        (es_to_ds_csr_rd              ),
-    .i_ms_to_ds_csr_rd        (ms_to_ds_csr_rd              ),
-    .i_ws_to_ds_csr_rd        (ws_to_ds_csr_rd              ),
+    // for load stall
+    .i_es_to_ds_load_sel      (es_to_ds_load_sel            ),
+    // 前递 forward 解决数据相关性冲突:
+    // 流水线组合逻辑结果前递到译码级寄存器读出
+    .i_es_to_ds_bypass_bus    (es_to_ds_bypass_bus          ),
+    .i_ms_to_ds_bypass_bus    (ms_to_ds_bypass_bus          ),
+    .i_ws_to_ds_bypass_bus    (ws_to_ds_bypass_bus          ),
     // debug
     .i_debug_ws_to_rf_bus     (debug_ws_to_rf_bus           ),
     .o_debug_ds_to_es_bus     (debug_ds_to_es_bus           )
@@ -143,6 +145,7 @@ module ysyx_22050710_core #(
     .CSR_ADDR_WD              (CSR_ADDR_WD                  ),
     .DS_TO_ES_BUS_WD          (DS_TO_ES_BUS_WD              ),
     .ES_TO_MS_BUS_WD          (ES_TO_MS_BUS_WD              ),
+    .BYPASS_BUS_WD            (BYPASS_BUS_WD                ),
     .SRAM_ADDR_WD             (SRAM_ADDR_WD                 ),
     .SRAM_WMASK_WD            (SRAM_WMASK_WD                ),
     .SRAM_DATA_WD             (SRAM_DATA_WD                 ),
@@ -165,9 +168,10 @@ module ysyx_22050710_core #(
     .o_data_sram_wen          (o_data_sram_wen              ), // data ram 的读数据在mem stage 返回
     .o_data_sram_wmask        (o_data_sram_wmask            ),
     .o_data_sram_wdata        (o_data_sram_wdata            ),
-    // 目的寄存器
-    .o_es_to_ds_gpr_rd        (es_to_ds_gpr_rd              ),
-    .o_es_to_ds_csr_rd        (es_to_ds_csr_rd              ),
+    // for load stall
+    .o_es_to_ds_load_sel      (es_to_ds_load_sel            ),
+    // bypass
+    .o_es_to_ds_bypass_bus    (es_to_ds_bypass_bus          ),
     // debug
     .i_debug_ds_to_es_bus     (debug_ds_to_es_bus           ),
     .o_debug_es_to_ms_bus     (debug_es_to_ms_bus           )
@@ -181,6 +185,7 @@ module ysyx_22050710_core #(
     .CSR_ADDR_WD              (CSR_ADDR_WD                  ),
     .ES_TO_MS_BUS_WD          (ES_TO_MS_BUS_WD              ),
     .MS_TO_WS_BUS_WD          (MS_TO_WS_BUS_WD              ),
+    .BYPASS_BUS_WD            (BYPASS_BUS_WD                ),
     .SRAM_DATA_WD             (SRAM_DATA_WD                 ),
     .DEBUG_BUS_WD             (DEBUG_BUS_WD                 )
   ) u_mem_stage (
@@ -197,9 +202,8 @@ module ysyx_22050710_core #(
     .o_ms_to_ws_bus           (ms_to_ws_bus                 ),
     // from data-sram
     .i_data_sram_rdata        (i_data_sram_rdata            ), // data ram 读数据返回 进入 lsu 进行处理
-    // 目的寄存器
-    .o_ms_to_ds_gpr_rd        (ms_to_ds_gpr_rd              ),
-    .o_ms_to_ds_csr_rd        (ms_to_ds_csr_rd              ),
+    // bypass
+    .o_ms_to_ds_bypass_bus    (ms_to_ds_bypass_bus          ),
     // debug
     .i_debug_es_to_ms_bus     (debug_es_to_ms_bus           ),
     .o_debug_ms_to_ws_bus     (debug_ms_to_ws_bus           )
@@ -215,6 +219,7 @@ module ysyx_22050710_core #(
     .CSR_WD                   (CSR_WD                       ),
     .MS_TO_WS_BUS_WD          (MS_TO_WS_BUS_WD              ),
     .WS_TO_RF_BUS_WD          (WS_TO_RF_BUS_WD              ),
+    .BYPASS_BUS_WD            (BYPASS_BUS_WD                ),
     .DEBUG_BUS_WD             (DEBUG_BUS_WD                 )
   ) u_wb_stage (
     .i_clk                    (i_clk                        ),
@@ -226,9 +231,8 @@ module ysyx_22050710_core #(
     .i_ms_to_ws_bus           (ms_to_ws_bus                 ),
     // to rf
     .o_ws_to_rf_bus           (ws_to_rf_bus                 ),
-    // 目的寄存器
-    .o_ws_to_ds_gpr_rd        (ws_to_ds_gpr_rd              ),
-    .o_ws_to_ds_csr_rd        (ws_to_ds_csr_rd              ),
+    // bypass
+    .o_ws_to_ds_bypass_bus    (ws_to_ds_bypass_bus          ),
     // debug
     .i_debug_ms_to_ws_bus     (debug_ms_to_ws_bus           ),
     .o_debug_ws_to_rf_bus     (debug_ws_to_rf_bus           )
