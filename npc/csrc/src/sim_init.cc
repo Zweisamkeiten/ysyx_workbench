@@ -146,5 +146,5 @@ extern "C" void end_sim() {
   tfp->close();
 #endif
   printf("cycles: %lu, insts: %lu\n", cycles, insts);
-  printf("ipc: %lf\n", (double)cycles / insts);
+  printf("ipc: %lf\n", (double)insts / cycles);
 }
