@@ -142,9 +142,9 @@ module ysyx_22050710_mem_stage #(
 
   assign o_ms_to_ds_bypass_bus = {BYPASS_BUS_WD{ms_valid}} &
                                   {({GPR_ADDR_WD{ms_gpr_wen}} & ms_rd),
-                                   ({GPR_WD{ms_gpr_wen}} & ms_alu_result),
+                                   ({WORD_WD{ms_gpr_wen}} & ms_gpr_final_result),
                                    ({CSR_ADDR_WD{ms_csr_wen}} & ms_csr),
-                                   ({CSR_WD{ms_csr_wen}} & ms_csr_result)
+                                   ({WORD_WD{ms_csr_wen}} & ms_csr_final_result)
                                   };
 
   ysyx_22050710_lsu_load #(
