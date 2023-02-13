@@ -45,12 +45,14 @@ module ysyx_22050710_id_stage #(
   wire                         ds_valid                      ;
   wire                         ds_ready_go                   ;
   wire                         ds_wb_not_finish_for_ebreak   ; // for ebreak inst, must wait until a0 reg write back.
+  /* wire                         ds_wb_not_finish_for_load     ; // for load type inst, must wait until load inst pass into mem stage. */
 
   assign ds_wb_not_finish_for_ebreak
                              = ebreak_sel &&
                                 ((es_to_ds_gpr_rd == 5'ha)
                                ||(ms_to_ds_gpr_rd == 5'ha)
                                ||(ws_to_ds_gpr_rd == 5'ha))  ;
+
 
   assign ds_ready_go         = ~ds_wb_not_finish_for_ebreak;
   assign o_ds_allowin        = (!ds_valid) || (ds_ready_go && i_es_allowin);
