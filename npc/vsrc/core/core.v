@@ -58,6 +58,9 @@ module ysyx_22050710_core #(
   wire [BYPASS_BUS_WD-1:0    ] ms_to_ds_bypass_bus           ;
   wire [BYPASS_BUS_WD-1:0    ] ws_to_ds_bypass_bus           ;
 
+  // for load stall
+  wire                         es_to_ds_load_sel             ;
+
   // debug
   wire [DEBUG_BUS_WD-1:0     ] debug_ds_to_es_bus            ;
   wire [DEBUG_BUS_WD-1:0     ] debug_es_to_ms_bus            ;
@@ -119,6 +122,8 @@ module ysyx_22050710_core #(
     .o_br_bus                 (br_bus                       ),
     // from ws to rf: for write back
     .i_ws_to_rf_bus           (ws_to_rf_bus                 ),
+    // for load stall
+    .i_es_to_ds_load_sel      (es_to_ds_load_sel            ),
     // 前递 forward 解决数据相关性冲突:
     // 流水线组合逻辑结果前递到译码级寄存器读出
     .i_es_to_ds_bypass_bus    (es_to_ds_bypass_bus          ),
@@ -163,6 +168,8 @@ module ysyx_22050710_core #(
     .o_data_sram_wen          (o_data_sram_wen              ), // data ram 的读数据在mem stage 返回
     .o_data_sram_wmask        (o_data_sram_wmask            ),
     .o_data_sram_wdata        (o_data_sram_wdata            ),
+    // for load stall
+    .o_es_to_ds_load_sel      (es_to_ds_load_sel            ),
     // bypass
     .o_es_to_ds_bypass_bus    (es_to_ds_bypass_bus          ),
     // debug
