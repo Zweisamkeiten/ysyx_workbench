@@ -28,6 +28,8 @@ module ysyx_22050710_idu #(
   output                       o_mem_ren                     , // for load inst
   output [2:0                ] o_mem_op                      ,
   output                       o_csr_inst_sel                , // write csrdata to gpr
+  // for load stall
+  output                       o_load_sel                    ,
   // for ecall, ebreak, csr ctrl inst, mret
   output [2:0                ] o_csr_op                      ,
   // for ebreak, ecall, mret
@@ -367,6 +369,9 @@ module ysyx_22050710_idu #(
 
   // csr 相关 逻辑计算指令操作码 根据手册funct3唯一
   assign o_csr_op            = funct3                        ;
+
+  // for load stall
+  assign o_load_sel          = inst_load                     ;
 
   assign o_ecall_sel         = inst_ecall                    ;
   assign o_mret_sel          = inst_mret                     ;

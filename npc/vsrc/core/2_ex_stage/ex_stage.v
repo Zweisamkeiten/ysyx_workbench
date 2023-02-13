@@ -34,6 +34,8 @@ module ysyx_22050710_ex_stage #(
   output                       o_data_sram_wen               ,
   output [SRAM_WMASK_WD-1:0  ] o_data_sram_wmask             ,
   output [SRAM_DATA_WD-1:0   ] o_data_sram_wdata             ,
+  // for load stall
+  output                       o_es_to_ds_load_sel           ,
   // bypass
   output [BYPASS_BUS_WD-1:0  ] o_es_to_ds_bypass_bus         ,
   // debug
@@ -92,10 +94,12 @@ module ysyx_22050710_ex_stage #(
   wire [2:0                  ] es_mem_op                     ; // mem 操作 op
   wire                         es_csr_inst_sel               ; // write csrrdata to gpr
   wire [2:0                  ] es_csr_op                     ; // csr 相关逻辑运算操作
+  wire                         es_load_inst_sel              ; // for load stall
   wire                         es_ebreak_sel                 ; // 环境断点 用于结束运行
   wire                         es_invalid_inst_sel           ; // 译码错误 非法指令
   
-  assign {es_rs1data                                         ,  // 358:295
+  assign {es_load_inst_sel                                   ,  // 359:359 for load stall
+          es_rs1data                                         ,  // 358:295
           es_rs2data                                         ,  // 294:231
           es_csrrdata                                        ,  // 230:167
           es_imm                                             ,  // 166:103
@@ -166,6 +170,8 @@ module ysyx_22050710_ex_stage #(
                                 es_csrrdata                  ,
                                 es_alu_result                ,
                                 es_csr_result               };
+
+  assign o_es_to_ds_load_sel   = es_valid & es_load_inst_sel ; // for load stall
 
   assign o_es_to_ds_bypass_bus = {BYPASS_BUS_WD{es_valid}} &
                                   {({GPR_ADDR_WD{es_gpr_wen}} & es_rd),

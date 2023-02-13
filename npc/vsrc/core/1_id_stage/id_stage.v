@@ -33,6 +33,8 @@ module ysyx_22050710_id_stage #(
   output [BR_BUS_WD-1:0      ] o_br_bus                      ,
   // from ws to rf: for write back
   input  [WS_TO_RF_BUS_WD-1:0] i_ws_to_rf_bus                ,
+  // for load stall
+  input                        i_es_to_ds_load_sel           ,
   // bypass
   input  [BYPASS_BUS_WD-1:0  ] i_es_to_ds_bypass_bus         ,
   input  [BYPASS_BUS_WD-1:0  ] i_ms_to_ds_bypass_bus         ,
@@ -45,7 +47,7 @@ module ysyx_22050710_id_stage #(
   wire                         ds_valid                      ;
   wire                         ds_ready_go                   ;
   wire                         ds_wb_not_finish_for_ebreak   ; // for ebreak inst, must wait until a0 reg write back.
-  /* wire                         ds_wb_not_finish_for_load     ; // for load type inst, must wait until load inst pass into mem stage. */
+  wire                         ds_wb_not_finish_for_load     ; // for load type inst, must wait until load inst pass into mem stage.
 
   assign ds_wb_not_finish_for_ebreak
                              = ebreak_sel &&
@@ -53,8 +55,15 @@ module ysyx_22050710_id_stage #(
                                ||(ms_to_ds_gpr_rd == 5'ha)
                                ||(ws_to_ds_gpr_rd == 5'ha))  ;
 
+   // 当 id stage 指令真相关于当前位于执行级的 load 类型指令时 需要停顿等其进
+   // 入 mem stage
+  assign ds_load_stall       = i_es_to_ds_load_sel &&
+                               ((es_to_ds_gpr_rd == rs1) ||
+                                (es_to_ds_gpr_rd == rs2))    ;
 
-  assign ds_ready_go         = ~ds_wb_not_finish_for_ebreak;
+
+  assign ds_ready_go         = ~ds_wb_not_finish_for_ebreak &
+                               ~ds_load_stall                ;
   assign o_ds_allowin        = (!ds_valid) || (ds_ready_go && i_es_allowin);
   assign o_ds_to_es_valid    = ds_valid && ds_ready_go       ;
 
@@ -113,6 +122,7 @@ module ysyx_22050710_id_stage #(
   wire [2:0                  ] mem_op                        ; // mem 操作 op
   wire                         csr_inst_sel                  ; // write csrrdata to gpr
   wire [2:0                  ] csr_op                        ; // csr 相关逻辑运算操作
+  wire                         load_sel                      ; // load type inst sel: load指令的前递路径需要停顿一周期从 mem stage 返回
   wire                         ebreak_sel                    ; // 环境断点 用于结束运行
   wire                         ecall_sel                     ; // 环境调用 引发环境调用异常来请求执行环境
   wire                         mret_sel                      ; // 机器模式异常状态返回
@@ -202,7 +212,8 @@ module ysyx_22050710_id_stage #(
                              csrrdata                        ;
 
   // id stage to ex stage
-  assign o_ds_to_es_bus      = {ds_rs1data                   ,  // 358:295
+  assign o_ds_to_es_bus      = {load_sel                     ,  // 359:359
+                                ds_rs1data                   ,  // 358:295
                                 ds_rs2data                   ,  // 294:231
                                 ds_csrrdata                  ,  // 230:167
                                 imm                          ,  // 166:103
@@ -369,6 +380,8 @@ module ysyx_22050710_id_stage #(
     .o_csr_inst_sel           (csr_inst_sel                 ), // write csrdata to gpr
     // for ecall, ebreak, csr ctrl inst, mret
     .o_csr_op                 (csr_op                       ),
+    // for load stall
+    .o_load_sel               (load_sel                     ),
     // for ebreak, ecall, mret
     .o_ebreak_sel             (ebreak_sel                   ),
     .o_ecall_sel              (ecall_sel                    ),
