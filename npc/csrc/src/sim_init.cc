@@ -13,8 +13,8 @@ Vtop *top;
 #ifdef CONFIG_VCD_TRACE
 VerilatedContext *contextp = NULL;
 VerilatedVcdC *tfp = NULL;
-int cycle = 0;
 #endif
+uint64_t cycle = 0;
 
 void finish_handle(long long pc, long long dnpc, long long inst, svLogic memen, long long memaddr) {
   extern vaddr_t last_pc;
@@ -23,6 +23,7 @@ void finish_handle(long long pc, long long dnpc, long long inst, svLogic memen, 
   cpu.inst = inst;
   cpu.pc = dnpc;
   a_inst_finished = 1;
+  printf("cycle: %lu\n", cycle);
   if (memen) {
     if (is_mmio_addr(memaddr)) {
       difftest_skip_ref();
@@ -85,8 +86,8 @@ extern "C" void npc_pmem_write(long long waddr, long long wdata, char wmask) {
 }
 
 extern "C" void single_cycle(int rst) {
-#ifdef CONFIG_VCD_TRACE
   cycle ++;
+#ifdef CONFIG_VCD_TRACE
   // printf("cycle: %d\n", cycle);
 #endif
   top->i_clk = 0;
