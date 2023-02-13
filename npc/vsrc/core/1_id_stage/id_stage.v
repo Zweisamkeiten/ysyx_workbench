@@ -179,7 +179,7 @@ module ysyx_22050710_id_stage #(
 
   wire [GPR_WD-1:0           ] ds_rs1data                    ;
   wire [GPR_WD-1:0           ] ds_rs2data                    ;
-  wire [CSR_WD-1:0           ] ds_csrdata                    ;
+  wire [CSR_WD-1:0           ] ds_csrrdata                   ;
 
   assign ds_rs1data          =
   (es_to_ds_gpr_rd != 0 && rs1 == es_to_ds_gpr_rd) ? es_to_ds_gpr_result :
@@ -193,16 +193,16 @@ module ysyx_22050710_id_stage #(
   (ws_to_ds_gpr_rd != 0 && rs2 == ws_to_ds_gpr_rd) ? ws_to_ds_gpr_result :
                                                      rs2data             ;
 
-  assign ds_csrdata          =
+  assign ds_csrrdata         =
   (csr == es_to_ds_csr_rd) ? es_to_ds_gpr_result :
   (csr == ms_to_ds_csr_rd) ? ms_to_ds_csr_result :
   (csr == ws_to_ds_csr_rd) ? ws_to_ds_gpr_result :
-                             csrdata                         ;
+                             csrrdata                        ;
 
   // id stage to ex stage
   assign o_ds_to_es_bus      = {ds_rs1data                   ,  // 358:295
                                 ds_rs2data                   ,  // 294:231
-                                ds_csrdata                   ,  // 230:167
+                                ds_csrrdata                  ,  // 230:167
                                 imm                          ,  // 166:103
                                 ds_pc                        ,  // 102:39
                                 alu_src1_sel                 ,  //  38:38
