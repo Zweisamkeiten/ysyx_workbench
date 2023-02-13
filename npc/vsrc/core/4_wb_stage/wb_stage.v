@@ -112,9 +112,9 @@ module ysyx_22050710_wb_stage #(
 
   assign o_ws_to_ds_bypass_bus = {BYPASS_BUS_WD{ws_valid}} &
                                   {({GPR_ADDR_WD{ws_gpr_wen}} & ws_rd),
-                                   ({GPR_WD{ws_gpr_wen}} & ws_alu_result),
+                                   ({GPR_WD{ws_gpr_wen}} & ws_gpr_final_result),
                                    ({CSR_ADDR_WD{ws_csr_wen}} & ws_csr),
-                                   ({CSR_WD{ws_csr_wen}} & ws_csr_result)
+                                   ({CSR_WD{ws_csr_wen}} & ws_csr_final_result)
                                   };
 
   ysyx_22050710_wbu #(
