@@ -183,20 +183,20 @@ module ysyx_22050710_id_stage #(
 
   assign ds_rs1data          =
   (es_to_ds_gpr_rd != 0 && rs1 == es_to_ds_gpr_rd) ? es_to_ds_gpr_result :
-  (ms_to_ds_gpr_rd != 0 && rs1 == ms_to_ds_gpr_rd) ? ms_to_ds_csr_result :
+  (ms_to_ds_gpr_rd != 0 && rs1 == ms_to_ds_gpr_rd) ? ms_to_ds_gpr_result :
   (ws_to_ds_gpr_rd != 0 && rs1 == ws_to_ds_gpr_rd) ? ws_to_ds_gpr_result :
                                                      rs1data             ;
 
   assign ds_rs2data          =
   (es_to_ds_gpr_rd != 0 && rs2 == es_to_ds_gpr_rd) ? es_to_ds_gpr_result :
-  (ms_to_ds_gpr_rd != 0 && rs2 == ms_to_ds_gpr_rd) ? ms_to_ds_csr_result :
+  (ms_to_ds_gpr_rd != 0 && rs2 == ms_to_ds_gpr_rd) ? ms_to_ds_gpr_result :
   (ws_to_ds_gpr_rd != 0 && rs2 == ws_to_ds_gpr_rd) ? ws_to_ds_gpr_result :
                                                      rs2data             ;
 
   assign ds_csrrdata         =
-  (csr == es_to_ds_csr_rd) ? es_to_ds_gpr_result :
+  (csr == es_to_ds_csr_rd) ? es_to_ds_csr_result :
   (csr == ms_to_ds_csr_rd) ? ms_to_ds_csr_result :
-  (csr == ws_to_ds_csr_rd) ? ws_to_ds_gpr_result :
+  (csr == ws_to_ds_csr_rd) ? ws_to_ds_csr_result :
                              csrrdata                        ;
 
   // id stage to ex stage
