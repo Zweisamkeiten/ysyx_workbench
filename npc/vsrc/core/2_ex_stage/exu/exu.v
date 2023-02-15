@@ -78,7 +78,7 @@ module ysyx_22050710_exu #(
     .o_csr_result             (o_csr_result                 )
   );
 
-  always @(posedge i_clk) begin
+  always @(*) begin
     if (i_ebreak_sel) begin
       set_state_end(); // ebreak
     end
