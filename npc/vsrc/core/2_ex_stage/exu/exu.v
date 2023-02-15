@@ -10,7 +10,6 @@ module ysyx_22050710_exu #(
   parameter CSR_WD                                           ,
   parameter IMM_WD
 ) (
-  input                        i_clk                         ,
   // oprand
   input  [GPR_WD-1:0         ] i_rs1data                     ,
   input  [GPR_WD-1:0         ] i_rs2data                     ,
@@ -78,7 +77,7 @@ module ysyx_22050710_exu #(
     .o_csr_result             (o_csr_result                 )
   );
 
-  always @(posedge i_clk) begin
+  always @(*) begin
     if (i_ebreak_sel) begin
       set_state_end(); // ebreak
     end

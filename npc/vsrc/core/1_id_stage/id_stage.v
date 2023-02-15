@@ -64,7 +64,7 @@ module ysyx_22050710_id_stage #(
 
   assign ds_ready_go         = ~ds_wb_not_finish_for_ebreak &
                                ~ds_load_stall                ;
-  assign o_ds_allowin        = (!ds_valid) || (ds_ready_go && i_es_allowin);
+  assign o_ds_allowin        = ((!ds_valid) || (ds_ready_go && i_es_allowin)) & ~ebreak_sel; // when ebreak inst dont fetch inst
   assign o_ds_to_es_valid    = ds_valid && ds_ready_go       ;
 
   Reg #(
