@@ -51,7 +51,7 @@ module ysyx_22050710_id_stage #(
   assign ds_wb_not_finish_for_ebreak
                              = ebreak_sel &&
                                 ((es_to_ds_gpr_rd == 5'ha)
-                               ||(ms_to_ds_gpr_rd == 5'ha)   ;
+                               ||(ms_to_ds_gpr_rd == 5'ha))  ;
 
    // 当 id stage 指令真相关于当前位于执行级的 load 类型指令时 需要停顿等其进
    // 入 mem stage
