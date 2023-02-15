@@ -14,6 +14,7 @@ endif
 VERILATOR_CFLAGS += --compiler clang --build -cc -j $(shell nproc)
 VERILATOR_CFLAGS += -Wall -Wno-DECLFILENAME
 # VERILATOR_CFLAGS += -Wno-UNUSED
+VERILATOR_CFLAGS += --trace
 VERILATOR_CFLAGS += -O3 -I./vsrc -CFLAGS -O3#-O0
 
 remove_quote = $(patsubst "%",%,$(1))
