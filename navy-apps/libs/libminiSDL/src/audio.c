@@ -8,7 +8,7 @@ static bool is_locked = 0;
 static SDL_AudioSpec device;
 
 void CallbackHelper() {
-  if (is_locked == false) return;
+  if (is_locked == true) return;
 
   static bool reenter_flag = false;
   static uint32_t last_time = 0;
@@ -22,12 +22,12 @@ void CallbackHelper() {
     int len = (device.format & 0xff) / 8 * device.samples * device.channels;
     int query = NDL_QueryAudio();
     if (query > len) {
-      uint8_t * stream = (uint8_t *)malloc(len);
+      uint8_t * stream = (uint8_t *)malloc(len * sizeof(uint8_t));
       reenter_flag = !reenter_flag;
       device.callback(device.userdata, stream, len);
-      reenter_flag = !reenter_flag;
       NDL_PlayAudio(stream, len);
       free(stream);
+      reenter_flag = !reenter_flag;
     }
     last_time = now;
   }
@@ -35,8 +35,9 @@ void CallbackHelper() {
 
 int SDL_OpenAudio(SDL_AudioSpec *desired, SDL_AudioSpec *obtained) {
   NDL_OpenAudio(desired->freq, desired->channels, desired->samples);
+  printf("%d, %d, %d\n", desired->freq, desired->channels, desired->samples);
 
-  interval = desired->samples / desired->freq; // freq = 每秒采样个数, samples = 用户每次需要采样数量
+  interval = desired->samples * 1000 / desired->freq; // freq = 每秒采样个数, samples = 用户每次需要采样数量, *1000 秒 转 毫秒
 
   device.freq = desired->freq;
   device.channels = desired->channels;
@@ -157,9 +158,9 @@ void SDL_FreeWAV(uint8_t *audio_buf) {
 }
 
 void SDL_LockAudio() {
-  is_locked = false;
+  is_locked = true;
 }
 
 void SDL_UnlockAudio() {
-  is_locked = true;
+  is_locked = false;
 }
