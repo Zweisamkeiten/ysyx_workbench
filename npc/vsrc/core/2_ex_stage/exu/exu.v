@@ -78,6 +78,7 @@ module ysyx_22050710_exu #(
   );
 
   always @(*) begin
+    $display(i_ebreak_sel);
     if (i_ebreak_sel) begin
       set_state_end(); // ebreak
     end
