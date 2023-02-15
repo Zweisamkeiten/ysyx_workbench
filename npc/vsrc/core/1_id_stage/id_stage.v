@@ -394,7 +394,7 @@ module ysyx_22050710_id_stage #(
   );
 
   always @* begin
-    $display("%x, %x", invalid_inst_sel, ds_pc);
+    $display("%x, %x, %x", invalid_inst_sel, ds_pc, ds_inst);
   end
 
 endmodule
