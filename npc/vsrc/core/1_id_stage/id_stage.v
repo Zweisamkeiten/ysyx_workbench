@@ -88,7 +88,7 @@ module ysyx_22050710_id_stage #(
   ) u_fs_to_ds_bus_r (
     .clk                      (i_clk                        ),
     .rst                      (i_rst                        ),
-    .din                      (br_taken ? 0 : i_fs_to_ds_bus), // br taken 发生, 将已经if stage 取来的+4地址的指令清空为nop指令
+    .din                      (br_taken ? {'h00000013, PC_WD{1'b1}} & i_fs_to_ds_bus : i_fs_to_ds_bus), // br taken 发生, 将已经if stage 取来的+4地址的指令清空为nop指令
     .dout                     (fs_to_ds_bus_r               ),
     .wen                      (i_fs_to_ds_valid&&o_ds_allowin)
   );
