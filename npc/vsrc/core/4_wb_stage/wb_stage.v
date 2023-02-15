@@ -10,7 +10,6 @@ module ysyx_22050710_wb_stage #(
   parameter CSR_WD                                           ,
   parameter MS_TO_WS_BUS_WD                                  ,
   parameter WS_TO_RF_BUS_WD                                  ,
-  parameter BYPASS_BUS_WD                                    ,
   parameter DEBUG_BUS_WD
 ) (
   input                        i_clk                         ,
