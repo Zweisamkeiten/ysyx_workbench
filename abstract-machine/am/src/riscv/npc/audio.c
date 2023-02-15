@@ -34,7 +34,10 @@ void __am_audio_status(AM_AUDIO_STATUS_T *stat) {
 
 static void audio_write(uint8_t *buf, int len) {
   int nwrite = 0;
+  int cycle=0;
   while (nwrite < len) {
+    cycle++;
+    printf("%d\n", cycle);
     int count = inl(AUDIO_COUNT_ADDR);
     int free = sbufsize - count;
     if (free > len) {
