@@ -10,7 +10,6 @@ module ysyx_22050710_exu #(
   parameter CSR_WD                                           ,
   parameter IMM_WD
 ) (
-  input                        i_clk                         ,
   // oprand
   input  [GPR_WD-1:0         ] i_rs1data                     ,
   input  [GPR_WD-1:0         ] i_rs2data                     ,
