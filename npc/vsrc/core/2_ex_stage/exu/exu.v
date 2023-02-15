@@ -84,7 +84,6 @@ module ysyx_22050710_exu #(
   end
 
   always @(i_invalid_inst_sel) begin // 敏感变量只有 i_is_invalid_inst, reset(10) 因此只处理一次
-    $display(i_invalid_inst_sel);
     if (i_invalid_inst_sel) set_state_abort(); // invalid inst
   end
 

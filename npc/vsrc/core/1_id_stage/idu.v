@@ -377,6 +377,9 @@ module ysyx_22050710_idu #(
   assign o_mret_sel          = inst_mret                     ;
   assign o_ebreak_sel        = inst_ebreak                   ;
 
+  always @* begin
+    $display(i_invalid_inst_sel);
+  end
   assign o_invalid_inst_sel  = (|inst_type == 1'b0) || (i_inst == 32'b0);
 
 endmodule
