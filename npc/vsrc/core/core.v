@@ -56,7 +56,6 @@ module ysyx_22050710_core #(
 
   wire [BYPASS_BUS_WD-1:0    ] es_to_ds_bypass_bus           ;
   wire [BYPASS_BUS_WD-1:0    ] ms_to_ds_bypass_bus           ;
-  wire [BYPASS_BUS_WD-1:0    ] ws_to_ds_bypass_bus           ;
 
   // for load stall
   wire                         es_to_ds_load_sel             ;
@@ -128,7 +127,6 @@ module ysyx_22050710_core #(
     // 流水线组合逻辑结果前递到译码级寄存器读出
     .i_es_to_ds_bypass_bus    (es_to_ds_bypass_bus          ),
     .i_ms_to_ds_bypass_bus    (ms_to_ds_bypass_bus          ),
-    .i_ws_to_ds_bypass_bus    (ws_to_ds_bypass_bus          ),
     // debug
     .i_debug_ws_to_rf_bus     (debug_ws_to_rf_bus           ),
     .o_debug_ds_to_es_bus     (debug_ds_to_es_bus           )
@@ -231,8 +229,6 @@ module ysyx_22050710_core #(
     .i_ms_to_ws_bus           (ms_to_ws_bus                 ),
     // to rf
     .o_ws_to_rf_bus           (ws_to_rf_bus                 ),
-    // bypass
-    .o_ws_to_ds_bypass_bus    (ws_to_ds_bypass_bus          ),
     // debug
     .i_debug_ms_to_ws_bus     (debug_ms_to_ws_bus           ),
     .o_debug_ws_to_rf_bus     (debug_ws_to_rf_bus           )

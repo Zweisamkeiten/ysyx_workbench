@@ -22,8 +22,6 @@ module ysyx_22050710_wb_stage #(
   input  [MS_TO_WS_BUS_WD-1:0] i_ms_to_ws_bus                ,
   // to rf
   output [WS_TO_RF_BUS_WD-1:0] o_ws_to_rf_bus                ,
-  // bypass
-  output [BYPASS_BUS_WD-1:0  ] o_ws_to_ds_bypass_bus         ,
   // debug
   input  [DEBUG_BUS_WD-1:0   ] i_debug_ms_to_ws_bus          ,
   output [DEBUG_BUS_WD-1:0   ] o_debug_ws_to_rf_bus
@@ -112,13 +110,6 @@ module ysyx_22050710_wb_stage #(
           ws_csr                                             ,
           ws_csr_final_result
           }                  = ms_to_ws_bus_r                ;
-
-  assign o_ws_to_ds_bypass_bus = {BYPASS_BUS_WD{ws_valid}} &
-                                  {({GPR_ADDR_WD{ws_gpr_wen}} & ws_rd),
-                                   ({GPR_WD{ws_gpr_wen}} & ws_gpr_final_result),
-                                   ({CSR_ADDR_WD{ws_csr_wen}} & ws_csr),
-                                   ({CSR_WD{ws_csr_wen}} & ws_csr_final_result)
-                                  };
 
   ysyx_22050710_wbu #(
     .GPR_ADDR_WD              (GPR_ADDR_WD                  ),

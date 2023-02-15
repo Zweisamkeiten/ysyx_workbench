@@ -38,7 +38,6 @@ module ysyx_22050710_id_stage #(
   // bypass
   input  [BYPASS_BUS_WD-1:0  ] i_es_to_ds_bypass_bus         ,
   input  [BYPASS_BUS_WD-1:0  ] i_ms_to_ds_bypass_bus         ,
-  input  [BYPASS_BUS_WD-1:0  ] i_ws_to_ds_bypass_bus         ,
   // debug
   input  [DEBUG_BUS_WD-1:0   ] i_debug_ws_to_rf_bus          ,
   output [DEBUG_BUS_WD-1:0   ] o_debug_ds_to_es_bus
@@ -52,8 +51,7 @@ module ysyx_22050710_id_stage #(
   assign ds_wb_not_finish_for_ebreak
                              = ebreak_sel &&
                                 ((es_to_ds_gpr_rd == 5'ha)
-                               ||(ms_to_ds_gpr_rd == 5'ha)
-                               ||(ws_to_ds_gpr_rd == 5'ha))  ;
+                               ||(ms_to_ds_gpr_rd == 5'ha)   ;
 
    // 当 id stage 指令真相关于当前位于执行级的 load 类型指令时 需要停顿等其进
    // 入 mem stage
@@ -164,14 +162,10 @@ module ysyx_22050710_id_stage #(
   wire [GPR_WD-1:0           ] es_to_ds_gpr_result           ;
   wire [GPR_ADDR_WD-1:0      ] ms_to_ds_gpr_rd               ;
   wire [GPR_WD-1:0           ] ms_to_ds_gpr_result           ;
-  wire [GPR_ADDR_WD-1:0      ] ws_to_ds_gpr_rd               ;
-  wire [GPR_WD-1:0           ] ws_to_ds_gpr_result           ;
   wire [CSR_ADDR_WD-1:0      ] es_to_ds_csr_rd               ;
   wire [CSR_WD-1:0           ] es_to_ds_csr_result           ;
   wire [CSR_ADDR_WD-1:0      ] ms_to_ds_csr_rd               ;
   wire [CSR_WD-1:0           ] ms_to_ds_csr_result           ;
-  wire [CSR_ADDR_WD-1:0      ] ws_to_ds_csr_rd               ;
-  wire [CSR_WD-1:0           ] ws_to_ds_csr_result           ;
 
   assign {es_to_ds_gpr_rd,
           es_to_ds_gpr_result,
@@ -183,11 +177,6 @@ module ysyx_22050710_id_stage #(
           ms_to_ds_csr_rd,
           ms_to_ds_csr_result
          }                   = i_ms_to_ds_bypass_bus         ;
-  assign {ws_to_ds_gpr_rd,
-          ws_to_ds_gpr_result,
-          ws_to_ds_csr_rd,
-          ws_to_ds_csr_result
-         }                   = i_ws_to_ds_bypass_bus         ;
 
   wire [GPR_WD-1:0           ] ds_rs1data                    ;
   wire [GPR_WD-1:0           ] ds_rs2data                    ;
@@ -196,19 +185,16 @@ module ysyx_22050710_id_stage #(
   assign ds_rs1data          =
   (es_to_ds_gpr_rd != 0 && rs1 == es_to_ds_gpr_rd) ? es_to_ds_gpr_result :
   (ms_to_ds_gpr_rd != 0 && rs1 == ms_to_ds_gpr_rd) ? ms_to_ds_gpr_result :
-  (ws_to_ds_gpr_rd != 0 && rs1 == ws_to_ds_gpr_rd) ? ws_to_ds_gpr_result :
                                                      rs1data             ;
 
   assign ds_rs2data          =
   (es_to_ds_gpr_rd != 0 && rs2 == es_to_ds_gpr_rd) ? es_to_ds_gpr_result :
   (ms_to_ds_gpr_rd != 0 && rs2 == ms_to_ds_gpr_rd) ? ms_to_ds_gpr_result :
-  (ws_to_ds_gpr_rd != 0 && rs2 == ws_to_ds_gpr_rd) ? ws_to_ds_gpr_result :
                                                      rs2data             ;
 
   assign ds_csrrdata         =
   (csr == es_to_ds_csr_rd) ? es_to_ds_csr_result :
   (csr == ms_to_ds_csr_rd) ? ms_to_ds_csr_result :
-  (csr == ws_to_ds_csr_rd) ? ws_to_ds_csr_result :
                              csrrdata                        ;
 
   // id stage to ex stage
@@ -392,9 +378,5 @@ module ysyx_22050710_id_stage #(
     // invalid inst
     .o_invalid_inst_sel       (invalid_inst_sel             )
   );
-
-  always @* begin
-    $display("%x, %x, %x, %x, %x", invalid_inst_sel, ds_pc, ds_inst, fs_to_ds_bus_r, i_fs_to_ds_bus);
-  end
 
 endmodule
