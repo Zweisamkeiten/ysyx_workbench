@@ -393,4 +393,8 @@ module ysyx_22050710_id_stage #(
     .o_invalid_inst_sel       (invalid_inst_sel             )
   );
 
+  always @* begin
+    $display(o_invalid_inst_sel, ds_pc);
+  end
+
 endmodule
