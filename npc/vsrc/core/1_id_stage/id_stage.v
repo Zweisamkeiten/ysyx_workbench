@@ -250,6 +250,7 @@ module ysyx_22050710_id_stage #(
   );
 
   wire                         rf_debug_valid                ;
+  wire                         rf_debug_addnop               ;
   wire [INST_WD-1:0          ] rf_debug_inst                 ;
   wire [PC_WD-1:0            ] rf_debug_pc                   ;
   wire [PC_WD-1:0            ] rf_debug_dnpc                 ;
@@ -257,6 +258,7 @@ module ysyx_22050710_id_stage #(
   wire [WORD_WD-1:0          ] rf_debug_memaddr              ;
 
   assign {rf_debug_valid                                     ,
+          rf_debug_addnop                                    ,
           rf_debug_inst                                      ,
           rf_debug_pc                                        ,
           rf_debug_dnpc                                      ,
@@ -265,6 +267,7 @@ module ysyx_22050710_id_stage #(
          }                   = debug_ws_to_rf_bus_r          ;
 
   assign o_debug_ds_to_es_bus= {o_ds_to_es_valid             ,  // blocking
+                                br_taken                     ,
                                 ds_inst                      ,
                                 ds_pc                        ,
                                 br_taken ? br_target : fs_pc ,
@@ -273,7 +276,7 @@ module ysyx_22050710_id_stage #(
   };
 
   always @(*) begin
-    if (rf_debug_valid && rf_debug_inst != 0) begin
+    if (rf_debug_valid && rf_debug_addnop != 1) begin
       finish_handle(rf_debug_pc, rf_debug_dnpc, {32'b0, rf_debug_inst}, rf_debug_memen, rf_debug_memaddr);
     end
   end
