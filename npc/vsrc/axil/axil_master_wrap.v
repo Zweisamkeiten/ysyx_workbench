@@ -93,7 +93,7 @@ module ysyx_22050710_axil_master_wrap #(
   // 写通道状态切换
   always @(*) begin
     if (~i_arsetn) begin
-      write_state_reg <= WRITE_STATE_IDLE;
+      write_state_next <= WRITE_STATE_IDLE;
     end
     else if (i_rw_valid && i_rw_wen) begin
       case (write_state_reg)
@@ -112,7 +112,7 @@ module ysyx_22050710_axil_master_wrap #(
   // 读通道状态切换
   always @(*) begin
     if (~i_arsetn) begin
-      read_state_reg <= READ_STATE_IDLE;
+      read_state_next <= READ_STATE_IDLE;
     end
     else if (i_rw_valid && i_rw_ren) begin
       case (read_state_reg)
@@ -123,7 +123,7 @@ module ysyx_22050710_axil_master_wrap #(
       endcase
     end
     else begin
-      read_state_reg <= read_state_reg;
+      read_state_next <= read_state_next;
     end
   end
 
