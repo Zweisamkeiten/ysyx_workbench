@@ -105,6 +105,7 @@ module ysyx_22050710_axil_inst_sram_wrap #(
     end
     else begin
       mem_rd_en = 1'b0;
+      rvalid_next = 1'b0;
       arready_next = 1'b0;
     end
   end
