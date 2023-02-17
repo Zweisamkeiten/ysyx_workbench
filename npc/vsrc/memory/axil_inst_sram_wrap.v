@@ -83,12 +83,13 @@ module ysyx_22050710_axil_inst_sram_wrap #(
       awready_reg <= 1'b0;
       wready_reg <= 1'b0;
       bvalid_reg <= 1'b0;
+      mem <= 0;
     end
     else begin
       awready_reg <= awready_next;
       wready_reg <= wready_next;
       bvalid_reg <= bvalid_next;
-      if (mem_wr_en && i_wstrb && i_awaddr) begin
+      if (mem_wr_en && |i_wstrb && |i_awaddr) begin
           mem <= i_wdata;
       end
     end
@@ -126,6 +127,9 @@ module ysyx_22050710_axil_inst_sram_wrap #(
     else begin
       if (mem_rd_en) begin
         rdata_reg <= rdata;
+      end
+      else begin
+        rdata_reg <= mem;
       end
       arready_reg <= arready_next;
       rvalid_reg <= rvalid_next;
