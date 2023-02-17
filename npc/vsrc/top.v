@@ -23,15 +23,16 @@ module ysyx_22050710_top #(
   input                        i_rst
 );
 
+  parameter STRB_WIDTH = (DATA_WIDTH/8),
   wire                        ifu_awvalid                 ;
   wire                        ifu_awready                 ;
-  wire [ADDR_WIDTH-1:0      ] ifu_awaddr                  ;
+  wire [SRAM_ADDR_WD-1:0    ] ifu_awaddr                  ;
   wire [2:0                 ] ifu_awprot                  ; // define the access permission for write accesses.
 
   // Write data channel
   wire                        ifu_wvalid                  ;
   wire                        ifu_wready                  ;
-  wire [DATA_WIDTH-1:0      ] ifu_wdata                   ;
+  wire [SRAM_DATA_WD-1:0    ] ifu_wdata                   ;
   wire [STRB_WIDTH-1:0      ] ifu_wstrb                   ;
 
   // Write response channel
@@ -42,25 +43,25 @@ module ysyx_22050710_top #(
   // Read address channel
   wire                        ifu_arvalid                 ;
   wire                        ifu_arready                 ;
-  wire [ADDR_WIDTH-1:0      ] ifu_araddr                  ;
+  wire [SRAM_ADDR_WD-1:0    ] ifu_araddr                  ;
   wire [2:0                 ] ifu_arprot                  ;
 
   // Read data channel
   wire                        ifu_rvalid                  ;
   wire                        ifu_rready                  ;
-  wire [DATA_WIDTH-1:0      ] ifu_rdata                   ;
+  wire [SRAM_DATA_WD-1:0    ] ifu_rdata                   ;
   wire [1:0                 ] ifu_rresp                   ;
 
   // Wirte address channel
   wire                        lsu_awvalid                 ;
   wire                        lsu_awready                 ;
-  wire [ADDR_WIDTH-1:0      ] lsu_awaddr                  ;
+  wire [SRAM_ADDR_WD-1:0    ] lsu_awaddr                  ;
   wire [2:0                 ] lsu_awprot                  ; // define the access permission for write accesses.
 
   // Write data channel
   wire                        lsu_wvalid                  ;
   wire                        lsu_wready                  ;
-  wire [DATA_WIDTH-1:0      ] lsu_wdata                   ;
+  wire [SRAM_DATA_WD-1:0    ] lsu_wdata                   ;
   wire [STRB_WIDTH-1:0      ] lsu_wstrb                   ;
 
   // Write response channel
@@ -71,13 +72,13 @@ module ysyx_22050710_top #(
   // Read address channel
   wire                        lsu_arvalid                 ;
   wire                        lsu_arready                 ;
-  wire [ADDR_WIDTH-1:0      ] lsu_araddr                  ;
+  wire [SRAM_ADDR_WD-1:0    ] lsu_araddr                  ;
   wire [2:0                 ] lsu_arprot                  ;
 
   // Read data channel
   wire                        lsu_rvalid                  ;
   wire                        lsu_rready                  ;
-  wire [DATA_WIDTH-1:0      ] lsu_rdata                   ;
+  wire [SRAM_DATA_WD-1:0    ] lsu_rdata                   ;
   wire [1:0                 ] lsu_rresp                   ;
 
   ysyx_22050710_cpu_top #(
