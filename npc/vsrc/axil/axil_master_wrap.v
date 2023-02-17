@@ -63,7 +63,7 @@ module ysyx_22050710_axil_master_wrap #(
   assign w_fire              = i_wready  & o_wvalid          ;
   assign b_fire              = o_bready  & i_bvalid          ;
   assign ar_fire             = i_arready & o_arvalid         ;
-  assign r_fire              = i_rready  & o_rvalid          ;
+  assign r_fire              = o_rready  & i_rvalid          ;
 
   // ------------------State Machine--------------------------
   localparam [1:0]

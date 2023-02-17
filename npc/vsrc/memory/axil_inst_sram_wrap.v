@@ -78,7 +78,7 @@ module ysyx_22050710_axil_inst_sram_wrap #(
     end
   end
 
-  always @(posedge clk) begin
+  always @(posedge i_aclk) begin
     if (rst) begin
       awready_reg <= 1'b0;
       wready_reg <= 1'b0;
