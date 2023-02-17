@@ -101,6 +101,7 @@ module ysyx_22050710_axil_master_wrap #(
         WRITE_STATE_ADDR  : if (aw_fire) write_state_next <= WRITE_STATE_WRITE ;
         WRITE_STATE_WRITE : if (w_fire ) write_state_next <= WRITE_STATE_RESP  ;
         WRITE_STATE_RESP  : if (b_fire ) write_state_next <= WRITE_STATE_IDLE  ;
+        default           :              write_state_next <= write_state_next  ;
       endcase
     end
     else begin
@@ -118,6 +119,7 @@ module ysyx_22050710_axil_master_wrap #(
         READ_STATE_IDLE :              read_state_next <= READ_STATE_ADDR ;
         READ_STATE_ADDR : if (ar_fire) read_state_next <= READ_STATE_READ ;
         READ_STATE_READ : if (r_fire ) read_state_next <= READ_STATE_IDLE ;
+        default           :            read_state_next <= read_state_next ;
       endcase
     end
     else begin
