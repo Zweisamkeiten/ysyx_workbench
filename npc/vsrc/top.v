@@ -121,8 +121,8 @@ module ysyx_22050710_top #(
     .o_ifu_arprot            (ifu_arprot                    ),
 
   // Read data channel
-    .o_ifu_rvalid            (ifu_rvalid                    ),
-    .i_ifu_rready            (ifu_rready                    ),
+    .i_ifu_rvalid            (ifu_rvalid                    ),
+    .o_ifu_rready            (ifu_rready                    ),
     .i_ifu_rdata             (ifu_rdata                     ),
     .i_ifu_rresp             (ifu_rresp                     ),
 
@@ -150,8 +150,8 @@ module ysyx_22050710_top #(
     .o_lsu_arprot            (lsu_arprot                    ),
 
   // Read data channel
-    .o_lsu_rvalid            (lsu_rvalid                    ),
-    .i_lsu_rready            (lsu_rready                    ),
+    .i_lsu_rvalid            (lsu_rvalid                    ),
+    .o_lsu_rready            (lsu_rready                    ),
     .i_lsu_rdata             (lsu_rdata                     ),
     .i_lsu_rresp             (lsu_rresp                     )
   );
