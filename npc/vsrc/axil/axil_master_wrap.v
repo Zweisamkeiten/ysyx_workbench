@@ -146,7 +146,7 @@ module ysyx_22050710_axil_master_wrap #(
   // Read address channel signals
   assign o_arvalid           = r_state_addr                  ;
   assign o_araddr            = i_rw_addr                     ;
-  assign o_arprot            = `AXI_PROT_UNPRIVILEGED_ACCESS | `AXI_PROT_SECURE_ACCESS | `AXI_PROT_DATA_ACCESS;  //初始化信号即可
+  assign o_arprot            = `YSYX_22050710_AXI_PROT_UNPRIVILEGED_ACCESS | `YSYX_22050710_AXI_PROT_SECURE_ACCESS | `YSYX_22050710_AXI_PROT_DATA_ACCESS;  //初始化信号即可
 
   // Read data channel signals
   assign o_rready            = r_state_read                  ;
