@@ -27,8 +27,8 @@ module ysyx_22050710_core #(
   input                        i_clk                         ,
   input                        i_rst                         ,
   // inst sram interface
-  output                       o_inst_sram_ren               ,
   output [SRAM_ADDR_WD-1:0   ] o_inst_sram_addr              ,
+  output                       o_inst_sram_ren               ,
   input  [SRAM_DATA_WD-1:0   ] i_inst_sram_rdata             ,
   // data sram interface
   output [SRAM_ADDR_WD-1:0   ] o_data_sram_addr              ,
@@ -56,6 +56,7 @@ module ysyx_22050710_core #(
 
   wire [BYPASS_BUS_WD-1:0    ] es_to_ds_bypass_bus           ;
   wire [BYPASS_BUS_WD-1:0    ] ms_to_ds_bypass_bus           ;
+  wire [BYPASS_BUS_WD-1:0    ] ws_to_ds_bypass_bus           ;
 
   // for load stall
   wire                         es_to_ds_load_sel             ;
@@ -127,6 +128,7 @@ module ysyx_22050710_core #(
     // 流水线组合逻辑结果前递到译码级寄存器读出
     .i_es_to_ds_bypass_bus    (es_to_ds_bypass_bus          ),
     .i_ms_to_ds_bypass_bus    (ms_to_ds_bypass_bus          ),
+    .i_ws_to_ds_bypass_bus    (ws_to_ds_bypass_bus          ),
     // debug
     .i_debug_ws_to_rf_bus     (debug_ws_to_rf_bus           ),
     .o_debug_ds_to_es_bus     (debug_ds_to_es_bus           )
@@ -217,6 +219,7 @@ module ysyx_22050710_core #(
     .CSR_WD                   (CSR_WD                       ),
     .MS_TO_WS_BUS_WD          (MS_TO_WS_BUS_WD              ),
     .WS_TO_RF_BUS_WD          (WS_TO_RF_BUS_WD              ),
+    .BYPASS_BUS_WD            (BYPASS_BUS_WD                ),
     .DEBUG_BUS_WD             (DEBUG_BUS_WD                 )
   ) u_wb_stage (
     .i_clk                    (i_clk                        ),
@@ -228,6 +231,8 @@ module ysyx_22050710_core #(
     .i_ms_to_ws_bus           (ms_to_ws_bus                 ),
     // to rf
     .o_ws_to_rf_bus           (ws_to_rf_bus                 ),
+    // bypass
+    .o_ws_to_ds_bypass_bus    (ws_to_ds_bypass_bus          ),
     // debug
     .i_debug_ms_to_ws_bus     (debug_ms_to_ws_bus           ),
     .o_debug_ws_to_rf_bus     (debug_ws_to_rf_bus           )
