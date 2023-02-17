@@ -90,8 +90,6 @@ module ysyx_22050710_axil_master_wrap #(
   wire w_state_write  = write_state_reg == WRITE_STATE_WRITE ;
   wire w_state_resp   = write_state_reg == WRITE_STATE_RESP  ;
 
-  wire r_state_idle = r_state == R_STATE_IDLE, r_state_addr = r_state == R_STATE_ADDR, r_state_read  = r_state == R_STATE_READ;
-  
   // 写通道状态切换
   always @(posedge i_aclk) begin
     if (~i_arsetn) begin
