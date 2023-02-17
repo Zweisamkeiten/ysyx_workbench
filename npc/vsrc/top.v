@@ -6,80 +6,80 @@ import "DPI-C" function void npc_pmem_write(input longint waddr, input longint w
 
 
 module ysyx_22050710_top #(
-  parameter WORD_WD          = `ysyx_22050710_WORD_WD         ,
-  parameter PC_RESETVAL      = `ysyx_22050710_PC_RESETVAL     ,
-  parameter PC_WD            = `ysyx_22050710_PC_WD           ,
-  parameter GPR_WD           = `ysyx_22050710_GPR_WD          ,
-  parameter GPR_ADDR_WD      = `ysyx_22050710_GPR_ADDR_WD     ,
-  parameter IMM_WD           = `ysyx_22050710_IMM_WD          ,
-  parameter CSR_WD           = `ysyx_22050710_CSR_WD          ,
-  parameter CSR_ADDR_WD      = `ysyx_22050710_CSR_ADDR_WD     ,
-  parameter INST_WD          = `ysyx_22050710_INST_WD         ,
-  parameter SRAM_ADDR_WD     = `ysyx_22050710_SRAM_ADDR_WD    ,
-  parameter SRAM_WMASK_WD    = `ysyx_22050710_SRAM_WMASK_WD   ,
+  parameter WORD_WD          = `ysyx_22050710_WORD_WD        ,
+  parameter PC_RESETVAL      = `ysyx_22050710_PC_RESETVAL    ,
+  parameter PC_WD            = `ysyx_22050710_PC_WD          ,
+  parameter GPR_WD           = `ysyx_22050710_GPR_WD         ,
+  parameter GPR_ADDR_WD      = `ysyx_22050710_GPR_ADDR_WD    ,
+  parameter IMM_WD           = `ysyx_22050710_IMM_WD         ,
+  parameter CSR_WD           = `ysyx_22050710_CSR_WD         ,
+  parameter CSR_ADDR_WD      = `ysyx_22050710_CSR_ADDR_WD    ,
+  parameter INST_WD          = `ysyx_22050710_INST_WD        ,
+  parameter SRAM_ADDR_WD     = `ysyx_22050710_SRAM_ADDR_WD   ,
+  parameter SRAM_WMASK_WD    = `ysyx_22050710_SRAM_WMASK_WD  ,
   parameter SRAM_DATA_WD     = `ysyx_22050710_SRAM_DATA_WD
 ) (
   input                        i_clk                         ,
   input                        i_rst
 );
 
-  parameter STRB_WIDTH      = (DATA_WIDTH/8)              ;
-  wire                        ifu_awvalid                 ;
-  wire                        ifu_awready                 ;
-  wire [SRAM_ADDR_WD-1:0    ] ifu_awaddr                  ;
-  wire [2:0                 ] ifu_awprot                  ; // define the access permission for write accesses.
+  parameter STRB_WIDTH      = (SRAM_DATA_WD/8)               ;
+  wire                        ifu_awvalid                    ;
+  wire                        ifu_awready                    ;
+  wire [SRAM_ADDR_WD-1:0    ] ifu_awaddr                     ;
+  wire [2:0                 ] ifu_awprot                     ; // define the access permission for write accesses.
 
   // Write data channel
-  wire                        ifu_wvalid                  ;
-  wire                        ifu_wready                  ;
-  wire [SRAM_DATA_WD-1:0    ] ifu_wdata                   ;
-  wire [STRB_WIDTH-1:0      ] ifu_wstrb                   ;
+  wire                        ifu_wvalid                     ;
+  wire                        ifu_wready                     ;
+  wire [SRAM_DATA_WD-1:0    ] ifu_wdata                      ;
+  wire [STRB_WIDTH-1:0      ] ifu_wstrb                      ;
 
   // Write response channel
-  wire                        ifu_bvalid                  ;
-  wire                        ifu_bready                  ;
-  wire [1:0                 ] ifu_bresp                   ;
+  wire                        ifu_bvalid                     ;
+  wire                        ifu_bready                     ;
+  wire [1:0                 ] ifu_bresp                      ;
 
   // Read address channel
-  wire                        ifu_arvalid                 ;
-  wire                        ifu_arready                 ;
-  wire [SRAM_ADDR_WD-1:0    ] ifu_araddr                  ;
-  wire [2:0                 ] ifu_arprot                  ;
+  wire                        ifu_arvalid                    ;
+  wire                        ifu_arready                    ;
+  wire [SRAM_ADDR_WD-1:0    ] ifu_araddr                     ;
+  wire [2:0                 ] ifu_arprot                     ;
 
   // Read data channel
-  wire                        ifu_rvalid                  ;
-  wire                        ifu_rready                  ;
-  wire [SRAM_DATA_WD-1:0    ] ifu_rdata                   ;
-  wire [1:0                 ] ifu_rresp                   ;
+  wire                        ifu_rvalid                     ;
+  wire                        ifu_rready                     ;
+  wire [SRAM_DATA_WD-1:0    ] ifu_rdata                      ;
+  wire [1:0                 ] ifu_rresp                      ;
 
   // Wirte address channel
-  wire                        lsu_awvalid                 ;
-  wire                        lsu_awready                 ;
-  wire [SRAM_ADDR_WD-1:0    ] lsu_awaddr                  ;
-  wire [2:0                 ] lsu_awprot                  ; // define the access permission for write accesses.
+  wire                        lsu_awvalid                    ;
+  wire                        lsu_awready                    ;
+  wire [SRAM_ADDR_WD-1:0    ] lsu_awaddr                     ;
+  wire [2:0                 ] lsu_awprot                     ; // define the access permission for write accesses.
 
   // Write data channel
-  wire                        lsu_wvalid                  ;
-  wire                        lsu_wready                  ;
-  wire [SRAM_DATA_WD-1:0    ] lsu_wdata                   ;
-  wire [STRB_WIDTH-1:0      ] lsu_wstrb                   ;
+  wire                        lsu_wvalid                     ;
+  wire                        lsu_wready                     ;
+  wire [SRAM_DATA_WD-1:0    ] lsu_wdata                      ;
+  wire [STRB_WIDTH-1:0      ] lsu_wstrb                      ;
 
   // Write response channel
-  wire                        lsu_bvalid                  ;
-  wire                        lsu_bready                  ;
-  wire [1:0                 ] lsu_bresp                   ;
+  wire                        lsu_bvalid                     ;
+  wire                        lsu_bready                     ;
+  wire [1:0                 ] lsu_bresp                      ;
 
   // Read address channel
-  wire                        lsu_arvalid                 ;
-  wire                        lsu_arready                 ;
-  wire [SRAM_ADDR_WD-1:0    ] lsu_araddr                  ;
-  wire [2:0                 ] lsu_arprot                  ;
+  wire                        lsu_arvalid                    ;
+  wire                        lsu_arready                    ;
+  wire [SRAM_ADDR_WD-1:0    ] lsu_araddr                     ;
+  wire [2:0                 ] lsu_arprot                     ;
 
   // Read data channel
-  wire                        lsu_rvalid                  ;
-  wire                        lsu_rready                  ;
-  wire [SRAM_DATA_WD-1:0    ] lsu_rdata                   ;
-  wire [1:0                 ] lsu_rresp                   ;
+  wire                        lsu_rvalid                     ;
+  wire                        lsu_rready                     ;
+  wire [SRAM_DATA_WD-1:0    ] lsu_rdata                      ;
+  wire [1:0                 ] lsu_rresp                      ;
 
   ysyx_22050710_cpu_top #(
     .WORD_WD                 (WORD_WD                       ),
