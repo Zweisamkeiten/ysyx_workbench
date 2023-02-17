@@ -177,19 +177,19 @@ module ysyx_22050710_top #(
     // Write response channel
     .o_bvalid                (ifu_bvalid                    ),
     .i_bready                (ifu_bready                    ),
-    .i_bresp                 (ifu_bresp                     ),
+    .o_bresp                 (ifu_bresp                     ),
 
     // Read address channel
     .i_arvalid               (ifu_arvalid                   ),
-    .i_arready               (ifu_arready                   ),
+    .o_arready               (ifu_arready                   ),
     .i_araddr                (ifu_araddr                    ),
     .i_arprot                (ifu_arprot                    ),
 
     // Read data channel
-    .i_rvalid                (ifu_rvalid                    ),
+    .o_rvalid                (ifu_rvalid                    ),
     .i_rready                (ifu_rready                    ),
-    .i_rdata                 (ifu_rdata                     ),
-    .i_rresp                 (ifu_rresp                     )
+    .o_rdata                 (ifu_rdata                     ),
+    .o_rresp                 (ifu_rresp                     )
   );
 
   // data ram
@@ -216,19 +216,19 @@ module ysyx_22050710_top #(
     // Write response channel
     .o_bvalid                (lsu_bvalid                    ),
     .i_bready                (lsu_bready                    ),
-    .i_bresp                 (lsu_bresp                     ),
+    .o_bresp                 (lsu_bresp                     ),
 
     // Read address channel
     .i_arvalid               (lsu_arvalid                   ),
-    .i_arready               (lsu_arready                   ),
+    .o_arready               (lsu_arready                   ),
     .i_araddr                (lsu_araddr                    ),
     .i_arprot                (lsu_arprot                    ),
 
     // Read data channel
-    .i_rvalid                (lsu_rvalid                    ),
+    .o_rvalid                (lsu_rvalid                    ),
     .i_rready                (lsu_rready                    ),
-    .i_rdata                 (lsu_rdata                     ),
-    .i_rresp                 (lsu_rresp                     )
+    .o_rdata                 (lsu_rdata                     ),
+    .o_rresp                 (lsu_rresp                     )
   );
 
 endmodule
