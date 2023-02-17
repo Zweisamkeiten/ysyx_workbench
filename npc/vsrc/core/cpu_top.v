@@ -41,8 +41,8 @@ module ysyx_22050710_cpu_top #(
   output [2:0                ] o_ifu_arprot                  ,
 
   // Read data channel
-  output                       o_ifu_rvalid                  ,
-  input                        i_ifu_rready                  ,
+  input                        i_ifu_rvalid                  ,
+  output                       o_ifu_rready                  ,
   input  [DATA_WIDTH-1:0     ] i_ifu_rdata                   ,
   input  [1:0                ] i_ifu_rresp                   ,
 
@@ -70,8 +70,8 @@ module ysyx_22050710_cpu_top #(
   output [2:0                ] o_lsu_arprot                  ,
 
   // Read data channel
-  output                       o_lsu_rvalid                  ,
-  input                        i_lsu_rready                  ,
+  input                        i_lsu_rvalid                  ,
+  output                       o_lsu_rready                  ,
   input  [DATA_WIDTH-1:0     ] i_lsu_rdata                   ,
   input  [1:0                ] i_lsu_rresp
 );
@@ -157,8 +157,8 @@ module ysyx_22050710_cpu_top #(
     .o_arprot                  (o_ifu_arprot                ),
 
     // Read data channel
-    .o_rvalid                  (o_ifu_rvalid                ),
-    .i_rready                  (i_ifu_rready                ),
+    .i_rvalid                  (i_ifu_rvalid                ),
+    .o_rready                  (o_ifu_rready                ),
     .i_rdata                   (i_ifu_rdata                 ),
     .i_rresp                   (i_ifu_rresp                 )
   );
@@ -200,8 +200,8 @@ module ysyx_22050710_cpu_top #(
     .o_arprot                  (o_lsu_arprot                ),
 
     // Read data channel
-    .o_rvalid                  (o_lsu_rvalid                ),
-    .i_rready                  (i_lsu_rready                ),
+    .i_rvalid                  (i_lsu_rvalid                ),
+    .o_rready                  (o_lsu_rready                ),
     .i_rdata                   (i_lsu_rdata                 ),
     .i_rresp                   (i_lsu_rresp                 )
   );

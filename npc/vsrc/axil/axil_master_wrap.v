@@ -45,8 +45,8 @@ module ysyx_22050710_axil_master_wrap #(
   output [2:0                ] o_arprot                      ,
 
   // Read data channel
-  output                       o_rvalid                      ,
-  input                        i_rready                      ,
+  input                        i_rvalid                      ,
+  output                       o_rready                      ,
   input  [DATA_WIDTH-1:0     ] i_rdata                       ,
   input  [1:0                ] i_rresp
 );
