@@ -99,7 +99,7 @@ module ysyx_22050710_axil_inst_sram_wrap #(
     mem_rd_en = 1'b0;
 
     arready_next = 1'b0;
-    rvalid_next = rvalid_reg && !rready;
+    rvalid_next = rvalid_reg && !i_rready;
 
     if (i_arvalid && (!o_rvalid || i_rready) && (!o_arready)) begin
       arready_next = 1'b1;
