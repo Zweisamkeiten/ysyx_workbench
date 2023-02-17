@@ -26,10 +26,8 @@ module ysyx_22050710_if_stage #(
 );
 
   // pre if stage
-  wire                         pre_fs_ready_go               ;
-  assign pre_fs_ready_go     = i_inst_sram_rw_ready          ;
   wire                         to_fs_valid                   ;
-  assign to_fs_valid         = ~i_rst & pre_fs_ready_go      ;
+  assign to_fs_valid         = ~i_rst                        ;
   wire                         br_taken                      ;
   wire                         br_sel                        ;
   wire [PC_WD-1:0            ] br_target                     ;
