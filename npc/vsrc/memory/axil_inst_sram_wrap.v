@@ -79,7 +79,7 @@ module ysyx_22050710_axil_inst_sram_wrap #(
   end
 
   always @(posedge i_aclk) begin
-    if (rst) begin
+    if (~i_arsetn) begin
       awready_reg <= 1'b0;
       wready_reg <= 1'b0;
       bvalid_reg <= 1'b0;

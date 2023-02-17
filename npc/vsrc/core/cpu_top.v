@@ -12,7 +12,8 @@ module ysyx_22050710_cpu_top #(
 
   parameter SRAM_ADDR_WD                                     ,
   parameter SRAM_WMASK_WD                                    ,
-  parameter SRAM_DATA_WD
+  parameter SRAM_DATA_WD                                     ,
+  parameter STRB_WIDTH = (SRAM_DATA_WD/8)
 ) (
   input                        i_aclk                        ,
   input                        i_arsetn                      ,
@@ -20,13 +21,13 @@ module ysyx_22050710_cpu_top #(
   // Wirte address channel
   output                       o_ifu_awvalid                 ,
   input                        i_ifu_awready                 ,
-  output [ADDR_WIDTH-1:0     ] o_ifu_awaddr                  ,
+  output [SRAM_ADDR_WD-1:0   ] o_ifu_awaddr                  ,
   output [2:0                ] o_ifu_awprot                  , // define the access permission for write accesses.
 
   // Write data channel
   output                       o_ifu_wvalid                  ,
   input                        i_ifu_wready                  ,
-  output [DATA_WIDTH-1:0     ] o_ifu_wdata                   ,
+  output [SRAM_DATA_WD-1:0   ] o_ifu_wdata                   ,
   output [STRB_WIDTH-1:0     ] o_ifu_wstrb                   ,
 
   // Write response channel
@@ -37,25 +38,25 @@ module ysyx_22050710_cpu_top #(
   // Read address channel
   output                       o_ifu_arvalid                 ,
   input                        i_ifu_arready                 ,
-  output [ADDR_WIDTH-1:0     ] o_ifu_araddr                  ,
+  output [SRAM_ADDR_WD-1:0   ] o_ifu_araddr                  ,
   output [2:0                ] o_ifu_arprot                  ,
 
   // Read data channel
   input                        i_ifu_rvalid                  ,
   output                       o_ifu_rready                  ,
-  input  [DATA_WIDTH-1:0     ] i_ifu_rdata                   ,
+  input  [SRAM_DATA_WD-1:0   ] i_ifu_rdata                   ,
   input  [1:0                ] i_ifu_rresp                   ,
 
   // Wirte address channel
   output                       o_lsu_awvalid                 ,
   input                        i_lsu_awready                 ,
-  output [ADDR_WIDTH-1:0     ] o_lsu_awaddr                  ,
+  output [SRAM_ADDR_WD-1:0   ] o_lsu_awaddr                  ,
   output [2:0                ] o_lsu_awprot                  , // define the access permission for write accesses.
 
   // Write data channel
   output                       o_lsu_wvalid                  ,
   input                        i_lsu_wready                  ,
-  output [DATA_WIDTH-1:0     ] o_lsu_wdata                   ,
+  output [SRAM_DATA_WD-1:0   ] o_lsu_wdata                   ,
   output [STRB_WIDTH-1:0     ] o_lsu_wstrb                   ,
 
   // Write response channel
@@ -66,13 +67,13 @@ module ysyx_22050710_cpu_top #(
   // Read address channel
   output                       o_lsu_arvalid                 ,
   input                        i_lsu_arready                 ,
-  output [ADDR_WIDTH-1:0     ] o_lsu_araddr                  ,
+  output [SRAM_ADDR_WD-1:0   ] o_lsu_araddr                  ,
   output [2:0                ] o_lsu_arprot                  ,
 
   // Read data channel
   input                        i_lsu_rvalid                  ,
   output                       o_lsu_rready                  ,
-  input  [DATA_WIDTH-1:0     ] i_lsu_rdata                   ,
+  input  [SRAM_DATA_WD-1:0   ] i_lsu_rdata                   ,
   input  [1:0                ] i_lsu_rresp
 );
   // cpu inst sram
