@@ -26,8 +26,10 @@ module ysyx_22050710_if_stage #(
 );
 
   // pre if stage
+  wire                         pre_fs_ready_go               ;
+  assign pre_fs_ready_go     = i_inst_sram_rw_ready          ;
   wire                         to_fs_valid                   ;
-  assign to_fs_valid         = ~i_rst                        ;
+  assign to_fs_valid         = ~i_rst & pre_fs_ready_go      ;
   wire                         br_taken                      ;
   wire                         br_sel                        ;
   wire [PC_WD-1:0            ] br_target                     ;
@@ -41,7 +43,7 @@ module ysyx_22050710_if_stage #(
   wire                         fs_ready_go                   ;
   wire                         fs_allowin                    ;
 
-  assign fs_ready_go         = i_inst_sram_rw_ready          ;
+  assign fs_ready_go         = 1'b1          ;
   assign fs_allowin          = (!fs_valid) || (fs_ready_go && i_ds_allowin); // 或条件1: cpu rst后的初始状态, 每个stage都为空闲
                                                                              // 或条件2: stage 直接相互依赖, 当后续设计使得当前
                                                                              // stage 无法在一周期内完成, ready_go 信号会变得复杂
