@@ -23,7 +23,7 @@ module ysyx_22050710_top #(
   input                        i_rst
 );
 
-  parameter STRB_WIDTH = (DATA_WIDTH/8),
+  parameter STRB_WIDTH      = (DATA_WIDTH/8)              ;
   wire                        ifu_awvalid                 ;
   wire                        ifu_awready                 ;
   wire [SRAM_ADDR_WD-1:0    ] ifu_awaddr                  ;
