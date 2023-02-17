@@ -10,7 +10,7 @@ module ysyx_22050710_axil_master_wrap #(
   parameter STRB_WIDTH       = (DATA_WIDTH/8)
 ) (
 	input                        i_rw_valid                    ,  //IF&MEM输入信号
-	output                       o_rw_ready                    ,  //IF&MEM输入信号
+	output reg                   o_rw_ready                    ,  //IF&MEM输入信号
 	input                        i_rw_ren                      ,  //IF&MEM输入信号
 	input                        i_rw_wen                      ,  //IF&MEM输入信号
   input  [ADDR_WIDTH-1:0]      i_rw_addr                     ,  //IF&MEM输入信号
@@ -58,11 +58,12 @@ module ysyx_22050710_axil_master_wrap #(
   wire ar_fire                                               ;
   wire r_fire                                                ;
 
+  // 主机主动向从机发送信号 !
   // --------------------------------------------------------
-  assign aw_fire             = i_awready & o_awvalid         ;
-  assign w_fire              = i_wready  & o_wvalid          ;
+  assign aw_fire             = o_awvalid & i_awready         ;
+  assign w_fire              = o_wvalid  & i_wready          ;
   assign b_fire              = o_bready  & i_bvalid          ;
-  assign ar_fire             = i_arready & o_arvalid         ;
+  assign ar_fire             = o_arvalid & i_arready         ;
   assign r_fire              = o_rready  & i_rvalid          ;
 
   // ------------------State Machine--------------------------
@@ -157,21 +158,15 @@ module ysyx_22050710_axil_master_wrap #(
     end
     else if (r_fire) begin
       o_data_read <= i_rdata;
+      o_rw_ready <= r_fire;
+    end
+    else if (b_fire) begin
+      o_rw_ready <= b_fire;
     end
     else begin
       o_data_read <= o_data_read;
+      o_rw_ready <= 0;
     end
   end
-
-  Reg #(
-    .WIDTH                    (1                            ),
-    .RESET_VAL                (1'b0                         )
-  ) u_rw_ready (
-    .clk                      (i_aclk                       ),
-    .rst                      (~i_arsetn                    ),
-    .din                      (r_fire | b_fire              ),
-    .dout                     (o_rw_ready                   ),
-    .wen                      (r_fire | b_fire              )
-  );
 
 endmodule
