@@ -111,7 +111,7 @@ module ysyx_22050710_axil_master_wrap #(
   // 读通道状态切换
   always @(posedge i_aclk) begin
     if (~i_arsetn) begin
-      read_state_reg <= read_STATE_IDLE;
+      read_state_reg <= READ_STATE_IDLE;
     end
     else if (i_rw_valid && i_rw_ren) begin
       case (read_state_reg)
