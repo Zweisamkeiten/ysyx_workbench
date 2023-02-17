@@ -63,18 +63,19 @@ module ysyx_22050710_axil_inst_sram_wrap #(
 
   reg  [DATA_WIDTH-1:0     ] mem                         ;  // address register for pmem read.
   always @(*) begin
-    mem_wr_en = 1'b0;
-
-    awready_next = 1'b0;
-    wready_next = 1'b0;
-    bvalid_next = bvalid_reg && !i_bready;
-
     if (i_awvalid && i_wvalid && (!o_bvalid || i_bready) && (!o_awready && !o_wready)) begin
       awready_next = 1'b1;
       wready_next = 1'b1;
       bvalid_next = 1'b1;
 
       mem_wr_en = 1'b1;
+    end
+    else begin
+      mem_wr_en = 1'b0;
+
+      awready_next = 1'b0;
+      wready_next = 1'b0;
+      bvalid_next = bvalid_reg && !i_bready;
     end
   end
 
@@ -96,15 +97,15 @@ module ysyx_22050710_axil_inst_sram_wrap #(
   end
 
   always @(*) begin
-    mem_rd_en = 1'b0;
-
-    arready_next = 1'b0;
-
     if (i_arvalid && (!o_rvalid || i_rready) && (!o_arready)) begin
       arready_next = 1'b1;
       rvalid_next = 1'b1;
 
       mem_rd_en = 1'b1;
+    end
+    else begin
+      mem_rd_en = 1'b0;
+      arready_next = 1'b0;
     end
   end
 
