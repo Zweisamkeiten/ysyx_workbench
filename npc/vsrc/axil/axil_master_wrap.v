@@ -71,7 +71,7 @@ module ysyx_22050710_axil_master_wrap #(
       READ_STATE_ADDR        = 2'd1                          ,
       READ_STATE_READ        = 2'd2                          ;
 
-  reg [1:0] read_state_reg   = READ_STATE_IDLE, read_state_next;
+  reg [1:0] read_state_reg   = READ_STATE_IDLE;
 
   wire r_state_idle     = read_state_reg == READ_STATE_IDLE  ;
   wire r_state_addr     = read_state_reg == READ_STATE_ADDR  ;
@@ -83,7 +83,7 @@ module ysyx_22050710_axil_master_wrap #(
       WRITE_STATE_WRITE      = 2'd2                          ,
       WRITE_STATE_RESP       = 2'd3                          ;
 
-  reg [1:0] write_state_reg  = WRITE_STATE_IDLE, write_state_next;
+  reg [1:0] write_state_reg  = WRITE_STATE_IDLE;
 
   wire w_state_idle   = write_state_reg == WRITE_STATE_IDLE  ;
   wire w_state_addr   = write_state_reg == WRITE_STATE_ADDR  ;
@@ -91,17 +91,17 @@ module ysyx_22050710_axil_master_wrap #(
   wire w_state_resp   = write_state_reg == WRITE_STATE_RESP  ;
 
   // 写通道状态切换
-  always @(*) begin
+  always @(posedge i_aclk) begin
     if (~i_arsetn) begin
-      write_state_next <= WRITE_STATE_IDLE;
+      write_state_reg <= WRITE_STATE_IDLE;
     end
     else if (i_rw_valid && i_rw_wen) begin
       case (write_state_reg)
-        WRITE_STATE_IDLE  :              write_state_next <= WRITE_STATE_ADDR  ;
-        WRITE_STATE_ADDR  : if (aw_fire) write_state_next <= WRITE_STATE_WRITE ;
-        WRITE_STATE_WRITE : if (w_fire ) write_state_next <= WRITE_STATE_RESP  ;
-        WRITE_STATE_RESP  : if (b_fire ) write_state_next <= WRITE_STATE_IDLE  ;
-        default           :              write_state_next <= write_state_next  ;
+        WRITE_STATE_IDLE  :              write_state_reg <= WRITE_STATE_ADDR  ;
+        WRITE_STATE_ADDR  : if (aw_fire) write_state_reg <= WRITE_STATE_WRITE ;
+        WRITE_STATE_WRITE : if (w_fire ) write_state_reg <= WRITE_STATE_RESP  ;
+        WRITE_STATE_RESP  : if (b_fire ) write_state_reg <= WRITE_STATE_IDLE  ;
+        default           :              write_state_reg <= write_state_reg   ;
       endcase
     end
     else begin
@@ -110,20 +110,20 @@ module ysyx_22050710_axil_master_wrap #(
   end
 
   // 读通道状态切换
-  always @(*) begin
+  always @(posedge i_aclk) begin
     if (~i_arsetn) begin
-      read_state_next <= READ_STATE_IDLE;
+      read_state_reg <= READ_STATE_IDLE;
     end
     else if (i_rw_valid && i_rw_ren) begin
       case (read_state_reg)
-        READ_STATE_IDLE :              read_state_next <= READ_STATE_ADDR ;
-        READ_STATE_ADDR : if (ar_fire) read_state_next <= READ_STATE_READ ;
-        READ_STATE_READ : if (r_fire ) read_state_next <= READ_STATE_IDLE ;
-        default           :            read_state_next <= read_state_next ;
+        READ_STATE_IDLE :              read_state_reg <= READ_STATE_ADDR ;
+        READ_STATE_ADDR : if (ar_fire) read_state_reg <= READ_STATE_READ ;
+        READ_STATE_READ : if (r_fire ) read_state_reg <= READ_STATE_IDLE ;
+        default           :            read_state_reg <= read_state_reg  ;
       endcase
     end
     else begin
-      read_state_next <= read_state_next;
+      read_state_reg <= read_state_reg;
     end
   end
 
