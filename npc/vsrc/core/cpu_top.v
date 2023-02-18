@@ -89,8 +89,8 @@ module ysyx_22050710_cpu_top #(
   wire                         cpu_data_wen                  ;
   wire [SRAM_WMASK_WD-1:0    ] cpu_data_wmask                ;
   wire [SRAM_DATA_WD-1:0     ] cpu_data_wdata                ;
-  wire                         cpu_inst_addr_ok              ;
-  wire                         cpu_inst_data_ok              ;
+  wire                         cpu_data_addr_ok              ;
+  wire                         cpu_data_data_ok              ;
 
   ysyx_22050710_core #( 
     .WORD_WD                 (WORD_WD                       ),
