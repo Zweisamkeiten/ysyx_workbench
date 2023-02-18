@@ -28,6 +28,8 @@ module ysyx_22050710_if_stage #(
 
   // pre if stage
   wire                         prefs_valid                   ;
+  wire                         prefs_ready_go                ;
+  wire                         prefs_to_fs_valid             ;
   assign prefs_valid         = ~i_rst                        ;
   assign prefs_ready_go      = i_inst_sram_addr_ok;
   assign prefs_to_fs_valid   = prefs_valid && prefs_ready_go ;
