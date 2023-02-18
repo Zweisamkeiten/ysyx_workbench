@@ -42,10 +42,10 @@ module ysyx_22050710_axil_inst_sram_wrap #(
   output [1:0                ] o_rresp
 );
 
-  reg awready_reg            = 1'b1, awready_next            ;
-  reg wready_reg             = 1'b1, wready_next             ;
+  reg awready_reg            = 1'b0, awready_next            ;
+  reg wready_reg             = 1'b0, wready_next             ;
   reg bvalid_reg             = 1'b0, bvalid_next             ;
-  reg arready_reg            = 1'b1, arready_next            ;
+  reg arready_reg            = 1'b0, arready_next            ;
   reg [DATA_WIDTH-1:0] rdata_reg = {DATA_WIDTH{1'b0}}, rdata_next;
   reg rvalid_reg             = 1'b0, rvalid_next             ;
 
@@ -130,7 +130,7 @@ module ysyx_22050710_axil_inst_sram_wrap #(
         rdata_reg <= rdata;
       end
       else begin
-        rdata_reg <= mem;
+        rdata_reg <= 0;
       end
       arready_reg <= arready_next;
       rvalid_reg <= rvalid_next;
