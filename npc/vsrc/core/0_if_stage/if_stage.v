@@ -22,12 +22,15 @@ module ysyx_22050710_if_stage #(
   output                       o_inst_sram_ren               ,
   output [SRAM_ADDR_WD-1:0   ] o_inst_sram_addr              ,
   input  [SRAM_DATA_WD-1:0   ] i_inst_sram_rdata             ,
-  input                        i_inst_sram_rw_ready
+  input                        i_inst_sram_addr_ok           ,
+  input                        i_inst_sram_data_ok
 );
 
   // pre if stage
-  wire                         to_fs_valid                   ;
-  assign to_fs_valid         = ~i_rst                        ;
+  wire                         prefs_valid                   ;
+  assign prefs_valid         = ~i_rst                        ;
+  assign prefs_ready_go      = i_inst_sram_addr_ok;
+  assign prefs_to_fs_valid   = prefs_valid && prefs_ready_go ;
   wire                         br_taken                      ;
   wire                         br_sel                        ;
   wire [PC_WD-1:0            ] br_target                     ;
@@ -41,7 +44,7 @@ module ysyx_22050710_if_stage #(
   wire                         fs_ready_go                   ;
   wire                         fs_allowin                    ;
 
-  assign fs_ready_go         = i_inst_sram_rw_ready          ;
+  assign fs_ready_go         = 1'b1                          ;
   assign fs_allowin          = (!fs_valid) || (fs_ready_go && i_ds_allowin); // 或条件1: cpu rst后的初始状态, 每个stage都为空闲
                                                                              // 或条件2: stage 直接相互依赖, 当后续设计使得当前
                                                                              // stage 无法在一周期内完成, ready_go 信号会变得复杂
@@ -58,7 +61,7 @@ module ysyx_22050710_if_stage #(
   ) u_fs_valid (
     .clk                      (i_clk                        ),
     .rst                      (i_rst                        ),
-    .din                      (to_fs_valid                  ), // ~reset
+    .din                      (prefs_to_fs_valid            ),
     .dout                     (fs_valid                     ),
     .wen                      (fs_allowin                   )
   );
