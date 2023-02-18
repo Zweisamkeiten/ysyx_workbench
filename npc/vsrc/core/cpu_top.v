@@ -89,7 +89,8 @@ module ysyx_22050710_cpu_top #(
   wire                         cpu_data_wen                  ;
   wire [SRAM_WMASK_WD-1:0    ] cpu_data_wmask                ;
   wire [SRAM_DATA_WD-1:0     ] cpu_data_wdata                ;
-  wire                         cpu_data_rw_ready             ;
+  wire                         cpu_inst_addr_ok              ;
+  wire                         cpu_inst_data_ok              ;
 
   ysyx_22050710_core #( 
     .WORD_WD                 (WORD_WD                       ),
@@ -169,7 +170,8 @@ module ysyx_22050710_cpu_top #(
 
   ysyx_22050710_axil_master_wrap u_lsu_axi_wrap (
     .i_rw_valid                (cpu_data_ren | cpu_data_wen ),  //IF&MEM输入信号
-    .o_rw_ready                (cpu_data_rw_ready           ),  //IF&MEM输入信号
+    .o_rw_addr_ok              (cpu_data_addr_ok            ),  //IF&MEM输入信号
+    .o_rw_data_ok              (cpu_data_data_ok            ),  //IF&MEM输入信号
     .i_rw_ren                  (cpu_data_ren                ),  //IF&MEM输入信号
     .i_rw_wen                  (cpu_data_wen                ),  //IF&MEM输入信号
     .i_rw_addr                 (cpu_data_addr               ),  //IF&MEM输入信号
