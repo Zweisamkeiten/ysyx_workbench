@@ -80,7 +80,8 @@ module ysyx_22050710_cpu_top #(
   wire [SRAM_ADDR_WD-1:0     ] cpu_inst_addr                 ;
   wire                         cpu_inst_ren                  ;
   wire [SRAM_DATA_WD-1:0     ] cpu_inst_rdata                ;
-  wire                         cpu_inst_rw_ready             ;
+  wire                         cpu_inst_addr_ok              ;
+  wire                         cpu_inst_data_ok              ;
   // cpu data sram
   wire [SRAM_ADDR_WD-1:0     ] cpu_data_addr                 ;
   wire                         cpu_data_ren                  ;
@@ -110,7 +111,8 @@ module ysyx_22050710_cpu_top #(
     .o_inst_sram_addr        (cpu_inst_addr                 ),
     .o_inst_sram_ren         (cpu_inst_ren                  ),
     .i_inst_sram_rdata       (cpu_inst_rdata                ),
-    .i_inst_sram_rw_ready    (cpu_inst_rw_ready             ),
+    .i_inst_sram_addr_ok     (cpu_inst_addr_ok              ),
+    .i_inst_sram_data_ok     (cpu_inst_data_ok              ),
 
     // data sram interface
     .o_data_sram_addr        (cpu_data_addr                 ),
@@ -123,7 +125,8 @@ module ysyx_22050710_cpu_top #(
 
   ysyx_22050710_axil_master_wrap u_ifu_axi_wrap (
     .i_rw_valid                (cpu_inst_ren                ),  //IF&MEM输入信号
-    .o_rw_ready                (cpu_inst_rw_ready           ),  //IF&MEM输入信号
+    .o_rw_addr_ok              (cpu_inst_addr_ok            ),  //IF&MEM输入信号
+    .o_rw_data_ok              (cpu_inst_data_ok            ),  //IF&MEM输入信号
     .i_rw_ren                  (cpu_inst_ren                ),  //IF&MEM输入信号
     .i_rw_wen                  (0                           ),  //IF&MEM输入信号
     .i_rw_addr                 (cpu_inst_addr               ),  //IF&MEM输入信号

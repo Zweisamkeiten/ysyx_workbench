@@ -30,7 +30,8 @@ module ysyx_22050710_core #(
   output [SRAM_ADDR_WD-1:0   ] o_inst_sram_addr              ,
   output                       o_inst_sram_ren               ,
   input  [SRAM_DATA_WD-1:0   ] i_inst_sram_rdata             ,
-  input                        i_inst_sram_rw_ready          ,
+  input                        i_inst_sram_addr_ok           ,
+  input                        i_inst_sram_data_ok           ,
   // data sram interface
   output [SRAM_ADDR_WD-1:0   ] o_data_sram_addr              ,
   output                       o_data_sram_ren               ,
@@ -90,7 +91,8 @@ module ysyx_22050710_core #(
     .o_inst_sram_ren          (o_inst_sram_ren              ),
     .o_inst_sram_addr         (o_inst_sram_addr             ),
     .i_inst_sram_rdata        (i_inst_sram_rdata            ),
-    .i_inst_sram_rw_ready     (i_inst_sram_rw_ready         )
+    .i_inst_sram_addr_ok      (i_inst_sram_addr_ok          ),
+    .i_inst_sram_data_ok      (i_inst_sram_data_ok          )
   );
 
   ysyx_22050710_id_stage #(

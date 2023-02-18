@@ -10,7 +10,8 @@ module ysyx_22050710_axil_master_wrap #(
   parameter STRB_WIDTH       = (DATA_WIDTH/8)
 ) (
 	input                        i_rw_valid                    ,  //IF&MEM输入信号
-	output reg                   o_rw_ready                    ,  //IF&MEM输入信号
+	output reg                   o_rw_addr_ok                  ,  //IF&MEM输入信号
+	output reg                   o_rw_data_ok                  ,  //IF&MEM输入信号
 	input                        i_rw_ren                      ,  //IF&MEM输入信号
 	input                        i_rw_wen                      ,  //IF&MEM输入信号
   input  [ADDR_WIDTH-1:0]      i_rw_addr                     ,  //IF&MEM输入信号
@@ -97,6 +98,7 @@ module ysyx_22050710_axil_master_wrap #(
       write_state_reg <= WRITE_STATE_IDLE;
     end
     else if (i_rw_valid && i_rw_wen) begin
+      o_rw_addr_ok <= aw_fire;
       case (write_state_reg)
         WRITE_STATE_IDLE  :              write_state_reg <= WRITE_STATE_ADDR  ;
         WRITE_STATE_ADDR  : if (aw_fire) write_state_reg <= WRITE_STATE_WRITE ;
@@ -116,6 +118,7 @@ module ysyx_22050710_axil_master_wrap #(
       read_state_reg <= READ_STATE_IDLE;
     end
     else if (i_rw_valid && i_rw_ren) begin
+      o_rw_addr_ok <= ar_fire;
       case (read_state_reg)
         READ_STATE_IDLE :              read_state_reg <= READ_STATE_ADDR ;
         READ_STATE_ADDR : if (ar_fire) read_state_reg <= READ_STATE_READ ;
@@ -158,14 +161,14 @@ module ysyx_22050710_axil_master_wrap #(
     end
     else if (r_fire) begin
       o_data_read <= i_rdata;
-      o_rw_ready <= r_fire;
+      o_rw_data_ok <= r_fire;
     end
     else if (b_fire) begin
-      o_rw_ready <= b_fire;
+      o_rw_data_ok <= b_fire;
     end
     else begin
       o_data_read <= o_data_read;
-      o_rw_ready <= 0;
+      o_rw_data_ok <= 0;
     end
   end
 
