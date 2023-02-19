@@ -41,99 +41,56 @@ module ysyx_22050710_axil_inst_sram_wrap #(
   output [DATA_WIDTH-1:0     ] o_rdata                       ,
   output [1:0                ] o_rresp
 );
+  // ---------------------------------------------------------
+  wire ar_fire                                               ;
+  wire r_fire                                                ;
 
-  reg awready_reg            = 1'b0, awready_next            ;
-  reg wready_reg             = 1'b0, wready_next             ;
-  reg bvalid_reg             = 1'b0, bvalid_next             ;
-  reg arready_reg            = 1'b0, arready_next            ;
-  reg [DATA_WIDTH-1:0] rdata_reg = {DATA_WIDTH{1'b0}}, rdata_next;
-  reg rvalid_reg             = 1'b0, rvalid_next             ;
+  // --------------------------------------------------------
+  assign ar_fire             = o_arvalid & i_arready         ;
+  assign r_fire              = o_rready  & i_rvalid          ;
 
-  assign o_awready           = awready_reg                   ;
-  assign o_wready            = wready_reg                    ;
-  assign o_bresp             = 2'b00                         ;
-  assign o_bvalid            = bvalid_reg                    ;
-  assign o_arready           = arready_reg                   ;
-  assign o_rdata             = rdata_reg                     ;
-  assign o_rresp             = 2'b00                         ;
-  assign o_rvalid            = rvalid_reg                    ;
+  // ------------------State Machine--------------------------
+  localparam [0:0]
+      READ_STATE_IDLE        = 1'd0                          ,
+      READ_STATE_WAIT_RREADY = 1'd1                          ;
 
-  reg mem_wr_en;
-  reg mem_rd_en;
+  reg [0:0] read_state_reg   = READ_STATE_IDLE;
 
-  reg  [DATA_WIDTH-1:0     ] mem                         ;  // address register for pmem read.
-  always @(*) begin
-    mem_wr_en = 1'b0;
+  wire r_state_idle         = read_state_reg == READ_STATE_IDLE  ;
+  wire r_state_waite_rready = read_state_reg == READ_STATE_WAIT_RREADY  ;
 
-    awready_next = 1'b0;
-    wready_next = 1'b0;
-    bvalid_next = bvalid_reg && !i_bready;
+  assign o_arready           = r_state_idle;
+  assign o_rvalid            = r_state_waite_rready;
 
-    if (i_awvalid && i_wvalid && (!o_bvalid || i_bready) && (!o_awready && !o_wready)) begin
-      awready_next = 1'b1;
-      wready_next = 1'b1;
-      bvalid_next = 1'b1;
-
-      mem_wr_en = 1'b1;
-    end
-  end
-
+  // 读通道状态切换
   always @(posedge i_aclk) begin
     if (~i_arsetn) begin
-      awready_reg <= 1'b0;
-      wready_reg <= 1'b0;
-      bvalid_reg <= 1'b0;
-      mem <= 0;
+      read_state_reg <= READ_STATE_IDLE;
     end
     else begin
-      awready_reg <= awready_next;
-      wready_reg <= wready_next;
-      bvalid_reg <= bvalid_next;
-      if (mem_wr_en && |i_wstrb && |i_awaddr) begin
-          mem <= i_wdata;
-      end
+      case (read_state_reg)
+        READ_STATE_IDLE        : if (ar_fire) read_state_reg <= READ_STATE_WAIT_RREADY ;
+        READ_STATE_WAIT_RREADY : if (r_fire ) read_state_reg <= READ_STATE_IDLE ;
+        default                :              read_state_reg <= read_state_reg  ;
+      endcase
+    end
+    else begin
+      read_state_reg <= read_state_reg;
     end
   end
 
   always @(*) begin
-    mem_rd_en = 1'b0;
-
-    arready_next = 1'b0;
-    rvalid_next = rvalid_reg && !i_rready;
-
-    if (i_arvalid && (!o_rvalid || i_rready) && (!o_arready)) begin
-      arready_next = 1'b1;
-      rvalid_next = 1'b1;
-
-      mem_rd_en = 1'b1;
-    end
-  end
-
-  reg  [DATA_WIDTH-1:0     ] rdata                         ;  // address register for pmem read.
-
-  always @(*) begin
-    if (mem_rd_en) begin
-      npc_pmem_read({32'b0, i_araddr}, rdata);
+    if (ar_fire) begin
+      npc_pmem_read({32'b0, i_addr}, rdata);
     end
     else begin
       rdata = 0;
     end
   end
 
-  always @(posedge i_aclk) begin
-    if (~i_arsetn) begin
-      arready_reg <= 1'b0;
-      rvalid_reg <= 1'b0;
-    end
-    else begin
-      if (mem_rd_en) begin
-        rdata_reg <= rdata;
-      end
-      else begin
-        rdata_reg <= 0;
-      end
-      arready_reg <= arready_next;
-      rvalid_reg <= rvalid_next;
+  always @(posedge i_clk) begin
+    if (ar_fire) begin
+      o_rdata <= rdata;
     end
   end
 
