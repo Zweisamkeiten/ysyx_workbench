@@ -81,7 +81,7 @@ module ysyx_22050710_axil_data_sram_wrap #(
   assign o_awready           = w_state_idle;
   assign o_wready            = w_state_wait_wreday;
   assign o_bvalid            = w_state_resp;
-  assign o_bresp             = 0;
+  assign o_bresp             = 2'b00;
   assign o_rresp             = 2'b00; // trans ok
 
   // 写通道状态切换
