@@ -195,9 +195,6 @@ module ysyx_22050710_top #(
 
   // data ram
   ysyx_22050710_axil_data_sram_wrap #(
-    .SRAM_ADDR_WD            (SRAM_ADDR_WD                  ),
-    .SRAM_WMASK_WD           (SRAM_WMASK_WD                 ),
-    .SRAM_DATA_WD            (SRAM_DATA_WD                  )
   ) u_data_ram_wrap (
     .i_aclk                  (i_clk                         ),
     .i_arsetn                (~i_rst                        ),
