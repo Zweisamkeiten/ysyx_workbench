@@ -151,9 +151,11 @@ module ysyx_22050710_id_stage #(
   wire [PC_WD-1:0            ] epnpc                         ;
 
   // bru 产生 跳转使能 以及目标地址 to if stage
+  wire                         br_stall                      ;
   wire                         br_taken                      ;
   wire [PC_WD-1:0            ] br_target                     ;
-  assign o_br_bus            = {br_taken, br_target }        ;
+  assign br_stall            = br_taken & ds_load_stall      ;
+  assign o_br_bus            = {br_stall, br_taken, br_target};
 
   // bypass
   wire [GPR_ADDR_WD-1:0      ] es_to_ds_gpr_rd               ;
