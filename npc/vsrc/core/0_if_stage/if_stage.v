@@ -55,9 +55,7 @@ module ysyx_22050710_if_stage #(
 
   wire [INST_WD-1:0          ] fs_inst                       ;
   wire [PC_WD-1:0            ] fs_pc                         ;
-  wire [PC_WD-1:0            ] fs_dnpc                       ;
-  assign o_fs_to_ds_bus      = {fs_inst, fs_pc, fs_dnpc}     ;
-  assign o_inst_sram_ren     = prefs_valid                   ;
+  assign o_fs_to_ds_bus      = {fs_inst, fs_pc}              ;
 
   Reg #(
     .WIDTH                    (1                            ),
@@ -81,7 +79,6 @@ module ysyx_22050710_if_stage #(
     .i_br_taken               (br_taken                     ), // br taken 发生
     .i_br_sel                 (br_sel                       ), // bru 控制指令的跳转在 id stage 完成 直接回到此处改变 pc
     .i_br_target              (br_target                    ), // 避免控制指令冲突问题
-    .o_dnpc                   (fs_dnpc                      ),
     .o_pc                     (fs_pc                        ),
     .o_inst_sram_addr         (o_inst_sram_addr             )
   );
