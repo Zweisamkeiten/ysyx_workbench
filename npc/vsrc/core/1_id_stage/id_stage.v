@@ -79,7 +79,6 @@ module ysyx_22050710_id_stage #(
   );
 
   wire [PC_WD-1:0            ] fs_pc                         ;
-  wire [PC_WD-1:0            ] fs_dnpc                       ;
   wire [FS_TO_DS_BUS_WD-1:0  ] fs_to_ds_bus_r                ;
   assign fs_pc               = i_fs_to_ds_bus[127:64]        ;
 
@@ -96,6 +95,7 @@ module ysyx_22050710_id_stage #(
 
   wire [INST_WD-1:0          ] ds_inst                       ;
   wire [PC_WD-1:0            ] ds_pc                         ;
+  wire [PC_WD-1:0            ] ds_dnpc                       ;
   assign {ds_inst, ds_pc, ds_dnpc}    = fs_to_ds_bus_r       ;
 
   // 通用寄存器
