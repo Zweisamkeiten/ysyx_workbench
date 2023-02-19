@@ -79,8 +79,10 @@ module ysyx_22050710_id_stage #(
   );
 
   wire [PC_WD-1:0            ] fs_pc                         ;
+  wire [PC_WD-1:0            ] fs_dnpc                       ;
   wire [FS_TO_DS_BUS_WD-1:0  ] fs_to_ds_bus_r                ;
-  assign fs_pc               = i_fs_to_ds_bus[63:0]          ;
+  assign fs_pc               = i_fs_to_ds_bus[127:64]        ;
+  assign fs_dnpc             = i_fs_to_ds_bus[63:0]          ;
 
   Reg #(
     .WIDTH                    (FS_TO_DS_BUS_WD              ),
@@ -270,7 +272,7 @@ module ysyx_22050710_id_stage #(
                                 br_taken                     ,
                                 ds_inst                      ,
                                 ds_pc                        ,
-                                br_taken ? br_target : fs_pc ,
+                                br_taken ? br_target : fs_dnpc,
                                 mem_ren | mem_wen            ,
                                 64'b0
   };
