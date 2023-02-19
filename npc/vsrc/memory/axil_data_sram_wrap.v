@@ -1,4 +1,4 @@
-// ysyx_22050710 axi lite Wrap 以axi-lite接口封装的inst sram 模块
+// ysyx_22050710 axi data Wrap 以axi-lite接口封装的 data sram 模块
 `include "axi_defines.v"
 
 module ysyx_22050710_axil_data_sram_wrap #(
@@ -7,10 +7,7 @@ module ysyx_22050710_axil_data_sram_wrap #(
   // Width of address bus in bits
   parameter ADDR_WIDTH       = 32                            ,
   // Width of wstrb (width of data bus in words)
-  parameter STRB_WIDTH       = (DATA_WIDTH/8)                ,
-  parameter SRAM_ADDR_WD                                     ,
-  parameter SRAM_WMASK_WD                                    ,
-  parameter SRAM_DATA_WD
+  parameter STRB_WIDTH       = (DATA_WIDTH/8)
 ) (
   input                        i_aclk                        ,
   input                        i_arsetn                      ,
@@ -41,93 +38,102 @@ module ysyx_22050710_axil_data_sram_wrap #(
   // Read data channel
   output                       o_rvalid                      ,
   input                        i_rready                      ,
-  output [DATA_WIDTH-1:0     ] o_rdata                       ,
+  output reg [DATA_WIDTH-1:0 ] o_rdata                       ,
   output [1:0                ] o_rresp
 );
+  // ---------------------------------------------------------
+  wire aw_fire                                               ;
+  wire w_fire                                                ;
+  wire b_fire                                                ;
+  wire ar_fire                                               ;
+  wire r_fire                                                ;
 
-  reg awready_reg            = 1'b0, awready_next            ;
-  reg wready_reg             = 1'b0, wready_next             ;
-  reg bvalid_reg             = 1'b0, bvalid_next             ;
-  reg arready_reg            = 1'b0, arready_next            ;
-  reg rvalid_reg             = 1'b0, rvalid_next             ;
+  // --------------------------------------------------------
+  assign aw_fire             = i_awvalid & o_awready         ;
+  assign w_fire              = i_wvalid  & o_wready          ;
+  assign b_fire              = i_bready  & o_bvalid          ;
+  assign ar_fire             = i_arvalid & o_arready         ;
+  assign r_fire              = i_rready  & o_rvalid          ;
 
-  assign o_awready           = awready_reg                   ;
-  assign o_wready            = wready_reg                    ;
-  assign o_bresp             = 2'b00                         ;
-  assign o_bvalid            = bvalid_reg                    ;
-  assign o_arready           = arready_reg                   ;
-  assign o_rresp             = 2'b00                         ;
-  assign o_rvalid            = rvalid_reg                    ;
+  // ------------------State Machine--------------------------
+  localparam [0:0]
+      READ_STATE_IDLE        = 1'd0                          ,
+      READ_STATE_WAIT_RREADY = 1'd1                          ;
 
-  reg mem_wr_en;
-  reg mem_rd_en;
+  reg [0:0] read_state_reg   = READ_STATE_IDLE;
 
+  wire r_state_idle         = read_state_reg == READ_STATE_IDLE  ;
+  wire r_state_waite_rready = read_state_reg == READ_STATE_WAIT_RREADY  ;
+
+  localparam [1:0]
+      WRITE_STATE_IDLE       = 2'd0                          ,
+      WRITE_STATE_WAIT_WREADY= 2'd1                          ,
+      WRITE_STATE_RESP       = 2'd2                          ;
+
+  reg [1:0] write_state_reg  = WRITE_STATE_IDLE;
+
+  wire w_state_idle   = write_state_reg == WRITE_STATE_IDLE  ;
+  wire w_state_wait_wreday = write_state_reg == WRITE_STATE_WAIT_WREADY ;
+  wire w_state_resp   = write_state_reg == WRITE_STATE_RESP  ;
+
+  assign o_arready           = r_state_idle;
+  assign o_rvalid            = r_state_waite_rready;
+  assign o_awready           = w_state_idle;
+  assign o_wready            = w_state_wait_wreday;
+  assign o_bvalid            = w_state_resp;
+  assign o_bresp             = 0;
+  assign o_rresp             = 2'b00; // trans ok
+
+  // 写通道状态切换
+  always @(posedge i_aclk) begin
+    if (~i_arsetn) begin
+      write_state_reg <= WRITE_STATE_IDLE;
+    end
+    else begin
+      case (write_state_reg)
+        WRITE_STATE_IDLE        : if (aw_fire) write_state_reg <= WRITE_STATE_WAIT_WREADY;
+        WRITE_STATE_WAIT_WREADY : if (w_fire ) write_state_reg <= WRITE_STATE_RESP ;
+        WRITE_STATE_RESP        : if (b_fire ) write_state_reg <= WRITE_STATE_IDLE  ;
+        default                 :              write_state_reg <= write_state_reg   ;
+      endcase
+    end
+  end
+
+  // 读通道状态切换
+  always @(posedge i_aclk) begin
+    if (~i_arsetn) begin
+      read_state_reg <= READ_STATE_IDLE;
+    end
+    else begin
+      case (read_state_reg)
+        READ_STATE_IDLE        : if (ar_fire) read_state_reg <= READ_STATE_WAIT_RREADY ;
+        READ_STATE_WAIT_RREADY : if (r_fire ) read_state_reg <= READ_STATE_IDLE ;
+        default                :              read_state_reg <= read_state_reg  ;
+      endcase
+    end
+  end
+
+  reg [DATA_WIDTH-1:0] rdata;
   always @(*) begin
-    mem_wr_en = 1'b0;
-
-    awready_next = 1'b0;
-    wready_next = 1'b0;
-    bvalid_next = bvalid_reg && !i_bready;
-
-    if (i_awvalid && i_wvalid && (!o_bvalid || i_bready) && (!o_awready && !o_wready)) begin
-      awready_next = 1'b1;
-      wready_next = 1'b1;
-      bvalid_next = 1'b1;
-
-      mem_wr_en = 1'b1;
+    if (ar_fire) begin
+      npc_pmem_read({32'b0, i_araddr}, rdata);
+    end
+    else begin
+      rdata = 0;
     end
   end
 
   always @(posedge i_aclk) begin
-    if (~i_arsetn) begin
-      awready_reg <= 1'b0;
-      wready_reg <= 1'b0;
-      bvalid_reg <= 1'b0;
-    end
-    else begin
-      awready_reg <= awready_next;
-      wready_reg <= wready_next;
-      bvalid_reg <= bvalid_next;
+    if (ar_fire) begin
+      o_rdata <= rdata;
     end
   end
 
-  always @(*) begin
-    mem_rd_en = 1'b0;
-
-    arready_next = 1'b0;
-    rvalid_next = rvalid_reg && !i_rready;
-
-    if (i_arvalid && (!o_rvalid || i_rready) && (!o_arready)) begin
-      arready_next = 1'b1;
-      rvalid_next = 1'b1;
-
-      mem_rd_en = 1'b1;
-    end
-  end
-
+  // write port
   always @(posedge i_aclk) begin
-    if (~i_arsetn) begin
-      arready_reg <= 1'b0;
-      rvalid_reg <= 1'b0;
-    end
-    else begin
-      arready_reg <= arready_next;
-      rvalid_reg <= rvalid_next;
+    if (aw_fire) begin
+      npc_pmem_write({32'b0, i_awaddr}, i_wdata, i_wstrb);
     end
   end
-
-  ysyx_22050710_data_sram #(
-    .SRAM_ADDR_WD            (SRAM_ADDR_WD                  ),
-    .SRAM_WMASK_WD           (SRAM_WMASK_WD                 ),
-    .SRAM_DATA_WD            (SRAM_DATA_WD                  )
-  ) u_data_ram (
-    .i_clk                   (i_aclk                        ),
-    .i_addr                  (i_awaddr | i_araddr           ),
-    .i_ren                   (mem_rd_en                     ),
-    .o_rdata                 (o_rdata                       ),  //63:0
-    .i_wen                   (mem_wr_en                     ),
-    .i_wmask                 (i_wstrb                       ),
-    .i_wdata                 (i_wdata                       )   // 63:0
-  );
 
 endmodule
