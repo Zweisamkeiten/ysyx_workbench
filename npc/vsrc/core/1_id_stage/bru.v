@@ -84,7 +84,7 @@ module ysyx_22050710_bru #(
     })
   );
 
-  assign o_br_taken          = (i_bren & PCAsrc) | i_ep_sel  ;
+  assign o_br_taken          = i_bren | i_ep_sel             ;
   assign o_br_target         = i_ep_sel
                              ? i_epnpc
                              : (PCBsrc ? i_rs1data : i_pc) + (PCAsrc ? i_imm : 4);
