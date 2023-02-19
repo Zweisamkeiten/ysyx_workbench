@@ -46,8 +46,8 @@ module ysyx_22050710_axil_inst_sram_wrap #(
   wire r_fire                                                ;
 
   // --------------------------------------------------------
-  assign ar_fire             = o_arvalid & i_arready         ;
-  assign r_fire              = o_rready  & i_rvalid          ;
+  assign ar_fire             = i_arvalid & o_arready         ;
+  assign r_fire              = i_rready  & o_rvalid          ;
 
   // ------------------State Machine--------------------------
   localparam [0:0]
