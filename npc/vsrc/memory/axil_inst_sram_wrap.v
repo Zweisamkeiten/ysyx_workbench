@@ -76,9 +76,10 @@ module ysyx_22050710_axil_inst_sram_wrap #(
     end
   end
 
+  reg [DATA_WIDTH-1:0] rdata;
   always @(*) begin
     if (ar_fire) begin
-      npc_pmem_read({32'b0, i_addr}, rdata);
+      npc_pmem_read({32'b0, i_araddr}, rdata);
     end
     else begin
       rdata = 0;
