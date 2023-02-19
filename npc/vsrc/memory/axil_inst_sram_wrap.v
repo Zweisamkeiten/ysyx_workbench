@@ -74,9 +74,6 @@ module ysyx_22050710_axil_inst_sram_wrap #(
         default                :              read_state_reg <= read_state_reg  ;
       endcase
     end
-    else begin
-      read_state_reg <= read_state_reg;
-    end
   end
 
   always @(*) begin
