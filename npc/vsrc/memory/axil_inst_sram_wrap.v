@@ -38,7 +38,7 @@ module ysyx_22050710_axil_inst_sram_wrap #(
   // Read data channel
   output                       o_rvalid                      ,
   input                        i_rready                      ,
-  output [DATA_WIDTH-1:0     ] o_rdata                       ,
+  output reg [DATA_WIDTH-1:0 ] o_rdata                       ,
   output [1:0                ] o_rresp
 );
   // ---------------------------------------------------------
@@ -61,6 +61,11 @@ module ysyx_22050710_axil_inst_sram_wrap #(
 
   assign o_arready           = r_state_idle;
   assign o_rvalid            = r_state_waite_rready;
+  assign o_awready           = 0;
+  assign o_wready            = 0;
+  assign o_bvalid            = 0;
+  assign o_bresp             = 0;
+  assign o_rresp             = 0;
 
   // 读通道状态切换
   always @(posedge i_aclk) begin
