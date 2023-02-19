@@ -26,6 +26,7 @@ void finish_handle(long long pc, long long dnpc, long long inst, svLogic memen, 
   last_pc = pc;
   cpu.inst = inst;
   cpu.pc = *npc;
+  printf("%lx\n", cpu.pc);
 #ifdef CONFIG_IPC_CAL
   insts++;
 #endif
