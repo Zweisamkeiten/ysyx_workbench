@@ -85,7 +85,7 @@ module ysyx_22050710_axil_inst_sram_wrap #(
     end
   end
 
-  always @(posedge i_clk) begin
+  always @(posedge i_aclk) begin
     if (ar_fire) begin
       o_rdata <= rdata;
     end
