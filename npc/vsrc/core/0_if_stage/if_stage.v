@@ -36,7 +36,7 @@ module ysyx_22050710_if_stage #(
          }                   = i_br_bus                      ;
   wire                         pre_fs_ready_go               ;
   wire                         pre_fs_to_fs_valid            ;
-  assign pre_fs_ready_go     = ~br_stall                     ;
+  assign pre_fs_ready_go     = ~br_stall & i_inst_sram_addr_ok;
   assign pre_fs_to_fs_valid  = ~i_rst & pre_fs_ready_go      ;
 
   // if stage
