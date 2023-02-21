@@ -11,7 +11,6 @@
 extern "C" Vtop *top;
 extern "C" VerilatedContext *contextp;
 extern "C" VerilatedVcdC *tfp;
-extern "C" uint32_t * npcinst;
 
 extern "C" void single_cycle(int rst);
 

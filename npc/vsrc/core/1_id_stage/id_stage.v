@@ -80,7 +80,7 @@ module ysyx_22050710_id_stage #(
 
   wire [PC_WD-1:0            ] fs_pc                         ;
   wire [FS_TO_DS_BUS_WD-1:0  ] fs_to_ds_bus_r                ;
-  assign fs_pc               = i_fs_to_ds_bus[63:0]          ;
+  assign fs_pc               = i_fs_to_ds_bus[97:32]         ;
 
   Reg #(
     .WIDTH                    (FS_TO_DS_BUS_WD              ),
@@ -88,14 +88,15 @@ module ysyx_22050710_id_stage #(
   ) u_fs_to_ds_bus_r (
     .clk                      (i_clk                        ),
     .rst                      (i_rst                        ),
-    .din                      (br_taken ? {32'h00000013, fs_pc} : i_fs_to_ds_bus), // br taken 发生, 将已经if stage 取来的+4地址的指令清空为nop指令
+    .din                      (br_taken ? {32'h00000013, fs_pc, 32'h0} : i_fs_to_ds_bus), // br taken 发生, 将已经if stage 取来的+4地址的指令清空为nop指令
     .dout                     (fs_to_ds_bus_r               ),
     .wen                      (i_fs_to_ds_valid&&o_ds_allowin)
   );
 
   wire [INST_WD-1:0          ] ds_inst                       ;
   wire [PC_WD-1:0            ] ds_pc                         ;
-  assign {ds_inst, ds_pc}    = fs_to_ds_bus_r                ;
+  wire [31:0                 ] ds_dnpc                       ;
+  assign {ds_inst, ds_pc, ds_dnpc}    = fs_to_ds_bus_r                ;
 
   // 通用寄存器
   wire [GPR_ADDR_WD-1:0      ] rs1, rs2                      ;

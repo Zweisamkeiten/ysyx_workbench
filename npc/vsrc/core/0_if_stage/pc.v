@@ -12,7 +12,6 @@ module ysyx_22050710_pc #(
   input  [PC_WD-1:0          ] i_br_target                   ,
   output [PC_WD-1:0          ] o_pc                          ,
   // inst sram interface
-  output                       o_inst_sram_ren               ,
   output [SRAM_ADDR_WD-1:0   ] o_inst_sram_addr
 );
   
@@ -31,7 +30,6 @@ module ysyx_22050710_pc #(
    * 即在本周期"更新 PC 的阶段"就发起对 inst sram 的请求
    * inst sram 的输出是在 if stage 完成
    */
-  assign o_inst_sram_ren     = i_load                        ;
   assign o_inst_sram_addr    = dnpc[31:0]                    ;
 
 
