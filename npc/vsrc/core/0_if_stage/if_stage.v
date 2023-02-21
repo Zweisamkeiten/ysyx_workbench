@@ -54,7 +54,7 @@ module ysyx_22050710_if_stage #(
   wire [INST_WD-1:0          ] fs_inst                       ;
   wire [PC_WD-1:0            ] fs_pc                         ;
   assign o_fs_to_ds_bus      = {fs_inst, fs_pc              };
-  assign o_inst_sram_ren     = prefs_valid                   ;
+  assign o_inst_sram_ren     = pre_fs_to_fs_valid            ;
 
   Reg #(
     .WIDTH                    (1                            ),
