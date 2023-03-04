@@ -25,7 +25,7 @@ module ysyx_22050710_id_stage #(
   output                       o_ds_allowin                  ,
   // from fs
   input                        i_fs_to_ds_valid              ,
-  input  [FS_TO_DS_BUS_WD-1:0] i_fs_to_ds_bus                , // {fs_inst[31:0], fs_pc[63:0]}
+  input  [FS_TO_DS_BUS_WD-1:0] i_fs_to_ds_bus                , // {fs_inst[31:0], fs_pc[63:0], fs_dnpc[63:0]}
   // to es
   output                       o_ds_to_es_valid              ,
   output [DS_TO_ES_BUS_WD-1:0] o_ds_to_es_bus                ,
@@ -82,8 +82,8 @@ module ysyx_22050710_id_stage #(
   );
 
   wire [PC_WD-1:0            ] fs_dnpc                       ;
-  assign fs_dnpc             = i_fs_to_ds_bus[63:0]          ;
-  wire [FS_TO_DS_BUS_WD-1:0  ] fs_to_ds_bus_r                ;
+  assign fs_dnpc             = i_fs_to_ds_bus[PC_WD-1:0]          ;
+  wire [FS_TO_DS_BUS_WD-PC_WD-1:0] fs_to_ds_bus_r            ;
 
   Reg #(
     .WIDTH                    (FS_TO_DS_BUS_WD              ),
@@ -91,17 +91,15 @@ module ysyx_22050710_id_stage #(
   ) u_fs_to_ds_bus_r (
     .clk                      (i_clk                        ),
     .rst                      (i_rst                        ),
-    .din                      (i_fs_to_ds_bus               ),
+    .din                      (i_fs_to_ds_bus[FS_TO_DS_BUS_WD:PC_WD]),
     .dout                     (fs_to_ds_bus_r               ),
     .wen                      (i_fs_to_ds_valid&&o_ds_allowin)
   );
 
   wire [INST_WD-1:0          ] ds_inst                       ;
   wire [PC_WD-1:0            ] ds_pc                         ;
-  wire [PC_WD-1:0            ] ds_dnpc                       ;
   assign {ds_inst                                            ,
           ds_pc                                              ,
-          ds_dnpc
           }                  = fs_to_ds_bus_r                ;
 
   // 通用寄存器
@@ -272,7 +270,7 @@ module ysyx_22050710_id_stage #(
   assign o_debug_ds_to_es_bus= {o_ds_to_es_valid             ,  // blocking
                                 ds_inst                      ,
                                 ds_pc                        ,
-                                br_taken ? fs_dnpc : ds_dnpc ,
+                                fs_dnpc                      ,
                                 mem_ren | mem_wen            ,
                                 64'b0
   };
