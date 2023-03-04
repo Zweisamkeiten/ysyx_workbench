@@ -91,7 +91,7 @@ module ysyx_22050710_id_stage #(
   ) u_fs_to_ds_bus_r (
     .clk                      (i_clk                        ),
     .rst                      (i_rst                        ),
-    .din                      (i_fs_to_ds_bus[FS_TO_DS_BUS_WD-PC_WD-1:PC_WD]),
+    .din                      (i_fs_to_ds_bus[FS_TO_DS_BUS_WD-1:PC_WD]),
     .dout                     (fs_to_ds_bus_r               ),
     .wen                      (i_fs_to_ds_valid&&o_ds_allowin)
   );
