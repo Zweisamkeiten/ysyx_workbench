@@ -81,9 +81,7 @@ module ysyx_22050710_id_stage #(
     .wen                      (o_ds_allowin                 )
   );
 
-  wire [PC_WD-1:0            ] fs_pc                         ;
   wire [FS_TO_DS_BUS_WD-1:0  ] fs_to_ds_bus_r                ;
-  assign fs_pc               = i_fs_to_ds_bus[63:0]          ;
 
   Reg #(
     .WIDTH                    (FS_TO_DS_BUS_WD              ),
@@ -98,7 +96,11 @@ module ysyx_22050710_id_stage #(
 
   wire [INST_WD-1:0          ] ds_inst                       ;
   wire [PC_WD-1:0            ] ds_pc                         ;
-  assign {ds_inst, ds_pc}    = fs_to_ds_bus_r                ;
+  wire [PC_WD-1:0            ] ds_dnpc                       ;
+  assign {ds_inst                                            ,
+          ds_pc                                              ,
+          ds_dnpc
+          }                  = fs_to_ds_bus_r                ;
 
   // 通用寄存器
   wire [GPR_ADDR_WD-1:0      ] rs1, rs2                      ;
@@ -251,7 +253,6 @@ module ysyx_22050710_id_stage #(
   );
 
   wire                         rf_debug_valid                ;
-  wire                         rf_debug_addnop               ;
   wire [INST_WD-1:0          ] rf_debug_inst                 ;
   wire [PC_WD-1:0            ] rf_debug_pc                   ;
   wire [PC_WD-1:0            ] rf_debug_dnpc                 ;
@@ -259,7 +260,6 @@ module ysyx_22050710_id_stage #(
   wire [WORD_WD-1:0          ] rf_debug_memaddr              ;
 
   assign {rf_debug_valid                                     ,
-          rf_debug_addnop                                    ,
           rf_debug_inst                                      ,
           rf_debug_pc                                        ,
           rf_debug_dnpc                                      ,
@@ -268,10 +268,9 @@ module ysyx_22050710_id_stage #(
          }                   = debug_ws_to_rf_bus_r          ;
 
   assign o_debug_ds_to_es_bus= {o_ds_to_es_valid             ,  // blocking
-                                br_taken                     ,
                                 ds_inst                      ,
                                 ds_pc                        ,
-                                br_taken ? br_target : fs_pc ,
+                                ds_dnpc                      ,
                                 mem_ren | mem_wen            ,
                                 64'b0
   };

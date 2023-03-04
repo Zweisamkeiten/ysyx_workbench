@@ -53,7 +53,8 @@ module ysyx_22050710_if_stage #(
 
   wire [INST_WD-1:0          ] fs_inst                       ;
   wire [PC_WD-1:0            ] fs_pc                         ;
-  assign o_fs_to_ds_bus      = {fs_inst, fs_pc              };
+  wire [PC_WD-1:0            ] fs_pc                         ;
+  assign o_fs_to_ds_bus      = {fs_inst, fs_pc, fs_dnpc     };
   assign o_inst_sram_ren     = fs_allowin                    ;
 
   Reg #(
@@ -78,6 +79,7 @@ module ysyx_22050710_if_stage #(
     .i_br_taken               (br_taken                     ), // br taken 发生
     .i_br_target              (br_target                    ), // 避免控制指令冲突问题
     .o_pc                     (fs_pc                        ),
+    .o_dnpc                   (fs_dnpc                      ),
     .o_inst_sram_addr         (o_inst_sram_addr             )
   );
 
