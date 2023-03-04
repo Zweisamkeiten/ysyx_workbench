@@ -33,7 +33,7 @@ void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
     // for (int column = ctl->x; column < ctl->x + ctl->w; column++) {
       // fb[row * w + column] = *pixels++;
     memcpy(fb + row * w, pixels, ctl->w*sizeof(uint32_t));
-    pixels += ctl->w * sizeof(uint32_t);
+    pixels += ctl->w;
     // }
   }
   if (ctl->sync) {
