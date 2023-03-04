@@ -91,9 +91,6 @@ module ysyx_22050710_id_stage #(
   ) u_fs_to_ds_bus_r (
     .clk                      (i_clk                        ),
     .rst                      (i_rst                        ),
-    /* .din                      ((br_taken & i_inst_sram_data_ok) */
-    /*                            ? {32'h00000013, fs_pc} */
-    /*                            : i_fs_to_ds_bus             ), // br taken 发生, 将已经if stage 取来的+4地址的指令清空为nop指令 */
     .din                      (i_fs_to_ds_bus               ),
     .dout                     (fs_to_ds_bus_r               ),
     .wen                      (i_fs_to_ds_valid&&o_ds_allowin)
@@ -280,7 +277,7 @@ module ysyx_22050710_id_stage #(
   };
 
   always @(*) begin
-    if (rf_debug_valid && rf_debug_addnop != 1) begin
+    if (rf_debug_valid) begin
       finish_handle(rf_debug_pc, rf_debug_dnpc, {32'b0, rf_debug_inst}, rf_debug_memen, rf_debug_memaddr);
     end
   end
