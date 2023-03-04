@@ -99,7 +99,7 @@ module ysyx_22050710_id_stage #(
   wire [INST_WD-1:0          ] ds_inst                       ;
   wire [PC_WD-1:0            ] ds_pc                         ;
   assign {ds_inst                                            ,
-          ds_pc                                              ,
+          ds_pc
           }                  = fs_to_ds_bus_r                ;
 
   // 通用寄存器
