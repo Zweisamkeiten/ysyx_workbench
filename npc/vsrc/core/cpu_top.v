@@ -121,7 +121,9 @@ module ysyx_22050710_cpu_top #(
     .i_data_sram_rdata        (cpu_data_rdata                ),
     .o_data_sram_wen          (cpu_data_wen                  ),
     .o_data_sram_wmask        (cpu_data_wmask                ),
-    .o_data_sram_wdata        (cpu_data_wdata                )
+    .o_data_sram_wdata        (cpu_data_wdata                ),
+    .i_data_sram_addr_ok      (cpu_data_addr_ok              ),
+    .i_data_sram_data_ok      (cpu_data_data_ok              )
   );
 
   ysyx_22050710_axil_master_wrap u_ifu_axi_wrap (

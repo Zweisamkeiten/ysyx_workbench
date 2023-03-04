@@ -38,7 +38,9 @@ module ysyx_22050710_core #(
   input  [SRAM_DATA_WD-1:0   ] i_data_sram_rdata             ,
   output                       o_data_sram_wen               ,
   output [SRAM_WMASK_WD-1:0  ] o_data_sram_wmask             ,
-  output [SRAM_DATA_WD-1:0   ] o_data_sram_wdata
+  output [SRAM_DATA_WD-1:0   ] o_data_sram_wdata             ,
+  input                        i_data_sram_addr_ok           ,
+  input                        i_data_sram_data_ok
 );
 
   wire                         ds_allowin                    ;
@@ -179,6 +181,8 @@ module ysyx_22050710_core #(
     .o_es_to_ds_load_sel      (es_to_ds_load_sel            ),
     // bypass
     .o_es_to_ds_bypass_bus    (es_to_ds_bypass_bus          ),
+    // data sram
+    .i_data_sram_addr_ok      (i_data_sram_addr_ok          ),
     // debug
     .i_debug_ds_to_es_bus     (debug_ds_to_es_bus           ),
     .o_debug_es_to_ms_bus     (debug_es_to_ms_bus           )
@@ -211,6 +215,8 @@ module ysyx_22050710_core #(
     .i_data_sram_rdata        (i_data_sram_rdata            ), // data ram 读数据返回 进入 lsu 进行处理
     // bypass
     .o_ms_to_ds_bypass_bus    (ms_to_ds_bypass_bus          ),
+    // data sram
+    .i_data_sram_data_ok      (i_data_sram_data_ok          ),
     // debug
     .i_debug_es_to_ms_bus     (debug_es_to_ms_bus           ),
     .o_debug_ms_to_ws_bus     (debug_ms_to_ws_bus           )

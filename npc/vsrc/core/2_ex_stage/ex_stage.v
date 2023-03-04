@@ -38,6 +38,8 @@ module ysyx_22050710_ex_stage #(
   output                       o_es_to_ds_load_sel           ,
   // bypass
   output [BYPASS_BUS_WD-1:0  ] o_es_to_ds_bypass_bus         ,
+  // data sram
+  input                        i_data_sram_addr_ok           ,
   // debug
   input  [DEBUG_BUS_WD-1:0   ] i_debug_ds_to_es_bus          ,
   output [DEBUG_BUS_WD-1:0   ] o_debug_es_to_ms_bus
@@ -45,7 +47,7 @@ module ysyx_22050710_ex_stage #(
 
   wire                         es_valid                      ;
   wire                         es_ready_go                   ;
-  assign es_ready_go         = 1'b1                          ;
+  assign es_ready_go         = i_data_sram_addr_ok           ;
   assign o_es_allowin        = (!es_valid) || (es_ready_go && i_ms_allowin);
   assign o_es_to_ms_valid    = es_valid && es_ready_go       ;
 
