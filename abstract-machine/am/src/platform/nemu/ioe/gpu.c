@@ -27,14 +27,12 @@ void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
 }
 
 void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
-  uint32_t *fb = (uint32_t *)(uintptr_t)FB_ADDR;
-  uint32_t *pixels = ctl->pixels;
+  uint64_t *fb = (uint64_t *)(uintptr_t)FB_ADDR;
+  uint64_t *pixels = ctl->pixels;
   for (int row = ctl->y; row < ctl->y + ctl->h; row++) {
-    // for (int column = ctl->x; column < ctl->x + ctl->w; column++) {
-      // fb[row * w + column] = *pixels++;
-    memcpy(fb + row * w + ctl->x, pixels, ctl->w*sizeof(uint32_t));
-    pixels += ctl->w;
-    // }
+    for (int column = ctl->x; column < (ctl->x + ctl->w)/2; column++) {
+      fb[row * w + column] = *pixels++;
+    }
   }
   if (ctl->sync) {
     outl(SYNC_ADDR, 1);
