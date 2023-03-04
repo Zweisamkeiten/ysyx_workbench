@@ -136,7 +136,6 @@ module ysyx_22050710_ex_stage #(
   );
 
   wire                         es_debug_valid                ;
-  wire                         es_debug_addnop               ;
   wire [INST_WD-1:0          ] es_debug_inst                 ;
   wire [PC_WD-1:0            ] es_debug_pc                   ;
   wire [PC_WD-1:0            ] es_debug_dnpc                 ;
@@ -144,7 +143,6 @@ module ysyx_22050710_ex_stage #(
   wire [WORD_WD-1:0          ] es_debug_memaddr              ;
 
   assign {es_debug_valid                                     ,
-          es_debug_addnop                                    ,
           es_debug_inst                                      ,
           es_debug_pc                                        ,
           es_debug_dnpc                                      ,
@@ -153,7 +151,6 @@ module ysyx_22050710_ex_stage #(
          }                   = debug_ds_to_es_bus_r          ;
 
   assign o_debug_es_to_ms_bus= {es_debug_valid               ,
-                                es_debug_addnop              ,
                                 es_debug_inst                ,
                                 es_debug_pc                  ,
                                 es_debug_dnpc                ,
