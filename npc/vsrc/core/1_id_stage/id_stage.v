@@ -86,7 +86,7 @@ module ysyx_22050710_id_stage #(
   wire [FS_TO_DS_BUS_WD-PC_WD-1:0] fs_to_ds_bus_r            ;
 
   Reg #(
-    .WIDTH                    (FS_TO_DS_BUS_WD-PC_WD-1      ),
+    .WIDTH                    (FS_TO_DS_BUS_WD-PC_WD        ),
     .RESET_VAL                (0                            )
   ) u_fs_to_ds_bus_r (
     .clk                      (i_clk                        ),
