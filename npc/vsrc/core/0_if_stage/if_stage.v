@@ -53,7 +53,7 @@ module ysyx_22050710_if_stage #(
 
   wire [INST_WD-1:0          ] fs_inst                       ;
   wire [PC_WD-1:0            ] fs_pc                         ;
-  wire [PC_WD-1:0            ] fs_pc                         ;
+  wire [PC_WD-1:0            ] fs_dnpc                       ;
   assign o_fs_to_ds_bus      = {fs_inst, fs_pc, fs_dnpc     };
   assign o_inst_sram_ren     = fs_allowin                    ;
 
