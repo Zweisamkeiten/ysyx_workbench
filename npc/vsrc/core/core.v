@@ -27,16 +27,20 @@ module ysyx_22050710_core #(
   input                        i_clk                         ,
   input                        i_rst                         ,
   // inst sram interface
-  output                       o_inst_sram_ren               ,
   output [SRAM_ADDR_WD-1:0   ] o_inst_sram_addr              ,
+  output                       o_inst_sram_ren               ,
   input  [SRAM_DATA_WD-1:0   ] i_inst_sram_rdata             ,
+  input                        i_inst_sram_addr_ok           ,
+  input                        i_inst_sram_data_ok           ,
   // data sram interface
   output [SRAM_ADDR_WD-1:0   ] o_data_sram_addr              ,
   output                       o_data_sram_ren               ,
   input  [SRAM_DATA_WD-1:0   ] i_data_sram_rdata             ,
   output                       o_data_sram_wen               ,
   output [SRAM_WMASK_WD-1:0  ] o_data_sram_wmask             ,
-  output [SRAM_DATA_WD-1:0   ] o_data_sram_wdata
+  output [SRAM_DATA_WD-1:0   ] o_data_sram_wdata             ,
+  input                        i_data_sram_addr_ok           ,
+  input                        i_data_sram_data_ok
 );
 
   wire                         ds_allowin                    ;
@@ -88,7 +92,9 @@ module ysyx_22050710_core #(
     // inst sram interface
     .o_inst_sram_ren          (o_inst_sram_ren              ),
     .o_inst_sram_addr         (o_inst_sram_addr             ),
-    .i_inst_sram_rdata        (i_inst_sram_rdata            )
+    .i_inst_sram_rdata        (i_inst_sram_rdata            ),
+    .i_inst_sram_addr_ok      (i_inst_sram_addr_ok          ),
+    .i_inst_sram_data_ok      (i_inst_sram_data_ok          )
   );
 
   ysyx_22050710_id_stage #(
@@ -124,6 +130,9 @@ module ysyx_22050710_core #(
     .i_ws_to_rf_bus           (ws_to_rf_bus                 ),
     // for load stall
     .i_es_to_ds_load_sel      (es_to_ds_load_sel            ),
+    // 原先的 If flush 是由于一周期后下一条指令已经到达. 现加入总线, 因此指令
+    // 到达时间不确定
+    .i_inst_sram_data_ok      (i_inst_sram_data_ok          ),
     // 前递 forward 解决数据相关性冲突:
     // 流水线组合逻辑结果前递到译码级寄存器读出
     .i_es_to_ds_bypass_bus    (es_to_ds_bypass_bus          ),
@@ -172,6 +181,8 @@ module ysyx_22050710_core #(
     .o_es_to_ds_load_sel      (es_to_ds_load_sel            ),
     // bypass
     .o_es_to_ds_bypass_bus    (es_to_ds_bypass_bus          ),
+    // data sram
+    .i_data_sram_addr_ok      (i_data_sram_addr_ok          ),
     // debug
     .i_debug_ds_to_es_bus     (debug_ds_to_es_bus           ),
     .o_debug_es_to_ms_bus     (debug_es_to_ms_bus           )
@@ -204,6 +215,8 @@ module ysyx_22050710_core #(
     .i_data_sram_rdata        (i_data_sram_rdata            ), // data ram 读数据返回 进入 lsu 进行处理
     // bypass
     .o_ms_to_ds_bypass_bus    (ms_to_ds_bypass_bus          ),
+    // data sram
+    .i_data_sram_data_ok      (i_data_sram_data_ok          ),
     // debug
     .i_debug_es_to_ms_bus     (debug_es_to_ms_bus           ),
     .o_debug_ms_to_ws_bus     (debug_ms_to_ws_bus           )

@@ -129,14 +129,24 @@ void *memmove(void *dst, const void *src, size_t n) {
  * Use memmove() if the memory areas do overlap.
  */
 void *memcpy(void *out, const void *in, size_t n) {
-  unsigned char *cin = (unsigned char *)in;
-  unsigned char *cout = (unsigned char *)out;
+  void *res = out;
 
-  for (size_t i = 0; i < n; i++) {
-    cout[i] = cin[i];
+  size_t words = n / sizeof(word_t);
+  size_t bytes = n % sizeof(word_t);
+
+  for (size_t i = 0; i < words; i++) {
+    *(word_t *)out = *(word_t *)in;
+    out += sizeof(word_t);
+    in  += sizeof(word_t);
   }
 
-  return cout;
+  for (size_t i = 0; i < bytes; i++) {
+    *(unsigned char *)out = *(unsigned char *)in;
+    out += sizeof(unsigned char);
+    in  += sizeof(unsigned char);
+  }
+
+  return res;
 }
 
 /*
