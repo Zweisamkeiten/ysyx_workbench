@@ -64,8 +64,7 @@ void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
     x = 0, y = 0, w = s->w, h = s->h;
   }
 
-  static uint32_t pixels[400 * 300];
-  printf("%d, %d\n", s->w, s->h);
+  uint32_t * pixels_color_p = (uint32_t *)malloc(sizeof(uint32_t) * (s->w * s->h));
   int idx = 0;
   if (s->format->BytesPerPixel == 1) {
     for (int row = 0; row < h; row++) {
@@ -82,10 +81,10 @@ void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
                               ((color.r) << 16) | // RR
                               ((color.g) <<  8) | // GG
                               ((color.b) <<  0) ; // BB
-        pixels[idx++] = color_argb;
+        pixels_color_p[idx++] = color_argb;
       }
     }
-    NDL_DrawRect((uint32_t *)pixels, x, y, w, h);
+    NDL_DrawRect((uint32_t *)pixels_color_p, x, y, w, h);
     return;
   }
 
