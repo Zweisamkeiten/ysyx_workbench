@@ -35,31 +35,6 @@ void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_
            src->pixels + (rows + srcrect_y) * src->pitch + srcrect_x * src->format->BytesPerPixel, // pointer to src rect current coping row first pixel
            srcrect_w * src->format->BytesPerPixel); // size
   }
-  // int rows; // has copid rows
-  // printf("%d\n", src->format->BytesPerPixel);
-  // switch (src->format->BytesPerPixel) {
-  //   case 1: {
-  //     uint8_t * dst_p = (uint8_t *)(dst->pixels + (rows + dstrect_y) * dst->pitch + dstrect_x * dst->format->BytesPerPixel);
-  //     uint8_t * src_p = (uint8_t *)(src->pixels + (rows + srcrect_y) * src->pitch + srcrect_x * src->format->BytesPerPixel);
-  //     for (rows = 0; rows < srcrect_h; rows++) {
-  //       for (int pixels = 0; pixels < srcrect_w; pixels++) {
-  //         dst_p[pixels] = src_p[pixels];
-  //       }
-  //     }
-  //     break;
-  //   }
-  //   case 4: {
-  //     uint32_t * dst_p = (uint32_t *)(dst->pixels + (rows + dstrect_y) * dst->pitch + dstrect_x * dst->format->BytesPerPixel);
-  //     uint32_t * src_p = (uint32_t *)(src->pixels + (rows + srcrect_y) * src->pitch + srcrect_x * src->format->BytesPerPixel);
-  //     for (rows = 0; rows < srcrect_h; rows++) {
-  //       for (int pixels = 0; pixels < srcrect_w; pixels++) {
-  //         dst_p[pixels] = src_p[pixels];
-  //       }
-  //     }
-  //     break;
-  //   }
-  //   default: break;
-  // }
 }
 
 void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
@@ -92,8 +67,6 @@ void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
   uint32_t * pixels_color_p = (uint32_t *)malloc(sizeof(uint32_t) * (s->w * s->h));
   int idx = 0;
   if (s->format->BytesPerPixel == 1) {
-    static uint32_t pixels[400 * 300];
-    int idx = 0;
     for (int row = 0; row < h; row++) {
       // 像素阵列存放的是8位的调色板下标,
       // 用这个下标在调色板中进行索引, 得到的才是32位的颜色信息
