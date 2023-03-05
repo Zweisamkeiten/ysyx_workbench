@@ -65,6 +65,7 @@ void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
   }
 
   static uint32_t pixels[400 * 300];
+  printf("%d, %d\n", s->w, s->h);
   int idx = 0;
   if (s->format->BytesPerPixel == 1) {
     for (int row = 0; row < h; row++) {
