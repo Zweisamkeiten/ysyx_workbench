@@ -15,8 +15,6 @@ struct Context {
   uint8_t redzone[128];
 };
 
-typedef uint64_t word_t;
-
 #define GPR1 uc.uc_mcontext.gregs[REG_RDI]
 #define GPR2 uc.uc_mcontext.gregs[REG_RSI]
 #define GPR3 uc.uc_mcontext.gregs[REG_RDX]

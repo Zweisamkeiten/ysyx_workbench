@@ -7,8 +7,6 @@ struct Context {
   void *pdir;
 };
 
-typedef uint32_t word_t;
-
 #define GPR1 gpr[17] // a7
 #define GPR2 gpr[0]
 #define GPR3 gpr[0]
