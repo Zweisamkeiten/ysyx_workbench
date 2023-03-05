@@ -129,7 +129,6 @@ SDL_Surface* SDL_CreateRGBSurface(uint32_t flags, int width, int height, int dep
   }
 
   s->format->BitsPerPixel = depth;
-  printf("bits: %d\n", s->format->BitsPerPixel);
   s->format->BytesPerPixel = depth / 8;
 
   s->w = width;
