@@ -64,18 +64,6 @@ void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
   if (s->format->BytesPerPixel == 1) {
     for (int row = 0; row < h; row++) {
       for (int column = 0; column < w; column++) {
-        // 像素阵列存放的是8位的调色板下标,
-        // 用这个下标在调色板中进行索引, 得到的才是32位的颜色信息
-        uint8_t color_xy_idx = *(s->pixels + (row + y) * s->pitch + (column + x));
-        SDL_Color color = *(s->format->palette->colors + color_xy_idx);
-
-        // Transform SDL_Color to AARRGGBB
-        // struct order rgba. On little-end machine, the color number is AABBGGRR, because the byte order.
-        uint32_t color_argb = ((color.a) << 24) | // AA
-                              ((color.r) << 16) | // RR
-                              ((color.g) <<  8) | // GG
-                              ((color.b) <<  0) ; // BB
-        NDL_DrawRect(&color_argb, column + x, row + y, 1, 1);
       }
     }
     return;
@@ -99,7 +87,6 @@ static inline int maskToShift(uint32_t mask) {
 
 SDL_Surface* SDL_CreateRGBSurface(uint32_t flags, int width, int height, int depth,
     uint32_t Rmask, uint32_t Gmask, uint32_t Bmask, uint32_t Amask) {
-  printf("%s\n", __func__);
   assert(depth == 8 || depth == 32);
   SDL_Surface *s = malloc(sizeof(SDL_Surface));
   assert(s);
@@ -139,7 +126,6 @@ SDL_Surface* SDL_CreateRGBSurface(uint32_t flags, int width, int height, int dep
 
 SDL_Surface* SDL_CreateRGBSurfaceFrom(void *pixels, int width, int height, int depth,
     int pitch, uint32_t Rmask, uint32_t Gmask, uint32_t Bmask, uint32_t Amask) {
-  printf("%s\n", __func__);
   SDL_Surface *s = SDL_CreateRGBSurface(SDL_PREALLOC, width, height, depth,
       Rmask, Gmask, Bmask, Amask);
   assert(pitch == s->pitch);
@@ -148,7 +134,6 @@ SDL_Surface* SDL_CreateRGBSurfaceFrom(void *pixels, int width, int height, int d
 }
 
 void SDL_FreeSurface(SDL_Surface *s) {
-  printf("%s\n", __func__);
   if (s != NULL) {
     if (s->format != NULL) {
       if (s->format->palette != NULL) {
@@ -163,14 +148,12 @@ void SDL_FreeSurface(SDL_Surface *s) {
 }
 
 SDL_Surface* SDL_SetVideoMode(int width, int height, int bpp, uint32_t flags) {
-  printf("%s\n", __func__);
   if (flags & SDL_HWSURFACE) NDL_OpenCanvas(&width, &height);
   return SDL_CreateRGBSurface(flags, width, height, bpp,
       DEFAULT_RMASK, DEFAULT_GMASK, DEFAULT_BMASK, DEFAULT_AMASK);
 }
 
 void SDL_SoftStretch(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect) {
-  printf("%s\n", __func__);
   assert(src && dst);
   assert(dst->format->BitsPerPixel == src->format->BitsPerPixel);
   assert(dst->format->BitsPerPixel == 8);
@@ -198,7 +181,6 @@ void SDL_SoftStretch(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_
 }
 
 void SDL_SetPalette(SDL_Surface *s, int flags, SDL_Color *colors, int firstcolor, int ncolors) {
-  printf("%s\n", __func__);
   assert(s);
   assert(s->format);
   assert(s->format->palette);
@@ -219,7 +201,6 @@ void SDL_SetPalette(SDL_Surface *s, int flags, SDL_Color *colors, int firstcolor
 }
 
 static void ConvertPixelsARGB_ABGR(void *dst, void *src, int len) {
-  printf("%s\n", __func__);
   int i;
   uint8_t (*pdst)[4] = dst;
   uint8_t (*psrc)[4] = src;
@@ -247,7 +228,6 @@ static void ConvertPixelsARGB_ABGR(void *dst, void *src, int len) {
 }
 
 SDL_Surface *SDL_ConvertSurface(SDL_Surface *src, SDL_PixelFormat *fmt, uint32_t flags) {
-  printf("%s\n", __func__);
   assert(src->format->BitsPerPixel == 32);
   assert(src->w * src->format->BytesPerPixel == src->pitch);
   assert(src->format->BitsPerPixel == fmt->BitsPerPixel);
@@ -263,7 +243,6 @@ SDL_Surface *SDL_ConvertSurface(SDL_Surface *src, SDL_PixelFormat *fmt, uint32_t
 }
 
 uint32_t SDL_MapRGBA(SDL_PixelFormat *fmt, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-  printf("%s\n", __func__);
   assert(fmt->BytesPerPixel == 4);
   uint32_t p = (r << fmt->Rshift) | (g << fmt->Gshift) | (b << fmt->Bshift);
   if (fmt->Amask) p |= (a << fmt->Ashift);
