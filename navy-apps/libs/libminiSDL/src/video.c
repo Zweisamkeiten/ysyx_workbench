@@ -81,26 +81,12 @@ void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
                               ((color.r) << 16) | // RR
                               ((color.g) <<  8) | // GG
                               ((color.b) <<  0) ; // BB
-        // NDL_DrawRect(&color_argb, column + x, row + y, 1, 1);
         pixels[idx++] = color_argb;
       }
     }
     NDL_DrawRect((uint32_t *)pixels, x, y, w, h);
     return;
   }
-  // switch (s->format->BitsPerPixel)
-  // {
-  // case 8:
-  //   for (int i = 0; i < h; i++)
-  //   {
-  //     int s_idx = (i + y) * s->pitch + x;
-  //     for (int j = 0; j < w; j++)
-  //     {
-  //       pixels[idx++] = s->format->palette->colors[s->pixels[s_idx++]].val;
-  //     }
-  //   }
-  //   break;
-  // }
 
   NDL_DrawRect((uint32_t *)s->pixels, x, y, w, h);
 }
