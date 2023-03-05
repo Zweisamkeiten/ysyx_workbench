@@ -7,6 +7,7 @@
 
 static int blit_count = 0;
 static int fill_count = 0;
+static int update_count = 0;
 
 void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect) {
   blit_count++;
@@ -67,6 +68,8 @@ void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
 }
 
 void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
+  update_count++;
+  printf("update_count: %d\n", update_count);
   if ((x & y & w & h) == 0) {
     x = 0, y = 0, w = s->w, h = s->h;
   }
