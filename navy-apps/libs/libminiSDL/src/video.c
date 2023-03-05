@@ -85,6 +85,7 @@ void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
         pixels[idx++] = color_argb;
       }
     }
+    NDL_DrawRect((uint32_t *)pixels, x, y, w, h);
     return;
   }
   // switch (s->format->BitsPerPixel)
@@ -101,7 +102,7 @@ void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
   //   break;
   // }
 
-  NDL_DrawRect((uint32_t *)pixels, x, y, w, h);
+  NDL_DrawRect((uint32_t *)s->pixels, x, y, w, h);
 }
 
 // APIs below are already implemented.
