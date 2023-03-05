@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <debug.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -14,6 +15,7 @@ extern "C" {
 #include "sdl-video.h"
 #include "sdl-audio.h"
 #include "sdl-file.h"
+extern void CallbackHelper();
 
 #ifdef __cplusplus
 }
