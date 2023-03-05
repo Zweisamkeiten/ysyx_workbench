@@ -26,7 +26,6 @@ void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_
     dx = dstrect->x;
     dy = dstrect->y;
   }
-  printf("bits: %d\n", src->format->BitsPerPixel);
   switch (src->format->BitsPerPixel)
   {
   case 8:
@@ -73,7 +72,6 @@ void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color)
   uint32_t *p;
   uint8_t *p8;
   uint32_t line_size = dst->w;
-  printf("bits2: %d\n", dst->format->BitsPerPixel);
   switch (dst->format->BitsPerPixel)
   {
   case 8:
@@ -111,7 +109,6 @@ void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h)
   static uint32_t pixels[400 * 300];
   int idx = 0;
 
-  printf("bits3: %d\n", s->format->BitsPerPixel);
   switch (s->format->BitsPerPixel)
   {
   case 8:
