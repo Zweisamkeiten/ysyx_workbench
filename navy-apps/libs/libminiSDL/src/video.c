@@ -70,9 +70,10 @@ void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
     for (int row = 0; row < h; row++) {
       // 像素阵列存放的是8位的调色板下标,
       // 用这个下标在调色板中进行索引, 得到的才是32位的颜色信息
-      uint8_t color_xy_idx = *(s->pixels + (row + y) * s->pitch + x);
+      uint8_t * pos_p = s->pixels + (y + row) * s->pitch + x;
       for (int column = 0; column < w; column++) {
-        SDL_Color color = s->format->palette->colors[color_xy_idx++];
+        uint8_t color_xy_idx = *(pos_p + column);
+        SDL_Color color = s->format->palette->colors[color_xy_idx];
 
         // Transform SDL_Color to AARRGGBB
         // struct order rgba. On little-end machine, the color number is AABBGGRR, because the byte order.
@@ -86,19 +87,19 @@ void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
     }
     return;
   }
-  switch (s->format->BitsPerPixel)
-  {
-  case 8:
-    for (int i = 0; i < h; i++)
-    {
-      int s_idx = (i + y) * s->pitch + x;
-      for (int j = 0; j < w; j++)
-      {
-        pixels[idx++] = s->format->palette->colors[s->pixels[s_idx++]].val;
-      }
-    }
-    break;
-  }
+  // switch (s->format->BitsPerPixel)
+  // {
+  // case 8:
+  //   for (int i = 0; i < h; i++)
+  //   {
+  //     int s_idx = (i + y) * s->pitch + x;
+  //     for (int j = 0; j < w; j++)
+  //     {
+  //       pixels[idx++] = s->format->palette->colors[s->pixels[s_idx++]].val;
+  //     }
+  //   }
+  //   break;
+  // }
 
   NDL_DrawRect((uint32_t *)pixels, x, y, w, h);
 }
