@@ -90,11 +90,12 @@ void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
   }
 
   if (s->format->BytesPerPixel == 1) {
+    static uint32_t pixels[400 * 300];
+    int idx = 0;
     for (int row = 0; row < h; row++) {
+      // 像素阵列存放的是8位的调色板下标,
+      // 用这个下标在调色板中进行索引, 得到的才是32位的颜色信息
       for (int column = 0; column < w; column++) {
-        // 像素阵列存放的是8位的调色板下标,
-        // 用这个下标在调色板中进行索引, 得到的才是32位的颜色信息
-        uint8_t color_xy_idx = *(s->pixels + (row + y) * s->pitch + (column + x));
         SDL_Color color = *(s->format->palette->colors + color_xy_idx);
 
         // Transform SDL_Color to AARRGGBB
@@ -103,7 +104,8 @@ void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
         //                       ((color.r) << 16) | // RR
         //                       ((color.g) <<  8) | // GG
         //                       ((color.b) <<  0) ; // BB
-        NDL_DrawRect((uint32_t *)&color, column + x, row + y, 1, 1);
+        // NDL_DrawRect((uint32_t *)&color, column + x, row + y, 1, 1);
+        pixels[idx++] = *(s->format->palette->colors
       }
     }
     return;
