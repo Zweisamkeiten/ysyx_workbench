@@ -91,14 +91,14 @@ void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
 
   if (s->format->BytesPerPixel == 1) {
     for (int row = 0; row < h; row++) {
-      // 像素阵列存放的是8位的调色板下标,
-      // 用这个下标在调色板中进行索引, 得到的才是32位的颜色信息
-      uint8_t color_xy_idx = *(s->pixels + (row + y) * s->pitch + x);
       for (int column = 0; column < w; column++) {
-        SDL_Color color = *(s->format->palette->colors + color_xy_idx++);
+        // 像素阵列存放的是8位的调色板下标,
+        // 用这个下标在调色板中进行索引, 得到的才是32位的颜色信息
+        uint8_t color_xy_idx = *(s->pixels + (row + y) * s->pitch + (column + x));
+        SDL_Color color = *(s->format->palette->colors + color_xy_idx);
 
-        // // Transform SDL_Color to AARRGGBB
-        // // struct order rgba. On little-end machine, the color number is AABBGGRR, because the byte order.
+        // Transform SDL_Color to AARRGGBB
+        // struct order rgba. On little-end machine, the color number is AABBGGRR, because the byte order.
         // uint32_t color_argb = ((color.a) << 24) | // AA
         //                       ((color.r) << 16) | // RR
         //                       ((color.g) <<  8) | // GG
