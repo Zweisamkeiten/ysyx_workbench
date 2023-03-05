@@ -77,6 +77,7 @@ module ysyx_22050710_mem_stage #(
   );
 
   wire                         ms_debug_valid                ;
+  wire                         ms_debug_addnop               ;
   wire [INST_WD-1:0          ] ms_debug_inst                 ;
   wire [PC_WD-1:0            ] ms_debug_pc                   ;
   wire [PC_WD-1:0            ] ms_debug_dnpc                 ;
@@ -84,6 +85,7 @@ module ysyx_22050710_mem_stage #(
   wire [WORD_WD-1:0          ] ms_debug_memaddr              ;
 
   assign {ms_debug_valid                                     ,
+          ms_debug_addnop                                    ,
           ms_debug_inst                                      ,
           ms_debug_pc                                        ,
           ms_debug_dnpc                                      ,
@@ -92,6 +94,7 @@ module ysyx_22050710_mem_stage #(
          }                   = debug_es_to_ms_bus_r          ;
 
   assign o_debug_ms_to_ws_bus= {ms_debug_valid               ,
+                                ms_debug_addnop              ,
                                 ms_debug_inst                ,
                                 ms_debug_pc                  ,
                                 ms_debug_dnpc                ,

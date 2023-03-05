@@ -25,7 +25,7 @@ module ysyx_22050710_id_stage #(
   output                       o_ds_allowin                  ,
   // from fs
   input                        i_fs_to_ds_valid              ,
-  input  [FS_TO_DS_BUS_WD-1:0] i_fs_to_ds_bus                , // {fs_inst[31:0], fs_pc[63:0], fs_dnpc[63:0]}
+  input  [FS_TO_DS_BUS_WD-1:0] i_fs_to_ds_bus                , // {fs_inst[31:0], fs_pc[63:0]}
   // to es
   output                       o_ds_to_es_valid              ,
   output [DS_TO_ES_BUS_WD-1:0] o_ds_to_es_bus                ,
@@ -35,9 +35,6 @@ module ysyx_22050710_id_stage #(
   input  [WS_TO_RF_BUS_WD-1:0] i_ws_to_rf_bus                ,
   // for load stall
   input                        i_es_to_ds_load_sel           ,
-  // 原先的 If flush 是由于一周期后下一条指令已经到达. 现加入总线, 因此指令
-  // 到达时间不确定
-  input                        i_inst_sram_data_ok           ,
   // bypass
   input  [BYPASS_BUS_WD-1:0  ] i_es_to_ds_bypass_bus         ,
   input  [BYPASS_BUS_WD-1:0  ] i_ms_to_ds_bypass_bus         ,
@@ -81,26 +78,24 @@ module ysyx_22050710_id_stage #(
     .wen                      (o_ds_allowin                 )
   );
 
-  wire [PC_WD-1:0            ] fs_dnpc                       ;
-  assign fs_dnpc             = i_fs_to_ds_bus[PC_WD-1:0]          ;
-  wire [FS_TO_DS_BUS_WD-PC_WD-1:0] fs_to_ds_bus_r            ;
+  wire [PC_WD-1:0            ] fs_pc                         ;
+  wire [FS_TO_DS_BUS_WD-1:0  ] fs_to_ds_bus_r                ;
+  assign fs_pc               = i_fs_to_ds_bus[63:0]          ;
 
   Reg #(
-    .WIDTH                    (FS_TO_DS_BUS_WD-PC_WD        ),
+    .WIDTH                    (FS_TO_DS_BUS_WD              ),
     .RESET_VAL                (0                            )
   ) u_fs_to_ds_bus_r (
     .clk                      (i_clk                        ),
     .rst                      (i_rst                        ),
-    .din                      (i_fs_to_ds_bus[FS_TO_DS_BUS_WD-1:PC_WD]),
+    .din                      (br_taken ? {32'h00000013, fs_pc} : i_fs_to_ds_bus), // br taken 发生, 将已经if stage 取来的+4地址的指令清空为nop指令
     .dout                     (fs_to_ds_bus_r               ),
     .wen                      (i_fs_to_ds_valid&&o_ds_allowin)
   );
 
   wire [INST_WD-1:0          ] ds_inst                       ;
   wire [PC_WD-1:0            ] ds_pc                         ;
-  assign {ds_inst                                            ,
-          ds_pc
-          }                  = fs_to_ds_bus_r                ;
+  assign {ds_inst, ds_pc}    = fs_to_ds_bus_r                ;
 
   // 通用寄存器
   wire [GPR_ADDR_WD-1:0      ] rs1, rs2                      ;
@@ -253,6 +248,7 @@ module ysyx_22050710_id_stage #(
   );
 
   wire                         rf_debug_valid                ;
+  wire                         rf_debug_addnop               ;
   wire [INST_WD-1:0          ] rf_debug_inst                 ;
   wire [PC_WD-1:0            ] rf_debug_pc                   ;
   wire [PC_WD-1:0            ] rf_debug_dnpc                 ;
@@ -260,6 +256,7 @@ module ysyx_22050710_id_stage #(
   wire [WORD_WD-1:0          ] rf_debug_memaddr              ;
 
   assign {rf_debug_valid                                     ,
+          rf_debug_addnop                                    ,
           rf_debug_inst                                      ,
           rf_debug_pc                                        ,
           rf_debug_dnpc                                      ,
@@ -268,15 +265,16 @@ module ysyx_22050710_id_stage #(
          }                   = debug_ws_to_rf_bus_r          ;
 
   assign o_debug_ds_to_es_bus= {o_ds_to_es_valid             ,  // blocking
+                                br_taken                     ,
                                 ds_inst                      ,
                                 ds_pc                        ,
-                                fs_dnpc                      ,
+                                br_taken ? br_target : fs_pc ,
                                 mem_ren | mem_wen            ,
                                 64'b0
   };
 
   always @(*) begin
-    if (rf_debug_valid) begin
+    if (rf_debug_valid && rf_debug_addnop != 1) begin
       finish_handle(rf_debug_pc, rf_debug_dnpc, {32'b0, rf_debug_inst}, rf_debug_memen, rf_debug_memaddr);
     end
   end
