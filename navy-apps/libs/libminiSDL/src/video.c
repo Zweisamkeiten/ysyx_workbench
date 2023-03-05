@@ -36,6 +36,7 @@ void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_
   //          srcrect_w * src->format->BytesPerPixel); // size
   // }
   int rows; // has copid rows
+  printf("%d\n", src->format->BytesPerPixel);
   switch (src->format->BytesPerPixel) {
     case 1: {
       uint8_t * dst_p = (uint8_t *)(dst->pixels + (rows + dstrect_y) * dst->pitch + dstrect_x * dst->format->BytesPerPixel);
