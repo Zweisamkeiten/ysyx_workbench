@@ -6,6 +6,7 @@
 #include <stdio.h>
 
 static int blit_count = 0;
+static int fill_count = 0;
 
 void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect) {
   blit_count++;
@@ -42,6 +43,8 @@ void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_
 }
 
 void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
+  fill_count++;
+  printf("fill_count: %d\n", fill_count);
   int rectx, recty;
   int rectw, recth;
   if (dstrect == NULL) {
