@@ -6,7 +6,6 @@
 #include <stdio.h>
 
 void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect) {
-  printf("%s\n", __func__);
   assert(dst && src);
   assert(dst->format->BitsPerPixel == src->format->BitsPerPixel);
 
@@ -32,11 +31,13 @@ void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_
 
   int rows; // has copid rows
   for (rows = 0; rows < srcrect_h; rows++) {
+    memcpy(dst->pixels + (rows + dstrect_y) * dst->pitch + dstrect_x * dst->format->BytesPerPixel, // pointer to dst rect current coping row first pixel
+           src->pixels + (rows + srcrect_y) * src->pitch + srcrect_x * src->format->BytesPerPixel, // pointer to src rect current coping row first pixel
+           srcrect_w * src->format->BytesPerPixel); // size
   }
 }
 
 void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
-  printf("%s\n", __func__);
   int rectx, recty;
   int rectw, recth;
   if (dstrect == NULL) {
@@ -51,22 +52,61 @@ void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
   int rows; // has copid rows
   for (rows = 0; rows < recth; rows++) {
     for (int column = 0; column < rectw; column++) {
+      memcpy(dst->pixels + (rows + recty) * dst->pitch + (column + rectx) * dst->format->BytesPerPixel,
+             &color,
+             sizeof(color));
     }
   }
 }
 
 void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
-  printf("%s\n", __func__);
   if ((x & y & w & h) == 0) {
     x = 0, y = 0, w = s->w, h = s->h;
   }
 
-  if (s->format->BytesPerPixel == 1) {
-    for (int row = 0; row < h; row++) {
-      for (int column = 0; column < w; column++) {
+  static uint32_t pixels[400 * 300];
+  int idx = 0;
+  // if (s->format->BytesPerPixel == 1) {
+  //   for (int row = 0; row < h; row++) {
+  //     for (int column = 0; column < w; column++) {
+  //       // 像素阵列存放的是8位的调色板下标,
+  //       // 用这个下标在调色板中进行索引, 得到的才是32位的颜色信息
+  //       uint8_t color_xy_idx = *(s->pixels + (row + y) * s->pitch + (column + x));
+  //       SDL_Color color = *(s->format->palette->colors + color_xy_idx);
+
+  //       // Transform SDL_Color to AARRGGBB
+  //       // struct order rgba. On little-end machine, the color number is AABBGGRR, because the byte order.
+  //       uint32_t color_argb = ((color.a) << 24) | // AA
+  //                             ((color.r) << 16) | // RR
+  //                             ((color.g) <<  8) | // GG
+  //                             ((color.b) <<  0) ; // BB
+  //       NDL_DrawRect(&color_argb, column + x, row + y, 1, 1);
+  //     }
+  //   }
+  //   return;
+  // }
+  switch (s->format->BitsPerPixel)
+  {
+  case 8:
+    for (int i = 0; i < h; i++)
+    {
+      int s_idx = (i + y) * s->w + x;
+      for (int j = 0; j < w; j++)
+      {
+        pixels[idx++] = s->format->palette->colors[s->pixels[s_idx++]].val;
       }
     }
-    return;
+    break;
+  case 32:
+    for (int i = 0; i < h; i++)
+    {
+      int s_idx = (i + y) * s->w + x;
+      memcpy(&pixels[idx],&s->pixels[s_idx*4],w*4);
+      idx+=w;
+    }
+    break;
+  default:
+    break;
   }
 
   NDL_DrawRect((uint32_t *)s->pixels, x, y, w, h);
