@@ -97,16 +97,6 @@ void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
       }
     }
     break;
-  case 32:
-    for (int i = 0; i < h; i++)
-    {
-      int s_idx = (i + y) * s->w + x;
-      memcpy(&pixels[idx],&s->pixels[s_idx*4],w*4);
-      idx+=w;
-    }
-    break;
-  default:
-    break;
   }
 
   NDL_DrawRect((uint32_t *)pixels, x, y, w, h);
