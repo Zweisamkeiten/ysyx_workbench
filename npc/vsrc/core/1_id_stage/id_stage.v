@@ -275,7 +275,7 @@ module ysyx_22050710_id_stage #(
                                 64'b0
   };
 
-  always @(*) begin
+  always @(debug_ws_to_rf_bus_r) begin
     if (rf_debug_valid) begin
       finish_handle(rf_debug_pc, rf_debug_dnpc, {32'b0, rf_debug_inst}, rf_debug_memen, rf_debug_memaddr);
     end
