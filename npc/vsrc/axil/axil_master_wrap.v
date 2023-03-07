@@ -97,7 +97,7 @@ module ysyx_22050710_axil_master_wrap #(
     if (~i_arsetn) begin
       write_state_reg <= WRITE_STATE_IDLE;
     end
-    else if (i_rw_valid && i_rw_wen) begin
+    else if ((i_rw_valid && i_rw_wen) || b_fire) begin
       o_rw_addr_ok <= aw_fire;
       case (write_state_reg)
         WRITE_STATE_IDLE  :              write_state_reg <= WRITE_STATE_ADDR  ;
