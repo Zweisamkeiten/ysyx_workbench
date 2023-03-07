@@ -47,7 +47,7 @@ module ysyx_22050710_ex_stage #(
 
   wire                         es_valid                      ;
   wire                         es_ready_go                   ;
-  assign es_ready_go         = i_data_sram_addr_ok           ;
+  assign es_ready_go         = (es_mem_ren |  es_mem_wen) ? i_data_sram_addr_ok : 1;  // 若为访存类型指令, 则需等其地址接收
   assign o_es_allowin        = (!es_valid) || (es_ready_go && i_ms_allowin);
   assign o_es_to_ms_valid    = es_valid && es_ready_go       ;
 
@@ -223,7 +223,7 @@ module ysyx_22050710_ex_stage #(
     .o_wdata                  (o_data_sram_wdata            )
   );
 
-  assign o_data_sram_ren     = es_mem_ren                    ;
+  assign o_data_sram_ren     = es_mem_ren && i_ms_allowin    ;
   assign o_data_sram_wen     = es_mem_wen && es_valid        ;
   assign o_data_sram_addr    = es_alu_result[31:0]           ; // x[rs1] + imm
 
