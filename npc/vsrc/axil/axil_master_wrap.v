@@ -99,7 +99,7 @@ module ysyx_22050710_axil_master_wrap #(
     end
     else if ((i_rw_valid && i_rw_wen) || b_fire) begin
       case (write_state_reg)
-        WRITE_STATE_IDLE  :              write_state_reg <= WRITE_STATE_ADDR  ;
+        WRITE_STATE_IDLE  : if (!o_rw_data_ok) write_state_reg <= WRITE_STATE_ADDR  ;
         WRITE_STATE_ADDR  : if (aw_fire) write_state_reg <= WRITE_STATE_WRITE ;
         WRITE_STATE_WRITE : if (w_fire ) write_state_reg <= WRITE_STATE_RESP  ;
         WRITE_STATE_RESP  : if (b_fire ) write_state_reg <= WRITE_STATE_IDLE  ;
