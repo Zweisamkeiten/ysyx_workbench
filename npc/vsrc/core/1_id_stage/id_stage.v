@@ -35,9 +35,6 @@ module ysyx_22050710_id_stage #(
   input  [WS_TO_RF_BUS_WD-1:0] i_ws_to_rf_bus                ,
   // for load stall
   input                        i_es_to_ds_load_sel           ,
-  // 原先的 If flush 是由于一周期后下一条指令已经到达. 现加入总线, 因此指令
-  // 到达时间不确定
-  input                        i_inst_sram_data_ok           ,
   // bypass
   input  [BYPASS_BUS_WD-1:0  ] i_es_to_ds_bypass_bus         ,
   input  [BYPASS_BUS_WD-1:0  ] i_ms_to_ds_bypass_bus         ,

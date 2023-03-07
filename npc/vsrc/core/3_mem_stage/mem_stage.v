@@ -35,7 +35,7 @@ module ysyx_22050710_mem_stage #(
 
   wire                         ms_valid                      ;
   wire                         ms_ready_go                   ;
-  assign ms_ready_go         = ms_mem_ren ? i_data_sram_data_ok : 1;
+  assign ms_ready_go         = ms_mem_ren ? i_data_sram_data_ok : 1; // 访存类型中读取指令 需等 data_ok
   assign o_ms_allowin        = (!ms_valid) || (ms_ready_go && i_ws_allowin);
   assign o_ms_to_ws_valid    = ms_valid && ms_ready_go       ;
 
