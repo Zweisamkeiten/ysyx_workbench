@@ -91,7 +91,6 @@ module ysyx_22050710_axil_master_wrap #(
   wire w_state_addr   = write_state_reg == WRITE_STATE_ADDR  ;
   wire w_state_write  = write_state_reg == WRITE_STATE_WRITE ;
   wire w_state_resp   = write_state_reg == WRITE_STATE_RESP  ;
-  assign o_rw_addr_ok = aw_fire | ar_fire                    ;
 
   // 写通道状态切换
   always @(posedge i_aclk) begin
@@ -127,6 +126,18 @@ module ysyx_22050710_axil_master_wrap #(
     end
     else begin
       read_state_reg <= read_state_reg;
+    end
+  end
+
+  always @(posedge i_aclk) begin
+    if (~i_arsetn) begin
+      o_rw_addr_ok <= 0;
+    end
+    else if (i_rw_valid) begin
+      o_rw_addr_ok <= ar_fire | aw_fire;
+    end
+    else begin
+      o_rw_addr_ok <= o_rw_addr_ok;
     end
   end
 
