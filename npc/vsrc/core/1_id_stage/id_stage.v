@@ -246,7 +246,7 @@ module ysyx_22050710_id_stage #(
     .rst                      (i_rst                        ),
     .din                      (i_debug_ws_to_rf_bus         ),
     .dout                     (debug_ws_to_rf_bus_r         ),
-    .wen                      (o_ds_to_es_valid             )
+    .wen                      (ds_valid                     )
   );
 
   wire                         rf_debug_valid                ;
