@@ -38,6 +38,9 @@ module ysyx_22050710_ex_stage #(
   output                       o_es_to_ds_load_sel           ,
   // bypass
   output [BYPASS_BUS_WD-1:0  ] o_es_to_ds_bypass_bus         ,
+  // data sram
+  input                        i_data_sram_addr_ok           ,
+  input                        i_data_sram_data_ok           ,
   // debug
   input  [DEBUG_BUS_WD-1:0   ] i_debug_ds_to_es_bus          ,
   output [DEBUG_BUS_WD-1:0   ] o_debug_es_to_ms_bus
@@ -45,7 +48,9 @@ module ysyx_22050710_ex_stage #(
 
   wire                         es_valid                      ;
   wire                         es_ready_go                   ;
-  assign es_ready_go         = 1'b1                          ;
+  assign es_ready_go         = (es_mem_ren | es_mem_wen)
+                             ? i_data_sram_data_ok
+                             : 1'b1                          ; // ex_stage 访存类型指令 读取内存 等待 addr_ok
   assign o_es_allowin        = (!es_valid) || (es_ready_go && i_ms_allowin);
   assign o_es_to_ms_valid    = es_valid && es_ready_go       ;
 
@@ -132,11 +137,10 @@ module ysyx_22050710_ex_stage #(
     .rst                      (i_rst                        ),
     .din                      (i_debug_ds_to_es_bus         ),
     .dout                     (debug_ds_to_es_bus_r         ),
-    .wen                      (1'b1                         )
+    .wen                      (i_ds_to_es_valid&&o_es_allowin)
   );
 
   wire                         es_debug_valid                ;
-  wire                         es_debug_addnop               ;
   wire [INST_WD-1:0          ] es_debug_inst                 ;
   wire [PC_WD-1:0            ] es_debug_pc                   ;
   wire [PC_WD-1:0            ] es_debug_dnpc                 ;
@@ -144,7 +148,6 @@ module ysyx_22050710_ex_stage #(
   wire [WORD_WD-1:0          ] es_debug_memaddr              ;
 
   assign {es_debug_valid                                     ,
-          es_debug_addnop                                    ,
           es_debug_inst                                      ,
           es_debug_pc                                        ,
           es_debug_dnpc                                      ,
@@ -153,7 +156,6 @@ module ysyx_22050710_ex_stage #(
          }                   = debug_ds_to_es_bus_r          ;
 
   assign o_debug_es_to_ms_bus= {es_debug_valid               ,
-                                es_debug_addnop              ,
                                 es_debug_inst                ,
                                 es_debug_pc                  ,
                                 es_debug_dnpc                ,
@@ -224,7 +226,7 @@ module ysyx_22050710_ex_stage #(
     .o_wdata                  (o_data_sram_wdata            )
   );
 
-  assign o_data_sram_ren     = es_mem_ren                    ;
+  assign o_data_sram_ren     = es_mem_ren && i_ms_allowin    ;
   assign o_data_sram_wen     = es_mem_wen && es_valid        ;
   assign o_data_sram_addr    = es_alu_result[31:0]           ; // x[rs1] + imm
 
