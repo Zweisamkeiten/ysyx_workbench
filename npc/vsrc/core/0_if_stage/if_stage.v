@@ -37,7 +37,9 @@ module ysyx_22050710_if_stage #(
   wire                         pre_fs_ready_go               ;
   wire                         pre_fs_to_fs_valid            ;
   assign pre_fs_ready_go     = ~br_stall & i_inst_sram_addr_ok;
+  assign pre_fs_allowin      = pre_fs_ready_go && fs_allowin ;
   assign pre_fs_to_fs_valid  = ~i_rst & pre_fs_ready_go      ;
+  assign o_inst_sram_ren     = pre_fs_allowin                ;
 
   // if stage
   wire                         fs_valid                      ;
@@ -55,7 +57,6 @@ module ysyx_22050710_if_stage #(
   wire [PC_WD-1:0            ] fs_pc                         ;
   wire [PC_WD-1:0            ] fs_dnpc                       ;
   assign o_fs_to_ds_bus      = {fs_inst, fs_pc, fs_dnpc     };
-  assign o_inst_sram_ren     = fs_allowin                    ;
 
   Reg #(
     .WIDTH                    (1                            ),
