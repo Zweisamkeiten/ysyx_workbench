@@ -35,6 +35,7 @@ module ysyx_22050710_if_stage #(
           br_target
          }                   = i_br_bus                      ;
   wire                         pre_fs_ready_go               ;
+  wire                         pre_fs_allowin                ;
   wire                         pre_fs_to_fs_valid            ;
   assign pre_fs_ready_go     = ~br_stall & i_inst_sram_addr_ok;
   assign pre_fs_allowin      = pre_fs_ready_go && fs_allowin ;
