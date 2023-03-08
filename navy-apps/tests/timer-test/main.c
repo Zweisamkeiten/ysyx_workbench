@@ -1,16 +1,23 @@
 #include <stdio.h>
-#include <NDL.h>
+#include <assert.h>
+#include <stdint.h>
 
 int main() {
-  NDL_Init(0);
+  uint32_t systick;
+  uint32_t old_systick;
 
-  int halfsec = 1;
-  while (1) {
-    while (NDL_GetTicks() / 500 < halfsec);
-    printf("time pass 0.5s\n");
-    halfsec++;
+  printf("Timer-test\n");
+  systick = NDL_GetTicks();
+  old_systick = systick;
+
+  for (size_t i = 0; i < 10; i++)
+  {
+    while ((systick - old_systick) < 500)
+    {
+      systick = NDL_GetTicks();
+    }
+    old_systick = systick;
+    printf("0.5 * %d (s)\n", i);
   }
-
-  NDL_Quit();
   return 0;
 }

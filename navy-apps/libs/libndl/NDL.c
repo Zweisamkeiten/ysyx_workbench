@@ -3,39 +3,61 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <fcntl.h>
-#include <sys/time.h>
-#include <assert.h>
 
 static int evtdev = -1;
 static int fbdev = -1;
 static int screen_w = 0, screen_h = 0;
-static int canvas_w = 0, canvas_h = 0;
+static int window_w = 0, window_h = 0;
+static int fd_events = -1;
+static int fd_dispinfo = -1;
+static int fd_fb = -1;
+// static int fd_sb = -1;
+// static int fd_sbctl = -1;
 static uint32_t boot_time = 0;
-static int eventsdev = -1;
-static int dispdev = -1;
-static int sbdev = -1;
-static int sbctldev = -1;
+
 
 uint32_t NDL_GetTicks() {
-  struct timeval now;
-  gettimeofday(&now, NULL);
-  uint32_t ms = now.tv_sec * 1000 + now.tv_usec / 1000;
-
-  return ms - boot_time;
+  struct timeval tod;
+  gettimeofday(&tod, NULL);
+  return (tod.tv_sec * 1000 + tod.tv_usec / 1000 - boot_time);
 }
 
 int NDL_PollEvent(char *buf, int len) {
-  assert(eventsdev != -1);
-  // 读出一条事件信息, 将其写入`buf`中, 最长写入`len`字节
-  // 若读出了有效的事件, 函数返回1, 否则返回0
-  if (read(eventsdev, buf, len) != 0) {
-    return 1;
+  return read(fd_events, buf, len);
+}
+
+void getWindowSize(int *win_w, int *win_h)
+{
+  char whbuf[64];
+  size_t i;
+  read(fd_dispinfo, whbuf, sizeof(whbuf));
+  for (i = 0; i < sizeof(whbuf); i++)// find 0-9
+  {
+    if('0' <= whbuf[i] && whbuf[i] <= '9') break;
   }
-  return 0;
+  *win_w = atoi(whbuf+i);
+  for (; i < sizeof(whbuf); i++)// exit 0-9
+  {
+    if(whbuf[i] < '0' || '9' < whbuf[i]) break;
+  }
+  for (; i < sizeof(whbuf); i++)// find 0-9
+  {
+    if('0' <= whbuf[i] && whbuf[i] <= '9') break;
+  }
+  *win_h = atoi(whbuf+i);
 }
 
 void NDL_OpenCanvas(int *w, int *h) {
+  getWindowSize(&window_w, &window_h);
+  if ((*w |*h) == 0)
+  {
+    *w = window_w;
+    *h = window_h;
+  }
+  *h = *h > window_h ? window_h : *h;
+  *w = *w > window_w ? window_w : *w;
+  screen_w = *w; screen_h = *h;
+  
   if (getenv("NWM_APP")) {
     int fbctl = 4;
     fbdev = 5;
@@ -53,89 +75,80 @@ void NDL_OpenCanvas(int *w, int *h) {
     }
     close(fbctl);
   }
-
-  assert(*w >= 0 && *h >= 0);
-
-  if (*w == 0 && *h == 0) {
-    *w = screen_w;
-    *h = screen_h;
-  }
-
-  canvas_w = *w;
-  canvas_h = *h;
 }
 
 void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
-  assert(canvas_w != 0 && canvas_h != 0);
-
-  assert(fbdev != -1);
-
-  // center the canvas
-  int draw_x = x + (screen_w - canvas_w) / 2;
-  int draw_y = y + (screen_h - canvas_h) / 2;
-  for (int row = 0; row < h; row++) {
-    lseek(fbdev, ((draw_y + row) * screen_w + draw_x) * 4, SEEK_SET);
-    write(fbdev, pixels + row * w, w * 4);
+  getWindowSize(&window_w, &window_h);
+  int screen_x = (window_w - screen_w) / 2;//center
+  int screen_y = (window_h - screen_h) / 2;//center
+  static int count = 0;
+  printf("x = %d, y = %d, w = %d, h = %d, window_w = %d, window_h = %d, screen_w = %d, screen_h = %d, screen_x = %d, screen_y = %d, count = %d\n", x, y, w, h, window_w, window_h, screen_w, screen_h, screen_x, screen_y, count);
+  count++;
+  // x += screen_x;
+  // y += screen_y;
+  // if (w == window_w && (x|y) == 0)
+  // {
+  //   lseek(fd_fb, 0, SEEK_SET);
+  //   write(fd_fb, pixels, w*h*sizeof(uint32_t));
+  // }
+  // else
+  {
+    size_t offset = (y * window_w + x) * 4;
+    size_t len = w*sizeof(uint32_t);
+    for (size_t i = 0; i < h; i++)
+    {
+      lseek(fd_fb, offset, SEEK_SET);
+      write(fd_fb, pixels, len);
+      offset += window_w * 4;
+      pixels += w;
+    }
   }
 }
 
-void NDL_OpenAudio(int freq, int channels, int samples) {
-  assert(sbctldev != -1);
 
-  int buf[3] = {freq, channels, samples};
-  write(sbctldev, buf, sizeof(buf));
+void NDL_OpenAudio(int freq, int channels, int samples) {
+  // int buf[3] = {freq, channels, samples};
+  // write(fd_sbctl, buf, sizeof(buf));
 }
 
 void NDL_CloseAudio() {
-  close(sbdev);
-  close(sbctldev);
+  // printf("file: %s line: %d func: %s is not support!\n", __FILE__, __LINE__, __FUNCTION__);
 }
 
 int NDL_PlayAudio(void *buf, int len) {
-  assert(sbdev != -1);
-
-  write(sbdev, buf, len);
-  return len;
+  // if(buf==NULL || len==0) return 0;
+  // return write(fd_sb, buf, len);
 }
 
 int NDL_QueryAudio() {
-  assert(sbctldev != -1);
-
-  int free_size = 0;
-  char buf[30] = {};
-  read(sbctldev, buf, 30);
-  sscanf(buf, "%d", &free_size);
-  return free_size;
+  // int count;
+  // if(read(fd_sbctl, &count, 4))
+  //   return count;
+  // else
+  //   return 0;
 }
 
 int NDL_Init(uint32_t flags) {
   if (getenv("NWM_APP")) {
     evtdev = 3;
   }
+  fd_events = open("/dev/events", 0, 0);
+  if(fd_events == 0) {return 1;}
+  fd_dispinfo = open("/proc/dispinfo", 0, 0);
+  if(fd_dispinfo == 0) {return 1;}
+  fd_fb = open("/dev/fb", 0, 0);
+  if(fd_fb == 0) {return 1;}
+  // fd_sb = open("/dev/sb", 0, 0);
+  // if(fd_sb == 0) {return 1;}
+  // fd_sbctl = open("/dev/sbctl", 0, 0);
+  // if(fd_sbctl == 0) {return 1;}
 
-  boot_time = NDL_GetTicks();
-
-  eventsdev = open("/dev/events", 0, 0);
-
-  dispdev = open("/proc/dispinfo", 0, 0);
-  if (dispdev != -1) {
-    char buf[32];
-    int nread = read(dispdev, buf, sizeof(buf));
-    sscanf(buf, "WIDTH : %d\nHEIGHT : %d\n", &screen_w, &screen_h);
-    printf("\033[32mNDL_INIT: WIDTH: %d, HEIGHT: %d" "\33[0m\n", screen_w, screen_h);
-    canvas_w = screen_w;
-    canvas_h = screen_h;
-    close(dispdev);
-  }
-
-  fbdev = open("/dev/fb", 0, 0);
-
-  sbdev = open("/dev/sb", 0, 0);
-
-  sbctldev = open("/dev/sbctl", 0, 0);
-
+  struct timeval tod;
+  gettimeofday(&tod, NULL);
+  boot_time = tod.tv_sec * 1000 + tod.tv_usec / 1000;
   return 0;
 }
 
 void NDL_Quit() {
+  //exit(0);
 }

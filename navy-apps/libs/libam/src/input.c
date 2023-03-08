@@ -1,35 +1,43 @@
 #include <am.h>
-#include <libam.h>
+#include <fcntl.h> 
+#include <string.h>
 
 #define keyname(k) #k,
+#define key_num (sizeof(keyname)/sizeof(keyname[0]))
 
 static const char *keyname[] = {
   "NONE",
   AM_KEYS(keyname)
 };
 
-#define NR_KEY sizeof(keyname)/sizeof(char *)
+uint8_t key_state[key_num] = {0};
+
+static int fd_events = -1;
 
 void __am_input_keybrd(AM_INPUT_KEYBRD_T *kbd) {
-  char buf[64];
-  kbd->keycode = AM_KEY_NONE;
-  kbd->keydown = 0;
-
-  if (NDL_PollEvent(buf, sizeof(buf))) {
-    char *event_type = strtok(buf, " ");
-    if (strcmp(event_type, "kd") == 0) {
-      kbd->keydown = 1;
-    } else {
-      kbd->keydown = 0;
-    }
-
-    char *key_code = event_type + strlen(event_type) + 1;
-    key_code[strlen(key_code) - 1] = '\0';
-    for (int i = 0; i < NR_KEY; i++) {
-      if (strcmp(key_code, keyname[i]) == 0) {
+  if(kbd == NULL) return ;
+  if (fd_events == -1)
+  {
+    fd_events = open("/dev/events", O_RDONLY, 0);
+    if(fd_events == 0) {return ;}
+  }
+  char buf[32];
+  char kd_ku;
+  char key_name[20];
+  if(read(fd_events, buf, sizeof(buf)) != 0)
+  {
+    if(sscanf(buf, "k%c %s\n", &kd_ku, key_name) != 2) return ;
+    for (size_t i = 0; i < key_num; i++)
+    {
+      if (strcmp(keyname[i], key_name) == 0)
+      {
         kbd->keycode = i;
+        kbd->keydown = kd_ku == 'd';
+        return ;
       }
     }
   }
-  return;
+  kbd->keycode = AM_KEY_NONE;
+  kbd->keydown = 0;
+  return ;
 }

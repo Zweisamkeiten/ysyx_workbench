@@ -5,80 +5,160 @@
 #ifdef __LP64__
 # define Elf_Ehdr Elf64_Ehdr
 # define Elf_Phdr Elf64_Phdr
-# define Elf_Off  Elf64_Off
-# define Elf_Addr Elf64_Addr
-# define word_t   uint64_t
 #else
 # define Elf_Ehdr Elf32_Ehdr
 # define Elf_Phdr Elf32_Phdr
-# define Elf_Off  Elf32_Off
-# define Elf_Addr Elf32_Addr
-# define word_t   uint32_t
 #endif
 
 #if defined(__ISA_AM_NATIVE__)
-# define EXPECT_TYPE EM_X86_64
+#define EXPECT_TYPE EM_X86_64
 #elif defined(__ISA_X86__)
-# define EXPECT_TYPE EM_386 // Intel 80386 X86
+#define EXPECT_TYPE EM_X86_64
 #elif defined(__ISA_MIPS32__)
-# define EXPECT_TYPE EM_MIPS_RS3_LE	 // MIPS R3000 little-endian
+#define EXPECT_TYPE EM_MIPS
 #elif defined(__ISA_RISCV32__) || defined(__ISA_RISCV64__)
-# define EXPECT_TYPE EM_RISCV
-#elif
-# error unsupported ISA __ISA__
+#define EXPECT_TYPE EM_RISCV
+#else
+#error Unsupported ISA
 #endif
 
-static uintptr_t loader(PCB *pcb, const char *filename) {
-  int fd = fs_open(filename, 0, 0);
-  if (fd == -1) {
-    printf("file is not existed.\n");
-    return (uintptr_t)NULL;
-  }
+#define DEUBG_PRINTF 0
+#if DEUBG_PRINTF
+#define debug_printf(format, ...) printf(format, ##__VA_ARGS__)
+#else
+#define debug_printf(format, ...)
+#endif // DEUBG_PRINTF
 
-  Elf_Ehdr elf;
-  fs_read(fd, &elf, sizeof(Elf_Ehdr));
+Elf_Ehdr elf_header;
+Elf_Phdr *program_headers = NULL;
 
-  // check the magic number.
-  assert(*(uint32_t *)elf.e_ident == 0x464c457f);
+size_t ramdisk_read(void *buf, size_t offset, size_t len);
 
-  // check the ELF ISA type
-  printf("Debug: Machine: %d\n", elf.e_machine);
-  assert(elf.e_machine == EXPECT_TYPE);
+int init_elf(int fd);
+int Process_object(int fd);
+int get_file_header(int fd);
+int process_program_headers(int fd);
+int get_program_headers(int fd);
+size_t get_filedata(int fd, void *var, long offset, size_t size);
 
-  Elf_Phdr *phdr = malloc(elf.e_phnum * sizeof(Elf_Phdr));
-  fs_lseek(fd, elf.e_phoff, SEEK_SET);
-  fs_read(fd, phdr, elf.e_phnum * sizeof(Elf_Phdr));
+int init_elf(int fd)
+{
+    if(fd != 0) 
+        return Process_object(fd);
+    return 0;
+}
 
-  printf("Debug: Program header list\n");
-  for (int i = 0; i < elf.e_phnum; i++) {
-    switch(phdr[i].p_type) {
-      case PT_LOAD: {
-        printf("Debug: Offset: 0x%x\n", phdr[i].p_offset);
-        printf("Debug: Text segment: 0x%x\n", phdr[i].p_vaddr);
-        printf("Debug: FileSiz: 0x%x\n", phdr[i].p_filesz);
-        printf("Debug: Memsz: 0x%x\n", phdr[i].p_memsz);
+int Process_object(int fd)
+{
 
-        Elf_Addr vaddr = phdr[i].p_vaddr;
-        Elf_Off offset = phdr[i].p_offset;
-        word_t filesz = phdr[i].p_filesz;
-        word_t memsz = phdr[i].p_memsz;
-        fs_lseek(fd, offset, SEEK_SET);
-        fs_read(fd, (void *)vaddr, filesz);
-        memset((void *)vaddr + filesz, 0, memsz-filesz);
-      }
+    if (!get_file_header(fd))
+    {
+        debug_printf("get file header Failed!\n");
+        return 0;
     }
-  }
+    if (!process_program_headers(fd))
+    {
+        return 0;
+    }
 
-  free(phdr);
-  fs_close(fd);
+    return 1;
+}
 
-  return elf.e_entry;
+int get_file_header(int fd)
+{
+    if (get_filedata(fd, elf_header.e_ident, 0, EI_NIDENT) != EI_NIDENT)
+        return 0;
+ 
+    assert(*(uint32_t *)elf_header.e_ident == 0x464C457F);
+    
+    if (get_filedata(fd, (uint8_t *)(&elf_header) + EI_NIDENT, EI_NIDENT, sizeof(Elf_Ehdr) - EI_NIDENT) != (sizeof(Elf_Ehdr) - EI_NIDENT))
+        return 0;
+    assert(elf_header.e_machine == EM_RISCV);
+    return 1;
+}
+
+int process_program_headers(int fd)
+{
+    if (elf_header.e_phnum == 0)
+    {
+        if (elf_header.e_phoff != 0)
+        {
+            debug_printf("possibly corrupt ELF header - it has a non-zero program header offset, but no program headers\n");
+            return 0;
+        }
+        else
+        {
+            debug_printf("\nThere are no program headers in this file.\n");
+            return 0;
+        }
+    }
+
+    return get_program_headers(fd);
+}
+
+int get_program_headers(int fd)
+{
+    if (program_headers != NULL)
+    {
+        free(program_headers);
+    }
+
+
+    Elf_Phdr *phdrs;
+
+    phdrs = (Elf_Phdr *)malloc(elf_header.e_phnum * sizeof(Elf_Phdr));
+    if (phdrs == NULL)
+    {
+        debug_printf("Out of memory\n");
+        return 0;
+    }
+
+    if (get_filedata(fd, phdrs, elf_header.e_phoff, (elf_header.e_phentsize * elf_header.e_phnum)) == (elf_header.e_phentsize * elf_header.e_phnum))
+    {
+        program_headers = phdrs;
+        return 1;
+    }
+
+    free(phdrs);
+    return 0;
+}
+
+size_t get_filedata(int fd, void *var, long offset, size_t size)
+{
+    if (size == 0)
+        return 0;
+
+    if (var == NULL)
+        return 0;
+
+    fs_lseek(fd, offset, SEEK_SET);
+
+    return fs_read(fd, var, size);
+}
+
+static uintptr_t loader(PCB *pcb, const char *filename) {
+    int fd = fs_open(filename, 0 ,0);
+    if(fd == 0) 
+        return 0;
+    if(init_elf(fd) == 0)
+        return 0;
+    Elf_Phdr *phdr = program_headers;
+    for (size_t i = 0; i < elf_header.e_phnum; i++, phdr++)
+    {
+        if(phdr->p_type == PT_LOAD)
+            {
+                get_filedata(fd, (void *)phdr->p_vaddr, phdr->p_offset, phdr->p_filesz);
+                memset((uint8_t *)phdr->p_vaddr + phdr->p_filesz, 0, phdr->p_memsz - phdr->p_filesz);
+            }
+    }
+    free(program_headers);
+    fs_close(fd);
+    return elf_header.e_entry;
 }
 
 void naive_uload(PCB *pcb, const char *filename) {
   uintptr_t entry = loader(pcb, filename);
+  assert(entry != 0);
   Log("Jump to entry = %p", entry);
-  if (entry == (uintptr_t)NULL) return;
   ((void(*)())entry) ();
 }
-

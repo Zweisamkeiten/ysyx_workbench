@@ -34,7 +34,7 @@ module ysyx_22050710_mem_stage #(
 
   wire                         ms_valid                      ;
   wire                         ms_ready_go                   ;
-  assign ms_ready_go         = 1'b1                          ; // 访存类型中读取指令 需等 data_ok
+  assign ms_ready_go         = 1'b1                          ;
   assign o_ms_allowin        = (!ms_valid) || (ms_ready_go && i_ws_allowin);
   assign o_ms_to_ws_valid    = ms_valid && ms_ready_go       ;
 
@@ -73,10 +73,11 @@ module ysyx_22050710_mem_stage #(
     .rst                      (i_rst                        ),
     .din                      (i_debug_es_to_ms_bus         ),
     .dout                     (debug_es_to_ms_bus_r         ),
-    .wen                      (i_es_to_ms_valid&&o_ms_allowin)
+    .wen                      (1'b1                         )
   );
 
   wire                         ms_debug_valid                ;
+  wire                         ms_debug_addnop               ;
   wire [INST_WD-1:0          ] ms_debug_inst                 ;
   wire [PC_WD-1:0            ] ms_debug_pc                   ;
   wire [PC_WD-1:0            ] ms_debug_dnpc                 ;
@@ -84,6 +85,7 @@ module ysyx_22050710_mem_stage #(
   wire [WORD_WD-1:0          ] ms_debug_memaddr              ;
 
   assign {ms_debug_valid                                     ,
+          ms_debug_addnop                                    ,
           ms_debug_inst                                      ,
           ms_debug_pc                                        ,
           ms_debug_dnpc                                      ,
@@ -92,6 +94,7 @@ module ysyx_22050710_mem_stage #(
          }                   = debug_es_to_ms_bus_r          ;
 
   assign o_debug_ms_to_ws_bus= {ms_debug_valid               ,
+                                ms_debug_addnop              ,
                                 ms_debug_inst                ,
                                 ms_debug_pc                  ,
                                 ms_debug_dnpc                ,

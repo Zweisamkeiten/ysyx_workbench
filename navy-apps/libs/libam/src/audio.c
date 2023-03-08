@@ -1,29 +1,25 @@
 #include <am.h>
-#include <klib.h>
-#include <libam.h>
-
-static int write_point = 0; // 读写队列 读的结尾, 写的开头
 
 void __am_audio_init() {
-  TODO();
+  not_support();
 }
 
 void __am_audio_config(AM_AUDIO_CONFIG_T *cfg) {
-  TODO();
+  not_support();
 }
 
 void __am_audio_ctrl(AM_AUDIO_CTRL_T *ctrl) {
-  TODO();
+  not_support();
 }
 
 void __am_audio_status(AM_AUDIO_STATUS_T *stat) {
-  TODO();
+  not_support();
 }
 
 static void audio_write(uint8_t *buf, int len) {
-  TODO();
+  not_support();
 }
 
 void __am_audio_play(AM_AUDIO_PLAY_T *ctl) {
-  TODO();
+  not_support();
 }

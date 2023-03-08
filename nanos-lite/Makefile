@@ -1,10 +1,5 @@
-HAS_NAVY = 1
+HAS_NAVY = 0
 RAMDISK_FILE = build/ramdisk.img
-# CONFIG_STRACE = 1
-
-ifeq ($(CONFIG_STRACE), 1)
-CFLAGS += -DCONFIG_STRACE
-endif
 
 NAME = nanos-lite
 SRCS = $(shell find -L ./src/ -name "*.c" -o -name "*.cpp" -o -name "*.S")
@@ -29,11 +24,14 @@ ifeq ($(wildcard $(NAVY_HOME)/libs/libos/src/syscall.h),)
   $(error $$NAVY_HOME must be a Navy-apps repo)
 endif
 
+delete:
+	rm -rf build/ $(NAVY_HOME)/build/ $(NAVY_HOME)/libs/libndl/build $(NAVY_HOME)/libs/libminiSDL/build $(NAVY_HOME)/apps/pal/build $(AM_HOME)/build
+
 update:
 	$(MAKE) -s -C $(NAVY_HOME) ISA=$(ISA) ramdisk
 	@ln -sf $(NAVY_HOME)/build/ramdisk.img $(RAMDISK_FILE)
 	@ln -sf $(NAVY_HOME)/build/ramdisk.h src/files.h
 	@ln -sf $(NAVY_HOME)/libs/libos/src/syscall.h src/syscall.h
 
-.PHONY: update
+.PHONY: update delete
 endif

@@ -69,10 +69,11 @@ module ysyx_22050710_wb_stage #(
     .rst                      (i_rst                        ),
     .din                      (i_debug_ms_to_ws_bus         ),
     .dout                     (debug_ms_to_ws_bus_r         ),
-    .wen                      (i_ms_to_ws_valid&&o_ws_allowin)
+    .wen                      (1'b1                         )
   );
 
   wire                         ws_debug_valid                ;
+  wire                         ws_debug_addnop               ;
   wire [INST_WD-1:0          ] ws_debug_inst                 ;
   wire [PC_WD-1:0            ] ws_debug_pc                   ;
   wire [PC_WD-1:0            ] ws_debug_dnpc                 ;
@@ -80,6 +81,7 @@ module ysyx_22050710_wb_stage #(
   wire [WORD_WD-1:0          ] ws_debug_memaddr              ;
 
   assign {ws_debug_valid                                     ,
+          ws_debug_addnop                                    ,
           ws_debug_inst                                      ,
           ws_debug_pc                                        ,
           ws_debug_dnpc                                      ,
@@ -88,6 +90,7 @@ module ysyx_22050710_wb_stage #(
          }                   = debug_ms_to_ws_bus_r          ;
 
   assign o_debug_ws_to_rf_bus= {ws_debug_valid               ,
+                                ws_debug_addnop              ,
                                 ws_debug_inst                ,
                                 ws_debug_pc                  ,
                                 ws_debug_dnpc                ,
