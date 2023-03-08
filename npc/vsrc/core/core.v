@@ -210,7 +210,6 @@ module ysyx_22050710_core #(
     .o_ms_to_ws_valid         (ms_to_ws_valid               ),
     .o_ms_to_ws_bus           (ms_to_ws_bus                 ),
     // from data-sram
-    .i_data_sram_data_ok      (i_data_sram_data_ok          ), // for 读取内存指令
     .i_data_sram_rdata        (i_data_sram_rdata            ), // data ram 读数据返回 进入 lsu 进行处理
     // bypass
     .o_ms_to_ds_bypass_bus    (ms_to_ds_bypass_bus          ),
