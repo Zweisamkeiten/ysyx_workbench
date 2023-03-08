@@ -169,16 +169,16 @@ module ysyx_22050710_axil_master_wrap #(
     if (~i_aclk) begin
       o_data_read <= 0;
     end
-    else if (r_fire) begin
+    else if (i_rw_valid && i_rw_ren) begin
       o_data_read <= i_rdata;
       o_rw_data_ok <= r_fire;
     end
-    else if (b_fire) begin
+    else if (i_rw_valid && i_rw_wen) begin
       o_rw_data_ok <= b_fire;
     end
     else begin
       o_data_read <= o_data_read;
-      o_rw_data_ok <= 0;
+      o_rw_data_ok <= o_rw_data_ok;
     end
   end
 
