@@ -79,7 +79,7 @@ module ysyx_22050710_id_stage #(
   );
 
   wire [PC_WD-1:0            ] fs_dnpc                       ;
-  assign fs_dnpc             = i_fs_to_ds_bus[PC_WD-1:0]          ;
+  assign fs_dnpc             = i_fs_to_ds_bus[PC_WD-1:0]     ;
   wire [FS_TO_DS_BUS_WD-PC_WD-1:0] fs_to_ds_bus_r            ;
 
   Reg #(
