@@ -264,7 +264,7 @@ module ysyx_22050710_id_stage #(
           rf_debug_memaddr
          }                   = debug_ws_to_rf_bus_r          ;
 
-  assign o_debug_ds_to_es_bus= {o_ds_to_es_valid             ,  // blocking
+  assign o_debug_ds_to_es_bus= {o_ds_to_es_valid && i_es_allowin,  // blocking
                                 ds_inst                      ,
                                 ds_pc                        ,
                                 fs_dnpc                      ,
