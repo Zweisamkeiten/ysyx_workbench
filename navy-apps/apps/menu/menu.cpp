@@ -47,7 +47,7 @@ static int i_max = 0;
 
 static void set_i_max() {
   i_max = (page == MAX_PAGE ? MAX_IDX_LAST_PAGE : 9);
-  printf("page = %d, MAX_PAGE = %d, MAX_IDX_LAST_PAGE = %d\n", page, MAX_PAGE, MAX_IDX_LAST_PAGE);
+  printf("page = %d, MAX_PAGE = %ld, MAX_IDX_LAST_PAGE = %ld\n", page, MAX_PAGE, MAX_IDX_LAST_PAGE);
 }
 static void next() {
   if (page < MAX_PAGE) {
@@ -109,7 +109,6 @@ int main(int argc, char *argv[], char *envp[]) {
       exec_argv[2] = NULL;
       clear_display();
       SDL_UpdateRect(screen, 0, 0, 0, 0);
-      printf("envp: %s\n", envp[0]);
       execve(exec_argv[0], (char**)exec_argv, (char**)envp);
       fprintf(stderr, "\033[31m[ERROR]\033[0m Exec %s failed.\n\n", exec_argv[0]);
     } else {
@@ -121,7 +120,7 @@ int main(int argc, char *argv[], char *envp[]) {
 
 static void draw_ch(BDF_Font *font, int x, int y, char ch, uint32_t fg, uint32_t bg) {
   SDL_Surface *s = BDF_CreateSurface(font, ch, fg, bg);
-  SDL_Rect dstrect = { .x = x, .y = y };
+  SDL_Rect dstrect = { .x = (int16_t)x, .y = (int16_t)y };
   SDL_BlitSurface(s, NULL, screen, &dstrect);
   SDL_FreeSurface(s);
 }
@@ -142,7 +141,7 @@ static void draw_text_row(char *s, int r) {
 
 static void display_menu(int n) {
   clear_display();
-  SDL_Rect rect = { .x = screen->w - logo_sf->w, .y = 0 };
+  SDL_Rect rect = { .x = (int16_t)(screen->w - logo_sf->w), .y = 0 };
   SDL_BlitSurface(logo_sf, NULL, screen, &rect);
   printf("Available applications:\n");
   char buf[80];
@@ -155,7 +154,7 @@ static void display_menu(int n) {
 
   i = 11;
 
-  sprintf(buf, "  page = %2d, #total apps = %d", page, nitems);
+  sprintf(buf, "  page = %2d, #total apps = %d", page, (int)nitems);
   draw_text_row(buf, i);
   i ++;
 

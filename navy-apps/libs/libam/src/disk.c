@@ -1,4 +1,5 @@
 #include <am.h>
+#include <libam.h>
 
 void __am_disk_config(AM_DISK_CONFIG_T *cfg) {
   cfg->present = false;

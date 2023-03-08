@@ -1,6 +1,7 @@
 #ifndef __SYSCALL_H__
 #define __SYSCALL_H__
 
+// syscall id
 enum {
   SYS_exit,
   SYS_yield,
@@ -21,7 +22,8 @@ enum {
   SYS_unlink,
   SYS_wait,
   SYS_times,
-  SYS_gettimeofday
+  SYS_gettimeofday,
+  NR_SYSCALLS
 };
 
 #endif

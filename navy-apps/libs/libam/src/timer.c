@@ -1,19 +1,18 @@
 #include <am.h>
-#include <time.h>
-#include <sys/time.h>
+#include <libam.h>
 
 static uint64_t boot_time = 0;
 
+static uint64_t read_time() {
+  return NDL_GetTicks() * 1000;
+}
+
 void __am_timer_init() {
-  struct timeval tod;
-  gettimeofday(&tod, NULL);
-  boot_time = tod.tv_sec * 1000000 + tod.tv_usec;
+  boot_time = read_time();
 }
 
 void __am_timer_uptime(AM_TIMER_UPTIME_T *uptime) {
-  struct timeval tod;
-  gettimeofday(&tod, NULL);
-  uptime->us = tod.tv_sec * 1000000 + tod.tv_usec - boot_time;
+  uptime->us = read_time() - boot_time;
 }
 
 void __am_timer_rtc(AM_TIMER_RTC_T *rtc) {

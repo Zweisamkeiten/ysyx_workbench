@@ -52,7 +52,6 @@ CFLAGS += -U_FORTIFY_SOURCE  # fix compile error in Newlib on ubuntu
 else
 WL = -Wl,
 endif
-CFLAGS += -g
 
 ### 32-bit ISA may need compiler-rt to support 64-bit mul/div
 ifneq ($(findstring $(ISA), x86|mips32|riscv32|loongarch32r),)
@@ -83,9 +82,13 @@ LD        = $(CROSS_COMPILE)ld
 INC_PATH += $(WORK_DIR)/include $(foreach l,$(LIBS_INC),$(NAVY_HOME)/libs/$(l)/include/)
 INCFLAGS += $(addprefix -I, $(INC_PATH))
 
-CFLAGS   += -O2 -MMD $(INCFLAGS) -static -D__NAVY__ \
+CFLAGS   += -O3 -MMD $(INCFLAGS) -static -D__NAVY__ \
             -D__ISA__=\"$(ISA)\" -D__ISA_$(shell echo $(ISA) | tr a-z A-Z)__ \
             -fno-asynchronous-unwind-tables -fno-builtin -fno-stack-protector
+ifeq ($(DEBUG),yes)
+CFLAGS   += -Og -ggdb3
+LDFLAGS  += -g
+endif
 CXXFLAGS +=  $(CFLAGS) -ffreestanding -fno-rtti -fno-exceptions
 ASFLAGS  +=  $(CFLAGS)
 
@@ -137,6 +140,7 @@ $(ARCHIVE): $(OBJS) libs
 
 ### Pull newlib from github if it does not exist
 ifeq ($(wildcard $(NAVY_HOME)/libs/libc/Makefile),)
+  $(shell cd $(NAVY_HOME)/libs && git clone git@github.com:NJU-ProjectN/newlib-navy.git libc)
 endif
 
 ### Build order control
@@ -166,8 +170,8 @@ $(CLEAN_ALL):
 .PHONY: clean-all $(CLEAN_ALL)
 
 ### Build fsimg and ramdisk for Nanos-lite
-APPS = pal# bird menu nterm nslider
-TESTS = #hello timer-test event-test bmp-test file-test cpp-test exec-test
+APPS = nslider menu nterm bird pal nplayer
+TESTS = dummy hello file-test timer-test event-test bmp-test fixedptc-test cpp-test
 
 fsimg: $(addprefix apps/, $(APPS)) $(addprefix tests/, $(TESTS))
 	-for t in $^; do $(MAKE) -s -C $(NAVY_HOME)/$$t install; done
@@ -178,6 +182,7 @@ $(RAMDISK): fsimg
 	$(eval FSIMG_FILES := $(shell find -L ./fsimg -type f))
 	@mkdir -p $(@D)
 	@cat $(FSIMG_FILES) > $@
+	# shrink or extend the size of a file to the specified size. '%' roundup to multiple of 对齐到512倍数
 	@truncate -s \%512 $@
 	@echo "// file path, file size, offset in disk" > $(RAMDISK_H)
 	@wc -c $(FSIMG_FILES) | grep -v 'total$$' | sed -e 's+ ./fsimg+ +' | awk -v sum=0 '{print "\x7b\x22" $$2 "\x22\x2c " $$1 "\x2c " sum "\x7d\x2c";sum += $$1}' >> $(RAMDISK_H)

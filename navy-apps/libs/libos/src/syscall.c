@@ -1,4 +1,5 @@
 #include <unistd.h>
+#include <stdint.h>
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <assert.h>
@@ -41,8 +42,11 @@
 #error _syscall_ is not implemented
 #endif
 
+extern uint8_t _end;
+void *program_break = &_end;
+
 intptr_t _syscall_(intptr_t type, intptr_t a0, intptr_t a1, intptr_t a2) {
-  register intptr_t _gpr1 asm (GPR1) = type;//_gpr1: a7 = type
+  register intptr_t _gpr1 asm (GPR1) = type;
   register intptr_t _gpr2 asm (GPR2) = a0;
   register intptr_t _gpr3 asm (GPR3) = a1;
   register intptr_t _gpr4 asm (GPR4) = a2;
@@ -52,20 +56,33 @@ intptr_t _syscall_(intptr_t type, intptr_t a0, intptr_t a1, intptr_t a2) {
 }
 
 void _exit(int status) {
+  _syscall_(SYS_execve, (intptr_t)"/bin/nterm", (intptr_t)NULL, (intptr_t)NULL);
   _syscall_(SYS_exit, status, 0, 0);
   while (1);
 }
 
 int _open(const char *path, int flags, mode_t mode) {
-  return _syscall_(SYS_open, path, flags, mode);
+  return _syscall_(SYS_open, (intptr_t)path, flags, mode);
 }
 
 int _write(int fd, void *buf, size_t count) {
-  return _syscall_(SYS_write, fd, buf, count);
+  return _syscall_(SYS_write, fd, (intptr_t)buf, count);
+}
+
+void *_sbrk(intptr_t increment) {
+  void *old_program_break = program_break;
+  void *new_program_break = program_break + increment;
+
+  if (_syscall_(SYS_brk, (intptr_t)new_program_break, 0, 0) == 0) {
+    program_break = new_program_break;
+    return old_program_break;
+  }
+
+  return (void *)-1;
 }
 
 int _read(int fd, void *buf, size_t count) {
-  return _syscall_(SYS_read, fd, buf, count);
+  return _syscall_(SYS_read, fd, (intptr_t)buf, count);
 }
 
 int _close(int fd) {
@@ -76,28 +93,12 @@ off_t _lseek(int fd, off_t offset, int whence) {
   return _syscall_(SYS_lseek, fd, offset, whence);
 }
 
-extern char _end;
-intptr_t program_break = &_end;
-void *_sbrk(intptr_t increment) {
-  intptr_t ret = -1;
-  if(_syscall_(SYS_brk, program_break + increment, 0, 0) == 0)
-  {
-    ret = program_break;
-    program_break += increment;
-  }
-  return (void *)ret;
-}
-
-
 int _gettimeofday(struct timeval *tv, struct timezone *tz) {
-  return _syscall_(SYS_gettimeofday, tv, 0, 0);
+  return _syscall_(SYS_gettimeofday, (intptr_t)tv, (intptr_t)tz, 0);
 }
 
 int _execve(const char *fname, char * const argv[], char *const envp[]) {
-  _syscall_(SYS_execve, fname, argv, envp);
-  assert(0);
-  while(1);//should not reach here
-  return 0;
+  return _syscall_(SYS_execve, (intptr_t)fname, (intptr_t)argv, (intptr_t)envp);
 }
 
 // Syscalls below are not used in Nanos-lite.
