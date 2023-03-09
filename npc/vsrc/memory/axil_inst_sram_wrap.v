@@ -59,14 +59,6 @@ module ysyx_22050710_axil_inst_sram_wrap #(
   wire r_state_idle = read_state_reg == READ_STATE_IDLE      ;
   wire r_state_read = read_state_reg == READ_STATE_READ      ;
 
-  assign o_arready           = r_state_idle                  ;
-  assign o_rvalid            = r_state_read                  ;
-  assign o_awready           = 0                             ;
-  assign o_wready            = 0                             ;
-  assign o_bvalid            = 0                             ;
-  assign o_bresp             = 0                             ;
-  assign o_rresp             = 0                             ;
-
   // 读通道状态切换
   always @(posedge i_aclk) begin
     if (~i_arsetn) begin
@@ -101,5 +93,25 @@ module ysyx_22050710_axil_inst_sram_wrap #(
     .dout                     (o_rdata                      ),
     .wen                      (ar_fire                      )
   );
+
+  assign o_arready           = r_state_idle                  ;
+  assign o_awready           = 0                             ;
+  assign o_wready            = 0                             ;
+  assign o_bvalid            = 0                             ;
+  assign o_bresp             = 0                             ;
+  assign o_rresp             = 0                             ;
+
+  Reg #(
+    .WIDTH                    (1                            ),
+    .RESET_VAL                (0                            )
+  ) u_o_rdata (
+    .clk                      (i_aclk                       ),
+    .rst                      (!i_arsetn                    ),
+    .din                      (ar_fire                      ),
+    .dout                     (o_rvalid                     ),
+    .wen                      (ar_fire                      )
+  );
+
+
 
 endmodule
