@@ -10,8 +10,8 @@ module ysyx_22050710_axil_master_wrap #(
   parameter STRB_WIDTH       = (DATA_WIDTH/8)
 ) (
 	input                        i_rw_valid                    ,  //IF&MEM输入信号
-	output reg                   o_rw_addr_ok                  ,  //IF&MEM输入信号
-	output reg                   o_rw_data_ok                  ,  //IF&MEM输入信号
+	output                       o_rw_addr_ok                  ,  //IF&MEM输入信号
+	output                       o_rw_data_ok                  ,  //IF&MEM输入信号
 	input                        i_rw_ren                      ,  //IF&MEM输入信号
 	input                        i_rw_wen                      ,  //IF&MEM输入信号
   input  [ADDR_WIDTH-1:0]      i_rw_addr                     ,  //IF&MEM输入信号
@@ -129,18 +129,6 @@ module ysyx_22050710_axil_master_wrap #(
     end
   end
 
-  always @(posedge i_aclk) begin
-    if (~i_arsetn) begin
-      o_rw_addr_ok <= 0;
-    end
-    else if (i_rw_valid) begin
-      o_rw_addr_ok <= r_state_read | w_state_write;
-    end
-    else begin
-      o_rw_addr_ok <= o_rw_addr_ok;
-    end
-  end
-
   // ------------------Write Transaction----------------------
   // 写地址通道
   assign o_awvalid           = w_state_addr                  ;
@@ -165,21 +153,8 @@ module ysyx_22050710_axil_master_wrap #(
   // Read data channel signals
   assign o_rready            = r_state_read                  ;
 
-  always @(posedge i_aclk) begin
-    if (~i_aclk) begin
-      o_data_read <= 0;
-    end
-    else if (i_rw_valid && i_rw_ren) begin
-      o_data_read <= i_rdata;
-      o_rw_data_ok <= r_fire;
-    end
-    else if (i_rw_valid && i_rw_wen) begin
-      o_rw_data_ok <= b_fire;
-    end
-    else begin
-      o_data_read <= o_data_read;
-      o_rw_data_ok <= o_rw_data_ok;
-    end
-  end
+  assign o_rw_addr_ok = r_state_read | w_state_write         ;
+  assign o_rw_data_ok = r_fire | b_fire                      ;
+  assign o_data_read  = i_rdata                              ;
 
 endmodule
