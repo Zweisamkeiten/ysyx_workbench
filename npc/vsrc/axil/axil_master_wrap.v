@@ -118,7 +118,7 @@ module ysyx_22050710_axil_master_wrap #(
     else if (i_rw_valid && i_rw_wen) begin
       case (write_state_reg)
         WRITE_STATE_IDLE  :                write_state_reg <= WRITE_STATE_ADDR  ;
-        WRITE_STATE_ADDR  : if (o_awvalid) write_state_reg <= WRITE_STATE_WRITE ;
+        WRITE_STATE_ADDR  : if (aw_fire  ) write_state_reg <= WRITE_STATE_WRITE ;
         WRITE_STATE_WRITE : if (w_fire   ) write_state_reg <= WRITE_STATE_RESP  ;
         WRITE_STATE_RESP  : if (b_fire   ) write_state_reg <= WRITE_STATE_IDLE  ;
         default           :                write_state_reg <= WRITE_STATE_IDLE  ;

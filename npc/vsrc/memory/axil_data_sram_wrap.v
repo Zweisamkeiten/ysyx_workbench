@@ -132,7 +132,7 @@ module ysyx_22050710_axil_data_sram_wrap #(
   // read port
   reg [0:0] rvalid = 0;
   always @(posedge i_aclk) begin
-    if (ar_fire) begin
+    if (r_state_read) begin
       o_rdata <= rdata;
       rvalid <= 1;
     end
@@ -144,14 +144,14 @@ module ysyx_22050710_axil_data_sram_wrap #(
 
   // write port
   always @(posedge i_aclk) begin
-    if (aw_fire) begin
+    if (w_state_write) begin
       npc_pmem_write({32'b0, i_awaddr}, i_wdata, i_wstrb);
     end
   end
 
   reg [0:0] bvalid = 0;
   always @(posedge i_aclk) begin
-    if (w_fire) begin
+    if (w_state_resp) begin
       bvalid <= 1;
     end
     else begin
