@@ -80,9 +80,9 @@ module ysyx_22050710_axil_data_sram_wrap #(
   wire w_state_write  = write_state_reg == WRITE_STATE_WRITE ;
   wire w_state_resp   = write_state_reg == WRITE_STATE_RESP  ;
 
-  assign o_arready           = r_state_idle                  ;
+  assign o_arready           = r_state_addr                  ;
   assign o_rvalid            = rvalid                        ;
-  assign o_awready           = w_state_idle                  ;
+  assign o_awready           = w_state_addr                  ;
   assign o_wready            = w_state_write                 ;
   assign o_bvalid            = w_state_resp                  ;
   assign o_bresp             = 2'b00                         ;
