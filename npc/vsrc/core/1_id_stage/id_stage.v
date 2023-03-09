@@ -241,7 +241,7 @@ module ysyx_22050710_id_stage #(
   wire [DEBUG_BUS_WD-1:0     ] debug_ws_to_rf_bus_r          ;
 
   Reg #(
-    .WIDTH                    (1                            ),
+    .WIDTH                    (DEBUG_BUS_WD                 ),
     .RESET_VAL                (0                            )
   ) u_debug_commit (
     .clk                      (i_clk                        ),
@@ -259,7 +259,7 @@ module ysyx_22050710_id_stage #(
     .rst                      (i_rst                        ),
     .din                      (i_debug_ws_to_rf_bus         ),
     .dout                     (debug_ws_to_rf_bus_r         ),
-    .wen                      (1'b1                         )
+    .wen                      (o_ds_allowin                 )
   );
 
   wire                         rf_debug_valid                ;
@@ -285,7 +285,7 @@ module ysyx_22050710_id_stage #(
                                 64'b0
   };
 
-  always @(posedge i_clk) begin
+  always @(debug_ws_to_rf_bus_r) begin
     if (debug_commit) begin
       finish_handle(rf_debug_pc, rf_debug_dnpc, {32'b0, rf_debug_inst}, rf_debug_memen, rf_debug_memaddr);
     end
