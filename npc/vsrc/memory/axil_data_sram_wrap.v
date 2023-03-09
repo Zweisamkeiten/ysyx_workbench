@@ -92,7 +92,7 @@ module ysyx_22050710_axil_data_sram_wrap #(
     else begin
       case (write_state_reg)
         WRITE_STATE_IDLE  : if (i_awvalid) write_state_reg <= WRITE_STATE_WRITE;
-        WRITE_STATE_WRITE : if (w_fire ) write_state_reg <= WRITE_STATE_RESP ;
+        WRITE_STATE_WRITE : if (i_wvalid ) write_state_reg <= WRITE_STATE_RESP ;
         WRITE_STATE_RESP  : if (b_fire ) write_state_reg <= WRITE_STATE_IDLE  ;
         default           :              write_state_reg <= write_state_reg   ;
       endcase
