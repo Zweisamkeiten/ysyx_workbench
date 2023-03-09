@@ -51,6 +51,7 @@ module ysyx_22050710_core #(
   wire                         ds_to_es_valid                ;
   wire                         es_to_ms_valid                ;
   wire                         ms_to_ws_valid                ;
+  wire                         ws_to_rf_valid                ;
   wire [FS_TO_DS_BUS_WD-1:0  ] fs_to_ds_bus                  ;
   wire [DS_TO_ES_BUS_WD-1:0  ] ds_to_es_bus                  ;
   wire [ES_TO_MS_BUS_WD-1:0  ] es_to_ms_bus                  ;
@@ -127,6 +128,7 @@ module ysyx_22050710_core #(
     // to fs
     .o_br_bus                 (br_bus                       ),
     // from ws to rf: for write back
+    .i_ws_to_rf_valid         (ws_to_rf_valid               ),
     .i_ws_to_rf_bus           (ws_to_rf_bus                 ),
     // for load stall
     .i_es_to_ds_load_sel      (es_to_ds_load_sel            ),
