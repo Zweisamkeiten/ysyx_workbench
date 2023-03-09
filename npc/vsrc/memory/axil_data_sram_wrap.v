@@ -61,7 +61,7 @@ module ysyx_22050710_axil_data_sram_wrap #(
       READ_STATE_READ        = 2'd1                          ,
       READ_STATE_RET         = 2'd2                          ;
 
-  reg [0:0] read_state_reg   = READ_STATE_IDLE;
+  reg [1:0] read_state_reg   = READ_STATE_IDLE;
 
   wire r_state_idle          = read_state_reg == READ_STATE_IDLE  ;
   wire r_state_read          = read_state_reg == READ_STATE_READ  ;
