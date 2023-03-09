@@ -55,7 +55,7 @@ module ysyx_22050710_wb_stage #(
     .rst                      (i_rst                        ),
     .din                      (i_ms_to_ws_bus               ),
     .dout                     (ms_to_ws_bus_r               ),
-    .wen                      (i_ms_to_ws_valid&&o_ws_allowin)
+    .wen                      (1                            )
   );
 
   // debug
