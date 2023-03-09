@@ -109,7 +109,7 @@ module ysyx_22050710_axil_inst_sram_wrap #(
     .rst                      (!i_arsetn                    ),
     .din                      (ar_fire                      ),
     .dout                     (o_rvalid                     ),
-    .wen                      (r_state_read                 )
+    .wen                      (1                            )
   );
 
 endmodule
