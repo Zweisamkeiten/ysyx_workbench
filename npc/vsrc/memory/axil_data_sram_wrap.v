@@ -98,7 +98,7 @@ module ysyx_22050710_axil_data_sram_wrap #(
         WRITE_STATE_IDLE  : if (i_awvalid) write_state_reg <= WRITE_STATE_ADDR ;
         WRITE_STATE_ADDR  : if (aw_fire  ) write_state_reg <= WRITE_STATE_WRITE;
         WRITE_STATE_WRITE : if (w_fire   ) write_state_reg <= WRITE_STATE_RESP ;
-        WRITE_STATE_RESP  : if (b_fire   ) write_state_reg <= WRITE_STATE_IDEL ;
+        WRITE_STATE_RESP  : if (b_fire   ) write_state_reg <= WRITE_STATE_IDLE ;
         default           :                write_state_reg <= WRITE_STATE_IDLE ;
       endcase
     end
