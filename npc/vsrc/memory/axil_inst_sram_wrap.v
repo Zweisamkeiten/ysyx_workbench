@@ -101,7 +101,7 @@ module ysyx_22050710_axil_inst_sram_wrap #(
       rvalid <= 1;
     end
     else begin
-      o_rdata <= 0;
+      o_rdata <= o_rdata;
       rvalid <= 0;
     end
   end
