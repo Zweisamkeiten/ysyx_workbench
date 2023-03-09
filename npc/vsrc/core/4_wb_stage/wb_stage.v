@@ -21,7 +21,6 @@ module ysyx_22050710_wb_stage #(
   input                        i_ms_to_ws_valid              ,
   input  [MS_TO_WS_BUS_WD-1:0] i_ms_to_ws_bus                ,
   // to rf
-  output                       o_ws_to_rf_valid              ,
   output [WS_TO_RF_BUS_WD-1:0] o_ws_to_rf_bus                ,
   // bypass
   output [BYPASS_BUS_WD-1:0  ] o_ws_to_ds_bypass_bus         ,
@@ -34,7 +33,6 @@ module ysyx_22050710_wb_stage #(
   wire                         ws_ready_go                   ;
   assign ws_ready_go         = 1'b1                          ;
   assign o_ws_allowin        = (!ws_valid) || (ws_ready_go)  ;
-  assign o_ws_to_rf_valid    = ws_valid && ws_ready_go       ;
 
   Reg #(
     .WIDTH                    (1                            ),

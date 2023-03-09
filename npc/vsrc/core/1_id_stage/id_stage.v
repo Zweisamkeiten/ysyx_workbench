@@ -32,7 +32,6 @@ module ysyx_22050710_id_stage #(
   // to fs
   output [BR_BUS_WD-1:0      ] o_br_bus                      ,
   // from ws to rf: for write back
-  input                        i_ws_to_rf_valid              ,
   input  [WS_TO_RF_BUS_WD-1:0] i_ws_to_rf_bus                ,
   // for load stall
   input                        i_es_to_ds_load_sel           ,
@@ -237,19 +236,7 @@ module ysyx_22050710_id_stage #(
   };
 
   // debug
-  wire                         debug_commit                  ;
   wire [DEBUG_BUS_WD-1:0     ] debug_ws_to_rf_bus_r          ;
-
-  Reg #(
-    .WIDTH                    (1                            ),
-    .RESET_VAL                (0                            )
-  ) u_debug_commit (
-    .clk                      (i_clk                        ),
-    .rst                      (i_rst                        ),
-    .din                      (i_ws_to_rf_valid             ),
-    .dout                     (debug_commit                 ),
-    .wen                      (1'b1                         )
-  );
 
   Reg #(
     .WIDTH                    (DEBUG_BUS_WD                 ),
@@ -286,7 +273,7 @@ module ysyx_22050710_id_stage #(
   };
 
   always @(debug_ws_to_rf_bus_r) begin
-    if (debug_commit) begin
+    if (rf_debug_valid) begin
       finish_handle(rf_debug_pc, rf_debug_dnpc, {32'b0, rf_debug_inst}, rf_debug_memen, rf_debug_memaddr);
     end
   end
