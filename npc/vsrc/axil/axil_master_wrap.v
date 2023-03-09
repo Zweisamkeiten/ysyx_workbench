@@ -153,7 +153,7 @@ module ysyx_22050710_axil_master_wrap #(
   // Read data channel signals
   assign o_rready            = r_state_read                  ;
 
-  assign o_rw_addr_ok = r_state_read | w_state_write         ;
+  assign o_rw_addr_ok = ar_fire | aw_fire                    ;
   assign o_rw_data_ok = r_fire | b_fire                      ;
   assign o_data_read  = i_rdata                              ;
 
