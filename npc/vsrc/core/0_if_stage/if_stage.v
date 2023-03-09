@@ -45,9 +45,7 @@ module ysyx_22050710_if_stage #(
   wire                         fs_ready_go                   ;
   wire                         fs_allowin                    ;
 
-  assign fs_ready_go         = i_ds_allowin
-                             ? i_inst_sram_data_ok
-                             : fs_inst_with_valid[INST_WD]   ;
+  assign fs_ready_go         = i_inst_sram_data_ok           ;
   assign fs_allowin          = (!fs_valid) || (fs_ready_go && i_ds_allowin); // 或条件1: cpu rst后的初始状态, 每个stage都为空闲
                                                                              // 或条件2: stage 直接相互依赖, 当后续设计使得当前
                                                                              // stage 无法在一周期内完成, ready_go 信号会变得复杂
@@ -79,7 +77,7 @@ module ysyx_22050710_if_stage #(
     .din                      ({i_inst_sram_data_ok, inst}  ),
     .dout                     (fs_inst_with_valid           ),
     .wen                      (i_inst_sram_data_ok          )
-  );
+  )
 
   ysyx_22050710_pc #(
     .PC_RESETVAL              (PC_RESETVAL                  ),
