@@ -88,6 +88,21 @@ module ysyx_22050710_axil_data_sram_wrap #(
   assign o_bresp             = 2'b00                         ;
   assign o_rresp             = 2'b00                         ; // trans ok
 
+  // 读通道状态切换
+  always @(posedge i_aclk) begin
+    if (~i_arsetn) begin
+      read_state_reg <= READ_STATE_IDLE;
+    end
+    else begin
+      case (read_state_reg)
+        READ_STATE_IDLE : if (i_arvalid) read_state_reg <= READ_STATE_ADDR ;
+        READ_STATE_ADDR : if (ar_fire  ) read_state_reg <= READ_STATE_READ ;
+        READ_STATE_READ : if (r_fire   ) read_state_reg <= READ_STATE_IDLE ;
+        default         :                read_state_reg <= READ_STATE_IDLE ;
+      endcase
+    end
+  end
+
   // 写通道状态切换
   always @(posedge i_aclk) begin
     if (~i_arsetn) begin
@@ -106,7 +121,7 @@ module ysyx_22050710_axil_data_sram_wrap #(
 
   reg [DATA_WIDTH-1:0        ] rdata                         ;
   always @(*) begin
-    if (r_state_read) begin
+    if (ar_fire) begin
       npc_pmem_read({32'b0, i_araddr}, rdata);
     end
     else begin
@@ -117,7 +132,7 @@ module ysyx_22050710_axil_data_sram_wrap #(
   // read port
   reg [0:0] rvalid = 0;
   always @(posedge i_aclk) begin
-    if (r_state_read) begin
+    if (ar_fire) begin
       o_rdata <= rdata;
       rvalid <= 1;
     end
