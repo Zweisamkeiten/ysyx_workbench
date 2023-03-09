@@ -67,7 +67,7 @@ module ysyx_22050710_axil_data_sram_wrap #(
 
   localparam [1:0]
       WRITE_STATE_IDLE       = 2'd0                          ,
-      WRITE_STATE_WAIT_WREADY= 2'd1                          ,
+      WRITE_STATE_WRITE      = 2'd1                          ,
       WRITE_STATE_RESP       = 2'd2                          ;
 
   reg [1:0] write_state_reg  = WRITE_STATE_IDLE;
