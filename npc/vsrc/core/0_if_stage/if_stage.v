@@ -77,7 +77,7 @@ module ysyx_22050710_if_stage #(
     .din                      ({i_inst_sram_data_ok, inst}  ),
     .dout                     (fs_inst_with_valid           ),
     .wen                      (i_inst_sram_data_ok&&~i_ds_allowin)
-  )
+  );
 
   ysyx_22050710_pc #(
     .PC_RESETVAL              (PC_RESETVAL                  ),
