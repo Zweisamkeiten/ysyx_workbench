@@ -36,7 +36,7 @@ module ysyx_22050710_axil_inst_sram_wrap #(
   input  [2:0                ] i_arprot                      ,
 
   // Read data channel
-  output                       o_rvalid                      ,
+  output reg                   o_rvalid                      ,
   input                        i_rready                      ,
   output reg [DATA_WIDTH-1:0 ] o_rdata                       ,
   output [1:0                ] o_rresp
@@ -96,7 +96,7 @@ module ysyx_22050710_axil_inst_sram_wrap #(
 
   reg [0:0] rvalid = 0;
   always @(posedge i_aclk) begin
-    if (ar_fire) begin
+    if (r_state_read) begin
       o_rdata <= rdata;
       rvalid <= 1;
     end
