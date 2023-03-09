@@ -56,52 +56,33 @@ module ysyx_22050710_axil_data_sram_wrap #(
   assign r_fire              = i_rready  & o_rvalid          ;
 
   // ------------------State Machine--------------------------
-  localparam [1:0]
-      READ_STATE_IDLE        = 2'd0                          ,
-      READ_STATE_ADDR        = 2'd1                          ,
-      READ_STATE_READ        = 2'd2                          ;
+  localparam [0:0]
+      READ_STATE_IDLE        = 1'd0                          ,
+      READ_STATE_WAIT_RREADY = 1'd1                          ;
 
-  reg [1:0] read_state_reg   = READ_STATE_IDLE;
+  reg [0:0] read_state_reg   = READ_STATE_IDLE;
 
-  wire r_state_idle     = read_state_reg == READ_STATE_IDLE  ;
-  wire r_state_addr     = read_state_reg == READ_STATE_ADDR  ;
-  wire r_state_read     = read_state_reg == READ_STATE_READ  ;
+  wire r_state_idle         = read_state_reg == READ_STATE_IDLE  ;
+  wire r_state_wait_rready = read_state_reg == READ_STATE_WAIT_RREADY  ;
 
   localparam [1:0]
       WRITE_STATE_IDLE       = 2'd0                          ,
-      WRITE_STATE_ADDR       = 2'd1                          ,
-      WRITE_STATE_WRITE      = 2'd2                          ,
-      WRITE_STATE_RESP       = 2'd3                          ;
+      WRITE_STATE_WAIT_WREADY= 2'd1                          ,
+      WRITE_STATE_RESP       = 2'd2                          ;
 
   reg [1:0] write_state_reg  = WRITE_STATE_IDLE;
 
   wire w_state_idle   = write_state_reg == WRITE_STATE_IDLE  ;
-  wire w_state_addr   = write_state_reg == WRITE_STATE_ADDR  ;
-  wire w_state_write  = write_state_reg == WRITE_STATE_WRITE ;
+  wire w_state_wait_wreday = write_state_reg == WRITE_STATE_WAIT_WREADY ;
   wire w_state_resp   = write_state_reg == WRITE_STATE_RESP  ;
 
-  assign o_arready           = r_state_addr                  ;
-  assign o_rvalid            = rvalid                        ;
-  assign o_awready           = w_state_addr                  ;
-  assign o_wready            = w_state_write                 ;
-  assign o_bvalid            = w_state_resp                  ;
-  assign o_bresp             = 2'b00                         ;
-  assign o_rresp             = 2'b00                         ; // trans ok
-
-  // 读通道状态切换
-  always @(posedge i_aclk) begin
-    if (~i_arsetn) begin
-      read_state_reg <= READ_STATE_IDLE;
-    end
-    else begin
-      case (read_state_reg)
-        READ_STATE_IDLE : if (i_arvalid) read_state_reg <= READ_STATE_ADDR ;
-        READ_STATE_ADDR : if (ar_fire  ) read_state_reg <= READ_STATE_READ ;
-        READ_STATE_READ : if (r_fire   ) read_state_reg <= READ_STATE_IDLE ;
-        default         :                read_state_reg <= READ_STATE_IDLE ;
-      endcase
-    end
-  end
+  assign o_arready           = r_state_idle;
+  assign o_rvalid            = r_state_wait_rready;
+  assign o_awready           = w_state_idle;
+  assign o_wready            = w_state_wait_wreday;
+  assign o_bvalid            = w_state_resp;
+  assign o_bresp             = 2'b00;
+  assign o_rresp             = 2'b00; // trans ok
 
   // 写通道状态切换
   always @(posedge i_aclk) begin
@@ -110,18 +91,31 @@ module ysyx_22050710_axil_data_sram_wrap #(
     end
     else begin
       case (write_state_reg)
-        WRITE_STATE_IDLE  : if (i_awvalid) write_state_reg <= WRITE_STATE_ADDR ;
-        WRITE_STATE_ADDR  : if (aw_fire  ) write_state_reg <= WRITE_STATE_WRITE;
-        WRITE_STATE_WRITE : if (w_fire   ) write_state_reg <= WRITE_STATE_RESP ;
-        WRITE_STATE_RESP  : if (b_fire   ) write_state_reg <= WRITE_STATE_IDLE ;
-        default           :                write_state_reg <= WRITE_STATE_IDLE ;
+        WRITE_STATE_IDLE        : if (aw_fire) write_state_reg <= WRITE_STATE_WAIT_WREADY;
+        WRITE_STATE_WAIT_WREADY : if (w_fire ) write_state_reg <= WRITE_STATE_RESP ;
+        WRITE_STATE_RESP        : if (b_fire ) write_state_reg <= WRITE_STATE_IDLE  ;
+        default                 :              write_state_reg <= write_state_reg   ;
       endcase
     end
   end
 
-  reg [DATA_WIDTH-1:0        ] rdata                         ;
+  // 读通道状态切换
+  always @(posedge i_aclk) begin
+    if (~i_arsetn) begin
+      read_state_reg <= READ_STATE_IDLE;
+    end
+    else begin
+      case (read_state_reg)
+        READ_STATE_IDLE        : if (ar_fire) read_state_reg <= READ_STATE_WAIT_RREADY ;
+        READ_STATE_WAIT_RREADY : if (r_fire ) read_state_reg <= READ_STATE_IDLE ;
+        default                :              read_state_reg <= read_state_reg  ;
+      endcase
+    end
+  end
+
+  reg [DATA_WIDTH-1:0] rdata;
   always @(*) begin
-    if (r_state_read) begin
+    if (ar_fire) begin
       npc_pmem_read({32'b0, i_araddr}, rdata);
     end
     else begin
@@ -129,33 +123,16 @@ module ysyx_22050710_axil_data_sram_wrap #(
     end
   end
 
-  // read port
-  reg [0:0] rvalid = 0;
   always @(posedge i_aclk) begin
-    if (r_state_read) begin
+    if (ar_fire) begin
       o_rdata <= rdata;
-      rvalid <= 1;
-    end
-    else begin
-      o_rdata <= o_rdata;
-      rvalid <= 0;
     end
   end
 
   // write port
   always @(posedge i_aclk) begin
-    if (w_state_write) begin
+    if (aw_fire) begin
       npc_pmem_write({32'b0, i_awaddr}, i_wdata, i_wstrb);
-    end
-  end
-
-  reg [0:0] bvalid = 0;
-  always @(posedge i_aclk) begin
-    if (w_state_resp) begin
-      bvalid <= 1;
-    end
-    else begin
-      bvalid <= 0;
     end
   end
 
