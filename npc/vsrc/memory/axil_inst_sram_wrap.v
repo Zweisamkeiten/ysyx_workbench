@@ -60,7 +60,7 @@ module ysyx_22050710_axil_inst_sram_wrap #(
   wire r_state_done = read_state_reg == READ_STATE_DONE      ;
 
   assign o_arready           = r_state_idle                  ;
-  assign o_rvalid            = r_state_wait_rready           ;
+  assign o_rvalid            = r_state_done                  ;
   assign o_awready           = 0                             ;
   assign o_wready            = 0                             ;
   assign o_bvalid            = 0                             ;

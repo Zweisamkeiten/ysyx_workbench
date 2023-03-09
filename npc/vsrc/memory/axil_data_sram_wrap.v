@@ -58,7 +58,7 @@ module ysyx_22050710_axil_data_sram_wrap #(
   // ------------------State Machine--------------------------
   localparam [0:0]
       READ_STATE_IDLE        = 1'd0                          ,
-      READ_STATE_WAIT_RREADY = 1'd1                          ;
+      READ_STATE_DONE        = 1'd1                          ;
 
   reg [0:0] read_state_reg   = READ_STATE_IDLE               ;
 
@@ -72,9 +72,9 @@ module ysyx_22050710_axil_data_sram_wrap #(
     end
     else begin
       case (read_state_reg)
-        READ_STATE_IDLE        : if (ar_fire) read_state_reg <= READ_STATE_WAIT_RREADY ;
-        READ_STATE_WAIT_RREADY : if (r_fire ) read_state_reg <= READ_STATE_IDLE ;
-        default                :              read_state_reg <= read_state_reg  ;
+        READ_STATE_IDLE : if (ar_fire) read_state_reg <= READ_STATE_DONE ;
+        READ_STATE_DONE : if (r_fire ) read_state_reg <= READ_STATE_IDLE ;
+        default         :              read_state_reg <= read_state_reg  ;
       endcase
     end
   end
@@ -90,13 +90,13 @@ module ysyx_22050710_axil_data_sram_wrap #(
   wire w_state_done   = write_state_reg == WRITE_STATE_DONE  ;
   wire w_state_resp   = write_state_reg == WRITE_STATE_RESP  ;
 
-  assign o_arready           = r_state_idle;
-  assign o_rvalid            = r_state_wait_rready;
-  assign o_awready           = w_state_idle;
-  assign o_wready            = w_state_wait_wreday;
-  assign o_bvalid            = w_state_resp;
-  assign o_bresp             = 2'b00;
-  assign o_rresp             = 2'b00; // trans ok
+  assign o_arready           = r_state_idle                  ;
+  assign o_rvalid            = r_state_done                  ;
+  assign o_awready           = w_state_idle                  ;
+  assign o_wready            = w_state_done                  ;
+  assign o_bvalid            = w_state_resp                  ;
+  assign o_bresp             = 2'b00                         ;
+  assign o_rresp             = 2'b00                         ; // trans ok
 
   // 写通道状态切换
   always @(posedge i_aclk) begin
