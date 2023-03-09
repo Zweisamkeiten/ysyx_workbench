@@ -248,7 +248,7 @@ module ysyx_22050710_id_stage #(
     .rst                      (i_rst                        ),
     .din                      (i_ws_to_rf_valid             ),
     .dout                     (debug_commit                 ),
-    .wen                      (o_ds_allowin                 )
+    .wen                      (1'b1                         )
   );
 
   Reg #(
@@ -259,7 +259,7 @@ module ysyx_22050710_id_stage #(
     .rst                      (i_rst                        ),
     .din                      (i_debug_ws_to_rf_bus         ),
     .dout                     (debug_ws_to_rf_bus_r         ),
-    .wen                      (o_ds_allowin                 )
+    .wen                      (1'b1                         )
   );
 
   wire                         rf_debug_valid                ;
