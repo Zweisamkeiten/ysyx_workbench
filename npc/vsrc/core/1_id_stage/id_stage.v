@@ -41,7 +41,7 @@ module ysyx_22050710_id_stage #(
   input  [BYPASS_BUS_WD-1:0  ] i_ms_to_ds_bypass_bus         ,
   input  [BYPASS_BUS_WD-1:0  ] i_ws_to_ds_bypass_bus         ,
   // debug
-  /* input  [DEBUG_BUS_WD-1:0   ] i_debug_ws_to_rf_bus          , */
+  input  [DEBUG_BUS_WD-1:0   ] i_debug_ws_to_rf_bus          ,
   output [DEBUG_BUS_WD-1:0   ] o_debug_ds_to_es_bus
 );
 
