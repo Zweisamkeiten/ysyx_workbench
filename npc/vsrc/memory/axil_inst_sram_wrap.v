@@ -95,9 +95,6 @@ module ysyx_22050710_axil_inst_sram_wrap #(
     if (ar_fire) begin
       o_rdata <= rdata;
     end
-    else begin
-      o_rdata <= o_rdata;
-    end
   end
 
 endmodule
