@@ -50,17 +50,19 @@ module ysyx_22050710_axil_inst_sram_wrap #(
   assign r_fire              = i_rready  & o_rvalid          ;
 
   // ------------------State Machine--------------------------
-  localparam [0:0]
-      READ_STATE_IDLE        = 1'd0                          ,
-      READ_STATE_WAIT_RREADY = 1'd1                          ;
+  localparam [1:0]
+      READ_STATE_IDLE        = 2'd0                          ,
+      READ_STATE_READ        = 2'd1                          ,
+      READ_STATE_READ_DONE   = 2'd2                          ;
 
   reg [0:0] read_state_reg   = READ_STATE_IDLE;
 
-  wire r_state_idle          = read_state_reg == READ_STATE_IDLE  ;
-  wire r_state_wait_rready   = read_state_reg == READ_STATE_WAIT_RREADY  ;
+  wire r_state_idle      = read_state_reg == READ_STATE_IDLE ;
+  wire r_state_read      = read_state_reg == READ_STATE_READ ;
+  wire r_state_read_done = read_state_reg == READ_STATE_READ_DONE;
 
   assign o_arready           = r_state_idle;
-  assign o_rvalid            = r_state_wait_rready;
+  assign o_rvalid            = r_state_read_done;
   assign o_awready           = 0;
   assign o_wready            = 0;
   assign o_bvalid            = 0;
@@ -74,16 +76,17 @@ module ysyx_22050710_axil_inst_sram_wrap #(
     end
     else begin
       case (read_state_reg)
-        READ_STATE_IDLE        : if (ar_fire) read_state_reg <= READ_STATE_WAIT_RREADY ;
-        READ_STATE_WAIT_RREADY : if (r_fire ) read_state_reg <= READ_STATE_IDLE ;
-        default                :              read_state_reg <= read_state_reg  ;
+        READ_STATE_IDLE     : if (ar_fire) read_state_reg <= READ_STATE_READ ;
+        READ_STATE_READ     : if (r_fire ) read_state_reg <= READ_STATE_READ_DONE ;
+        READ_STATE_READ_DONE:              read_state_reg <= READ_STATE_IDLE ;
+        default             :              read_state_reg <= read_state_reg  ;
       endcase
     end
   end
 
   reg [DATA_WIDTH-1:0] rdata;
   always @(*) begin
-    if (ar_fire) begin
+    if (r_state_read) begin
       npc_pmem_read({32'b0, i_araddr}, rdata);
     end
     else begin
@@ -92,7 +95,7 @@ module ysyx_22050710_axil_inst_sram_wrap #(
   end
 
   always @(posedge i_aclk) begin
-    if (ar_fire) begin
+    if (r_state_read) begin
       o_rdata <= rdata;
     end
   end
