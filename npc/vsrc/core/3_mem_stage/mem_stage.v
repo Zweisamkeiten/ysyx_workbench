@@ -24,6 +24,7 @@ module ysyx_22050710_mem_stage #(
   output                       o_ms_to_ws_valid              ,
   output [MS_TO_WS_BUS_WD-1:0] o_ms_to_ws_bus                ,
   // from data-sram
+  input                        i_data_sram_data_ok           ,
   input  [SRAM_DATA_WD-1:0   ] i_data_sram_rdata             , // data ram 读数据返回 进入 lsu 进行处理
   // bypass
   output [BYPASS_BUS_WD-1:0  ] o_ms_to_ds_bypass_bus         ,
@@ -34,7 +35,7 @@ module ysyx_22050710_mem_stage #(
 
   wire                         ms_valid                      ;
   wire                         ms_ready_go                   ;
-  assign ms_ready_go         = 1'b1                          ; // 访存类型中读取指令 需等 data_ok
+  assign ms_ready_go         = i_data_sram_data_ok           ; // 访存类型中读取指令 需等 data_ok
   assign o_ms_allowin        = (!ms_valid) || (ms_ready_go && i_ws_allowin);
   assign o_ms_to_ws_valid    = ms_valid && ms_ready_go       ;
 

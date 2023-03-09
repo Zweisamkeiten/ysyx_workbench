@@ -40,7 +40,6 @@ module ysyx_22050710_ex_stage #(
   output [BYPASS_BUS_WD-1:0  ] o_es_to_ds_bypass_bus         ,
   // data sram
   input                        i_data_sram_addr_ok           ,
-  input                        i_data_sram_data_ok           ,
   // debug
   input  [DEBUG_BUS_WD-1:0   ] i_debug_ds_to_es_bus          ,
   output [DEBUG_BUS_WD-1:0   ] o_debug_es_to_ms_bus
@@ -48,9 +47,9 @@ module ysyx_22050710_ex_stage #(
 
   wire                         es_valid                      ;
   wire                         es_ready_go                   ;
-  assign es_ready_go         = (es_mem_ren | es_mem_wen)
-                             ? i_data_sram_data_ok
-                             : 1'b1                          ; // ex_stage 访存类型指令 读取内存 等待 addr_ok
+  assign es_ready_go         = (es_mem_ren | es_mem_wen)       // ex_stage 访存类型指令 等待 addr_ok
+                             ? i_data_sram_addr_ok             // 读: 地址被接收
+                             : 1'b1                          ; // 写: 地址和数据被接收
   assign o_es_allowin        = (!es_valid) || (es_ready_go && i_ms_allowin);
   assign o_es_to_ms_valid    = es_valid && es_ready_go       ;
 

@@ -134,7 +134,7 @@ module ysyx_22050710_axil_master_wrap #(
       o_rw_addr_ok <= 0;
     end
     else if (i_rw_valid) begin
-      o_rw_addr_ok <= ar_fire | aw_fire;
+      o_rw_addr_ok <= r_state_read | w_state_write;
     end
     else begin
       o_rw_addr_ok <= o_rw_addr_ok;
