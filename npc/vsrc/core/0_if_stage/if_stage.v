@@ -73,7 +73,7 @@ module ysyx_22050710_if_stage #(
     .RESET_VAL                (0                            )
   ) u_save_inst (
     .clk                      (i_clk                        ),
-    .rst                      (i_rst                        ),
+    .rst                      (i_ds_allowin                 ),
     .din                      ({i_inst_sram_data_ok, fs_inst}),
     .dout                     (fs_inst_with_valid_buffer    ),
     .wen                      (i_inst_sram_data_ok&&~i_ds_allowin)
