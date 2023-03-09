@@ -38,7 +38,7 @@ module ysyx_22050710_axil_inst_sram_wrap #(
   // Read data channel
   output                       o_rvalid                      ,
   input                        i_rready                      ,
-  output reg [DATA_WIDTH-1:0 ] o_rdata                       ,
+  output [DATA_WIDTH-1:0     ] o_rdata                       ,
   output [1:0                ] o_rresp
 );
   // ---------------------------------------------------------
@@ -91,10 +91,15 @@ module ysyx_22050710_axil_inst_sram_wrap #(
     end
   end
 
-  always @(posedge i_aclk) begin
-    if (ar_fire) begin
-      o_rdata <= rdata;
-    end
-  end
+  Reg #(
+    .WIDTH                    (DATA_WIDTH                   ),
+    .RESET_VAL                (0                            )
+  ) u_o_rdata (
+    .clk                      (i_aclk                       ),
+    .rst                      (!i_arsetn                    ),
+    .din                      (rdata                        ),
+    .dout                     (o_rdata                      ),
+    .wen                      (ar_fire                      )
+  );
 
 endmodule
