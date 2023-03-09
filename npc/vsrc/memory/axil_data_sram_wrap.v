@@ -90,14 +90,6 @@ module ysyx_22050710_axil_data_sram_wrap #(
   wire w_state_write  = write_state_reg == WRITE_STATE_WRITE ;
   wire w_state_resp   = write_state_reg == WRITE_STATE_RESP  ;
 
-  assign o_arready           = r_state_idle                  ;
-  assign o_rvalid            = r_state_read                  ;
-  assign o_awready           = w_state_idle                  ;
-  assign o_wready            = w_state_write                 ;
-  assign o_bvalid            = w_state_resp                  ;
-  assign o_bresp             = 2'b00                         ;
-  assign o_rresp             = 2'b00                         ; // trans ok
-
   // 写通道状态切换
   always @(posedge i_aclk) begin
     if (~i_arsetn) begin
@@ -123,17 +115,40 @@ module ysyx_22050710_axil_data_sram_wrap #(
     end
   end
 
-  always @(posedge i_aclk) begin
-    if (ar_fire) begin
-      o_rdata <= rdata;
-    end
-  end
-
   // write port
   always @(posedge i_aclk) begin
     if (aw_fire) begin
       npc_pmem_write({32'b0, i_awaddr}, i_wdata, i_wstrb);
     end
   end
+
+  Reg #(
+    .WIDTH                    (DATA_WIDTH                   ),
+    .RESET_VAL                (0                            )
+  ) u_o_rdata (
+    .clk                      (i_aclk                       ),
+    .rst                      (!i_arsetn                    ),
+    .din                      (rdata                        ),
+    .dout                     (o_rdata                      ),
+    .wen                      (ar_fire                      )
+  );
+
+  assign o_arready           = r_state_idle                  ;
+  assign o_awready           = w_state_idle                  ;
+  assign o_wready            = w_state_write                 ;
+  assign o_bvalid            = w_state_resp                  ;
+  assign o_bresp             = 2'b00                         ;
+  assign o_rresp             = 2'b00                         ; // trans ok
+
+  Reg #(
+    .WIDTH                    (1                            ),
+    .RESET_VAL                (0                            )
+  ) u_o_rvalid (
+    .clk                      (i_aclk                       ),
+    .rst                      (!i_arsetn                    ),
+    .din                      (ar_fire                      ),
+    .dout                     (o_rvalid                     ),
+    .wen                      (ar_fire                      )
+  );
 
 endmodule
