@@ -73,7 +73,7 @@ module ysyx_22050710_axil_master_wrap #(
       READ_STATE_ADDR        = 2'd1                          ,
       READ_STATE_READ        = 2'd2                          ;
 
-  reg [1:0] read_state_reg   = READ_STATE_IDLE;
+  reg [1:0] read_state_reg   = READ_STATE_IDLE               ;
 
   wire r_state_idle     = read_state_reg == READ_STATE_IDLE  ;
   wire r_state_addr     = read_state_reg == READ_STATE_ADDR  ;
@@ -85,7 +85,7 @@ module ysyx_22050710_axil_master_wrap #(
       WRITE_STATE_WRITE      = 2'd2                          ,
       WRITE_STATE_RESP       = 2'd3                          ;
 
-  reg [1:0] write_state_reg  = WRITE_STATE_IDLE;
+  reg [1:0] write_state_reg  = WRITE_STATE_IDLE              ;
 
   wire w_state_idle   = write_state_reg == WRITE_STATE_IDLE  ;
   wire w_state_addr   = write_state_reg == WRITE_STATE_ADDR  ;
@@ -97,13 +97,13 @@ module ysyx_22050710_axil_master_wrap #(
     if (~i_arsetn) begin
       write_state_reg <= WRITE_STATE_IDLE;
     end
-    else if ((i_rw_valid && i_rw_wen) || b_fire) begin
+    else if (i_rw_valid && i_rw_wen) begin
       case (write_state_reg)
         WRITE_STATE_IDLE  :              write_state_reg <= WRITE_STATE_ADDR  ;
         WRITE_STATE_ADDR  : if (aw_fire) write_state_reg <= WRITE_STATE_WRITE ;
         WRITE_STATE_WRITE : if (w_fire ) write_state_reg <= WRITE_STATE_RESP  ;
         WRITE_STATE_RESP  : if (b_fire ) write_state_reg <= WRITE_STATE_IDLE  ;
-        default           :              write_state_reg <= WRITE_STATE_IDLE   ;
+        default           :              write_state_reg <= WRITE_STATE_IDLE  ;
       endcase
     end
     else begin
@@ -153,8 +153,8 @@ module ysyx_22050710_axil_master_wrap #(
   // Read data channel signals
   assign o_rready            = r_state_read                  ;
 
-  assign o_rw_addr_ok = ar_fire | w_fire                     ;
-  assign o_rw_data_ok = r_fire | b_fire                      ;
-  assign o_data_read  = i_rdata                              ;
+  assign o_rw_addr_ok        = ar_fire | w_fire              ;
+  assign o_rw_data_ok        = r_fire  | b_fire              ;
+  assign o_data_read         = i_rdata                       ;
 
 endmodule
