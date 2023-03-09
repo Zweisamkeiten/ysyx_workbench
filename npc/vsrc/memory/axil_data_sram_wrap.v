@@ -78,7 +78,7 @@ module ysyx_22050710_axil_data_sram_wrap #(
   wire w_state_write  = write_state_reg == WRITE_STATE_WRITE ;
   wire w_state_resp   = write_state_reg == WRITE_STATE_RESP  ;
 
-  assign o_arready           = r_state_idle|r_state_read;
+  assign o_arready           = r_state_idle;
   assign o_rvalid            = r_state_read;
   assign o_awready           = w_state_idle;
   assign o_wready            = w_state_write;
