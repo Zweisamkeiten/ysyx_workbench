@@ -60,20 +60,34 @@ module ysyx_22050710_axil_data_sram_wrap #(
       READ_STATE_IDLE        = 1'd0                          ,
       READ_STATE_WAIT_RREADY = 1'd1                          ;
 
-  reg [0:0] read_state_reg   = READ_STATE_IDLE;
+  reg [0:0] read_state_reg   = READ_STATE_IDLE               ;
 
-  wire r_state_idle         = read_state_reg == READ_STATE_IDLE  ;
-  wire r_state_wait_rready = read_state_reg == READ_STATE_WAIT_RREADY  ;
+  wire r_state_idle     = read_state_reg == READ_STATE_IDLE  ;
+  wire r_state_done     = read_state_reg == READ_STATE_DONE  ;
+
+  // 读通道状态切换
+  always @(posedge i_aclk) begin
+    if (~i_arsetn) begin
+      read_state_reg <= READ_STATE_IDLE;
+    end
+    else begin
+      case (read_state_reg)
+        READ_STATE_IDLE        : if (ar_fire) read_state_reg <= READ_STATE_WAIT_RREADY ;
+        READ_STATE_WAIT_RREADY : if (r_fire ) read_state_reg <= READ_STATE_IDLE ;
+        default                :              read_state_reg <= read_state_reg  ;
+      endcase
+    end
+  end
 
   localparam [1:0]
       WRITE_STATE_IDLE       = 2'd0                          ,
-      WRITE_STATE_WAIT_WREADY= 2'd1                          ,
+      WRITE_STATE_DONE       = 2'd1                          ,
       WRITE_STATE_RESP       = 2'd2                          ;
 
   reg [1:0] write_state_reg  = WRITE_STATE_IDLE;
 
   wire w_state_idle   = write_state_reg == WRITE_STATE_IDLE  ;
-  wire w_state_wait_wreday = write_state_reg == WRITE_STATE_WAIT_WREADY ;
+  wire w_state_done   = write_state_reg == WRITE_STATE_DONE  ;
   wire w_state_resp   = write_state_reg == WRITE_STATE_RESP  ;
 
   assign o_arready           = r_state_idle;
@@ -91,24 +105,10 @@ module ysyx_22050710_axil_data_sram_wrap #(
     end
     else begin
       case (write_state_reg)
-        WRITE_STATE_IDLE        : if (aw_fire) write_state_reg <= WRITE_STATE_WAIT_WREADY;
-        WRITE_STATE_WAIT_WREADY : if (w_fire ) write_state_reg <= WRITE_STATE_RESP ;
-        WRITE_STATE_RESP        : if (b_fire ) write_state_reg <= WRITE_STATE_IDLE  ;
-        default                 :              write_state_reg <= write_state_reg   ;
-      endcase
-    end
-  end
-
-  // 读通道状态切换
-  always @(posedge i_aclk) begin
-    if (~i_arsetn) begin
-      read_state_reg <= READ_STATE_IDLE;
-    end
-    else begin
-      case (read_state_reg)
-        READ_STATE_IDLE        : if (ar_fire) read_state_reg <= READ_STATE_WAIT_RREADY ;
-        READ_STATE_WAIT_RREADY : if (r_fire ) read_state_reg <= READ_STATE_IDLE ;
-        default                :              read_state_reg <= read_state_reg  ;
+        WRITE_STATE_IDLE : if (aw_fire) write_state_reg <= WRITE_STATE_DONE;
+        WRITE_STATE_DONE : if (w_fire ) write_state_reg <= WRITE_STATE_RESP;
+        WRITE_STATE_RESP : if (b_fire ) write_state_reg <= WRITE_STATE_IDLE;
+        default          :              write_state_reg <= write_state_reg ;
       endcase
     end
   end
