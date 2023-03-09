@@ -52,17 +52,17 @@ module ysyx_22050710_axil_inst_sram_wrap #(
   // ------------------State Machine--------------------------
   localparam [1:0]
       READ_STATE_IDLE        = 2'd0                          ,
-      READ_STATE_READ        = 2'd1                          ,
-      READ_STATE_RET         = 2'd2                          ;
+      READ_STATE_ADDR        = 2'd1                          ,
+      READ_STATE_READ        = 2'd2                          ;
 
   reg [1:0] read_state_reg   = READ_STATE_IDLE;
 
   wire r_state_idle          = read_state_reg == READ_STATE_IDLE  ;
+  wire r_state_addr          = read_state_reg == READ_STATE_ADDR  ;
   wire r_state_read          = read_state_reg == READ_STATE_READ  ;
-  wire r_state_ret           = read_state_reg == READ_STATE_RET   ;
 
   assign o_arready           = r_state_idle;
-  assign o_rvalid            = r_state_ret;
+  assign o_rvalid            = rvalid;
   assign o_awready           = 0;
   assign o_wready            = 0;
   assign o_bvalid            = 0;
@@ -76,10 +76,10 @@ module ysyx_22050710_axil_inst_sram_wrap #(
     end
     else begin
       case (read_state_reg)
-        READ_STATE_IDLE : if (i_arvalid) read_state_reg <= READ_STATE_READ ;
-        READ_STATE_READ : if (r_fire   ) read_state_reg <= READ_STATE_RET  ;
-        READ_STATE_RET  :                read_state_reg <= READ_STATE_IDLE ;
-        default         :                read_state_reg <= read_state_reg  ;
+        READ_STATE_IDLE : if (i_arvalid) read_state_reg <= READ_STATE_ADDR ;
+        READ_STATE_ADDR : if (ar_fire  ) read_state_reg <= READ_STATE_READ ;
+        READ_STATE_READ : if (r_fire   ) read_state_reg <= READ_STATE_IDLE ;
+        default         :                read_state_reg <= READ_STATE_IDLE ;
       endcase
     end
   end
@@ -94,9 +94,15 @@ module ysyx_22050710_axil_inst_sram_wrap #(
     end
   end
 
+  reg [0:0] rvalid = 0;
   always @(posedge i_aclk) begin
     if (ar_fire) begin
       o_rdata <= rdata;
+      rvalid <= 1;
+    end
+    else begin
+      o_rdata <= 0;
+      rvalid <= 0;
     end
   end
 
