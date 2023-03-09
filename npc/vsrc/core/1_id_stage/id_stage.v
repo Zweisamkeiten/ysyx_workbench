@@ -78,7 +78,9 @@ module ysyx_22050710_id_stage #(
     .wen                      (o_ds_allowin                 )
   );
 
+  wire [PC_WD-1:0          ] fs_dnpc                         ;
   wire [FS_TO_DS_BUS_WD-1:0] fs_to_ds_bus_r                  ;
+  assign fs_dnpc           = fs_to_ds_bus[PC_WD-1:0]         ;
 
   Reg #(
     .WIDTH                    (FS_TO_DS_BUS_WD              ),
@@ -267,7 +269,7 @@ module ysyx_22050710_id_stage #(
   assign o_debug_ds_to_es_bus= {o_ds_to_es_valid && i_es_allowin,  // blocking
                                 ds_inst                      ,
                                 ds_pc                        ,
-                                ds_dnpc                      ,
+                                br_taken ? ds_dnpc : fs_dnpc ,
                                 mem_ren | mem_wen            ,
                                 64'b0
   };
