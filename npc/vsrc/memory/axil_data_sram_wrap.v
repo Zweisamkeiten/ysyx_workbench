@@ -73,7 +73,7 @@ module ysyx_22050710_axil_data_sram_wrap #(
   reg [1:0] write_state_reg  = WRITE_STATE_IDLE;
 
   wire w_state_idle   = write_state_reg == WRITE_STATE_IDLE  ;
-  wire w_state_wait_wreday = write_state_reg == WRITE_STATE_WAIT_WREADY ;
+  wire w_state_write  = write_state_reg == WRITE_STATE_WRITE ;
   wire w_state_resp   = write_state_reg == WRITE_STATE_RESP  ;
 
   assign o_arready           = r_state_idle;
@@ -91,10 +91,10 @@ module ysyx_22050710_axil_data_sram_wrap #(
     end
     else begin
       case (write_state_reg)
-        WRITE_STATE_IDLE        : if (i_awvalid) write_state_reg <= WRITE_STATE_WAIT_WREADY;
-        WRITE_STATE_WAIT_WREADY : if (w_fire ) write_state_reg <= WRITE_STATE_RESP ;
-        WRITE_STATE_RESP        : if (b_fire ) write_state_reg <= WRITE_STATE_IDLE  ;
-        default                 :              write_state_reg <= write_state_reg   ;
+        WRITE_STATE_IDLE  : if (i_awvalid) write_state_reg <= WRITE_STATE_WRITE;
+        WRITE_STATE_WRITE : if (w_fire ) write_state_reg <= WRITE_STATE_RESP ;
+        WRITE_STATE_RESP  : if (b_fire ) write_state_reg <= WRITE_STATE_IDLE  ;
+        default           :              write_state_reg <= write_state_reg   ;
       endcase
     end
   end
