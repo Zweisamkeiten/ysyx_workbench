@@ -136,7 +136,6 @@ module ysyx_22050710_axil_data_sram_wrap #(
   assign o_arready           = r_state_idle                  ;
   assign o_awready           = w_state_idle                  ;
   assign o_wready            = w_state_write                 ;
-  assign o_bvalid            = w_state_resp                  ;
   assign o_bresp             = 2'b00                         ;
   assign o_rresp             = 2'b00                         ; // trans ok
 
@@ -148,6 +147,17 @@ module ysyx_22050710_axil_data_sram_wrap #(
     .rst                      (!i_arsetn                    ),
     .din                      (ar_fire                      ),
     .dout                     (o_rvalid                     ),
+    .wen                      (1                            )
+  );
+
+  Reg #(
+    .WIDTH                    (1                            ),
+    .RESET_VAL                (0                            )
+  ) u_o_bvalid (
+    .clk                      (i_aclk                       ),
+    .rst                      (!i_arsetn                    ),
+    .din                      (w_fire                       ),
+    .dout                     (o_bvalid                     ),
     .wen                      (1                            )
   );
 
