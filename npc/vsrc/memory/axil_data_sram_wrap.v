@@ -106,7 +106,7 @@ module ysyx_22050710_axil_data_sram_wrap #(
 
   reg [DATA_WIDTH-1:0        ] rdata                         ;
   always @(*) begin
-    if (ar_fire) begin
+    if (r_state_read) begin
       npc_pmem_read({32'b0, i_araddr}, rdata);
     end
     else begin
