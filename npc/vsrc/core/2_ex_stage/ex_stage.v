@@ -137,7 +137,7 @@ module ysyx_22050710_ex_stage #(
     .rst                      (i_rst                        ),
     .din                      (i_debug_ds_to_es_bus         ),
     .dout                     (debug_ds_to_es_bus_r         ),
-    .wen                      (i_ds_to_es_valid             )
+    .wen                      (1'b1                         )
   );
 
   wire                         es_debug_valid                ;
