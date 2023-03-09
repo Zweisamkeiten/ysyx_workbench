@@ -78,25 +78,25 @@ module ysyx_22050710_id_stage #(
     .wen                      (o_ds_allowin                 )
   );
 
-  wire [PC_WD-1:0            ] fs_dnpc                       ;
-  assign fs_dnpc             = i_fs_to_ds_bus[PC_WD-1:0]     ;
-  wire [FS_TO_DS_BUS_WD-PC_WD-1:0] fs_to_ds_bus_r            ;
+  wire [FS_TO_DS_BUS_WD-1:0]  fs_to_ds_bus_r                 ;
 
   Reg #(
-    .WIDTH                    (FS_TO_DS_BUS_WD-PC_WD        ),
+    .WIDTH                    (FS_TO_DS_BUS_WD              ),
     .RESET_VAL                (0                            )
   ) u_fs_to_ds_bus_r (
     .clk                      (i_clk                        ),
     .rst                      (i_rst                        ),
-    .din                      (i_fs_to_ds_bus[FS_TO_DS_BUS_WD-1:PC_WD]),
+    .din                      (i_fs_to_ds_bus               ),
     .dout                     (fs_to_ds_bus_r               ),
     .wen                      (i_fs_to_ds_valid&&o_ds_allowin)
   );
 
   wire [INST_WD-1:0          ] ds_inst                       ;
   wire [PC_WD-1:0            ] ds_pc                         ;
+  wire [PC_WD-1:0            ] ds_dnpc                       ;
   assign {ds_inst                                            ,
-          ds_pc
+          ds_pc                                              ,
+          ds_dnpc
           }                  = fs_to_ds_bus_r                ;
 
   // 通用寄存器
@@ -267,7 +267,7 @@ module ysyx_22050710_id_stage #(
   assign o_debug_ds_to_es_bus= {o_ds_to_es_valid && i_es_allowin,  // blocking
                                 ds_inst                      ,
                                 ds_pc                        ,
-                                fs_dnpc                      ,
+                                ds_dnpc                      ,
                                 mem_ren | mem_wen            ,
                                 64'b0
   };
