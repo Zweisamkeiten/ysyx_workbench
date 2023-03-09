@@ -106,9 +106,9 @@ module ysyx_22050710_axil_data_sram_wrap #(
     end
     else begin
       case (read_state_reg)
-        READ_STATE_IDLE        : if (i_arvalid) read_state_reg <= READ_STATE_WAIT_RREADY ;
-        READ_STATE_WAIT_RREADY : if (r_fire ) read_state_reg <= READ_STATE_IDLE ;
-        default                :              read_state_reg <= read_state_reg  ;
+        READ_STATE_IDLE : if (i_arvalid) read_state_reg <= READ_STATE_READ ;
+        READ_STATE_READ : if (r_fire ) read_state_reg <= READ_STATE_IDLE ;
+        default         :              read_state_reg <= read_state_reg  ;
       endcase
     end
   end
