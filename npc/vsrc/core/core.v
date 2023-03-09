@@ -243,6 +243,7 @@ module ysyx_22050710_core #(
     // to rf
     .o_ws_to_rf_bus           (ws_to_rf_bus                 ),
     // bypass
+    .o_ws_to_rf_valid         (ws_to_rf_valid               ),
     .o_ws_to_ds_bypass_bus    (ws_to_ds_bypass_bus          ),
     // debug
     .i_debug_ms_to_ws_bus     (debug_ms_to_ws_bus           ),
