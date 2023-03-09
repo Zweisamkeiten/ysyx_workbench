@@ -99,7 +99,7 @@ module ysyx_22050710_axil_master_wrap #(
     end
     else if ((i_rw_valid && i_rw_wen) || b_fire) begin
       case (write_state_reg)
-        WRITE_STATE_IDLE  : if (!o_rw_data_ok) write_state_reg <= WRITE_STATE_ADDR  ;
+        WRITE_STATE_IDLE  :              write_state_reg <= WRITE_STATE_ADDR  ;
         WRITE_STATE_ADDR  : if (aw_fire) write_state_reg <= WRITE_STATE_WRITE ;
         WRITE_STATE_WRITE : if (w_fire ) write_state_reg <= WRITE_STATE_RESP  ;
         WRITE_STATE_RESP  : if (b_fire ) write_state_reg <= WRITE_STATE_IDLE  ;
@@ -153,7 +153,7 @@ module ysyx_22050710_axil_master_wrap #(
   // Read data channel signals
   assign o_rready            = r_state_read                  ;
 
-  assign o_rw_addr_ok = ar_fire | aw_fire                    ;
+  assign o_rw_addr_ok = ar_fire | w_fire                     ;
   assign o_rw_data_ok = r_fire | b_fire                      ;
   assign o_data_read  = i_rdata                              ;
 
