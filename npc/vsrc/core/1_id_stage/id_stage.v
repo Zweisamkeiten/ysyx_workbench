@@ -241,7 +241,7 @@ module ysyx_22050710_id_stage #(
   wire [DEBUG_BUS_WD-1:0     ] debug_ws_to_rf_bus_r          ;
 
   Reg #(
-    .WIDTH                    (DEBUG_BUS_WD                 ),
+    .WIDTH                    (1                            ),
     .RESET_VAL                (0                            )
   ) u_debug_commit (
     .clk                      (i_clk                        ),
