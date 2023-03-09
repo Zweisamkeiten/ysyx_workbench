@@ -269,7 +269,7 @@ module ysyx_22050710_id_stage #(
   assign o_debug_ds_to_es_bus= {o_ds_to_es_valid && i_es_allowin,  // blocking
                                 ds_inst                      ,
                                 ds_pc                        ,
-                                br_taken ? ds_dnpc : fs_dnpc ,
+                                br_taken ? fs_dnpc : ds_dnpc ,
                                 mem_ren | mem_wen            ,
                                 64'b0
   };
