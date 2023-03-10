@@ -14,13 +14,13 @@ VERILATOR = $(VERILATOR_ROOT)/bin/verilator
 endif
 VERILATOR_CFLAGS += --compiler clang --build -cc -j $(shell nproc)
 VERILATOR_CFLAGS += -Wall -Wno-DECLFILENAME
-# VERILATOR_CFLAGS += -Wno-UNUSED
+VERILATOR_CFLAGS += -Wno-UNUSED
 VERILATOR_CFLAGS += --trace
 VERILATOR_CFLAGS += -O3 -I./vsrc -CFLAGS -O3#-O0
 
 remove_quote = $(patsubst "%",%,$(1))
 
-default: $(BIN)
+default: all
 
 $(shell mkdir -p $(BUILD_DIR))
 -include $(NPC_HOME)/csrc/include/config/auto.conf
