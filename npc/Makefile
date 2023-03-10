@@ -6,15 +6,16 @@ IMG ?=
 NPC_EXEC := $(BIN) $(IMG) $(ELF) $(REF) $(IFRUNBATCH)
 
 ifeq ($(VERILATOR_ROOT),)
+VERILATOR_ROOT=/usr/share/verilator
 VERILATOR = verilator
 else
 export VERILATOR_ROOT
 VERILATOR = $(VERILATOR_ROOT)/bin/verilator
 endif
 VERILATOR_CFLAGS += --compiler clang --build -cc -j $(shell nproc)
-VERILATOR_CFLAGS += --trace
 VERILATOR_CFLAGS += -Wall -Wno-DECLFILENAME
 VERILATOR_CFLAGS += -Wno-UNUSED
+VERILATOR_CFLAGS += --trace
 VERILATOR_CFLAGS += -O3 -I./vsrc -CFLAGS -O3#-O0
 
 remove_quote = $(patsubst "%",%,$(1))
@@ -67,17 +68,20 @@ $(VALL): $(VSRCS)
 	@echo "-- VERILATE & BUILD --------"
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $^ --prefix Vtop --Mdir $(VERILATOR_OBJ_DIR)
-	$(MAKE) -j -C $(VERILATOR_OBJ_DIR) -f ../../Makefile_obj
+
+	@make -C $(VERILATOR_OBJ_DIR) -f Vtop.mk
 	# @$(CXX) -O3 -I. $(INCLUDES) -MMD -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -std=gnu++17 -c -o $(VERILATOR_OBJ_DIR)/verilated.o /usr/share/verilator/include/verilated.cpp
 	# @$(CXX) -O3 -I. $(INCLUDES) -MMD -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -std=gnu++17 -c -o $(VERILATOR_OBJ_DIR)/verilated_dpi.o /usr/share/verilator/include/verilated_dpi.cpp
 	# @$(CXX) -O3 -I. $(INCLUDES) -MMD -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -std=gnu++17 -c -o $(VERILATOR_OBJ_DIR)/verilated_vcd_c.o /usr/share/verilator/include/verilated_vcd_c.cpp
 	# @$(CXX) -O3 -I. $(INCLUDES) -MMD -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -std=gnu++17 -c -o $(VERILATOR_OBJ_DIR)/verilated_threads.o /usr/share/verilator/include/verilated_threads.cpp
 
-# VERILATOR_SRC = verilated.cpp verilated_vcd_c.cpp
-# VERILATOR_OBJ = $(addprefix $(VERILATOR_OBJ_DIR)/, $(VERILATOR_SRC:%.cpp=%.o))
+# VERILATOR_SRC = verilated.cpp verilated_dpi.cpp verilated_vcd_c.cpp verilated_threads.cpp
+#
+# Include global rules
+include $(VERILATOR_ROOT)/include/verilated.mk
 
-$(BIN): $(VALL) $(VERILATOR_OBJ) $(OBJS) # $(NVBOARD_ARCHIVE)
-	@$(LD) -o $@ $(realpath $(OBJS)) $(VERILATOR_OBJ) $(VALL) $(LDFLAGS) $(LIBS)
+$(BIN): $(VALL) $(VK_GLOBAL_OBJS) $(OBJS) # $(NVBOARD_ARCHIVE)
+	@$(LD) -o $@ $(realpath $(OBJS)) $(VK_GLOBAL_OBJS) $(VALL) $(LDFLAGS) $(LIBS)
 
 run-env: $(BIN)
 
