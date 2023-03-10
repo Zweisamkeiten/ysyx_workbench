@@ -78,7 +78,8 @@ module ysyx_22050710_id_stage #(
     .wen                      (o_ds_allowin                 )
   );
 
-  wire [FS_TO_DS_BUS_WD-PC_WD-1:0]   fs_to_ds_bus_r          ;
+  wire [FS_TO_DS_BUS_WD-PC_WD-1:0] fs_to_ds_bus_r            ;
+  wire [PC_WD-1:0       ] fs_dnpc = i_fs_to_ds_bus[PC_WD-1:0];
 
   Reg #(
     .WIDTH                    (FS_TO_DS_BUS_WD-PC_WD        ),
