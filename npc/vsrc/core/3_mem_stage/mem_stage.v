@@ -74,7 +74,7 @@ module ysyx_22050710_mem_stage #(
     .rst                      (i_rst                        ),
     .din                      (i_debug_es_to_ms_bus         ),
     .dout                     (debug_es_to_ms_bus_r         ),
-    .wen                      (i_es_to_ms_valid&&o_ms_allowin)
+    .wen                      (1                            )
   );
 
   wire                         ms_debug_valid                ;
