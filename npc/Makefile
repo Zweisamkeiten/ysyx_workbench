@@ -11,7 +11,7 @@ else
 export VERILATOR_ROOT
 VERILATOR = $(VERILATOR_ROOT)/bin/verilator
 endif
-VERILATOR_CFLAGS += --compiler clang --exe -cc -j $(shell nproc)
+VERILATOR_CFLAGS += --compiler clang --build -cc -j $(shell nproc)
 VERILATOR_CFLAGS += --trace
 VERILATOR_CFLAGS += -Wall -Wno-DECLFILENAME
 VERILATOR_CFLAGS += -Wno-UNUSED
