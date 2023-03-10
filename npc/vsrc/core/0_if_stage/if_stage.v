@@ -53,12 +53,11 @@ module ysyx_22050710_if_stage #(
   assign o_fs_to_ds_valid    = fs_valid && fs_ready_go       ;
 
   wire [INST_WD-1:0          ] fs_inst                       ;
-  wire [INST_WD+PC_WD+PC_WD:0] fs_inst_with_valid_buffer     ;
+  wire [INST_WD+PC_WD+:0     ] fs_inst_with_valid_buffer     ;
   wire [PC_WD-1:0            ] fs_pc                         ;
-  wire [PC_WD-1:0            ] fs_dnpc                       ;
   assign o_fs_to_ds_bus      = fs_inst_with_valid_buffer[INST_WD]
-                             ? fs_inst_with_valid_buffer[INST_WD+PC_WD+PC_WD-1:0]
-                             : {fs_inst, fs_pc, fs_dnpc}     ;
+                             ? fs_inst_with_valid_buffer[INST_WD+PC_WD-1:0]
+                             : {fs_inst, fs_pc}              ;
 
   Reg #(
     .WIDTH                    (1                            ),
@@ -72,12 +71,12 @@ module ysyx_22050710_if_stage #(
   );
 
   Reg #(
-    .WIDTH                    (INST_WD + PC_WD + PC_WD + 1  ),
+    .WIDTH                    (INST_WD + PC_WD + 1  ),
     .RESET_VAL                (0                            )
   ) u_save_inst (
     .clk                      (i_clk                        ),
     .rst                      (i_ds_allowin || i_rst        ),
-    .din                      ({i_inst_sram_data_ok, fs_inst, fs_pc, fs_dnpc}),
+    .din                      ({i_inst_sram_data_ok, fs_inst, fs_pc}),
     .dout                     (fs_inst_with_valid_buffer    ),
     .wen                      (i_inst_sram_data_ok&&~i_ds_allowin)
   );
@@ -93,7 +92,6 @@ module ysyx_22050710_if_stage #(
     .i_br_taken               (br_taken                     ), // br taken 发生
     .i_br_target              (br_target                    ), // 避免控制指令冲突问题
     .o_pc                     (fs_pc                        ),
-    .o_dnpc                   (fs_dnpc                      ),
     .o_inst_sram_addr         (o_inst_sram_addr             )
   );
 
