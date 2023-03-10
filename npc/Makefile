@@ -6,6 +6,7 @@ IMG ?=
 NPC_EXEC := $(BIN) $(IMG) $(ELF) $(REF) $(IFRUNBATCH)
 
 ifeq ($(VERILATOR_ROOT),)
+VERILATOR_ROOT = /usr/share/verilat
 VERILATOR = verilator
 else
 export VERILATOR_ROOT
@@ -13,7 +14,7 @@ VERILATOR = $(VERILATOR_ROOT)/bin/verilator
 endif
 VERILATOR_CFLAGS += --compiler clang --build -cc -j $(shell nproc)
 VERILATOR_CFLAGS += -Wall -Wno-DECLFILENAME
-VERILATOR_CFLAGS += -Wno-UNUSED
+# VERILATOR_CFLAGS += -Wno-UNUSED
 VERILATOR_CFLAGS += --trace
 VERILATOR_CFLAGS += -O3 -I./vsrc -CFLAGS -O3#-O0
 
@@ -54,9 +55,6 @@ include $(NPC_HOME)/scripts/config.mk
 # Include rules for build
 include $(NPC_HOME)/scripts/build.mk
 
-# Include the rules made by Verilator
--include Vtop.mk
-
 # rules for NVBoard
 # include $(NVBOARD_HOME)/scripts/nvboard.mk
 # LDFLAGS += -lSDL2 -lSDL2_image
@@ -70,8 +68,15 @@ $(VALL): $(VSRCS)
 	@echo "-- VERILATE & BUILD --------"
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $^ --prefix Vtop --Mdir $(VERILATOR_OBJ_DIR)
+	@$(CXX) -O3 -I. $(INCLUDES) -MMD -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -std=gnu++17 -c -o $(VERILATOR_OBJ_DIR)/verilated.o $(VERILATOR_ROOT)/include/verilated.cpp
+	@$(CXX) -O3 -I. $(INCLUDES) -MMD -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -std=gnu++17 -c -o $(VERILATOR_OBJ_DIR)/verilated_dpi.o $(VERILATOR_ROOT)/include/verilated_dpi.cpp
+	@$(CXX) -O3 -I. $(INCLUDES) -MMD -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -std=gnu++17 -c -o $(VERILATOR_OBJ_DIR)/verilated_vcd_c.o $(VERILATOR_ROOT)/verilated_vcd_c.cpp
+	@$(CXX) -O3 -I. $(INCLUDES) -MMD -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -std=gnu++17 -c -o $(VERILATOR_OBJ_DIR)/verilated_threads.o $(VERILATOR_ROOT)/verilated_threads.cpp
 
-$(BIN): $(VALL) $(VK_GLOBAL_OBJS) $(VM_PREFIX)__ALL.a $(VM_HIER_LIBS) $(OBJS) # $(NVBOARD_ARCHIVE)
+VERILATOR_SRC = verilated.cpp verilated_dpi.cpp verilated_vcd_c.cpp verilated_threads.cpp
+VERILATOR_OBJ = $(addprefix $(VERILATOR_OBJ_DIR)/, $(VERILATOR_SRC:%.cpp=%.o))
+
+$(BIN): $(VALL) $(VERILATOR_OBJ) $(OBJS) # $(NVBOARD_ARCHIVE)
 	@$(LD) -o $@ $(realpath $(OBJS)) $(VERILATOR_OBJ) $(VALL) $(LDFLAGS) $(LIBS)
 
 run-env: $(BIN)
