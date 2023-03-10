@@ -12,7 +12,8 @@ else
 VERILATOR = $(shell which verilator)
 endif
 VERILATOR_VERSION = $(shell verilator --version | cut -d ' ' -f 2 | cut -d. -f 1)
-VERILATOR_CFLAGS += --compiler clang --build -cc -j $(shell nproc)
+VERILATOR_CFLAGS += --compiler $(call remove_quote,$(CONFIG_CC_OPT))
+VERILATOR_CFLAGS += --build -cc -j $(shell nproc)
 VERILATOR_CFLAGS += -Wall -Wno-DECLFILENAME
 VERILATOR_CFLAGS += -Wno-UNUSED
 VERILATOR_CFLAGS += --trace
