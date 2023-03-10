@@ -87,7 +87,7 @@ module ysyx_22050710_wb_stage #(
           ws_debug_memaddr
          }                   = debug_ms_to_ws_bus_r          ;
 
-  assign o_debug_ws_to_rf_bus= {ws_valid                     ,
+  assign o_debug_ws_to_rf_bus= {ws_debug_valid               ,
                                 ws_debug_inst                ,
                                 ws_debug_pc                  ,
                                 ws_debug_dnpc                ,
