@@ -6,10 +6,9 @@ IMG ?=
 NPC_EXEC := $(BIN) $(IMG) $(ELF) $(REF) $(IFRUNBATCH)
 
 ifeq ($(VERILATOR_ROOT),)
-VERILATOR_ROOT = /usr/share/verilat
+VERILATOR_ROOT = /usr/share/verilator
 VERILATOR = verilator
 else
-export VERILATOR_ROOT
 VERILATOR = $(shell which verilator)
 endif
 VERILATOR_CFLAGS += --compiler clang --build -cc -j $(shell nproc)
