@@ -10,7 +10,7 @@ VERILATOR_ROOT = /usr/share/verilat
 VERILATOR = verilator
 else
 export VERILATOR_ROOT
-VERILATOR = $(VERILATOR_ROOT)/bin/verilator
+VERILATOR = $(shell which verilator)
 endif
 VERILATOR_CFLAGS += --compiler clang --build -cc -j $(shell nproc)
 VERILATOR_CFLAGS += -Wall -Wno-DECLFILENAME
