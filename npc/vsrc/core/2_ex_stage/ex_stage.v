@@ -169,6 +169,7 @@ module ysyx_22050710_ex_stage #(
                                 es_gpr_wen                   ,
                                 es_csr_wen                   ,
                                 es_mem_ren                   ,
+                                es_mem_wen                   ,
                                 es_mem_op                    ,
                                 es_csr_inst_sel              ,
                                 es_csrrdata                  ,

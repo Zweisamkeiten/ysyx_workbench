@@ -35,7 +35,9 @@ module ysyx_22050710_mem_stage #(
 
   wire                         ms_valid                      ;
   wire                         ms_ready_go                   ;
-  assign ms_ready_go         = ms_mem_ren ? i_data_sram_data_ok : 1; // 访存类型中读取指令 需等 data_ok
+  assign ms_ready_go         = (ms_mem_ren|ms_mem_wen)
+                             ? i_data_sram_data_ok
+                             : 1                             ; // 访存类型中读取指令 需等 data_ok
   assign o_ms_allowin        = (!ms_valid) || (ms_ready_go && i_ws_allowin);
   assign o_ms_to_ws_valid    = ms_valid && ms_ready_go       ;
 
@@ -106,6 +108,7 @@ module ysyx_22050710_mem_stage #(
   wire                         ms_gpr_wen                    ; // gpr 写使能
   wire                         ms_csr_wen                    ; // csr 写使能
   wire                         ms_mem_ren                    ; // mem 读使能
+  wire                         ms_mem_wen                    ; // mem 写使能
   wire [2:0                  ] ms_mem_op                     ; // mem 操作 op
   wire                         ms_csr_inst_sel               ; // write csrrdata to gpr
   wire [WORD_WD-1:0          ] ms_csrrdata                   ;
@@ -117,6 +120,7 @@ module ysyx_22050710_mem_stage #(
           ms_gpr_wen                                         ,
           ms_csr_wen                                         ,
           ms_mem_ren                                         ,
+          ms_mem_wen                                         ,
           ms_mem_op                                          ,
           ms_csr_inst_sel                                    ,
           ms_csrrdata                                        ,
