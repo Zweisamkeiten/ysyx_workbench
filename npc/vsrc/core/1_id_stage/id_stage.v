@@ -79,8 +79,6 @@ module ysyx_22050710_id_stage #(
   );
 
   wire [FS_TO_DS_BUS_WD-1:0]   fs_to_ds_bus_r                ;
-  wire [PC_WD-1:0            ] fs_pc                         ;
-  assign fs_pc               = i_fs_to_ds_bus[PC_WD-1:0]     ;
 
   Reg #(
     .WIDTH                    (FS_TO_DS_BUS_WD              ),
@@ -95,8 +93,10 @@ module ysyx_22050710_id_stage #(
 
   wire [INST_WD-1:0          ] ds_inst                       ;
   wire [PC_WD-1:0            ] ds_pc                         ;
+  wire [PC_WD-1:0            ] ds_dnpc                       ;
   assign {ds_inst                                            ,
-          ds_pc
+          ds_pc                                              ,
+          ds_dnpc
           }                  = fs_to_ds_bus_r                ;
 
   // 通用寄存器
@@ -267,7 +267,7 @@ module ysyx_22050710_id_stage #(
   assign o_debug_ds_to_es_bus= {o_ds_to_es_valid && i_es_allowin,  // blocking
                                 ds_inst                      ,
                                 ds_pc                        ,
-                                fs_pc                        ,
+                                ds_dnpc                      ,
                                 mem_ren | mem_wen            ,
                                 64'b0
   };
