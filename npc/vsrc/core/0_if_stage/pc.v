@@ -11,6 +11,7 @@ module ysyx_22050710_pc #(
   input                        i_br_taken                    ,
   input  [PC_WD-1:0          ] i_br_target                   ,
   output [PC_WD-1:0          ] o_pc                          ,
+  output [PC_WD-1:0          ] o_dnpc                        ,
   // inst sram interface
   output [SRAM_ADDR_WD-1:0   ] o_inst_sram_addr
 );
@@ -31,6 +32,7 @@ module ysyx_22050710_pc #(
    * inst sram 的输出是在 if stage 完成
    */
   assign o_inst_sram_addr    = dnpc[31:0]                    ;
+  assign o_dnpc              = dnpc                          ;
 
 
   // 位宽为64bits, 复位值为64'h80000000, 写使能为i_load;

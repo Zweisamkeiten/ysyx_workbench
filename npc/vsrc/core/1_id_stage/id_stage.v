@@ -78,15 +78,15 @@ module ysyx_22050710_id_stage #(
     .wen                      (o_ds_allowin                 )
   );
 
-  wire [FS_TO_DS_BUS_WD-1:0]   fs_to_ds_bus_r            ;
+  wire [FS_TO_DS_BUS_WD-PC_WD-1:0]   fs_to_ds_bus_r          ;
 
   Reg #(
-    .WIDTH                    (FS_TO_DS_BUS_WD              ),
+    .WIDTH                    (FS_TO_DS_BUS_WD-PC_WD        ),
     .RESET_VAL                (0                            )
   ) u_fs_to_ds_bus_r (
     .clk                      (i_clk                        ),
     .rst                      (i_rst                        ),
-    .din                      (i_fs_to_ds_bus               ),
+    .din                      (i_fs_to_ds_bus[FS_TO_DS_BUS_WD-1:PC_WD]),
     .dout                     (fs_to_ds_bus_r               ),
     .wen                      (i_fs_to_ds_valid&&o_ds_allowin)
   );
@@ -265,7 +265,7 @@ module ysyx_22050710_id_stage #(
   assign o_debug_ds_to_es_bus= {o_ds_to_es_valid && i_es_allowin,  // blocking
                                 ds_inst                      ,
                                 ds_pc                        ,
-                                br_taken ? fs_pc : ds_pc + 4,
+                                fs_dnpc                      ,
                                 mem_ren | mem_wen            ,
                                 64'b0
   };
