@@ -11,6 +11,7 @@ VERILATOR = verilator
 else
 VERILATOR = $(shell which verilator)
 endif
+VERILATOR_VERSION = $(shell verilator --version | cut -d ' ' -f 2 | cut -d. -f 1)
 VERILATOR_CFLAGS += --compiler clang --build -cc -j $(shell nproc)
 VERILATOR_CFLAGS += -Wall -Wno-DECLFILENAME
 VERILATOR_CFLAGS += -Wno-UNUSED
@@ -70,15 +71,22 @@ $(VALL): $(VSRCS)
 	@$(CXX) -O3 -I. $(INCLUDES) -MMD -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-const-variable -std=gnu++17 -c -o $(VERILATOR_OBJ_DIR)/verilated.o $(VERILATOR_ROOT)/include/verilated.cpp
 	@$(CXX) -O3 -I. $(INCLUDES) -MMD -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-const-variable -std=gnu++17 -c -o $(VERILATOR_OBJ_DIR)/verilated_dpi.o $(VERILATOR_ROOT)/include/verilated_dpi.cpp
 	@$(CXX) -O3 -I. $(INCLUDES) -MMD -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-const-variable -std=gnu++17 -c -o $(VERILATOR_OBJ_DIR)/verilated_vcd_c.o $(VERILATOR_ROOT)/include/verilated_vcd_c.cpp
-	@$(CXX) -O3 -I. $(INCLUDES) -MMD -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-const-variable -std=gnu++17 -c -o $(VERILATOR_OBJ_DIR)/verilated_threads.o $(VERILATOR_ROOT)/include/verilated_threads.cpp
+	ifeq "$(VERILATOR_VERSION)" "5"
+		@$(CXX) -O3 -I. $(INCLUDES) -MMD -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-const-variable -std=gnu++17 -c -o $(VERILATOR_OBJ_DIR)/verilated_threads.o $(VERILATOR_ROOT)/include/verilated_threads.cpp
+	endif
 
 VERILATOR_SRC = verilated.cpp verilated_dpi.cpp verilated_vcd_c.cpp verilated_threads.cpp
+ifeq ($(VERILATOR_VERSION), "5")
+	VERILATOR_SRC += verilated_threads.cpp
+else
+	
+endif
 VERILATOR_OBJ = $(addprefix $(VERILATOR_OBJ_DIR)/, $(VERILATOR_SRC:%.cpp=%.o))
 
 $(BIN): $(VALL) $(VERILATOR_OBJ) $(OBJS) # $(NVBOARD_ARCHIVE)
 	@$(LD) -o $@ $(realpath $(OBJS)) $(VERILATOR_OBJ) $(VALL) $(LDFLAGS) $(LIBS)
 
-run-env: $(BIN)
+run-env: $(BIN) $(VSRCS) $(SRCS)
 
 sim: run-env
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
