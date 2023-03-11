@@ -169,7 +169,7 @@ module ysyx_22050710_id_stage #(
   Reg #(
     .WIDTH                    (BR_BUS_WD + 1                ),
     .RESET_VAL                (0                            )
-  ) save_br_bus_r (
+  ) u_save_br_bus_r (
     .clk                      (i_clk                        ),
     .rst                      (~o_ds_allowin || i_rst       ),
     .din                      ({i_fs_to_ds_valid             ,
@@ -178,7 +178,7 @@ module ysyx_22050710_id_stage #(
                                 br_target                  }),
     .dout                     (br_bus_with_valid            ),
     .wen                      (i_fs_to_ds_valid&&~o_ds_allowin)
-  ):
+  );
 
   // bypass
   wire [GPR_ADDR_WD-1:0      ] es_to_ds_gpr_rd               ;
