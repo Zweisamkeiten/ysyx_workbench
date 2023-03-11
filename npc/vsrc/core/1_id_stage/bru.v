@@ -32,7 +32,7 @@ module ysyx_22050710_bru #(
 
   assign overflow            = ~(i_rs1data[WORD_WD-1] ^ i_rs2data[WORD_WD-1]) ^ ~(i_rs1data[WORD_WD-2] ^ i_rs2data[WORD_WD-2]);
   wire [WORD_WD-1:0] test    = ~i_rs2data + 1;
-  assign {cout, sub_result}  = i_rs1data + (~i_rs2data + 1);
+  assign {cout, sub_result}  = {1'b0, i_rs1data} + ({1'b0, ~i_rs2data} + 1);
 
   assign signed_Less         = overflow == 0
                              ? (sub_result[WORD_WD-1] == 1 ? 1'b1 : 1'b0)
