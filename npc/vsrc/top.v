@@ -24,62 +24,35 @@ module ysyx_22050710_top #(
 );
 
   parameter STRB_WIDTH      = (SRAM_DATA_WD/8)               ;
-  wire                        ifu_awvalid                    ;
-  wire                        ifu_awready                    ;
-  wire [SRAM_ADDR_WD-1:0    ] ifu_awaddr                     ;
-  wire [2:0                 ] ifu_awprot                     ; // define the access permission for write accesses.
-
-  // Write data channel
-  wire                        ifu_wvalid                     ;
-  wire                        ifu_wready                     ;
-  wire [SRAM_DATA_WD-1:0    ] ifu_wdata                      ;
-  wire [STRB_WIDTH-1:0      ] ifu_wstrb                      ;
-
-  // Write response channel
-  wire                        ifu_bvalid                     ;
-  wire                        ifu_bready                     ;
-  wire [1:0                 ] ifu_bresp                      ;
-
-  // Read address channel
-  wire                        ifu_arvalid                    ;
-  wire                        ifu_arready                    ;
-  wire [SRAM_ADDR_WD-1:0    ] ifu_araddr                     ;
-  wire [2:0                 ] ifu_arprot                     ;
-
-  // Read data channel
-  wire                        ifu_rvalid                     ;
-  wire                        ifu_rready                     ;
-  wire [SRAM_DATA_WD-1:0    ] ifu_rdata                      ;
-  wire [1:0                 ] ifu_rresp                      ;
 
   // Wirte address channel
-  wire                        lsu_awvalid                    ;
-  wire                        lsu_awready                    ;
-  wire [SRAM_ADDR_WD-1:0    ] lsu_awaddr                     ;
-  wire [2:0                 ] lsu_awprot                     ; // define the access permission for write accesses.
+  wire                        cpu_awvalid                    ;
+  wire                        cpu_awready                    ;
+  wire [SRAM_ADDR_WD-1:0    ] cpu_awaddr                     ;
+  wire [2:0                 ] cpu_awprot                     ; // define the access permission for write accesses.
 
   // Write data channel
-  wire                        lsu_wvalid                     ;
-  wire                        lsu_wready                     ;
-  wire [SRAM_DATA_WD-1:0    ] lsu_wdata                      ;
-  wire [STRB_WIDTH-1:0      ] lsu_wstrb                      ;
+  wire                        cpu_wvalid                     ;
+  wire                        cpu_wready                     ;
+  wire [SRAM_DATA_WD-1:0    ] cpu_wdata                      ;
+  wire [STRB_WIDTH-1:0      ] cpu_wstrb                      ;
 
   // Write response channel
-  wire                        lsu_bvalid                     ;
-  wire                        lsu_bready                     ;
-  wire [1:0                 ] lsu_bresp                      ;
+  wire                        cpu_bvalid                     ;
+  wire                        cpu_bready                     ;
+  wire [1:0                 ] cpu_bresp                      ;
 
   // Read address channel
-  wire                        lsu_arvalid                    ;
-  wire                        lsu_arready                    ;
-  wire [SRAM_ADDR_WD-1:0    ] lsu_araddr                     ;
-  wire [2:0                 ] lsu_arprot                     ;
+  wire                        cpu_arvalid                    ;
+  wire                        cpu_arready                    ;
+  wire [SRAM_ADDR_WD-1:0    ] cpu_araddr                     ;
+  wire [2:0                 ] cpu_arprot                     ;
 
   // Read data channel
-  wire                        lsu_rvalid                     ;
-  wire                        lsu_rready                     ;
-  wire [SRAM_DATA_WD-1:0    ] lsu_rdata                      ;
-  wire [1:0                 ] lsu_rresp                      ;
+  wire                        cpu_rvalid                     ;
+  wire                        cpu_rready                     ;
+  wire [SRAM_DATA_WD-1:0    ] cpu_rdata                      ;
+  wire [1:0                 ] cpu_rresp                      ;
 
   ysyx_22050710_cpu_top #(
     .WORD_WD                 (WORD_WD                       ),
