@@ -257,7 +257,7 @@ static void statistic() {
 }
 
 void assert_fail_msg() {
-#ifdef CONFIG_IRINGTRACE
+#ifdef CONFIG_IRINGTRACE_COND
   if (IRINGTRACE_COND) print_iringbuf();
 #endif
   isa_reg_display();
@@ -286,6 +286,7 @@ void cpu_exec(uint64_t n) {
     case NEMU_RUNNING: nemu_state.state = NEMU_STOP; break;
 
     case NEMU_END: case NEMU_ABORT:
+      assert_fail_msg();
       Log("nemu: %s at pc = " FMT_WORD,
           (nemu_state.state == NEMU_ABORT ? ANSI_FMT("ABORT", ANSI_FG_RED) :
            (nemu_state.halt_ret == 0 ? ANSI_FMT("HIT GOOD TRAP", ANSI_FG_GREEN) :
