@@ -175,7 +175,7 @@ module ysyx_22050710_ex_stage #(
 
   assign o_es_to_ds_load_sel   = es_valid & es_load_inst_sel ; // for load stall
 
-  assign o_es_to_ds_bypass_bus = {BYPASS_BUS_WD{es_valid}} &
+  assign o_es_to_ds_bypass_bus = {BYPASS_BUS_WD{es_valid&~es_mem_wen}} &
                                   {({GPR_ADDR_WD{es_gpr_wen}} & es_rd),
                                    ({GPR_WD{es_gpr_wen}} & es_alu_result),
                                    ({CSR_ADDR_WD{es_csr_wen}} & es_csr),
