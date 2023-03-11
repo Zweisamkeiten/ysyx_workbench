@@ -15,7 +15,7 @@ module ysyx_22050710_axil_master_wrap #(
 	input                        i_rw_ren                      ,  //IF&MEM输入信号
 	input                        i_rw_wen                      ,  //IF&MEM输入信号
   input  [ADDR_WIDTH-1:0]      i_rw_addr                     ,  //IF&MEM输入信号
-  output reg [DATA_WIDTH-1:0]  o_data_read                   ,  //IF&MEM输入信号
+  output [DATA_WIDTH-1:0]      o_data_read                   ,  //IF&MEM输入信号
   input  [DATA_WIDTH-1:0]      i_rw_w_data                   ,  //IF&MEM输入信号
   input  [STRB_WIDTH-1:0]      i_rw_size                     ,  //IF&MEM输入信号
 

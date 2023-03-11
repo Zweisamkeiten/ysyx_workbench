@@ -106,7 +106,7 @@ module ysyx_22050710_id_stage #(
     .rst                      (o_ds_allowin || i_rst        ),
     .din                      ({i_fs_to_ds_valid, br_taken ? br_target : ds_pc + 4}),
     .dout                     (dnpc_buffer_with_valid       ),
-    .wen                      (i_fs_to_ds_valid&&!o_ds_allowin)
+    .wen                      (i_fs_to_ds_valid&&~o_ds_allowin)
   );
   wire [PC_WD-1:0            ] dnpc                          ;
   assign dnpc                = dnpc_buffer_with_valid[PC_WD]
