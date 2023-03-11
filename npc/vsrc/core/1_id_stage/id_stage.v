@@ -40,6 +40,7 @@ module ysyx_22050710_id_stage #(
   input  [BYPASS_BUS_WD-1:0  ] i_ms_to_ds_bypass_bus         ,
   input  [BYPASS_BUS_WD-1:0  ] i_ws_to_ds_bypass_bus         ,
   // debug
+  input                        i_debug_ws_to_rf_valid        ,
   input  [DEBUG_BUS_WD-1:0   ] i_debug_ws_to_rf_bus          ,
   output [DEBUG_BUS_WD-1:0   ] o_debug_ds_to_es_bus
 );
@@ -257,10 +258,10 @@ module ysyx_22050710_id_stage #(
     .RESET_VAL                (0                            )
   ) u_debug_ws_to_rf_bus_r (
     .clk                      (i_clk                        ),
-    .rst                      (i_rst                        ),
+    .rst                      (~i_debug_ws_to_rf_valid || i_rst),
     .din                      (i_debug_ws_to_rf_bus         ),
     .dout                     (debug_ws_to_rf_bus_r         ),
-    .wen                      (1'b1                         )
+    .wen                      (i_debug_ws_to_rf_valid       )
   );
 
   wire                         rf_debug_valid                ;
@@ -270,16 +271,25 @@ module ysyx_22050710_id_stage #(
   wire                         rf_debug_memen                ;
   wire [WORD_WD-1:0          ] rf_debug_memaddr              ;
 
-  assign {rf_debug_valid                                     ,
-          rf_debug_inst                                      ,
+  Reg #(
+    .WIDTH                    (1                            ),
+    .RESET_VAL                (0                            )
+  ) u_debug_valid_commit (
+    .clk                      (i_clk                        ),
+    .rst                      (~i_debug_ws_to_rf_valid || i_rst),
+    .din                      (i_debug_ws_to_rf_valid       ),
+    .dout                     (rf_debug_valid               ),
+    .wen                      (i_debug_ws_to_rf_valid       )
+  );
+
+  assign {rf_debug_inst                                      ,
           rf_debug_pc                                        ,
           rf_debug_dnpc                                      ,
           rf_debug_memen                                     ,
           rf_debug_memaddr
          }                   = debug_ws_to_rf_bus_r          ;
 
-  assign o_debug_ds_to_es_bus= {o_ds_to_es_valid && i_es_allowin,  // blocking
-                                ds_inst                      ,
+  assign o_debug_ds_to_es_bus= {ds_inst                      ,
                                 ds_pc                        ,
                                 dnpc                         ,
                                 mem_ren | mem_wen            ,

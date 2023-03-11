@@ -70,6 +70,7 @@ module ysyx_22050710_core #(
   wire [DEBUG_BUS_WD-1:0     ] debug_es_to_ms_bus            ;
   wire [DEBUG_BUS_WD-1:0     ] debug_ms_to_ws_bus            ;
   wire [DEBUG_BUS_WD-1:0     ] debug_ws_to_rf_bus            ;
+  wire                         debug_ws_to_rf_valid          ;
 
   ysyx_22050710_if_stage #(
     .INST_WD                  (INST_WD                      ),
@@ -136,6 +137,7 @@ module ysyx_22050710_core #(
     .i_ms_to_ds_bypass_bus    (ms_to_ds_bypass_bus          ),
     .i_ws_to_ds_bypass_bus    (ws_to_ds_bypass_bus          ),
     // debug
+    .i_debug_ws_to_rf_valid   (debug_ws_to_rf_valid         ),
     .i_debug_ws_to_rf_bus     (debug_ws_to_rf_bus           ),
     .o_debug_ds_to_es_bus     (debug_ds_to_es_bus           )
   );
@@ -244,6 +246,7 @@ module ysyx_22050710_core #(
     .o_ws_to_ds_bypass_bus    (ws_to_ds_bypass_bus          ),
     // debug
     .i_debug_ms_to_ws_bus     (debug_ms_to_ws_bus           ),
+    .o_debug_ws_to_rf_valid   (debug_ws_to_rf_valid         ),
     .o_debug_ws_to_rf_bus     (debug_ws_to_rf_bus           )
   );
 
