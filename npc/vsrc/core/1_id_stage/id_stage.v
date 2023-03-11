@@ -171,7 +171,7 @@ module ysyx_22050710_id_stage #(
     .RESET_VAL                (0                            )
   ) u_save_br_bus_r (
     .clk                      (i_clk                        ),
-    .rst                      (o_ds_allowin || i_rst        ),
+    .rst                      (~o_ds_allowin || i_rst       ),
     .din                      ({~i_fs_to_ds_valid            ,
                                 br_stall                     ,
                                 br_taken                     ,
