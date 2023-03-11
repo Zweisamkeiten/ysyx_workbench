@@ -257,7 +257,7 @@ static void statistic() {
 }
 
 void assert_fail_msg() {
-#ifdef CONFIG_IRINGTRACE_COND
+#ifdef CONFIG_IRINGTRACE
   if (IRINGTRACE_COND) print_iringbuf();
 #endif
   isa_reg_display();
