@@ -163,12 +163,12 @@ void disassemble_inst_to_buf(char *logbuf, size_t bufsize, uint8_t * inst_val, v
 static int iringbuf_index = 0;
 static char *iringbuf[16] = {NULL};
 static MUXDEF(CONFIG_ISA_x86, uint64_t, uint32_t) last_inst;
-static vaddr_t *snpc;
+static vaddr_t snpc;
 
 void print_iringbuf() {
   Log(ANSI_FMT("INSTRUCTIONS RING STRACE:\n", ANSI_FG_RED));
   char logbuf[128];
-  disassemble_inst_to_buf(logbuf, 128, (uint8_t *)&last_inst, cpu.pc, *snpc);
+  disassemble_inst_to_buf(logbuf, 128, (uint8_t *)&last_inst, cpu.pc, snpc);
   int arrow_len = strlen(" --> ");
   iringbuf[iringbuf_index] = realloc(iringbuf[iringbuf_index], arrow_len + strlen(logbuf) + 1);
   char *p = iringbuf[iringbuf_index];
@@ -227,7 +227,7 @@ static void exec_once(Decode *s, vaddr_t pc) {
   s->snpc = pc;
 #ifdef CONFIG_IRINGTRACE
   last_inst = s->isa.inst.val;
-  snpc = &s->snpc;
+  snpc = s->snpc;
 #endif
   isa_exec_once(s);
   cpu.pc = s->dnpc;
