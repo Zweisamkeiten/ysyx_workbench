@@ -24,15 +24,15 @@ module ysyx_22050710_bru #(
   wire [WORD_WD-1:0          ] sub_result                    ;
   wire                         cout                          ;
   wire                         overflow                      ;
+  wire [WORD_WD-1:0]           t_add_Cin
   wire                         zero                          ;
   wire                         less                          ;
   wire                         signed_Less, unsigned_Less    ;
 
   wire                         PCAsrc, PCBsrc                ;
 
-  wire [WORD_WD-1:0] t_add_Cin = ({WORD_WD{1'b1}}^i_rs2data) + 1;
+  assign t_add_Cin           = ({WORD_WD{1'b1}}^i_rs2data) + 1;
   assign overflow            = (i_rs1data[WORD_WD-1] == t_add_Cin[WORD_WD-1]) && (i_rs1data[WORD_WD-1] != sub_result[WORD_WD-1]);
-  wire [WORD_WD-1:0] test    = ~i_rs2data + 1;
   assign {cout, sub_result}  = {1'b0, i_rs1data} + t_add_Cin;
 
   assign signed_Less         = overflow == 0
