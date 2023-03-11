@@ -56,7 +56,7 @@ module ysyx_22050710_if_stage #(
   wire [INST_WD+PC_WD:0      ] fs_inst_with_valid_buffer     ;
   wire [PC_WD-1:0            ] fs_pc                         ;
   assign o_fs_to_ds_bus      = fs_inst_with_valid_buffer[INST_WD]
-                             ? fs_inst_with_valid_buffer[INST_WD+PC_WD-1:0]
+                             ? {fs_inst_with_valid_buffer[INST_WD+PC_WD-1:PC_WD], fs_pc}
                              : {fs_inst, fs_pc}              ;
 
   Reg #(
