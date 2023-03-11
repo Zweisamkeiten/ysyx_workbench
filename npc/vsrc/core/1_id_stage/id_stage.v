@@ -98,21 +98,10 @@ module ysyx_22050710_id_stage #(
           ds_pc
           }                  = fs_to_ds_bus_r                ;
 
-  wire [PC_WD:0              ] dnpc_buffer_with_valid        ;
-  Reg #(
-    .WIDTH                    (PC_WD + 1                    ),
-    .RESET_VAL                (0                            )
-  ) u_dnpc_r (
-    .clk                      (i_clk                        ),
-    .rst                      (o_ds_allowin || i_rst        ),
-    .din                      ({i_fs_to_ds_valid, br_taken ? br_target : ds_pc + 4}),
-    .dout                     (dnpc_buffer_with_valid       ),
-    .wen                      (i_fs_to_ds_valid&&~o_ds_allowin)
-  );
   wire [PC_WD-1:0            ] dnpc                          ;
-  assign dnpc                = dnpc_buffer_with_valid[PC_WD]
-                             ? dnpc_buffer_with_valid[PC_WD-1:0]
-                             : (br_taken ? br_target : ds_pc + 4);
+  assign dnpc                = br_taken
+                             ? br_target
+                             : ds_pc + 4                     ;
 
   // 通用寄存器
   wire [GPR_ADDR_WD-1:0      ] rs1, rs2                      ;
