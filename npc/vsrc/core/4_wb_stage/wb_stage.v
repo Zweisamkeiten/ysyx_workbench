@@ -123,6 +123,8 @@ module ysyx_22050710_wb_stage #(
     .CSR_WD                   (CSR_WD                       ),
     .WS_TO_RF_BUS_WD          (WS_TO_RF_BUS_WD              )
   ) u_wbu (
+    // valid
+    .i_ws_valid               (ws_valid                     ),
     // gpr
     .i_gpr_wen                (ws_gpr_wen                   ),
     .i_gpr_waddr              (ws_rd                        ),
