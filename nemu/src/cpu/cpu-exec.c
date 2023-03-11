@@ -260,6 +260,7 @@ void assert_fail_msg() {
 #ifdef CONFIG_IRINGTRACE
   if (IRINGTRACE_COND) print_iringbuf();
 #endif
+  print_iringbuf();
   isa_reg_display();
   statistic();
 }
