@@ -24,7 +24,7 @@ module ysyx_22050710_bru #(
   wire [WORD_WD-1:0          ] sub_result                    ;
   wire                         cout                          ;
   wire                         overflow                      ;
-  wire [WORD_WD-1:0]           t_add_Cin
+  wire [WORD_WD-1:0]           t_add_Cin                     ;
   wire                         zero                          ;
   wire                         less                          ;
   wire                         signed_Less, unsigned_Less    ;
