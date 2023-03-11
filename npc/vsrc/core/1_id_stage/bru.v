@@ -31,7 +31,7 @@ module ysyx_22050710_bru #(
   wire                         PCAsrc, PCBsrc                ;
 
   wire [WORD_WD-1:0] t_add_Cin = ({WORD_WD{1'b1}}^i_rs2data) + 1;
-  assign overflow            = (i_rs1data[WORD_WD-1] == t_no_Cin[WORD_WD-1]) && (i_rs1data[WORD_WD-1] != sub_result[WORD_WD-1]);
+  assign overflow            = (i_rs1data[WORD_WD-1] == t_add_Cin[WORD_WD-1]) && (i_rs1data[WORD_WD-1] != sub_result[WORD_WD-1]);
   wire [WORD_WD-1:0] test    = ~i_rs2data + 1;
   assign {cout, sub_result}  = {1'b0, i_rs1data} + t_add_Cin;
 
