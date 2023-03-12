@@ -249,8 +249,11 @@ void cpu_exec(uint64_t n) {
     npc_state.state = NPC_STOP;
     break;
 
-  case NPC_END:
   case NPC_ABORT:
+#ifdef CONFIG_IRINGTRACE_COND
+    if (IRINGTRACE_COND) print_iringbuf();
+#endif
+  case NPC_END:
     Log("npc: %s at pc = " FMT_WORD,
         (npc_state.state == NPC_ABORT
              ? ANSI_FMT("ABORT", ANSI_FG_RED)
