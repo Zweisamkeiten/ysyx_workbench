@@ -198,9 +198,6 @@ void exec_once() {
   // cpu.inst = paddr_read(last_pc, 4);
   disassemble_inst_to_buf(itrace_logbuf, 128, (uint8_t *)&(cpu.inst), last_pc, last_pc + 4);
 #endif
-#ifdef CONFIG_IRINGTRACE
-  last_inst = cpu.inst;
-#endif
   trace_and_difftest(cpu.pc);
 }
 
