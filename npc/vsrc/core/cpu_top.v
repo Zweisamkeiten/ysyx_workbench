@@ -244,8 +244,8 @@ module ysyx_22050710_cpu_top #(
   );
 
   ysyx_22050710_axil_arbiter_2x1 u_axil_arbiter (
-    .i_clk                    (i_aclk                       ),
-    .i_rst                    (~i_arsetn                    ),
+    .i_aclk                   (i_aclk                       ),
+    .i_arsetn                 (i_arsetn                     ),
 
     // -------------------------------------------------------
     // A

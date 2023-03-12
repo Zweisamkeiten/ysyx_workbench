@@ -131,8 +131,8 @@ module ysyx_22050710_axil_arbiter_2x1 #(
   assign o_b_bresp   = i_bresp  &  b_sel                     ;
 
   assign o_arvalid   = ar_sel ? i_a_arvalid : i_b_arvalid    ;
-  assign o_a_arready = i_arredy & ~ar_sel                    ;
-  assign o_b_arready = i_arredy &  ar_sel                    ;
+  assign o_a_arready = i_arready& ~ar_sel                    ;
+  assign o_b_arready = i_arready&  ar_sel                    ;
   assign o_araddr    = ar_sel ? i_a_araddr  : i_b_araddr     ;
   assign o_arprot    = ar_sel ? i_a_arprot  : i_b_arprot     ;
 
