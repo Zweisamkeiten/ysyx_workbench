@@ -124,8 +124,8 @@ module ysyx_22050710_axil_arbiter_2x1 #(
   assign o_wvalid    = w_sel  ? i_b_wvalid  : i_a_wvalid     ;
   assign o_a_wready  = i_wready & ~w_sel                     ;
   assign o_b_wready  = i_wready &  w_sel                     ;
-  assign o_wdata     = w_sel  ? i_b_wdata   : i_a_wdata      ;
-  assign o_wstrb     = w_sel  ? i_b_wstrb   : i_a_wstrb      ;
+  assign o_wdata     = w_sel | aw_sel ? i_b_wdata   : i_a_wdata      ;
+  assign o_wstrb     = w_sel | aw_sel ? i_b_wstrb   : i_a_wstrb      ;
 
   assign o_a_bvalid  = i_bvalid & ~b_sel                     ;
   assign o_b_bvalid  = i_bvalid &  b_sel                     ;
