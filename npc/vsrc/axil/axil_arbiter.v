@@ -8,6 +8,9 @@ module ysyx_22050710_axil_arbiter_2x1 #(
   // Width of wstrb (width of data bus in words)
   parameter STRB_WIDTH       = (DATA_WIDTH/8)
 ) (
+  input                        i_aclk                        ,
+  input                        i_arsetn                      ,  // 低电平复位
+
   // ---------------------------------------------------------
   // A
   // Wirte address channel
