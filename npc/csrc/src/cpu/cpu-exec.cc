@@ -144,7 +144,7 @@ static char *iringbuf[16] = {NULL};
 
 void print_iringbuf() {
   printf(ANSI_FMT("INSTRUCTIONS RING STRACE:\n", ANSI_FG_RED));
-  
+
   iringbuf_index = iringbuf_index + 16 - 1;
   iringbuf_index %= 16;
   memmove(iringbuf[iringbuf_index], " --> ", 4);
