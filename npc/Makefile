@@ -49,7 +49,7 @@ CFLAGS_TRACE += -DITRACE_COND=$(if $(CONFIG_ITRACE_COND),$(call remove_quote,$(C
 CFLAGS_TRACE += -DIRINGTRACE_COND=$(if $(CONFIG_IRINGTRACE_COND),$(call remove_quote,$(CONFIG_IRINGTRACE_COND)),true)
 CFLAGS_TRACE += -DFTRACE_COND=$(if $(CONFIG_FTRACE_COND),$(call remove_quote,$(CONFIG_FTRACE_COND)),true)
 CFLAGS  += $(CFLAGS_BUILD) $(CFLAGS_TRACE) -march=native
-LDFLAGS += $(CFLAGS_BUILD) -latomic -flto -ldl
+LDFLAGS += $(CFLAGS_BUILD) -latomic -flto -ldl -lpthread
 
 # Include rules for menuconfig
 include $(NPC_HOME)/scripts/config.mk
