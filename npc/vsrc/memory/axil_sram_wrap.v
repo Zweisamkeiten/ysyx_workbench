@@ -115,10 +115,22 @@ module ysyx_22050710_axil_sram_wrap #(
     end
   end
 
+  wire [ADDR_WIDTH-1:0] awaddr;
+  Reg #(
+    .WIDTH                    (ADDR_WIDTH                   ),
+    .RESET_VAL                (0                            )
+  ) u_aw_addr_r (
+    .clk                      (i_aclk                       ),
+    .rst                      (!i_arsetn                    ),
+    .din                      (i_awaddr                     ),
+    .dout                     (awaddr                       ),
+    .wen                      (i_awvalid                    )
+  );
+
   // write port
   always @(posedge i_aclk) begin
-    if (aw_fire) begin
-      npc_pmem_write({32'b0, i_awaddr}, i_wdata, i_wstrb);
+    if (w_state_write) begin
+      npc_pmem_write({32'b0, awaddr}, i_wdata, i_wstrb);
     end
   end
 
