@@ -130,8 +130,8 @@ module ysyx_22050710_axil_arbiter_2x1 #(
   assign o_a_bvalid  = i_bvalid & ~b_sel                     ;
   assign o_b_bvalid  = i_bvalid &  b_sel                     ;
   assign o_bready    = b_sel  ? i_a_bready  : i_b_bready     ;
-  assign o_a_bresp   = i_bresp  & ~b_sel                     ;
-  assign o_b_bresp   = i_bresp  &  b_sel                     ;
+  assign o_a_bresp   = i_bresp  & {2{~b_sel}}                ;
+  assign o_b_bresp   = i_bresp  & {2{ b_sel}}                ;
 
   assign o_arvalid   = ar_sel ? i_a_arvalid : i_b_arvalid    ;
   assign o_a_arready = i_arready& ~ar_sel                    ;
@@ -142,9 +142,9 @@ module ysyx_22050710_axil_arbiter_2x1 #(
   assign o_a_rvalid  = i_rvalid & ~r_sel                     ;
   assign o_b_rvalid  = i_rvalid &  r_sel                     ;
   assign o_rready    = r_sel ? i_a_rready   : i_b_rready     ;
-  assign o_a_rdata   = i_rdata  & ~r_sel                     ;
-  assign o_b_rdata   = i_rdata  &  r_sel                     ;
-  assign o_a_rresp   = i_rresp  & ~r_sel                     ;
-  assign o_b_rresp   = i_rresp  &  r_sel                     ;
+  assign o_a_rdata   = i_rdata  & {DATA_WIDTH{~r_sel}}       ;
+  assign o_b_rdata   = i_rdata  & {DATA_WIDTH{ r_sel}}       ;
+  assign o_a_rresp   = i_rresp  & {2{~r_sel}}                ;
+  assign o_b_rresp   = i_rresp  & {2{ r_sel}}                ;
 
 endmodule
