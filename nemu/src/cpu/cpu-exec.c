@@ -167,16 +167,16 @@ static vaddr_t snpc;
 
 void print_iringbuf() {
   Log(ANSI_FMT("INSTRUCTIONS RING STRACE:\n", ANSI_FG_RED));
-  char logbuf[128];
-  disassemble_inst_to_buf(logbuf, 128, (uint8_t *)&last_inst, cpu.pc, snpc);
-  int arrow_len = strlen(" --> ");
-  iringbuf[iringbuf_index] = realloc(iringbuf[iringbuf_index], arrow_len + strlen(logbuf) + 1);
-  char *p = iringbuf[iringbuf_index];
-  memset(p, ' ', arrow_len);
-  p += arrow_len;
-  strcpy(p, logbuf);
+  // char logbuf[128];
+  // disassemble_inst_to_buf(logbuf, 128, (uint8_t *)&last_inst, cpu.pc, snpc);
+  // int arrow_len = strlen(" --> ");
+  // iringbuf[iringbuf_index] = realloc(iringbuf[iringbuf_index], arrow_len + strlen(logbuf) + 1);
+  // char *p = iringbuf[iringbuf_index];
+  // memset(p, ' ', arrow_len);
+  // p += arrow_len;
+  // strcpy(p, logbuf);
 
-  memmove(iringbuf[iringbuf_index], " --> ", 4);
+  // memmove(iringbuf[iringbuf_index], " --> ", 4);
   for (int i = 0; iringbuf[i] != NULL && i < 16; i++) {
     if (i == iringbuf_index) {
       Log(ANSI_FMT("%s", ANSI_FG_RED), iringbuf[i]);
