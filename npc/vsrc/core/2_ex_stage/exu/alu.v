@@ -23,7 +23,7 @@ module ysyx_22050710_alu #(
   wire                         overflow                      ;
   wire [WORD_WD-1:0]           t_add_Cin                     ;
   wire [WORD_WD-1:0          ] sub_result                    ;
-  assign adder_result        = i_src_a + i_src_b             ;
+  assign adder_result        = i_src_a + i_src_b  + 1           ;
   assign t_add_Cin           = ({WORD_WD{1'b1}}^i_src_b) + 1 ;
   assign overflow            = (i_src_a[WORD_WD-1] == t_add_Cin[WORD_WD-1]) && (i_src_a[WORD_WD-1] != sub_result[WORD_WD-1]);
   assign {cout, sub_result}  = {1'b0, i_src_a} + t_add_Cin   ;
