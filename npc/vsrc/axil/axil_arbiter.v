@@ -16,7 +16,7 @@ module ysyx_22050710_axil_arbiter_2x1 #(
   // Wirte address channel
   input                        i_a_awvalid                   ,
   output                       o_a_awready                   ,
-  input  [DATA_WIDTH-1:0     ] i_a_awaddr                    ,
+  input  [ADDR_WIDTH-1:0     ] i_a_awaddr                    ,
   input  [2:0                ] i_a_awprot                    ,
 
   // Write data channel
@@ -47,7 +47,7 @@ module ysyx_22050710_axil_arbiter_2x1 #(
   // Wirte address channel
   input                        i_b_awvalid                   ,
   output                       o_b_awready                   ,
-  input  [DATA_WIDTH-1:0     ] i_b_awaddr                    ,
+  input  [ADDR_WIDTH-1:0     ] i_b_awaddr                    ,
   input  [2:0                ] i_b_awprot                    ,
 
   // Write data channel
