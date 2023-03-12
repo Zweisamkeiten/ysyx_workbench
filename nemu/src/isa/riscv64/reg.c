@@ -54,6 +54,7 @@ void isa_reg_display() {
   for (int i = 0; i < NR_CSREGS; i++) {
     printf(ANSI_FMT("%-7s:", ANSI_FG_BLUE) ANSI_FMT(FMT_WORD "\n", ANSI_FG_GREEN), csr_table[i].name, csr(csr_table[i].addr));
   }
+  printf(ANSI_FMT("%-7s:", ANSI_FG_BLUE) ANSI_FMT(FMT_WORD "\n", ANSI_FG_GREEN), "pc", cpu.pc);
 }
 
 word_t isa_reg_str2val(const char *s, bool *success) {
