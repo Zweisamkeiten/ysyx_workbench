@@ -115,33 +115,33 @@ module ysyx_22050710_axil_arbiter_2x1 #(
   assign ar_sel    = ~i_a_arvalid & i_b_arvalid ? 1'b1 : 1'b0; // 优先 a
   assign r_sel     = ~i_a_rready  & i_b_rready  ? 1'b1 : 1'b0; // 优先 a
 
-  assign o_awvalid   = aw_sel ? i_a_awvalid : i_b_awvalid    ;
+  assign o_awvalid   = aw_sel ? i_b_awvalid : i_a_awvalid    ;
   assign o_a_awready = i_awready & ~aw_sel                   ;
   assign o_b_awready = i_awready &  aw_sel                   ;
-  assign o_awaddr    = aw_sel ? i_a_awaddr  : i_b_awaddr     ;
-  assign o_awprot    = aw_sel ? i_a_awprot  : i_b_awprot     ;
+  assign o_awaddr    = aw_sel ? i_b_awaddr  : i_a_awaddr     ;
+  assign o_awprot    = aw_sel ? i_b_awprot  : i_a_awprot     ;
 
-  assign o_wvalid    = w_sel  ? i_a_wvalid  : i_b_wvalid     ;
+  assign o_wvalid    = w_sel  ? i_b_wvalid  : i_a_wvalid     ;
   assign o_a_wready  = i_wready & ~w_sel                     ;
   assign o_b_wready  = i_wready &  w_sel                     ;
-  assign o_wdata     = w_sel  ? i_a_wdata   : i_b_wdata      ;
-  assign o_wstrb     = w_sel  ? i_a_wstrb   : i_b_wstrb      ;
+  assign o_wdata     = w_sel  ? i_b_wdata   : i_a_wdata      ;
+  assign o_wstrb     = w_sel  ? i_b_wstrb   : i_a_wstrb      ;
 
   assign o_a_bvalid  = i_bvalid & ~b_sel                     ;
   assign o_b_bvalid  = i_bvalid &  b_sel                     ;
-  assign o_bready    = b_sel  ? i_a_bready  : i_b_bready     ;
+  assign o_bready    = b_sel  ? i_b_bready  : i_a_bready     ;
   assign o_a_bresp   = i_bresp  & {2{~b_sel}}                ;
   assign o_b_bresp   = i_bresp  & {2{ b_sel}}                ;
 
   assign o_arvalid   = ar_sel ? i_a_arvalid : i_b_arvalid    ;
   assign o_a_arready = i_arready& ~ar_sel                    ;
   assign o_b_arready = i_arready&  ar_sel                    ;
-  assign o_araddr    = ar_sel ? i_a_araddr  : i_b_araddr     ;
-  assign o_arprot    = ar_sel ? i_a_arprot  : i_b_arprot     ;
+  assign o_araddr    = ar_sel ? i_b_araddr  : i_a_araddr     ;
+  assign o_arprot    = ar_sel ? i_b_arprot  : i_a_arprot     ;
 
   assign o_a_rvalid  = i_rvalid & ~r_sel                     ;
   assign o_b_rvalid  = i_rvalid &  r_sel                     ;
-  assign o_rready    = r_sel ? i_a_rready   : i_b_rready     ;
+  assign o_rready    = r_sel ? i_b_rready   : i_a_rready     ;
   assign o_a_rdata   = i_rdata  & {DATA_WIDTH{~r_sel}}       ;
   assign o_b_rdata   = i_rdata  & {DATA_WIDTH{ r_sel}}       ;
   assign o_a_rresp   = i_rresp  & {2{~r_sel}}                ;
