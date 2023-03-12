@@ -105,13 +105,9 @@ module ysyx_22050710_axil_sram_wrap #(
     end
   end
 
-  reg [DATA_WIDTH-1:0] rdata;
-  always @(*) begin
+  always @(posedge i_aclk) begin
     if (ar_fire) begin
-      npc_pmem_read({32'b0, i_araddr}, rdata);
-    end
-    else begin
-      rdata = 0;
+      npc_pmem_read({32'b0, i_araddr}, o_rdata);
     end
   end
 
@@ -134,17 +130,6 @@ module ysyx_22050710_axil_sram_wrap #(
     end
   end
 
-  Reg #(
-    .WIDTH                    (DATA_WIDTH                   ),
-    .RESET_VAL                (0                            )
-  ) u_o_rdata (
-    .clk                      (i_aclk                       ),
-    .rst                      (!i_arsetn                    ),
-    .din                      (rdata                        ),
-    .dout                     (o_rdata                      ),
-    .wen                      (ar_fire                      )
-  );
-
   assign o_arready           = r_state_idle                  ;
   assign o_awready           = w_state_idle                  ;
   assign o_wready            = w_state_write                 ;
@@ -157,7 +142,7 @@ module ysyx_22050710_axil_sram_wrap #(
   ) u_o_rvalid (
     .clk                      (i_aclk                       ),
     .rst                      (!i_arsetn                    ),
-    .din                      (ar_fire                      ),
+    .din                      (r_state_read                 ),
     .dout                     (o_rvalid                     ),
     .wen                      (1                            )
   );
