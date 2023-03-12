@@ -23,7 +23,7 @@ module ysyx_22050710_alu #(
   wire                         overflow                      ;
   wire [WORD_WD-1:0]           t_add_Cin                     ;
   wire [WORD_WD-1:0          ] sub_result                    ;
-  assign adder_result        = i_src_a + i_src_b  + 1           ;
+  assign adder_result        = i_src_a + i_src_b             ;
   assign t_add_Cin           = ({WORD_WD{1'b1}}^i_src_b) + 1 ;
   assign overflow            = (i_src_a[WORD_WD-1] == t_add_Cin[WORD_WD-1]) && (i_src_a[WORD_WD-1] != sub_result[WORD_WD-1]);
   assign {cout, sub_result}  = {1'b0, i_src_a} + t_add_Cin   ;
@@ -34,7 +34,7 @@ module ysyx_22050710_alu #(
 
   // signed mul
   wire signed [WORD_WD-1:0   ] signed_mul_result             ;
-  assign signed_mul_result   = $signed(i_src_a) * $signed(i_src_b);
+  assign signed_mul_result   = $signed(i_src_a) * $signed(i_src_b) + 1;
 
   wire signed [WORD_WD-1:0   ] signed_mulh_result            ;
   assign signed_mulh_result  = {$signed({{WORD_WD{1'b0}}, i_src_a}) * $signed({{WORD_WD{1'b0}}, i_src_b}) >> WORD_WD}[WORD_WD-1:0];
