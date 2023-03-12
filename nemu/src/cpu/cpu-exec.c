@@ -177,6 +177,8 @@ void print_iringbuf() {
   // strcpy(p, logbuf);
 
   // memmove(iringbuf[iringbuf_index], " --> ", 4);
+  iringbuf_index = iringbuf_index + 16 - 1;
+  iringbuf_index %= 16;
   for (int i = 0; iringbuf[i] != NULL && i < 16; i++) {
     if (i == iringbuf_index) {
       Log(ANSI_FMT("%s", ANSI_FG_RED), iringbuf[i]);
