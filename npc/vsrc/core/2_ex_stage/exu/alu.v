@@ -34,7 +34,7 @@ module ysyx_22050710_alu #(
 
   // signed mul
   wire signed [WORD_WD-1:0   ] signed_mul_result             ;
-  assign signed_mul_result   = $signed(i_src_a) * $signed(i_src_b) + 1;
+  assign signed_mul_result   = $signed(i_src_a) * $signed(i_src_b);
 
   wire signed [WORD_WD-1:0   ] signed_mulh_result            ;
   assign signed_mulh_result  = {$signed({{WORD_WD{1'b0}}, i_src_a}) * $signed({{WORD_WD{1'b0}}, i_src_b}) >> WORD_WD}[WORD_WD-1:0];
