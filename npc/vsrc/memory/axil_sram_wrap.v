@@ -142,7 +142,7 @@ module ysyx_22050710_axil_sram_wrap #(
   ) u_o_rvalid (
     .clk                      (i_aclk                       ),
     .rst                      (!i_arsetn                    ),
-    .din                      (ar_fire                 ),
+    .din                      (ar_fire                      ), // 接收完成地址延迟一周期返回读数据有效
     .dout                     (o_rvalid                     ),
     .wen                      (1                            )
   );
