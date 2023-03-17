@@ -13,33 +13,50 @@ module ysyx_22050710_axil_sram_wrap #(
   input                        i_arsetn                      ,
 
   // Wirte address channel
+  input  [3:0                ] i_awid                        ,
+  input  [ADDR_WIDTH-1:0     ] i_awaddr                      ,
+  input  [7:0                ] i_awlen                       ,
+  input  [2:0                ] i_awsize                      ,
+  input  [1:0                ] i_awburst                     ,
+  input  [1:0                ] i_awlock                      ,
+  input  [3:0                ] i_awcache                     ,
+  input  [2:0                ] i_awprot                      ,
   input                        i_awvalid                     ,
   output                       o_awready                     ,
-  input  [ADDR_WIDTH-1:0     ] i_awaddr                      ,
-  input  [2:0                ] i_awprot                      , // define the access permission for write accesses.
 
   // Write data channel
-  input                        i_wvalid                      ,
-  output                       o_wready                      ,
+  input  [3:0                ] i_wid                         ,
   input  [DATA_WIDTH-1:0     ] i_wdata                       ,
   input  [STRB_WIDTH-1:0     ] i_wstrb                       ,
+  input                        i_wlast                       ,
+  input                        i_wvalid                      ,
+  output                       o_wready                      ,
 
   // Write response channel
+  output [3:0                ] o_bid                         ,
+  output [1:0                ] o_bresp                       ,
   output                       o_bvalid                      ,
   input                        i_bready                      ,
-  output [1:0                ] o_bresp                       ,
 
   // Read address channel
+  input  [3:0               ]  i_arid                        ,
+  input  [ADDR_WIDTH-1:0    ]  i_araddr                      ,
+  input  [7:0               ]  i_arlen                       ,
+  input  [2:0               ]  i_arsize                      ,
+  input  [1:0               ]  i_arburst                     ,
+  input  [1:0               ]  i_arlock                      ,
+  input  [3:0               ]  i_arcache                     ,
+  input  [2:0               ]  i_arprot                      ,
   input                        i_arvalid                     ,
   output                       o_arready                     ,
-  input  [ADDR_WIDTH-1:0     ] i_araddr                      ,
-  input  [2:0                ] i_arprot                      ,
 
   // Read data channel
+  output [3:0               ]  o_rid                         ,
+  output [DATA_WIDTH-1:0    ]  o_rdata                       ,
+  output [1:0               ]  o_rresp                       ,
+  output                       o_rlast                       ,
   output                       o_rvalid                      ,
-  input                        i_rready                      ,
-  output reg [DATA_WIDTH-1:0 ] o_rdata                       ,
-  output [1:0                ] o_rresp
+  input                        i_rready 
 );
   // ---------------------------------------------------------
   wire aw_fire                                               ;
@@ -135,6 +152,7 @@ module ysyx_22050710_axil_sram_wrap #(
   assign o_wready            = w_state_write                 ;
   assign o_bresp             = 2'b00                         ;
   assign o_rresp             = 2'b00                         ; // trans ok
+  assign o_rlast             = 1'b1                          ;
 
   Reg #(
     .WIDTH                    (1                            ),
@@ -155,6 +173,28 @@ module ysyx_22050710_axil_sram_wrap #(
     .rst                      (!i_arsetn                    ),
     .din                      (w_fire                       ),
     .dout                     (o_bvalid                     ),
+    .wen                      (1                            )
+  );
+
+  Reg #(
+    .WIDTH                    (4                            ),
+    .RESET_VAL                (0                            )
+  ) u_o_bid (
+    .clk                      (i_aclk                       ),
+    .rst                      (!i_arsetn                    ),
+    .din                      (i_awid | i_wid               ),
+    .dout                     (o_bid                        ),
+    .wen                      (1                            )
+  );
+
+  Reg #(
+    .WIDTH                    (4                            ),
+    .RESET_VAL                (0                            )
+  ) u_o_rid (
+    .clk                      (i_aclk                       ),
+    .rst                      (!i_arsetn                    ),
+    .din                      (i_arid                       ),
+    .dout                     (o_rid                        ),
     .wen                      (1                            )
   );
 

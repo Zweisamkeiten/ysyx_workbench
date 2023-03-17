@@ -7,49 +7,77 @@ module ysyx_22050710_axil_master_wrap #(
   // Width of address bus in bits
   parameter ADDR_WIDTH       = 32                            ,
   // Width of wstrb (width of data bus in words)
-  parameter STRB_WIDTH       = (DATA_WIDTH/8)
+  parameter STRB_WIDTH       = (DATA_WIDTH/8)                ,
+  parameter AXI_SIZE         = $clog2(DATA_WIDTH / 8)        ,
+  parameter ID_WIDTH         = `YSYX_22050710_AXI_ID_WIDTH   ,
+  parameter TRANSLEN_WIDTH   = `YSYX_22050710_AXI_TRANSLEN_WIDTH  ,
+
+  parameter BURST_TYPE_FIXED = `YSYX_22050710_AXI_BURST_TYPE_FIXED,
+  parameter BURST_TYPE_INCR  = `YSYX_22050710_AXI_BURST_TYPE_INCR ,
+  parameter BURST_TYPE_WRAP  = `YSYX_22050710_AXI_BURST_TYPE_WRAP ,
+
+  parameter PROT_UNPRIVILEGED_ACCESS      = `YSYX_22050710_AXI_PROT_UNPRIVILEGED_ACCESS     ,
+  parameter PROT_PRIVILEGED_ACCESS        = `YSYX_22050710_AXI_PROT_PRIVILEGED_ACCESS       ,
+  parameter PROT_SECURE_ACCESS            = `YSYX_22050710_AXI_PROT_SECURE_ACCESS           ,
+  parameter PROT_NON_SECURE_ACCESS        = `YSYX_22050710_AXI_PROT_NON_SECURE_ACCESS       ,
+  parameter PROT_DATA_ACCESS              = `YSYX_22050710_AXI_PROT_DATA_ACCESS             ,
+  parameter PROT_INSTRUCTION_ACCESS       = `YSYX_22050710_AXI_PROT_INSTRUCTION_ACCESS      ,
+  parameter AWCACHE_DEVICE_NON_BUFFERABLE = `YSYX_22050710_AXI_AWCACHE_DEVICE_NON_BUFFERABLE,
+  parameter ARCACHE_DEVICE_NON_BUFFERABLE = `YSYX_22050710_AXI_ARCACHE_DEVICE_NON_BUFFERABLE
 ) (
 	input                        i_rw_valid                    ,  //IF&MEM输入信号
 	output                       o_rw_addr_ok                  ,  //IF&MEM输入信号
 	output                       o_rw_data_ok                  ,  //IF&MEM输入信号
 	input                        i_rw_ren                      ,  //IF&MEM输入信号
 	input                        i_rw_wen                      ,  //IF&MEM输入信号
-  input  [ADDR_WIDTH-1:0]      i_rw_addr                     ,  //IF&MEM输入信号
-  output [DATA_WIDTH-1:0]      o_data_read                   ,  //IF&MEM输入信号
-  input  [DATA_WIDTH-1:0]      i_rw_w_data                   ,  //IF&MEM输入信号
-  input  [STRB_WIDTH-1:0]      i_rw_size                     ,  //IF&MEM输入信号
+  input  [ADDR_WIDTH-1:0     ] i_rw_addr                     ,  //IF&MEM输入信号
+  output [DATA_WIDTH-1:0     ] o_data_read                   ,  //IF&MEM输入信号
+  input  [DATA_WIDTH-1:0     ] i_rw_w_data                   ,  //IF&MEM输入信号
+  input  [STRB_WIDTH-1:0     ] i_rw_size                     ,  //IF&MEM输入信号
 
-  input                        i_aclk                        ,
-  input                        i_arsetn                      ,  // 低电平复位
+  input                        i_aclk                        ,  // AXI 时钟
+  input                        i_arsetn                      ,  // AXI 复位 低电平复位
 
   // Wirte address channel
-  output                       o_awvalid                     ,
-  input                        i_awready                     ,
-  output [ADDR_WIDTH-1:0     ] o_awaddr                      ,
-  output [2:0                ] o_awprot                      , // define the access permission for write accesses.
+  output [ADDR_WIDTH-1:0     ] o_awaddr                      ,  // 写请求地址
+  output [TRANSLEN_WIDTH-1:0 ] o_awlen                       ,  // 写请求控制信号, 请求传输的长度(数据传输拍数) 固定为0(without cache)
+  output [2:0                ] o_awsize                      ,  // 写请求控制信号, 请求传输的大小(数据传输每拍的字节数)
+  output [1:0                ] o_awburst                     ,  // 写请求控制信号, 传输类型 固定为0b01(without cache)
+  output [1:0                ] o_awlock                      ,  // 写请求控制信号, 原子锁 固定为0
+  output [3:0                ] o_awcache                     ,  // 写请求控制信号, Cache 属性 固定为 0
+  output [2:0                ] o_awprot                      ,  // 写请求控制信号, 保护属性 写权限
+  output                       o_awvalid                     ,  // 写请求地址握手信号, 写请求地址有效
+  input                        i_awready                     ,  // 写请求地址握手信号, slave 端准备好接收地址传输
 
   // Write data channel
-  output                       o_wvalid                      ,
-  input                        i_wready                      ,
-  output [DATA_WIDTH-1:0     ] o_wdata                       ,
-  output [STRB_WIDTH-1:0     ] o_wstrb                       ,
+  output [DATA_WIDTH-1:0     ] o_wdata                       ,  // 写请求的写数据
+  output [STRB_WIDTH-1:0     ] o_wstrb                       ,  // 写请求控制信号, 字节选通位
+  output                       o_wlast                       ,  // 写请求控制信号, 本次写请求的最后一拍数据的指示信号
+  output                       o_wvalid                      ,  // 写请求数据握手信号, 写请求数据有效
+  input                        i_wready                      ,  // 写请求数据握手信号, slave 端准备好将接收数据传输
 
   // Write response channel
-  input                        i_bvalid                      ,
-  output                       o_bready                      ,
-  input  [1:0                ] i_bresp                       ,
+  input  [1:0                ] i_bresp                       ,  // 写请求控制信号, 本次写请求是否成功完成
+  input                        i_bvalid                      ,  // 写请求响应握手信号, 写请求响应有效
+  output                       o_bready                      ,  // 写请求响应握手信号, master 端准备好接收写响应
 
   // Read address channel
-  output                       o_arvalid                     ,
-  input                        i_arready                     ,
-  output [ADDR_WIDTH-1:0     ] o_araddr                      ,
-  output [2:0                ] o_arprot                      ,
+  output [ADDR_WIDTH-1:0     ] o_araddr                      ,  // 读请求的地址
+  output [TRANSLEN_WIDTH-1:0 ] o_arlen                       ,  // 读请求控制信号, 请求传输的长度(数据传输拍数) 固定为0
+  output [2:0                ] o_arsize                      ,  // 读请求控制信号, 请求传输的大小(数据传输每拍的字节数)
+  output [1:0                ] o_arburst                     ,  // 读请求控制信号, 传输类型 固定为 0b01(without cache)
+  output [1:0                ] o_arlock                      ,  // 读请求控制信号, 原子锁 固定为 0
+  output [3:0                ] o_arcache                     ,  // 读请求控制信号, Cache 属性 固定为 0
+  output [2:0                ] o_arprot                      ,  // 读请求控制信号, 保护属性 固定为 0
+  output                       o_arvalid                     ,  // 读请求地址握手信号, 读请求地址有效
+  input                        i_arready                     ,  // 读请求地址握手信号, slave 端准备好接收地址传输
 
   // Read data channel
-  input                        i_rvalid                      ,
-  output                       o_rready                      ,
-  input  [DATA_WIDTH-1:0     ] i_rdata                       ,
-  input  [1:0                ] i_rresp
+  input  [DATA_WIDTH-1:0     ] i_rdata                       ,  // 读请求的读回数据
+  input  [1:0                ] i_rresp                       ,  // 读请求控制信号, 本次读请求是否成功完成 可忽略
+  input                        i_rlast                       ,  // 读请求控制信号, 本次读请求的最后一拍数据的知识信号 可忽略
+  input                        i_rvalid                      ,  // 读请求数据握手信号, 读请求数据有效
+  output                       o_rready                         // 读请求数据握手信号, master 端准备好接收数据传输
 );
 
   // ---------------------------------------------------------
@@ -124,15 +152,28 @@ module ysyx_22050710_axil_master_wrap #(
   end
 
   // ------------------Write Transaction----------------------
+  wire [TRANSLEN_WIDTH-1:0   ] axi_len                       ;
+  wire [2:0                  ] axi_size                      ;
+  assign axi_len             = 0                             ;
+  assign axi_size            = AXI_SIZE[2:0]                 ;
+
   // 写地址通道
   assign o_awvalid           = w_state_addr                  ;
   assign o_awaddr            = i_rw_addr                     ;
-  assign o_awprot            = `YSYX_22050710_AXI_PROT_UNPRIVILEGED_ACCESS | `YSYX_22050710_AXI_PROT_SECURE_ACCESS | `YSYX_22050710_AXI_PROT_DATA_ACCESS;  //初始化信号即可
+  assign o_awprot            = PROT_UNPRIVILEGED_ACCESS
+                             | PROT_SECURE_ACCESS
+                             | PROT_DATA_ACCESS              ;  // 初始化信号即可 固定为 0
+  assign o_awlen             = axi_len                       ;  // 固定为 0
+  assign o_awsize            = axi_size                      ;
+  assign o_awburst           = BURST_TYPE_INCR               ;  // 固定为 2'b01
+  assign o_awlock            = 0                             ;  // 固定为 0
+  assign o_awcache           = AWCACHE_DEVICE_NON_BUFFERABLE ;  // 固定为 0
 
   // 写数据通道
   assign o_wvalid            = w_state_write                 ;
   assign o_wdata             = i_rw_w_data                   ;
   assign o_wstrb             = i_rw_size                     ;
+  assign o_wlast             = 1'b1                          ; // 固定为 1
 
   // 写应答通道
   assign o_bready            = w_state_resp                  ;
@@ -142,7 +183,14 @@ module ysyx_22050710_axil_master_wrap #(
   // Read address channel signals
   assign o_arvalid           = r_state_addr                  ;
   assign o_araddr            = i_rw_addr                     ;
-  assign o_arprot            = `YSYX_22050710_AXI_PROT_UNPRIVILEGED_ACCESS | `YSYX_22050710_AXI_PROT_SECURE_ACCESS | `YSYX_22050710_AXI_PROT_DATA_ACCESS;  //初始化信号即可
+  assign o_arprot            = PROT_UNPRIVILEGED_ACCESS
+                             | PROT_SECURE_ACCESS
+                             | PROT_DATA_ACCESS              ;  // 初始化信号即可 固定为 0
+  assign o_arlen             = axi_len                       ;  // 固定为 0
+  assign o_arsize            = axi_size                      ;
+  assign o_arburst           = BURST_TYPE_INCR               ;  // 固定为 2'b01
+  assign o_arlock            = 0                             ;  // 固定为 0
+  assign o_arcache           = ARCACHE_DEVICE_NON_BUFFERABLE ;  // 固定为 0
 
   // Read data channel signals
   assign o_rready            = r_state_read                  ;
