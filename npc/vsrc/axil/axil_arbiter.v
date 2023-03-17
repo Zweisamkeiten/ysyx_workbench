@@ -26,7 +26,7 @@ module ysyx_22050710_axil_arbiter_2x1 #(
   // A Write data channel
   input  [3:0                ] i_a_wid                       ,
   input  [DATA_WIDTH-1:0     ] i_a_wdata                     ,
-  input  [STRB_WIDTH1-:0     ] i_a_wstrb                     ,
+  input  [STRB_WIDTH1-1:0    ] i_a_wstrb                     ,
   input                        i_a_wlast                     ,
   input                        i_a_wvalid                    ,
   output                       o_a_wready                    ,
@@ -74,7 +74,7 @@ module ysyx_22050710_axil_arbiter_2x1 #(
   // B Write data channel
   input  [3:0                ] i_b_wid                       ,
   input  [DATA_WIDTH-1:0     ] i_b_wdata                     ,
-  input  [STRB_WIDTH1-:0     ] i_b_wstrb                     ,
+  input  [STRB_WIDTH1-1:0    ] i_b_wstrb                     ,
   input                        i_b_wlast                     ,
   input                        i_b_wvalid                    ,
   output                       o_b_wready                    ,
