@@ -121,7 +121,7 @@ module ysyx_22050710_axil_arbiter_2x1 #(
   // Write data channel
   output [3:0                ] o_wid                         ,
   output [DATA_WIDTH-1:0     ] o_wdata                       ,
-  output [STRB_WIDTH1-:0     ] o_wstrb                       ,
+  output [STRB_WIDTH1-1:0    ] o_wstrb                       ,
   output                       o_wlast                       ,
   output                       o_wvalid                      ,
   input                        i_wready                      ,

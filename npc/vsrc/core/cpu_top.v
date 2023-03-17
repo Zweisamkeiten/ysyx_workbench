@@ -382,7 +382,7 @@ module ysyx_22050710_cpu_top #(
     .o_a_rresp                (ifu_rresp                    ),
     .o_a_rlast                (ifu_rlast                    ),
     .o_a_rvalid               (ifu_rvalid                   ),
-    .i_a_rready               (ifu_rready                   )
+    .i_a_rready               (ifu_rready                   ),
 
     // -------------------------------------------------------
     // B
