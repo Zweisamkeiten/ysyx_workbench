@@ -147,8 +147,6 @@ module ysyx_22050710_axil_sram_wrap #(
     end
   end
 
-  assign o_rid               = i_arid                        ;
-  assign o_bid               = i_awid | i_wid                ;
   assign o_arready           = r_state_idle                  ;
   assign o_awready           = w_state_idle                  ;
   assign o_wready            = w_state_write                 ;
@@ -175,6 +173,28 @@ module ysyx_22050710_axil_sram_wrap #(
     .rst                      (!i_arsetn                    ),
     .din                      (w_fire                       ),
     .dout                     (o_bvalid                     ),
+    .wen                      (1                            )
+  );
+
+  Reg #(
+    .WIDTH                    (4                            ),
+    .RESET_VAL                (0                            )
+  ) u_o_bid (
+    .clk                      (i_aclk                       ),
+    .rst                      (!i_arsetn                    ),
+    .din                      (i_awid | i_wid               ),
+    .dout                     (o_bid                        ),
+    .wen                      (1                            )
+  );
+
+  Reg #(
+    .WIDTH                    (4                            ),
+    .RESET_VAL                (0                            )
+  ) u_o_rid (
+    .clk                      (i_aclk                       ),
+    .rst                      (!i_arsetn                    ),
+    .din                      (i_arid                       ),
+    .dout                     (o_rid                        ),
     .wen                      (1                            )
   );
 

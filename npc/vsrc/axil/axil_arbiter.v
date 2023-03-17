@@ -21,19 +21,19 @@ module ysyx_22050710_axil_arbiter_2x1 #(
   input  [2:0                ] i_a_awprot                    ,
   input                        i_a_awvalid                   ,
   output                       o_a_awready                   ,
-                           
+
   // A Write data channel
   input  [DATA_WIDTH-1:0     ] i_a_wdata                     ,
   input  [STRB_WIDTH-1:0     ] i_a_wstrb                     ,
   input                        i_a_wlast                     ,
   input                        i_a_wvalid                    ,
   output                       o_a_wready                    ,
-                           
+
   // A Write response channe
   output [1:0                ] o_a_bresp                     ,
   output                       o_a_bvalid                    ,
   input                        i_a_bready                    ,
-                           
+
   // A Read address channel
   input  [ADDR_WIDTH-1:0     ] i_a_araddr                    ,
   input  [7:0                ] i_a_arlen                     ,
@@ -44,14 +44,14 @@ module ysyx_22050710_axil_arbiter_2x1 #(
   input  [2:0                ] i_a_arprot                    ,
   input                        i_a_arvalid                   ,
   output                       o_a_arready                   ,
-                           
+
   // A Read data channel
   output [DATA_WIDTH-1:0     ] o_a_rdata                     ,
   output [1:0                ] o_a_rresp                     ,
   output                       o_a_rlast                     ,
   output                       o_a_rvalid                    ,
   input                        i_a_rready                    ,
-                           
+
   // -----------------------
   // B
   // Wirte address channel
@@ -64,19 +64,19 @@ module ysyx_22050710_axil_arbiter_2x1 #(
   input  [2:0                ] i_b_awprot                    ,
   input                        i_b_awvalid                   ,
   output                       o_b_awready                   ,
-                           
+
   // B Write data channel
   input  [DATA_WIDTH-1:0     ] i_b_wdata                     ,
   input  [STRB_WIDTH-1:0     ] i_b_wstrb                     ,
   input                        i_b_wlast                     ,
   input                        i_b_wvalid                    ,
   output                       o_b_wready                    ,
-                           
+
   // B Write response channe
   output [1:0                ] o_b_bresp                     ,
   output                       o_b_bvalid                    ,
   input                        i_b_bready                    ,
-                           
+
   // B Read address channel
   input  [ADDR_WIDTH-1:0     ] i_b_araddr                    ,
   input  [7:0                ] i_b_arlen                     ,
@@ -94,7 +94,7 @@ module ysyx_22050710_axil_arbiter_2x1 #(
   output                       o_b_rlast                     ,
   output                       o_b_rvalid                    ,
   input                        i_b_rready                    ,
-                           
+
   // -----------------------
   // Wirte address channel
   output [3:0                ] o_awid                        ,

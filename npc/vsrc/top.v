@@ -40,7 +40,7 @@ module ysyx_22050710_top #(
   wire [3:0                  ] wid                           ;
   wire [SRAM_DATA_WD-1:0     ] wdata                         ;
   wire [STRB_WIDTH-1:0       ] wstrb                         ;
-  wire                         wlast                         ; 
+  wire                         wlast                         ;
   wire                         wvalid                        ;
   wire                         wready                        ;
 

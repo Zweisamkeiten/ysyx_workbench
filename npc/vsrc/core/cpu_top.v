@@ -94,7 +94,7 @@ module ysyx_22050710_cpu_top #(
   // Write data channel
   wire [SRAM_DATA_WD-1:0     ] ifu_wdata                     ;
   wire [STRB_WIDTH-1:0       ] ifu_wstrb                     ;
-  wire                         ifu_wlast                     ; 
+  wire                         ifu_wlast                     ;
   wire                         ifu_wvalid                    ;
   wire                         ifu_wready                    ;
 
@@ -135,7 +135,7 @@ module ysyx_22050710_cpu_top #(
   // Write data channel
   wire [SRAM_DATA_WD-1:0     ] lsu_wdata                     ;
   wire [STRB_WIDTH-1:0       ] lsu_wstrb                     ;
-  wire                         lsu_wlast                     ; 
+  wire                         lsu_wlast                     ;
   wire                         lsu_wvalid                    ;
   wire                         lsu_wready                    ;
 
