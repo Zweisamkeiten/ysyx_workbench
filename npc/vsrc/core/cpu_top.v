@@ -57,7 +57,7 @@ module ysyx_22050710_cpu_top #(
   input                        i_arready                     ,  // 读请求地址握手信号, slave 端准备好接收地址传输
 
   // Read data channel
-  output [3:0                ] o_rid                         ,  // 读请求的 ID 号, 取指 0; 取数 1;
+  input  [3:0                ] i_rid                         ,  // 读请求的 ID 号, 取指 0; 取数 1;
   input  [SRAM_DATA_WD-1:0   ] i_rdata                       ,  // 读请求的读回数据
   input  [1:0                ] i_rresp                       ,  // 读请求控制信号, 本次读请求是否成功完成 可忽略
   input                        i_rlast                       ,  // 读请求控制信号, 本次读请求的最后一拍数据的知识信号 可忽略
