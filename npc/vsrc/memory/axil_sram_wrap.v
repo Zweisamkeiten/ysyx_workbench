@@ -14,7 +14,7 @@ module ysyx_22050710_axil_sram_wrap #(
 
   // Wirte address channel
   input  [3:0                ] i_awid                        ,
-  input  [ADDR_WD-1:0        ] i_awaddr                      ,
+  input  [ADDR_WIDTH-1:0     ] i_awaddr                      ,
   input  [7:0                ] i_awlen                       ,
   input  [2:0                ] i_awsize                      ,
   input  [1:0                ] i_awburst                     ,
@@ -26,7 +26,7 @@ module ysyx_22050710_axil_sram_wrap #(
 
   // Write data channel
   input  [3:0                ] i_wid                         ,
-  input  [DATA_WD-1:0        ] i_wdata                       ,
+  input  [DATA_WIDTH-1:0     ] i_wdata                       ,
   input  [STRB_WIDTH-1:0     ] i_wstrb                       ,
   input                        i_wlast                       ,
   input                        i_wvalid                      ,
@@ -40,7 +40,7 @@ module ysyx_22050710_axil_sram_wrap #(
 
   // Read address channel
   input  [3:0               ]  i_arid                        ,
-  input  [ADDR_WD-1:0       ]  i_araddr                      ,
+  input  [ADDR_WIDTH-1:0    ]  i_araddr                      ,
   input  [7:0               ]  i_arlen                       ,
   input  [2:0               ]  i_arsize                      ,
   input  [1:0               ]  i_arburst                     ,
@@ -52,7 +52,7 @@ module ysyx_22050710_axil_sram_wrap #(
 
   // Read data channel
   output [3:0               ]  o_rid                         ,
-  output [DATA_WD-1:0       ]  o_rdata                       ,
+  output [DATA_WIDTH-1:0    ]  o_rdata                       ,
   output [1:0               ]  o_rresp                       ,
   output                       o_rlast                       ,
   output                       o_rvalid                      ,
