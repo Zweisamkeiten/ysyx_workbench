@@ -83,7 +83,6 @@ module ysyx_22050710_cpu_top #(
   // Wirte address channel
   wire [SRAM_ADDR_WD-1:0     ] ifu_awaddr                    ;
   wire [2:0                  ] ifu_awprot                    ; // define the access permission for write accesses.
-  wire [3:0                  ] ifu_awid                      ;
   wire [7:0                  ] ifu_awlen                     ;
   wire [2:0                  ] ifu_awsize                    ;
   wire [1:0                  ] ifu_awburst                   ;
@@ -93,7 +92,6 @@ module ysyx_22050710_cpu_top #(
   wire                         ifu_awready                   ;
 
   // Write data channel
-  wire [3:0                  ] ifu_wid                       ;
   wire [SRAM_DATA_WD-1:0     ] ifu_wdata                     ;
   wire [STRB_WIDTH-1:0       ] ifu_wstrb                     ;
   wire                         ifu_wlast                     ; 
@@ -101,13 +99,11 @@ module ysyx_22050710_cpu_top #(
   wire                         ifu_wready                    ;
 
   // Write response channel
-  wire [3:0                  ] ifu_bid                       ;
   wire [1:0                  ] ifu_bresp                     ;
   wire                         ifu_bvalid                    ;
   wire                         ifu_bready                    ;
 
   // Read address channel
-  wire [3:0                  ] ifu_arid                      ;
   wire [SRAM_ADDR_WD-1:0     ] ifu_araddr                    ;
   wire [7:0                  ] ifu_arlen                     ;
   wire [2:0                  ] ifu_arsize                    ;
@@ -119,7 +115,6 @@ module ysyx_22050710_cpu_top #(
   wire                         ifu_arready                   ;
 
   // Read data channel
-  wire [3:0                  ] ifu_rid                       ;
   wire [SRAM_DATA_WD-1:0     ] ifu_rdata                     ;
   wire [1:0                  ] ifu_rresp                     ;
   wire                         ifu_rlast                     ;
@@ -129,7 +124,6 @@ module ysyx_22050710_cpu_top #(
   // Wirte address channel
   wire [SRAM_ADDR_WD-1:0     ] lsu_awaddr                    ;
   wire [2:0                  ] lsu_awprot                    ; // define the access permission for write accesses.
-  wire [3:0                  ] lsu_awid                      ;
   wire [7:0                  ] lsu_awlen                     ;
   wire [2:0                  ] lsu_awsize                    ;
   wire [1:0                  ] lsu_awburst                   ;
@@ -139,7 +133,6 @@ module ysyx_22050710_cpu_top #(
   wire                         lsu_awready                   ;
 
   // Write data channel
-  wire [3:0                  ] lsu_wid                       ;
   wire [SRAM_DATA_WD-1:0     ] lsu_wdata                     ;
   wire [STRB_WIDTH-1:0       ] lsu_wstrb                     ;
   wire                         lsu_wlast                     ; 
@@ -147,13 +140,11 @@ module ysyx_22050710_cpu_top #(
   wire                         lsu_wready                    ;
 
   // Write response channel
-  wire [3:0                  ] lsu_bid                       ;
   wire [1:0                  ] lsu_bresp                     ;
   wire                         lsu_bvalid                    ;
   wire                         lsu_bready                    ;
 
   // Read address channel
-  wire [3:0                  ] lsu_arid                      ;
   wire [SRAM_ADDR_WD-1:0     ] lsu_araddr                    ;
   wire [7:0                  ] lsu_arlen                     ;
   wire [2:0                  ] lsu_arsize                    ;
@@ -165,7 +156,6 @@ module ysyx_22050710_cpu_top #(
   wire                         lsu_arready                   ;
 
   // Read data channel
-  wire [3:0                  ] lsu_rid                       ;
   wire [SRAM_DATA_WD-1:0     ] lsu_rdata                     ;
   wire [1:0                  ] lsu_rresp                     ;
   wire                         lsu_rlast                     ;
@@ -210,8 +200,6 @@ module ysyx_22050710_cpu_top #(
     .i_rw_valid               (cpu_inst_ren                 ),  //IF&MEM输入信号
     .o_rw_addr_ok             (cpu_inst_addr_ok             ),  //IF&MEM输入信号
     .o_rw_data_ok             (cpu_inst_data_ok             ),  //IF&MEM输入信号
-    .i_rw_rid                 (4'b0                         ),  //IF&MEM输入信号 取指置为 0
-    .i_rw_wid                 (4'b1                         ),  //IF&MEM输入信号 固定为 1
     .i_rw_ren                 (cpu_inst_ren                 ),  //IF&MEM输入信号
     .i_rw_wen                 (0                            ),  //IF&MEM输入信号
     .i_rw_addr                (cpu_inst_addr                ),  //IF&MEM输入信号
@@ -223,7 +211,6 @@ module ysyx_22050710_cpu_top #(
     .i_arsetn                 (i_arsetn                     ),
 
     // Wirte address channel
-    .o_awid                   (ifu_awid                     ),
     .o_awaddr                 (ifu_awaddr                   ),
     .o_awlen                  (ifu_awlen                    ),
     .o_awsize                 (ifu_awsize                   ),
@@ -235,7 +222,6 @@ module ysyx_22050710_cpu_top #(
     .i_awready                (ifu_awready                  ),
 
     // Write data channel
-    .o_wid                    (ifu_wid                      ),
     .o_wdata                  (ifu_wdata                    ),
     .o_wstrb                  (ifu_wstrb                    ),
     .o_wlast                  (ifu_wlast                    ),
@@ -243,13 +229,11 @@ module ysyx_22050710_cpu_top #(
     .i_wready                 (ifu_wready                   ),
 
     // Write response channel
-    .i_bid                    (ifu_bid                      ),
     .i_bresp                  (ifu_bresp                    ),
     .i_bvalid                 (ifu_bvalid                   ),
     .o_bready                 (ifu_bready                   ),
 
     // Read address channel
-    .o_arid                   (ifu_arid                     ),
     .o_araddr                 (ifu_araddr                   ),
     .o_arlen                  (ifu_arlen                    ),
     .o_arsize                 (ifu_arsize                   ),
@@ -261,7 +245,6 @@ module ysyx_22050710_cpu_top #(
     .i_arready                (ifu_arready                  ),
 
     // Read data channel
-    .i_rid                    (ifu_rid                      ),
     .i_rdata                  (ifu_rdata                    ),
     .i_rresp                  (ifu_rresp                    ),
     .i_rlast                  (ifu_rlast                    ),
@@ -273,8 +256,6 @@ module ysyx_22050710_cpu_top #(
     .i_rw_valid               (cpu_data_ren | cpu_data_wen  ),  //IF&MEM输入信号
     .o_rw_addr_ok             (cpu_data_addr_ok             ),  //IF&MEM输入信号
     .o_rw_data_ok             (cpu_data_data_ok             ),  //IF&MEM输入信号
-    .i_rw_rid                 (4'b1                         ),  //IF&MEM输入信号 取数置为 1
-    .i_rw_wid                 (4'b1                         ),  //IF&MEM输入信号 固定为 1
     .i_rw_ren                 (cpu_data_ren                 ),  //IF&MEM输入信号
     .i_rw_wen                 (cpu_data_wen                 ),  //IF&MEM输入信号
     .i_rw_addr                (cpu_data_addr                ),  //IF&MEM输入信号
@@ -286,7 +267,6 @@ module ysyx_22050710_cpu_top #(
     .i_arsetn                 (i_arsetn                     ),
 
     // Wirte address channel
-    .o_awid                   (lsu_awid                     ),
     .o_awaddr                 (lsu_awaddr                   ),
     .o_awlen                  (lsu_awlen                    ),
     .o_awsize                 (lsu_awsize                   ),
@@ -298,7 +278,6 @@ module ysyx_22050710_cpu_top #(
     .i_awready                (lsu_awready                  ),
 
     // Write data channel
-    .o_wid                    (lsu_wid                      ),
     .o_wdata                  (lsu_wdata                    ),
     .o_wstrb                  (lsu_wstrb                    ),
     .o_wlast                  (lsu_wlast                    ),
@@ -306,13 +285,11 @@ module ysyx_22050710_cpu_top #(
     .i_wready                 (lsu_wready                   ),
 
     // Write response channel
-    .i_bid                    (lsu_bid                      ),
     .i_bresp                  (lsu_bresp                    ),
     .i_bvalid                 (lsu_bvalid                   ),
     .o_bready                 (lsu_bready                   ),
 
     // Read address channel
-    .o_arid                   (lsu_arid                     ),
     .o_araddr                 (lsu_araddr                   ),
     .o_arlen                  (lsu_arlen                    ),
     .o_arsize                 (lsu_arsize                   ),
@@ -324,7 +301,6 @@ module ysyx_22050710_cpu_top #(
     .i_arready                (lsu_arready                  ),
 
     // Read data channel
-    .i_rid                    (lsu_rid                      ),
     .i_rdata                  (lsu_rdata                    ),
     .i_rresp                  (lsu_rresp                    ),
     .i_rlast                  (lsu_rlast                    ),
@@ -339,7 +315,6 @@ module ysyx_22050710_cpu_top #(
     // -------------------------------------------------------
     // A
     // Wirte address channel
-    .i_a_awid                 (ifu_awid                     ),
     .i_a_awaddr               (ifu_awaddr                   ),
     .i_a_awlen                (ifu_awlen                    ),
     .i_a_awsize               (ifu_awsize                   ),
@@ -351,7 +326,6 @@ module ysyx_22050710_cpu_top #(
     .o_a_awready              (ifu_awready                  ),
 
     // A Write data channel
-    .i_a_wid                  (ifu_wid                      ),
     .i_a_wdata                (ifu_wdata                    ),
     .i_a_wstrb                (ifu_wstrb                    ),
     .i_a_wlast                (ifu_wlast                    ),
@@ -359,13 +333,11 @@ module ysyx_22050710_cpu_top #(
     .o_a_wready               (ifu_wready                   ),
 
     // A Write response channel
-    .o_a_bid                  (ifu_bid                      ),
     .o_a_bresp                (ifu_bresp                    ),
     .o_a_bvalid               (ifu_bvalid                   ),
     .i_a_bready               (ifu_bready                   ),
 
     // A Read address channel
-    .i_a_arid                 (ifu_arid                     ),
     .i_a_araddr               (ifu_araddr                   ),
     .i_a_arlen                (ifu_arlen                    ),
     .i_a_arsize               (ifu_arsize                   ),
@@ -377,7 +349,6 @@ module ysyx_22050710_cpu_top #(
     .o_a_arready              (ifu_arready                  ),
 
     // A Read data channel
-    .o_a_rid                  (ifu_rid                      ),
     .o_a_rdata                (ifu_rdata                    ),
     .o_a_rresp                (ifu_rresp                    ),
     .o_a_rlast                (ifu_rlast                    ),
@@ -387,7 +358,6 @@ module ysyx_22050710_cpu_top #(
     // -------------------------------------------------------
     // B
     // Wirte address channel
-    .i_b_awid                 (lsu_awid                     ),
     .i_b_awaddr               (lsu_awaddr                   ),
     .i_b_awlen                (lsu_awlen                    ),
     .i_b_awsize               (lsu_awsize                   ),
@@ -399,7 +369,6 @@ module ysyx_22050710_cpu_top #(
     .o_b_awready              (lsu_awready                  ),
 
     // B Write data channel
-    .i_b_wid                  (lsu_wid                      ),
     .i_b_wdata                (lsu_wdata                    ),
     .i_b_wstrb                (lsu_wstrb                    ),
     .i_b_wlast                (lsu_wlast                    ),
@@ -407,13 +376,11 @@ module ysyx_22050710_cpu_top #(
     .o_b_wready               (lsu_wready                   ),
 
     // B Write response channel
-    .o_b_bid                  (lsu_bid                      ),
     .o_b_bresp                (lsu_bresp                    ),
     .o_b_bvalid               (lsu_bvalid                   ),
     .i_b_bready               (lsu_bready                   ),
 
     // B Read address channel
-    .i_b_arid                 (lsu_arid                     ),
     .i_b_araddr               (lsu_araddr                   ),
     .i_b_arlen                (lsu_arlen                    ),
     .i_b_arsize               (lsu_arsize                   ),
@@ -425,7 +392,6 @@ module ysyx_22050710_cpu_top #(
     .o_b_arready              (lsu_arready                  ),
 
     // B Read data channel
-    .o_b_rid                  (lsu_rid                      ),
     .o_b_rdata                (lsu_rdata                    ),
     .o_b_rresp                (lsu_rresp                    ),
     .o_b_rlast                (lsu_rlast                    ),
