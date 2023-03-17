@@ -159,7 +159,7 @@ module ysyx_22050710_axil_master_wrap #(
   end
 
   // ------------------Write Transaction----------------------
-  wire [TRANSLEN_WIDTH-1:0   ] axi_len
+  wire [TRANSLEN_WIDTH-1:0   ] axi_len                       ;
   wire [2:0                  ] axi_size                      ;
   assign axi_len             = 0                             ;
   assign axi_size            = AXI_SIZE[2:0]                 ;
