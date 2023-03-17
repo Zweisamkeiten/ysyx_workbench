@@ -10,7 +10,7 @@ module ysyx_22050710_axil_master_wrap #(
   parameter STRB_WIDTH       = (DATA_WIDTH/8)                ,
   parameter AXI_SIZE         = $clog2(DATA_WIDTH / 8)        ;
   parameter ID_WIDTH         = `YSYX_22050710_AXI_ID_WIDTH   ,
-  parameter TRANSLEN_WIDTH   = `YSYX_22050710_AXI_TRANSLEN_WDITH  ,
+  parameter TRANSLEN_WIDTH   = `YSYX_22050710_AXI_TRANSLEN_WIDTH  ,
 
   parameter BURST_TYPE_FIXED = `YSYX_22050710_AXI_BURST_TYPE_FIXED,
   parameter BURST_TYPE_INCR  = `YSYX_22050710_AXI_BURST_TYPE_INCR ,
