@@ -8,7 +8,7 @@ module ysyx_22050710_axil_master_wrap #(
   parameter ADDR_WIDTH       = 32                            ,
   // Width of wstrb (width of data bus in words)
   parameter STRB_WIDTH       = (DATA_WIDTH/8)                ,
-  parameter AXI_SIZE         = $clog2(DATA_WIDTH / 8)        ;
+  parameter AXI_SIZE         = $clog2(DATA_WIDTH / 8)        ,
   parameter ID_WIDTH         = `YSYX_22050710_AXI_ID_WIDTH   ,
   parameter TRANSLEN_WIDTH   = `YSYX_22050710_AXI_TRANSLEN_WIDTH  ,
 
