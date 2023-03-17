@@ -434,50 +434,50 @@ module ysyx_22050710_cpu_top #(
 
     // ---------------------------------------------------- ---
     // Wirte address channel
-    .o_awid                   (awid                         ),
-    .o_awaddr                 (awaddr                       ),
-    .o_awlen                  (awlen                        ),
-    .o_awsize                 (awsize                       ),
-    .o_awburst                (awburst                      ),
-    .o_awlock                 (awlock                       ),
-    .o_awcache                (awcache                      ),
-    .o_awprot                 (awprot                       ), // define the access permission for write accesses.
-    .o_awvalid                (awvalid                      ),
-    .i_awready                (awready                      ),
+    .o_awid                   (o_awid                       ),
+    .o_awaddr                 (o_awaddr                     ),
+    .o_awlen                  (o_awlen                      ),
+    .o_awsize                 (o_awsize                     ),
+    .o_awburst                (o_awburst                    ),
+    .o_awlock                 (o_awlock                     ),
+    .o_awcache                (o_awcache                    ),
+    .o_awprot                 (o_awprot                     ), // define the access permission for write accesses.
+    .o_awvalid                (o_awvalid                    ),
+    .i_awready                (i_awready                    ),
 
     // Write data channel
-    .o_wid                    (wid                          ),
-    .o_wdata                  (wdata                        ),
-    .o_wstrb                  (wstrb                        ),
-    .o_wlast                  (wlast                        ),
-    .o_wvalid                 (wvalid                       ),
-    .i_wready                 (wready                       ),
+    .o_wid                    (o_wid                        ),
+    .o_wdata                  (o_wdata                      ),
+    .o_wstrb                  (o_wstrb                      ),
+    .o_wlast                  (o_wlast                      ),
+    .o_wvalid                 (o_wvalid                     ),
+    .i_wready                 (i_wready                     ),
 
     // Write response channel
-    .i_bid                    (bid                          ),
-    .i_bresp                  (bresp                        ),
-    .i_bvalid                 (bvalid                       ),
-    .o_bready                 (bready                       ),
+    .i_bid                    (i_bid                        ),
+    .i_bresp                  (i_bresp                      ),
+    .i_bvalid                 (i_bvalid                     ),
+    .o_bready                 (o_bready                     ),
 
     // Read address channel
-    .o_arid                   (arid                         ),
-    .o_araddr                 (araddr                       ),
-    .o_arlen                  (arlen                        ),
-    .o_arsize                 (arsize                       ),
-    .o_arburst                (arburst                      ),
-    .o_arlock                 (arlock                       ),
-    .o_arcache                (arcache                      ),
-    .o_arprot                 (arprot                       ),
-    .o_arvalid                (arvalid                      ),
-    .i_arready                (arready                      ),
+    .o_arid                   (o_arid                       ),
+    .o_araddr                 (o_araddr                     ),
+    .o_arlen                  (o_arlen                      ),
+    .o_arsize                 (o_arsize                     ),
+    .o_arburst                (o_arburst                    ),
+    .o_arlock                 (o_arlock                     ),
+    .o_arcache                (o_arcache                    ),
+    .o_arprot                 (o_arprot                     ),
+    .o_arvalid                (o_arvalid                    ),
+    .i_arready                (i_arready                    ),
 
     // Read data channel
-    .i_rid                    (rid                          ),
-    .i_rdata                  (rdata                        ),
-    .i_rresp                  (rresp                        ),
-    .i_rlast                  (rlast                        ),
-    .i_rvalid                 (rvalid                       ),
-    .o_rready                 (rready                       )
+    .i_rid                    (i_rid                        ),
+    .i_rdata                  (i_rdata                      ),
+    .i_rresp                  (i_rresp                      ),
+    .i_rlast                  (i_rlast                      ),
+    .i_rvalid                 (i_rvalid                     ),
+    .o_rready                 (o_rready                     )
   );
 
 endmodule
