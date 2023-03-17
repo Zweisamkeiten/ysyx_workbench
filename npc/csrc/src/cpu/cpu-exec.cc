@@ -189,8 +189,16 @@ static void trace_and_difftest(vaddr_t dnpc) {
 
 void exec_once() {
   // printf("%lx\n", top->o_pc);
+  int cpi = 0;
   while (a_inst_finished == 0) {
+    cpi++;
     single_cycle(0);
+    if (cpi > 50) {
+      npc_state.state = NPC_ABORT;
+      npc_state.halt_pc = cpu.pc;
+      npc_state.halt_ret = -1;
+      return;
+    };
   }
   // single_cycle(0);
   a_inst_finished = 0;
