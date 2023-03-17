@@ -193,7 +193,7 @@ void exec_once() {
   while (a_inst_finished == 0) {
     cpi++;
     single_cycle(0);
-    if (cpi > 100) {
+    if (cpi > 50) {
       npc_state.state = NPC_ABORT;
       npc_state.halt_pc = cpu.pc;
       npc_state.halt_ret = -1;
