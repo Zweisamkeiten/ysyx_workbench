@@ -154,7 +154,7 @@ module ysyx_22050710_axil_arbiter_2x1 #(
   assign ar_sel    = ~i_a_arvalid & i_b_arvalid ? 1'b1 : 1'b0; // 优先 a
   assign r_sel     = i_rid[0]                                ;
 
-  assign o_awid      = aw_sel ? i_b_awid    : i_a_awid       ;
+  assign o_awid      = aw_sel ? 4'b1        : 4'b0           ; // 固定为 1, 即写数
   assign o_awvalid   = aw_sel ? i_b_awvalid : i_a_awvalid    ;
   assign o_a_awready = i_awready & ~aw_sel                   ;
   assign o_b_awready = i_awready &  aw_sel                   ;
@@ -166,7 +166,7 @@ module ysyx_22050710_axil_arbiter_2x1 #(
   assign o_awlock    = aw_sel ? i_b_awlock  : i_a_awlock     ;
   assign o_awcache   = aw_sel ? i_b_awcache : i_a_awcache    ;
 
-  assign o_wid       = w_sel  ? i_b_wid     : i_a_wid        ;
+  assign o_wid       = w_sel  ? 4'b1        : 4'b0           ; // 固定为 1, 即写数
   assign o_wvalid    = w_sel  ? i_b_wvalid  : i_a_wvalid     ;
   assign o_a_wready  = i_wready & ~w_sel                     ;
   assign o_b_wready  = i_wready &  w_sel                     ;
@@ -182,7 +182,7 @@ module ysyx_22050710_axil_arbiter_2x1 #(
   assign o_a_bresp   = i_bresp  & {2{~b_sel}}                ;
   assign o_b_bresp   = i_bresp  & {2{ b_sel}}                ;
 
-  assign o_arid      = ar_sel ? i_b_arid    : i_a_arid       ;
+  assign o_arid      = ar_sel ? 4'b1        : 4'b0           ; // 取指置为 0; 取数置为 1;
   assign o_arvalid   = ar_sel ? i_b_arvalid : i_a_arvalid    ;
   assign o_a_arready = i_arready& ~ar_sel                    ;
   assign o_b_arready = i_arready&  ar_sel                    ;
@@ -194,8 +194,6 @@ module ysyx_22050710_axil_arbiter_2x1 #(
   assign o_arlock    = ar_sel ? i_b_arlock  : i_a_arlock     ;
   assign o_arcache   = ar_sel ? i_b_arcache : i_a_arcache    ;
 
-  assign o_a_rid     = i_rid    & ~r_sel                     ;
-  assign o_b_rid     = i_rid    &  r_sel                     ;
   assign o_a_rvalid  = i_rvalid & ~r_sel                     ;
   assign o_b_rvalid  = i_rvalid &  r_sel                     ;
   assign o_rready    = r_sel ? i_b_rready   : i_a_rready     ;
