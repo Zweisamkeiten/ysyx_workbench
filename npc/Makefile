@@ -6,7 +6,7 @@ IMG ?=
 NPC_EXEC := $(BIN) $(IMG) $(ELF) $(REF) $(IFRUNBATCH)
 
 ifeq ($(VERILATOR_INC_ROOT),)
-# VERILATOR_INC_ROOT = /usr/share/verilator
+VERILATOR_INC_ROOT = /usr/share/verilator
 VERILATOR = verilator
 else
 VERILATOR = $(shell which verilator)
