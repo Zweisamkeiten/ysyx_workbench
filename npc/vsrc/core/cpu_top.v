@@ -430,7 +430,7 @@ module ysyx_22050710_cpu_top #(
     .o_b_rresp                (lsu_rresp                    ),
     .o_b_rlast                (lsu_rlast                    ),
     .o_b_rvalid               (lsu_rvalid                   ),
-    .i_b_rready               (lsu_rready                   )
+    .i_b_rready               (lsu_rready                   ),
 
     // ---------------------------------------------------- ---
     // Wirte address channel
