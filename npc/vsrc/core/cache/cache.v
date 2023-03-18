@@ -6,9 +6,10 @@ module ysyx_22050710_cache #(
   parameter CACHE_SIZE       = 4096                          , // cache size in bytes
   parameter CACHELINE_SIZE   = 16                            , // cache line size in bytes
   parameter ASSOC_NUM        = 4                             , // 四路组相连
+  parameter INDEX_NUM        = CACHELINE_SIZE/CACHELINE_SIZE/ASSOC_NUM, // Index 数量
   parameter WAY_SIZE         = CACHE_SIZE / ASSOC_NUM        , // 路大小
   parameter OFFSET_WIDTH     = $clog2(CACHELINE_SIZE)        , // Cache 行内偏移
-  parameter INDEX_WIDTH      = $clog2(CACHE_SIZE/CACHELINE_SIZE/ASSOC_NUM),  // index width in bits 6bits
+  parameter INDEX_WIDTH      = $clog2(INDEX_NUM)             , // index width in bits 6bits
   parameter TAG_WIDTH        = ADDR_WIDTH - $clog2(WAY_SIZE)   // 物理地址宽度 - log2(路大小)
 ) (
   input                        i_clk                         , // 时钟信号
@@ -42,7 +43,7 @@ module ysyx_22050710_cache #(
   input                        i_wr_rdy                        // 写请求能否被接收的握手信号. 高电平有效. 此处要求 wr_rdy 要先于
 );
 
-
+  // deal with input
   parameter Bits             = 128                           ;
   wire [4-1:0                ] wstrb                         ;
   wire                         cen                           ;
@@ -60,26 +61,27 @@ module ysyx_22050710_cache #(
     .out                      (bwen                         ),
     .key                      (wstrb                        ),
     .lut                      ({
-                                 4'd0, 128'b0                ,
-                                 4'd1, {120'b0, 8'b1        },
-                                 4'd2, {112'b0, 8'b1,   8'b0},
-                                 4'd3, {104'b0, 8'b1,  16'b0},
-                                 4'd4, { 96'b0, 8'b1,  24'b0},
-                                 4'd5, { 88'b0, 8'b1,  32'b0},
-                                 4'd6, { 80'b0, 8'b1,  40'b0},
-                                 4'd7, { 72'b0, 8'b1,  48'b0},
-                                 4'd8, { 64'b0, 8'b1,  56'b0},
-                                 4'd9, { 56'b0, 8'b1,  64'b0},
+                                4'd0 , 128'b0                ,
+                                4'd1 , {120'b0, 8'b1        },
+                                4'd2 , {112'b0, 8'b1,   8'b0},
+                                4'd3 , {104'b0, 8'b1,  16'b0},
+                                4'd4 , { 96'b0, 8'b1,  24'b0},
+                                4'd5 , { 88'b0, 8'b1,  32'b0},
+                                4'd6 , { 80'b0, 8'b1,  40'b0},
+                                4'd7 , { 72'b0, 8'b1,  48'b0},
+                                4'd8 , { 64'b0, 8'b1,  56'b0},
+                                4'd9 , { 56'b0, 8'b1,  64'b0},
                                 4'd10, { 48'b0, 8'b1,  72'b0},
                                 4'd11, { 40'b0, 8'b1,  80'b0},
                                 4'd12, { 32'b0, 8'b1,  88'b0},
                                 4'd13, { 24'b0, 8'b1,  96'b0},
                                 4'd14, { 16'b0, 8'b1, 104'b0},
                                 4'd15, {  8'b0, 8'b1, 112'b0}
-    })
+                              })
   );
 
   // ---------------------------------------------------------
+  // Organize manager
   // tag array
   reg [TAG_WIDTH-1:0] tag   [INDEX_WIDTH-1:0][ASSOC_NUM-1:0] ;
   reg [ASSOC_NUM-1:0] valid [INDEX_WIDTH-1:0]                ;
@@ -128,4 +130,108 @@ module ysyx_22050710_cache #(
     .D                        ()  // 写数据
   );
   // ---------------------------------------------------------
+  integer assoc;
+  integer idx;
+  always @(posedge i_clk) begin
+    if (i_rst) begin
+      for (assoc = 0; assoc < ASSOC_NUM; assoc = assoc + 1) begin
+        for (idx = 0; idx < INDEX_NUM; idx = idx + 1) begin
+            tag[idx][assoc] <= 0;
+          valid[idx][assoc] <= 0;
+          dirty[idx][assoc] <= 0;
+        end
+      end
+    end
+    else
+      /* TODO */
+    end
+  end
+
+  wire way0_v                = valid[i_index][0]              ;
+  wire way1_v                = valid[i_index][1]              ;
+  wire way2_v                = valid[i_index][2]              ;
+  wire way3_v                = valid[i_index][3]              ;
+
+  wire way0_tag              = tag[i_index][0]                ;
+  wire way1_tag              = tag[i_index][1]                ;
+  wire way2_tag              = tag[i_index][2]                ;
+  wire way3_tag              = tag[i_index][3]                ;
+
+  wire way0_d                = dirty[i_index][0]              ;
+  wire way1_d                = dirty[i_index][1]              ;
+  wire way2_d                = dirty[i_index][2]              ;
+  wire way3_d                = dirty[i_index][3]              ;
+
+  wire way0_hit              = way0_v && (way0_tag == reg_tag);
+  wire way1_hit              = way1_v && (way1_tag == reg_tag);
+  wire way2_hit              = way2_v && (way2_tag == reg_tag);
+  wire way3_hit              = way3_v && (way3_tag == reg_tag);
+
+  wire cache_hit             = way0_hit || way1_hit || way2_hit || way3_hit;
+
+  localparam [2:0]
+    CACHE_IDLE               = 3'd0                          ,
+    CACHE_LOOKUP             = 3'd1                          ,
+    CACHE_MISS               = 3'd2                          ,
+    CACHE_REPLACE            = 3'd3                          ,
+    CACHE_REFILL             = 3'd2                          ;
+
+  localparam [0:0]
+    W_BURF_IDLE              = 1'd0                          ,
+    W_BURF_WRITE             = 1'd1                          ;
+
+  reg [2:0] cache_state_reg        = CACHE_IDLE              ;
+  reg [0:0] write_buffer_state_reg = W_BURF_IDLE             ;
+
+  /* ---------------------------------------------------------
+   * State Machine
+   * --------------------------------------------------------- */
+
+  wire c_state_idle    = cache_state_reg == CACHE_IDLE       ;
+  wire c_state_lookup  = cache_state_reg == CACHE_LOOKUP     ;
+  wire c_state_miss    = cache_state_reg == CACHE_MISS       ;
+  wire c_state_replace = cache_state_reg == CACHE_REPLACE    ;
+  wire c_state_refill  = cache_state_reg == CACHE_REFILL     ;
+
+  wire wb_state_idle   = write_buffer_state_reg == W_BURF_IDLE ;
+  wire wb_state_write  = write_buffer_state_reg == W_BURF_WRITE;
+
+  always @(posedge i_clk) begin
+    if (i_rst) begin
+      cache_state_reg <= CACHE_IDLE;
+    end
+    else begin
+      case (cache_state_reg)
+        CACHE_IDLE: begin
+          if (i_valid) begin
+            cache_state_reg <= CACHE_LOOKUP;
+          end
+        end
+        CACHE_LOOKUP: begin
+        end
+        CACHE_MISS: begin
+        end
+        CACHE_REPLACE: begin
+        end
+        CACHE_REFILL: begin
+        end
+        default: cache_state_reg <= CACHE_IDLE;
+      endcase
+    end
+  end
+
+  always @(posedge i_clk) begin
+    if (i_rst) begin
+      write_buffer_state <= W_BURF_IDLE;
+    end
+    else begin
+      case (write_buffer_state)
+        W_BURF_IDLE: begin
+        end
+        W_BURF_WIRTE: begin
+        end
+        default: write_buffer_state <= W_BURF_IDLE;
+      endcase
+    end
+  end
 endmodule
