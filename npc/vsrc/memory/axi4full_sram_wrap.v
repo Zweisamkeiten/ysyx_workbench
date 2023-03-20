@@ -1,7 +1,7 @@
-// ysyx_22050710 axi sram Wrap 以axi-lite接口封装的 sram 模块
+// ysyx_22050710 axi sram Wrap 以axi4-full接口封装的 sram 模块
 `include "axi_defines.v"
 
-module ysyx_22050710_axil_sram_wrap #(
+module ysyx_22050710_axi4full_sram_wrap #(
   // Width of data bus in bits
   parameter DATA_WIDTH       = 64                            ,
   // Width of address bus in bits

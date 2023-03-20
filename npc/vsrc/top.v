@@ -136,8 +136,8 @@ module ysyx_22050710_top #(
     .o_rready                 (rready                       )
   );
 
-  // data ram
-  ysyx_22050710_axil_sram_wrap #(
+  // axi4-full sram
+  ysyx_22050710_axi4full_sram_wrap #(
   ) u_sram_wrap (
     .i_aclk                   (i_clk                        ),
     .i_arsetn                 (~i_rst                       ),

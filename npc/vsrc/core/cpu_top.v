@@ -208,7 +208,7 @@ module ysyx_22050710_cpu_top #(
     .i_data_sram_rdata        (cpu_data_rdata               )
   );
 
-  ysyx_22050710_axil_master_wrap u_ifu_axi_wrap (
+  ysyx_22050710_axi4full_master_wrap u_ifu_axi_wrap (
     .i_rw_req                 (cpu_inst_req                 ),  //IF&MEM输入信号
     .i_rw_wr                  (cpu_inst_wr                  ),  //IF&MEM输入信号
     .i_rw_size                (cpu_inst_size                ),  //IF&MEM输入信号
@@ -264,7 +264,7 @@ module ysyx_22050710_cpu_top #(
     .o_rready                 (ifu_rready                   )
   );
 
-  ysyx_22050710_axil_master_wrap u_lsu_axi_wrap (
+  ysyx_22050710_axi4full_master_wrap u_lsu_axi_wrap (
     .i_rw_req                 (cpu_data_req                 ),  //IF&MEM输入信号
     .i_rw_wr                  (cpu_data_wr                  ),  //IF&MEM输入信号
     .i_rw_size                (cpu_data_size                ),  //IF&MEM输入信号
@@ -320,7 +320,7 @@ module ysyx_22050710_cpu_top #(
     .o_rready                 (lsu_rready                   )
   );
 
-  ysyx_22050710_axil_arbiter_2x1 u_axil_arbiter (
+  ysyx_22050710_axi4full_arbiter_2x1 u_axi_arbiter (
     .i_aclk                   (i_aclk                        ),
     .i_arsetn                 (i_arsetn                      ),
 
