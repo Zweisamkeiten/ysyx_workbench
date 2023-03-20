@@ -18,13 +18,28 @@ module ysyx_22050710_if_stage #(
   // to ds
   output                       o_fs_to_ds_valid              ,
   output [FS_TO_DS_BUS_WD-1:0] o_fs_to_ds_bus                ,
-  // inst sram interface
-  output                       o_inst_sram_ren               ,
-  output [SRAM_ADDR_WD-1:0   ] o_inst_sram_addr              ,
-  input  [SRAM_DATA_WD-1:0   ] i_inst_sram_rdata             ,
-  input                        i_inst_sram_addr_ok           ,
-  input                        i_inst_sram_data_ok
+  // inst sram
+  output                       o_inst_sram_req               , // 请求信号, 为 1 时有读写请求, 为 0 时无读写请求
+  output                       o_inst_sram_wr                , // 为 1 表示该次是写请求, 为 0 表示该次是读请求
+  input  [1:0                ] i_inst_sram_size              , // 该次请求传输的字节数, 0: 1byte; 1: 2bytes; 2: 4bytes; 3: 8bytes
+  output [SRAM_ADDR_WD-1:0   ] o_inst_sram_addr              , // 该次请求的地址
+  output [SRAM_WMASK_WD-1:0  ] o_inst_sram_wstrb             , // 该次请求的写字节使能
+  output [SRAM_DATA_WD-1:0   ] o_inst_sram_wdata             , // 该次写请求的写数据
+  input                        i_inst_sram_addr_ok           , // 该次请求的地址传输 OK, 读: 地址被接收; 写: 地址和数据被接收
+  input                        i_inst_sram_data_ok           , // 该次请求的数据传输 OK, 读: 数据返回  ; 写: 数据写入完成
+  input  [SRAM_DATA_WD-1:0   ] i_inst_sram_rdata               // 该次请求返回的读数据
 );
+
+  assign o_inst_sram_req     = fs_allowin                    ;
+  assign o_inst_sram_wr      = 0                             ; // 恒为 0, 表示只有读请求
+  assign o_inst_sram_size    = 2'd2                          ; // 恒为 2, 表示每次请求 4 bytes
+  assign o_inst_sram_wstrb   = 0                             ; // 恒为 0, 没有写请求
+  assign o_inst_sram_wdata   = 0                             ; // 恒为 0, 没有写请求
+
+  wire                         req_fire                      ;
+  wire                         resp_fire                     ;
+  assign req_fire            = o_inst_sram_req && i_inst_sram_addr_ok;
+  assign resp_fire           = i_inst_sram_data_ok           ; // master 对于数据响应总是可以接收
 
   // pre if stage
   wire                         br_stall                      ;
@@ -36,16 +51,15 @@ module ysyx_22050710_if_stage #(
          }                   = i_br_bus                      ;
   wire                         pre_fs_ready_go               ;
   wire                         pre_fs_to_fs_valid            ;
-  assign pre_fs_ready_go     = ~br_stall & i_inst_sram_addr_ok;
+  assign pre_fs_ready_go     = ~br_stall & req_fire          ;
   assign pre_fs_to_fs_valid  = ~i_rst & pre_fs_ready_go      ;
-  assign o_inst_sram_ren     = fs_allowin                    ;
 
   // if stage
   wire                         fs_valid                      ;
   wire                         fs_ready_go                   ;
   wire                         fs_allowin                    ;
 
-  assign fs_ready_go         = i_inst_sram_data_ok || fs_inst_with_valid_buffer[INST_WD];
+  assign fs_ready_go         = resp_fire || fs_inst_with_valid_buffer[INST_WD];
   assign fs_allowin          = (!fs_valid)
                              ||(fs_ready_go && i_ds_allowin) ; // 或条件1: cpu rst后的初始状态, 每个stage都为空闲
                                                                // 或条件2: stage 直接相互依赖, 当后续设计使得当前
@@ -77,9 +91,9 @@ module ysyx_22050710_if_stage #(
   ) u_save_inst (
     .clk                      (i_clk                        ),
     .rst                      (i_ds_allowin || i_rst        ),
-    .din                      ({i_inst_sram_data_ok, fs_inst}),
+    .din                      ({resp_fire, fs_inst         }),
     .dout                     (fs_inst_with_valid_buffer    ),
-    .wen                      (i_inst_sram_data_ok&&~i_ds_allowin)
+    .wen                      (resp_fire && ~i_ds_allowin   )
   );
 
   ysyx_22050710_pc #(

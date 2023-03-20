@@ -27,20 +27,26 @@ module ysyx_22050710_core #(
   input                        i_clk                         ,
   input                        i_rst                         ,
   // inst sram interface
-  output [SRAM_ADDR_WD-1:0   ] o_inst_sram_addr              ,
-  output                       o_inst_sram_ren               ,
-  input  [SRAM_DATA_WD-1:0   ] i_inst_sram_rdata             ,
-  input                        i_inst_sram_addr_ok           ,
-  input                        i_inst_sram_data_ok           ,
+  output                       o_inst_sram_req               , // 请求信号, 为 1 时有读写请求, 为 0 时无读写请求
+  output                       o_inst_sram_wr                , // 为 1 表示该次是写请求, 为 0 表示该次是读请求
+  input  [1:0                ] i_inst_sram_size              , // 该次请求传输的字节数, 0: 1byte; 1: 2bytes; 2: 4bytes; 3: 8bytes
+  output [SRAM_ADDR_WD-1:0   ] o_inst_sram_addr              , // 该次请求的地址
+  output [SRAM_WMASK_WD-1:0  ] o_inst_sram_wstrb             , // 该次请求的写字节使能
+  output [SRAM_DATA_WD-1:0   ] o_inst_sram_wdata             , // 该次写请求的写数据
+  input                        i_inst_sram_addr_ok           , // 该次请求的地址传输 OK, 读: 地址被接收; 写: 地址和数据被接收
+  input                        i_inst_sram_data_ok           , // 该次请求的数据传输 OK, 读: 数据返回  ; 写: 数据写入完成
+  input  [SRAM_DATA_WD-1:0   ] i_inst_sram_rdata             , // 该次请求返回的读数据
+
   // data sram interface
-  output [SRAM_ADDR_WD-1:0   ] o_data_sram_addr              ,
-  output                       o_data_sram_ren               ,
-  input  [SRAM_DATA_WD-1:0   ] i_data_sram_rdata             ,
-  output                       o_data_sram_wen               ,
-  output [SRAM_WMASK_WD-1:0  ] o_data_sram_wmask             ,
-  output [SRAM_DATA_WD-1:0   ] o_data_sram_wdata             ,
-  input                        i_data_sram_addr_ok           ,
-  input                        i_data_sram_data_ok
+  output                       o_data_sram_req               , // 请求信号, 为 1 时有读写请求, 为 0 时无读写请求
+  output                       o_data_sram_wr                , // 为 1 表示该次是写请求, 为 0 表示该次是读请求
+  input  [1:0                ] i_data_sram_size              , // 该次请求传输的字节数, 0: 1byte; 1: 2bytes; 2: 4bytes; 3: 8bytes
+  output [SRAM_ADDR_WD-1:0   ] o_data_sram_addr              , // 该次请求的地址
+  output [SRAM_WMASK_WD-1:0  ] o_data_sram_wstrb             , // 该次请求的写字节使能
+  output [SRAM_DATA_WD-1:0   ] o_data_sram_wdata             , // 该次写请求的写数据
+  input                        i_data_sram_addr_ok           , // 该次请求的地址传输 OK, 读: 地址被接收; 写: 地址和数据被接收
+  input                        i_data_sram_data_ok           , // 该次请求的数据传输 OK, 读: 数据返回  ; 写: 数据写入完成
+  input  [SRAM_DATA_WD-1:0   ] i_data_sram_rdata               // 该次请求返回的读数据
 );
 
   wire                         ds_allowin                    ;
@@ -91,11 +97,15 @@ module ysyx_22050710_core #(
     .o_fs_to_ds_valid         (fs_to_ds_valid               ),
     .o_fs_to_ds_bus           (fs_to_ds_bus                 ),
     // inst sram interface
-    .o_inst_sram_ren          (o_inst_sram_ren              ),
+    .o_inst_sram_req          (o_inst_sram_req              ),
+    .o_inst_sram_wr           (o_inst_sram_wr               ),
+    .o_inst_sram_size         (o_inst_sram_size             ),
     .o_inst_sram_addr         (o_inst_sram_addr             ),
-    .i_inst_sram_rdata        (i_inst_sram_rdata            ),
+    .o_inst_sram_wstrb        (o_inst_sram_wstrb            ),
+    .o_inst_sram_wdata        (o_inst_sram_wdata            ),
     .i_inst_sram_addr_ok      (i_inst_sram_addr_ok          ),
-    .i_inst_sram_data_ok      (i_inst_sram_data_ok          )
+    .i_inst_sram_data_ok      (i_inst_sram_data_ok          ),
+    .i_inst_sram_rdata        (i_inst_sram_rdata            )
   );
 
   ysyx_22050710_id_stage #(
@@ -170,17 +180,17 @@ module ysyx_22050710_core #(
     // to ms
     .o_es_to_ms_valid         (es_to_ms_valid               ),
     .o_es_to_ms_bus           (es_to_ms_bus                 ),
-    // data sram interface
-    .o_data_sram_addr         (o_data_sram_addr             ),
-    .o_data_sram_ren          (o_data_sram_ren              ), // data ram 读请求或写请求是在 ex stage 发出
-    .o_data_sram_wen          (o_data_sram_wen              ), // data ram 的读数据在mem stage 返回
-    .o_data_sram_wmask        (o_data_sram_wmask            ),
-    .o_data_sram_wdata        (o_data_sram_wdata            ),
     // for load stall
     .o_es_to_ds_load_sel      (es_to_ds_load_sel            ),
     // bypass
     .o_es_to_ds_bypass_bus    (es_to_ds_bypass_bus          ),
-    // data sram
+    // data sram interface
+    .o_data_sram_req          (o_data_sram_req              ), // data ram 读请求或写请求是在 ex stage 发出
+    .o_data_sram_wr           (o_data_sram_wr               ), // data ram 的读数据在mem stage 返回
+    .o_data_sram_size         (o_data_sram_size             ),
+    .o_data_sram_addr         (o_data_sram_addr             ),
+    .o_data_sram_wstrb        (o_data_sram_wstrb            ),
+    .o_data_sram_wdata        (o_data_sram_wdata            ),
     .i_data_sram_addr_ok      (i_data_sram_addr_ok          ),
     // debug
     .i_debug_ds_to_es_bus     (debug_ds_to_es_bus           ),
