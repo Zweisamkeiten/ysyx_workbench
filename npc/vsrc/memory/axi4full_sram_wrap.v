@@ -83,7 +83,7 @@ module ysyx_22050710_axi4full_sram_wrap #(
   wire r_state_read     = read_state_reg == READ_STATE_READ  ;
 
   // 读通道状态切换
-  always @(posedge i_aclk) begin
+  always @(*) begin
     if (~i_arsetn) begin
       read_state_reg <= READ_STATE_IDLE;
     end
@@ -108,7 +108,7 @@ module ysyx_22050710_axi4full_sram_wrap #(
   wire w_state_resp   = write_state_reg == WRITE_STATE_RESP  ;
 
   // 写通道状态切换
-  always @(posedge i_aclk) begin
+  always @(*) begin
     if (~i_arsetn) begin
       write_state_reg <= WRITE_STATE_IDLE;
     end
