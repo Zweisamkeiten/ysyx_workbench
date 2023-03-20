@@ -40,7 +40,7 @@ module ysyx_22050710_axil_master_wrap #(
   // Wirte address channel
   output [ADDR_WIDTH-1:0     ] o_awaddr                      ,  // 写请求地址
   output [TRANSLEN_WIDTH-1:0 ] o_awlen                       ,  // 写请求控制信号, 请求传输的长度(数据传输拍数) 固定为0(without cache)
-  output [2:0                ] o_awsize                      ,  // 写请求控制信号, 请求传输的大小(数据传输每拍的字节数)
+  output [1:0                ] o_awsize                      ,  // 写请求控制信号, 请求传输的大小(数据传输每拍的字节数)
   output [1:0                ] o_awburst                     ,  // 写请求控制信号, 传输类型 固定为0b01(without cache)
   output [1:0                ] o_awlock                      ,  // 写请求控制信号, 原子锁 固定为0
   output [3:0                ] o_awcache                     ,  // 写请求控制信号, Cache 属性 固定为 0
@@ -63,7 +63,7 @@ module ysyx_22050710_axil_master_wrap #(
   // Read address channel
   output [ADDR_WIDTH-1:0     ] o_araddr                      ,  // 读请求的地址
   output [TRANSLEN_WIDTH-1:0 ] o_arlen                       ,  // 读请求控制信号, 请求传输的长度(数据传输拍数) 固定为0
-  output [2:0                ] o_arsize                      ,  // 读请求控制信号, 请求传输的大小(数据传输每拍的字节数)
+  output [1:0                ] o_arsize                      ,  // 读请求控制信号, 请求传输的大小(数据传输每拍的字节数)
   output [1:0                ] o_arburst                     ,  // 读请求控制信号, 传输类型 固定为 0b01(without cache)
   output [1:0                ] o_arlock                      ,  // 读请求控制信号, 原子锁 固定为 0
   output [3:0                ] o_arcache                     ,  // 读请求控制信号, Cache 属性 固定为 0
