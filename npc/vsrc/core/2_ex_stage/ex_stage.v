@@ -35,7 +35,7 @@ module ysyx_22050710_ex_stage #(
   // data sram interface
   output                       o_data_sram_req               , // 请求信号, 为 1 时有读写请求, 为 0 时无读写请求 data ram 读请求或写请求是在 ex stage 发出
   output                       o_data_sram_wr                , // 为 1 表示该次是写请求, 为 0 表示该次是读请求
-  input  [1:0                ] i_data_sram_size              , // 该次请求传输的字节数, 0: 1byte; 1: 2bytes; 2: 4bytes; 3: 8bytes
+  output [1:0                ] o_data_sram_size              , // 该次请求传输的字节数, 0: 1byte; 1: 2bytes; 2: 4bytes; 3: 8bytes
   output [SRAM_ADDR_WD-1:0   ] o_data_sram_addr              , // 该次请求的地址
   output [SRAM_WMASK_WD-1:0  ] o_data_sram_wstrb             , // 该次请求的写字节使能
   output [SRAM_DATA_WD-1:0   ] o_data_sram_wdata             , // 该次写请求的写数据
