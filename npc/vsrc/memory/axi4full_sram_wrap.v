@@ -149,7 +149,7 @@ module ysyx_22050710_axi4full_sram_wrap #(
 
   assign o_arready           = r_state_read                  ;
   assign o_awready           = w_state_write                 ;
-  assign o_wready            = w_state_write                 ;
+  assign o_wready            = w_state_resp                  ;
   assign o_bresp             = 2'b00                         ;
   assign o_rresp             = 2'b00                         ; // trans ok
   assign o_rlast             = 1'b1                          ;
