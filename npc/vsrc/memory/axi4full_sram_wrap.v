@@ -83,15 +83,15 @@ module ysyx_22050710_axi4full_sram_wrap #(
   wire r_state_read     = read_state_reg == READ_STATE_READ  ;
 
   // 读通道状态切换
-  always @(*) begin
+  always @(posedge i_aclk) begin
     if (~i_arsetn) begin
-      read_state_reg = READ_STATE_IDLE;
+      read_state_reg <= READ_STATE_IDLE;
     end
     else begin
       case (read_state_reg)
-        READ_STATE_IDLE : if (ar_fire) read_state_reg = READ_STATE_READ;
-        READ_STATE_READ : if (r_fire ) read_state_reg = READ_STATE_IDLE;
-        default         :              read_state_reg = read_state_reg ;
+        READ_STATE_IDLE : if (ar_fire) read_state_reg <= READ_STATE_READ;
+        READ_STATE_READ : if (r_fire ) read_state_reg <= READ_STATE_IDLE;
+        default         :              read_state_reg <= read_state_reg ;
       endcase
     end
   end
@@ -108,16 +108,16 @@ module ysyx_22050710_axi4full_sram_wrap #(
   wire w_state_resp   = write_state_reg == WRITE_STATE_RESP  ;
 
   // 写通道状态切换
-  always @(*) begin
+  always @(posedge i_aclk) begin
     if (~i_arsetn) begin
-      write_state_reg = WRITE_STATE_IDLE;
+      write_state_reg <= WRITE_STATE_IDLE;
     end
     else begin
       case (write_state_reg)
-        WRITE_STATE_IDLE  : if (aw_fire) write_state_reg = WRITE_STATE_WRITE;
-        WRITE_STATE_WRITE : if (w_fire ) write_state_reg = WRITE_STATE_RESP ;
-        WRITE_STATE_RESP  : if (b_fire ) write_state_reg = WRITE_STATE_IDLE ;
-        default           :              write_state_reg = write_state_reg  ;
+        WRITE_STATE_IDLE  : if (aw_fire) write_state_reg <= WRITE_STATE_WRITE;
+        WRITE_STATE_WRITE : if (w_fire ) write_state_reg <= WRITE_STATE_RESP ;
+        WRITE_STATE_RESP  : if (b_fire ) write_state_reg <= WRITE_STATE_IDLE ;
+        default           :              write_state_reg <= write_state_reg  ;
       endcase
     end
   end
