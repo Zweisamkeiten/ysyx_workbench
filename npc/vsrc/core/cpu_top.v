@@ -90,7 +90,7 @@ module ysyx_22050710_cpu_top #(
   wire [SRAM_ADDR_WD-1:0     ] ifu_awaddr                    ;
   wire [2:0                  ] ifu_awprot                    ; // define the access permission for write accesses.
   wire [7:0                  ] ifu_awlen                     ;
-  wire [2:0                  ] ifu_awsize                    ;
+  wire [1:0                  ] ifu_awsize                    ;
   wire [1:0                  ] ifu_awburst                   ;
   wire [1:0                  ] ifu_awlock                    ;
   wire [3:0                  ] ifu_awcache                   ;
@@ -112,7 +112,7 @@ module ysyx_22050710_cpu_top #(
   // Read address channel
   wire [SRAM_ADDR_WD-1:0     ] ifu_araddr                    ;
   wire [7:0                  ] ifu_arlen                     ;
-  wire [2:0                  ] ifu_arsize                    ;
+  wire [1:0                  ] ifu_arsize                    ;
   wire [1:0                  ] ifu_arburst                   ;
   wire [1:0                  ] ifu_arlock                    ;
   wire [3:0                  ] ifu_arcache                   ;
@@ -131,7 +131,7 @@ module ysyx_22050710_cpu_top #(
   wire [SRAM_ADDR_WD-1:0     ] lsu_awaddr                    ;
   wire [2:0                  ] lsu_awprot                    ; // define the access permission for write accesses.
   wire [7:0                  ] lsu_awlen                     ;
-  wire [2:0                  ] lsu_awsize                    ;
+  wire [1:0                  ] lsu_awsize                    ;
   wire [1:0                  ] lsu_awburst                   ;
   wire [1:0                  ] lsu_awlock                    ;
   wire [3:0                  ] lsu_awcache                   ;
@@ -153,7 +153,7 @@ module ysyx_22050710_cpu_top #(
   // Read address channel
   wire [SRAM_ADDR_WD-1:0     ] lsu_araddr                    ;
   wire [7:0                  ] lsu_arlen                     ;
-  wire [2:0                  ] lsu_arsize                    ;
+  wire [1:0                  ] lsu_arsize                    ;
   wire [1:0                  ] lsu_arburst                   ;
   wire [1:0                  ] lsu_arlock                    ;
   wire [3:0                  ] lsu_arcache                   ;
