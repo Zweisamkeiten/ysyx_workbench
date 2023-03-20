@@ -179,7 +179,7 @@ module ysyx_22050710_ex_stage #(
   assign o_debug_es_to_ms_bus= {es_debug_inst                ,
                                 es_debug_pc                  ,
                                 es_debug_dnpc                ,
-  1'b1 ? (o_data_sram_ren | o_data_sram_wen) : es_debug_memen,
+      1'b1 ? (data_sram_ren | data_sram_wen) : es_debug_memen,
         1'b1 ? ({32'b0, o_data_sram_addr}) : es_debug_memaddr
                                                              };
 

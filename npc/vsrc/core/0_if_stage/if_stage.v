@@ -7,7 +7,8 @@ module ysyx_22050710_if_stage #(
   parameter FS_TO_DS_BUS_WD                                  ,
   parameter BR_BUS_WD                                        ,
   parameter SRAM_ADDR_WD                                     ,
-  parameter SRAM_DATA_WD                        
+  parameter SRAM_DATA_WD                                     ,
+  parameter SRAM_WMASK_WD
 ) (
   input                        i_clk                         ,
   input                        i_rst                         ,
