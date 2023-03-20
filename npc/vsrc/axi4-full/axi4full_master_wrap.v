@@ -155,7 +155,7 @@ module ysyx_22050710_axi4full_master_wrap #(
   assign axi_len             = 0                             ;
 
   // 写地址通道
-  assign o_awvalid           = i_rw_req && i_rw_wr           ;
+  assign o_awvalid           = w_state_addr                  ;
   assign o_awaddr            = i_rw_addr                     ;
   assign o_awprot            = PROT_UNPRIVILEGED_ACCESS
                              | PROT_SECURE_ACCESS
@@ -178,7 +178,7 @@ module ysyx_22050710_axi4full_master_wrap #(
   // ------------------Read Transaction-----------------------
 
   // Read address channel signals
-  assign o_arvalid           = i_rw_req && ~i_rw_wr          ;
+  assign o_arvalid           = r_state_addr                  ;
   assign o_araddr            = i_rw_addr                     ;
   assign o_arprot            = PROT_UNPRIVILEGED_ACCESS
                              | PROT_SECURE_ACCESS
@@ -192,8 +192,8 @@ module ysyx_22050710_axi4full_master_wrap #(
   // Read data channel signals
   assign o_rready            = r_state_read                  ;
 
-  assign o_rw_addr_ok        = i_arready | i_wready          ;
-  assign o_rw_data_ok        = i_rvalid  | i_bvalid          ;
+  assign o_rw_addr_ok        = i_arready | i_wready              ;
+  assign o_rw_data_ok        = i_rvalid  | i_bvalid              ;
   assign o_rw_rdata          = i_rdata                       ;
 
 endmodule
