@@ -131,7 +131,7 @@ module ysyx_22050710_axi4full_sram_wrap #(
   // write port
   always @(posedge i_aclk) begin
     if (aw_fire) begin
-      npc_pmem_write({32'b0, awaddr}, i_wdata, i_wstrb);
+      npc_pmem_write({32'b0, i_awaddr}, i_wdata, i_wstrb);
     end
   end
 
