@@ -171,10 +171,10 @@ module ysyx_22050710_axi4full_sram_wrap #(
     .RESET_VAL                (0                            )
   ) u_o_rvalid (
     .clk                      (i_aclk                       ),
-    .rst                      (!i_arsetn                    ),
-    .din                      (ar_fire                      ), // 接收完成地址延迟一周期返回读数据有效
+    .rst                      (!i_arsetn || ~r_state_read   ),
+    .din                      (r_state_read                 ), // 接收完成地址延迟一周期返回读数据有效
     .dout                     (o_rvalid                     ),
-    .wen                      (1                            )
+    .wen                      (r_state_read                 )
   );
 
   Reg #(
