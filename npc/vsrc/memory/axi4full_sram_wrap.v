@@ -122,9 +122,21 @@ module ysyx_22050710_axi4full_sram_wrap #(
     end
   end
 
+  wire [ADDR_WIDTH-1:0] araddr;
+  Reg #(
+    .WIDTH                    (ADDR_WIDTH                   ),
+    .RESET_VAL                (0                            )
+  ) u_ar_addr_r (
+    .clk                      (i_aclk                       ),
+    .rst                      (!i_arsetn                    ),
+    .din                      (i_araddr                     ),
+    .dout                     (araddr                       ),
+    .wen                      (i_arvalid                    )
+  );
+
   always @(posedge i_aclk) begin
-    if (ar_fire) begin
-      npc_pmem_read({32'b0, i_araddr}, o_rdata);
+    if (r_state_read) begin
+      npc_pmem_read({32'b0, araddr}, o_rdata);
     end
   end
 
