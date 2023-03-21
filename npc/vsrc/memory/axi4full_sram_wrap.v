@@ -89,9 +89,9 @@ module ysyx_22050710_axi4full_sram_wrap #(
     end
     else begin
       case (read_state_reg)
-        READ_STATE_IDLE : if (i_arvalid) read_state_reg <= READ_STATE_READ;
-        READ_STATE_READ : if (r_fire   ) read_state_reg <= READ_STATE_IDLE;
-        default         :                read_state_reg <= READ_STATE_IDLE ;
+        READ_STATE_IDLE : if (ar_fire) read_state_reg <= READ_STATE_READ;
+        READ_STATE_READ : if (r_fire ) read_state_reg <= READ_STATE_IDLE;
+        default         :              read_state_reg <= read_state_reg ;
       endcase
     end
   end
@@ -104,6 +104,7 @@ module ysyx_22050710_axi4full_sram_wrap #(
   reg [1:0] write_state_reg  = WRITE_STATE_IDLE;
 
   wire w_state_idle   = write_state_reg == WRITE_STATE_IDLE  ;
+  wire w_state_write  = write_state_reg == WRITE_STATE_WRITE ;
   wire w_state_resp   = write_state_reg == WRITE_STATE_RESP  ;
 
   // 写通道状态切换
@@ -113,9 +114,10 @@ module ysyx_22050710_axi4full_sram_wrap #(
     end
     else begin
       case (write_state_reg)
-        WRITE_STATE_IDLE  : if (i_wvalid) write_state_reg <= WRITE_STATE_RESP;
-        WRITE_STATE_RESP  : if (b_fire   ) write_state_reg <= WRITE_STATE_IDLE ;
-        default           :                write_state_reg <= WRITE_STATE_IDLE ;
+        WRITE_STATE_IDLE  : if (aw_fire) write_state_reg <= WRITE_STATE_WRITE;
+        WRITE_STATE_WRITE : if (w_fire ) write_state_reg <= WRITE_STATE_RESP ;
+        WRITE_STATE_RESP  : if (b_fire ) write_state_reg <= WRITE_STATE_IDLE ;
+        default           :              write_state_reg <= write_state_reg  ;
       endcase
     end
   end
@@ -126,43 +128,53 @@ module ysyx_22050710_axi4full_sram_wrap #(
     end
   end
 
+  wire [ADDR_WIDTH-1:0] awaddr;
+  Reg #(
+    .WIDTH                    (ADDR_WIDTH                   ),
+    .RESET_VAL                (0                            )
+  ) u_aw_addr_r (
+    .clk                      (i_aclk                       ),
+    .rst                      (!i_arsetn                    ),
+    .din                      (i_awaddr                     ),
+    .dout                     (awaddr                       ),
+    .wen                      (i_awvalid                    )
+  );
+
   // write port
   always @(posedge i_aclk) begin
-    if (aw_fire) begin
-      npc_pmem_write({32'b0, i_awaddr}, i_wdata, i_wstrb);
+    if (w_state_write) begin
+      npc_pmem_write({32'b0, awaddr}, i_wdata, i_wstrb);
     end
   end
 
   assign o_arready           = r_state_idle                  ;
   assign o_awready           = w_state_idle                  ;
-  assign o_wready            = w_state_idle                  ;
-  assign o_bvalid            = w_state_resp                  ;
-  assign o_rvalid            = r_state_read                  ;
+  assign o_wready            = w_state_write                 ;
   assign o_bresp             = 2'b00                         ;
   assign o_rresp             = 2'b00                         ; // trans ok
   assign o_rlast             = 1'b1                          ;
 
-  /* Reg #( */
-  /*   .WIDTH                    (1                            ), */
-  /*   .RESET_VAL                (0                            ) */
-  /* ) u_o_rvalid ( */
-  /*   .clk                      (i_aclk                       ), */
-  /*   .rst                      (!i_arsetn || ~ar_fire        ), */
-  /*   .din                      (ar_fire                      ), // 接收完成地址延迟一周期返回读数据有效 */
-  /*   .dout                     (o_rvalid                     ), */
-  /*   .wen                      (ar_fire                      ) */
-  /* ); */
+  Reg #(
+    .WIDTH                    (1                            ),
+    .RESET_VAL                (0                            )
+  ) u_o_rvalid (
+    .clk                      (i_aclk                       ),
+    .rst                      (!i_arsetn                    ),
+    .din                      (ar_fire                      ), // 接收完成地址延迟一周期返回读数据有效
+    .dout                     (o_rvalid                     ),
+    .wen                      (1                            )
+  );
 
-  /* Reg #( */
-  /*   .WIDTH                    (1                            ), */
-  /*   .RESET_VAL                (0                            ) */
-  /* ) u_o_bvalid ( */
-  /*   .clk                      (i_aclk                       ), */
-  /*   .rst                      (!i_arsetn || ~w_fire         ), */
-  /*   .din                      (w_fire                       ), */
-  /*   .dout                     (o_bvalid                     ), */
-  /*   .wen                      (w_fire                       ) */
-  /* ); */
+  Reg #(
+    .WIDTH                    (1                            ),
+    .RESET_VAL                (0                            )
+  ) u_o_bvalid (
+    .clk                      (i_aclk                       ),
+    .rst                      (!i_arsetn                    ),
+    .din                      (w_fire                       ),
+    .dout                     (o_bvalid                     ),
+    .wen                      (1                            )
+  );
 
   Reg #(
     .WIDTH                    (4                            ),
