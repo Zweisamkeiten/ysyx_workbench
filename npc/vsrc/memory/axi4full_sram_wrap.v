@@ -89,7 +89,7 @@ module ysyx_22050710_axi4full_sram_wrap #(
     end
     else begin
       case (read_state_reg)
-        READ_STATE_IDLE : if (i_arlock) read_state_reg <= READ_STATE_READ;
+        READ_STATE_IDLE : if (i_arvalid) read_state_reg <= READ_STATE_READ;
         READ_STATE_READ : if (r_fire ) read_state_reg <= READ_STATE_IDLE;
         default         :              read_state_reg <= read_state_reg ;
       endcase
