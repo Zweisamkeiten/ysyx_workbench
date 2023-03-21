@@ -159,7 +159,7 @@ module ysyx_22050710_axi4full_master_wrap #(
                                 write_state_reg <= WRITE_STATE_IDLE  ;
                               end
                             end
-        default           :              write_state_reg <= WRITE_STATE_IDLE  ;
+        default           : write_state_reg <= WRITE_STATE_IDLE  ;
       endcase
     end
   end
