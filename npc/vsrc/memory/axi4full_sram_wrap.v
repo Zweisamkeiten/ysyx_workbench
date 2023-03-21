@@ -90,8 +90,8 @@ module ysyx_22050710_axi4full_sram_wrap #(
     else begin
       case (read_state_reg)
         READ_STATE_IDLE : if (i_arvalid) read_state_reg <= READ_STATE_READ;
-        READ_STATE_READ : if (r_fire ) read_state_reg <= READ_STATE_IDLE;
-        default         :              read_state_reg <= read_state_reg ;
+        READ_STATE_READ : if (r_fire   ) read_state_reg <= READ_STATE_IDLE;
+        default         :                read_state_reg <= READ_STATE_IDLE ;
       endcase
     end
   end
@@ -115,102 +115,53 @@ module ysyx_22050710_axi4full_sram_wrap #(
     else begin
       case (write_state_reg)
         WRITE_STATE_IDLE  : if (i_awvalid) write_state_reg <= WRITE_STATE_WRITE;
-        WRITE_STATE_WRITE : if (i_wvalid ) write_state_reg <= WRITE_STATE_RESP ;
-        WRITE_STATE_RESP  : if (b_fire ) write_state_reg <= WRITE_STATE_IDLE ;
-        default           :              write_state_reg <= write_state_reg  ;
+        WRITE_STATE_WRITE : if (w_fire   ) write_state_reg <= WRITE_STATE_RESP ;
+        WRITE_STATE_RESP  : if (b_fire   ) write_state_reg <= WRITE_STATE_IDLE ;
+        default           :                write_state_reg <= WRITE_STATE_IDLE ;
       endcase
     end
   end
 
-  wire [ADDR_WIDTH-1:0] araddr;
-  Reg #(
-    .WIDTH                    (ADDR_WIDTH                   ),
-    .RESET_VAL                (0                            )
-  ) u_ar_addr_r (
-    .clk                      (i_aclk                       ),
-    .rst                      (!i_arsetn                    ),
-    .din                      (i_araddr                     ),
-    .dout                     (araddr                       ),
-    .wen                      (i_arvalid                    )
-  );
-
   always @(posedge i_aclk) begin
     if (ar_fire) begin
-      npc_pmem_read({32'b0, araddr}, o_rdata);
+      npc_pmem_read({32'b0, i_araddr}, o_rdata);
     end
   end
-
-  wire [ADDR_WIDTH-1:0] awaddr;
-  Reg #(
-    .WIDTH                    (ADDR_WIDTH                   ),
-    .RESET_VAL                (0                            )
-  ) u_aw_addr_r (
-    .clk                      (i_aclk                       ),
-    .rst                      (!i_arsetn                    ),
-    .din                      (i_awaddr                     ),
-    .dout                     (awaddr                       ),
-    .wen                      (i_awvalid                    )
-  );
-
-  wire [DATA_WIDTH-1:0] wdata;
-  Reg #(
-    .WIDTH                    (DATA_WIDTH                   ),
-    .RESET_VAL                (0                            )
-  ) u_w_data_r (
-    .clk                      (i_aclk                       ),
-    .rst                      (!i_arsetn                    ),
-    .din                      (i_wdata                      ),
-    .dout                     (wdata                        ),
-    .wen                      (i_wvalid                     )
-  );
-
-  wire [STRB_WIDTH-1:0] wstrb;
-  Reg #(
-    .WIDTH                    (STRB_WIDTH                   ),
-    .RESET_VAL                (0                            )
-  ) u_w_strb_r (
-    .clk                      (i_aclk                       ),
-    .rst                      (!i_arsetn                    ),
-    .din                      (i_wstrb                      ),
-    .dout                     (wstrb                        ),
-    .wen                      (i_wvalid                     )
-  );
 
   // write port
   always @(posedge i_aclk) begin
-    if (w_state_write) begin
-      npc_pmem_write({32'b0, awaddr}, wdata, wstrb);
+    if (aw_fire) begin
+      npc_pmem_write({32'b0, awaddr}, i_wdata, i_wstrb);
     end
   end
 
-  assign o_arready           = i_arvalid                     ;
-  assign o_awready           = i_awvalid                     ;
-  assign o_wready            = i_wvalid                      ;
+  assign o_arready           = r_state_idle                  ;
+  assign o_awready           = w_state_idle                  ;
+  assign o_wready            = w_state_idle                  ;
   assign o_bresp             = 2'b00                         ;
   assign o_rresp             = 2'b00                         ; // trans ok
   assign o_rlast             = 1'b1                          ;
 
-  assign o_rvalid            = r_state_read                  ;
-  /* Reg #( */
-  /*   .WIDTH                    (1                            ), */
-  /*   .RESET_VAL                (0                            ) */
-  /* ) u_o_rvalid ( */
-  /*   .clk                      (i_aclk                       ), */
-  /*   .rst                      (!i_arsetn || ~r_state_read   ), */
-  /*   .din                      (r_state_read                 ), // 接收完成地址延迟一周期返回读数据有效 */
-  /*   .dout                     (o_rvalid                     ), */
-  /*   .wen                      (r_state_read                 ) */
-  /* ); */
+  Reg #(
+    .WIDTH                    (1                            ),
+    .RESET_VAL                (0                            )
+  ) u_o_rvalid (
+    .clk                      (i_aclk                       ),
+    .rst                      (!i_arsetn || ~ar_fire        ),
+    .din                      (ar_fire                      ), // 接收完成地址延迟一周期返回读数据有效
+    .dout                     (o_rvalid                     ),
+    .wen                      (ar_fire                      )
+  );
 
   Reg #(
     .WIDTH                    (1                            ),
     .RESET_VAL                (0                            )
   ) u_o_bvalid (
     .clk                      (i_aclk                       ),
-    .rst                      (!i_arsetn || ~w_state_write  ),
-    .din                      (w_state_write                ),
+    .rst                      (!i_arsetn || ~w_fire         ),
+    .din                      (w_fire                       ),
     .dout                     (o_bvalid                     ),
-    .wen                      (w_state_write                )
+    .wen                      (w_fire                       )
   );
 
   Reg #(
