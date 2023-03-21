@@ -199,7 +199,7 @@
 /*       end */
 /*     end */
 /*     else begin */
-/*       /* TODO */ */
+/*       /* TODO */
 /*     end */
 /*   end */
 /*   localparam [2:0] */
