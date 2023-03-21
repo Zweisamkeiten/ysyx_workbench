@@ -251,7 +251,6 @@ void cpu_exec(uint64_t n) {
     npc_state.state = NPC_RUNNING;
   }
 
-  extern "C" uint64_t get_time();
   uint64_t timer_start = get_time();
 
   execute(n);
