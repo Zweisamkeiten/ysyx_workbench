@@ -134,7 +134,7 @@ module ysyx_22050710_axi4full_sram_wrap #(
     .wen                      (i_arvalid                    )
   );
 
-  always @(*) begin
+  always @(posedge i_aclk) begin
     if (r_state_read) begin
       npc_pmem_read({32'b0, araddr}, o_rdata);
     end

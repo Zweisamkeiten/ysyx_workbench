@@ -206,7 +206,7 @@ module ysyx_22050710_axi4full_master_wrap #(
 
   assign o_rw_addr_ok        = ar_fire | w_fire              ;
   assign o_rw_data_ok        = r_fire  | b_fire              ;
-  assign o_rw_rdata          = i_rdata                       ;
+  /* assign o_rw_rdata          = i_rdata                       ; */
 
   wire [DATA_WIDTH-1:0] rdata;
   Reg #(
