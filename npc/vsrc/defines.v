@@ -53,3 +53,8 @@
   `define ysyx_22050710_MCAUSE                      12'h342
 `endif
 
+`ifndef YSYX_22050710_CACHE_H
+  `define YSYX_22050710_CACHE_H
+
+  `define ysyx_22050710_CACHE_ADDR_WD                32
+`endif
