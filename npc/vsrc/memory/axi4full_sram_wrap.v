@@ -58,19 +58,6 @@ module ysyx_22050710_axi4full_sram_wrap #(
   output                       o_rvalid                      ,
   input                        i_rready 
 );
-  // ---------------------------------------------------------
-  wire aw_fire                                               ;
-  wire w_fire                                                ;
-  wire b_fire                                                ;
-  wire ar_fire                                               ;
-  wire r_fire                                                ;
-
-  // --------------------------------------------------------
-  assign aw_fire             = i_awvalid & o_awready         ;
-  assign w_fire              = i_wvalid  & o_wready          ;
-  assign b_fire              = i_bready  & o_bvalid          ;
-  assign ar_fire             = i_arvalid & o_arready         ;
-  assign r_fire              = i_rready  & o_rvalid          ;
 
   // ------------------State Machine--------------------------
   localparam [0:0]
@@ -183,9 +170,9 @@ module ysyx_22050710_axi4full_sram_wrap #(
     end
   end
 
-  assign o_arready           = r_state_read                  ;
-  assign o_awready           = w_state_write                 ;
-  assign o_wready            = w_state_resp                  ;
+  assign o_arready           = i_arvalid                     ;
+  assign o_awready           = i_awvalid                     ;
+  assign o_wready            = i_wvalid                      ;
   assign o_bresp             = 2'b00                         ;
   assign o_rresp             = 2'b00                         ; // trans ok
   assign o_rlast             = 1'b1                          ;
