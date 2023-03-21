@@ -136,31 +136,33 @@ module ysyx_22050710_axi4full_sram_wrap #(
   assign o_arready           = r_state_idle                  ;
   assign o_awready           = w_state_idle                  ;
   assign o_wready            = w_state_idle                  ;
+  assign o_bvalid            = w_state_resp                  ;
+  assign o_rvalid            = r_state_read                  ;
   assign o_bresp             = 2'b00                         ;
   assign o_rresp             = 2'b00                         ; // trans ok
   assign o_rlast             = 1'b1                          ;
 
-  Reg #(
-    .WIDTH                    (1                            ),
-    .RESET_VAL                (0                            )
-  ) u_o_rvalid (
-    .clk                      (i_aclk                       ),
-    .rst                      (!i_arsetn || ~ar_fire        ),
-    .din                      (ar_fire                      ), // 接收完成地址延迟一周期返回读数据有效
-    .dout                     (o_rvalid                     ),
-    .wen                      (ar_fire                      )
-  );
+  /* Reg #( */
+  /*   .WIDTH                    (1                            ), */
+  /*   .RESET_VAL                (0                            ) */
+  /* ) u_o_rvalid ( */
+  /*   .clk                      (i_aclk                       ), */
+  /*   .rst                      (!i_arsetn || ~ar_fire        ), */
+  /*   .din                      (ar_fire                      ), // 接收完成地址延迟一周期返回读数据有效 */
+  /*   .dout                     (o_rvalid                     ), */
+  /*   .wen                      (ar_fire                      ) */
+  /* ); */
 
-  Reg #(
-    .WIDTH                    (1                            ),
-    .RESET_VAL                (0                            )
-  ) u_o_bvalid (
-    .clk                      (i_aclk                       ),
-    .rst                      (!i_arsetn || ~w_fire         ),
-    .din                      (w_fire                       ),
-    .dout                     (o_bvalid                     ),
-    .wen                      (w_fire                       )
-  );
+  /* Reg #( */
+  /*   .WIDTH                    (1                            ), */
+  /*   .RESET_VAL                (0                            ) */
+  /* ) u_o_bvalid ( */
+  /*   .clk                      (i_aclk                       ), */
+  /*   .rst                      (!i_arsetn || ~w_fire         ), */
+  /*   .din                      (w_fire                       ), */
+  /*   .dout                     (o_bvalid                     ), */
+  /*   .wen                      (w_fire                       ) */
+  /* ); */
 
   Reg #(
     .WIDTH                    (4                            ),
