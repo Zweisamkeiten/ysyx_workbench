@@ -123,8 +123,7 @@ module ysyx_22050710_axi4full_sram_wrap #(
   end
 
   always @(posedge i_aclk) begin
-    if (ar_fire) begin
-      $display("%x", i_araddr);
+    if (i_arvalid) begin
       npc_pmem_read({32'b0, i_araddr}, o_rdata);
     end
   end
