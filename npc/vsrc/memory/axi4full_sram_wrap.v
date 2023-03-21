@@ -113,7 +113,7 @@ module ysyx_22050710_axi4full_sram_wrap #(
     end
     else begin
       case (write_state_reg)
-        WRITE_STATE_IDLE  : if (i_awvalid) write_state_reg <= WRITE_STATE_RESP;
+        WRITE_STATE_IDLE  : if (i_wvalid) write_state_reg <= WRITE_STATE_RESP;
         WRITE_STATE_RESP  : if (b_fire   ) write_state_reg <= WRITE_STATE_IDLE ;
         default           :                write_state_reg <= WRITE_STATE_IDLE ;
       endcase
