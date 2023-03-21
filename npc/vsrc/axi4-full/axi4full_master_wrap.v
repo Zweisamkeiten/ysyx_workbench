@@ -113,7 +113,7 @@ module ysyx_22050710_axi4full_master_wrap #(
     end
     else begin
       case (read_state_reg)
-        READ_STATE_IDLE : read_state_reg <= READ_STATE_ADDR ;
+        READ_STATE_IDLE : if (i_rw_req && ~i_rw_wr) read_state_reg <= READ_STATE_ADDR ;
         READ_STATE_ADDR : if (ar_fire) read_state_reg <= READ_STATE_READ ;
         READ_STATE_READ : if (r_fire ) read_state_reg <= READ_STATE_IDLE ;
         default         :              read_state_reg <= READ_STATE_IDLE ;
@@ -141,7 +141,7 @@ module ysyx_22050710_axi4full_master_wrap #(
     end
     else begin
       case (write_state_reg)
-        WRITE_STATE_IDLE  : write_state_reg <= WRITE_STATE_ADDR  ;
+        WRITE_STATE_IDLE  : if (i_rw_req && i_rw_wr) write_state_reg <= WRITE_STATE_ADDR  ;
         WRITE_STATE_ADDR  : if (aw_fire) write_state_reg <= WRITE_STATE_WRITE ;
         WRITE_STATE_WRITE : if (w_fire ) write_state_reg <= WRITE_STATE_RESP  ;
         WRITE_STATE_RESP  : if (b_fire ) write_state_reg <= WRITE_STATE_IDLE  ;
@@ -155,7 +155,7 @@ module ysyx_22050710_axi4full_master_wrap #(
   assign axi_len             = 0                             ;
 
   // 写地址通道
-  assign o_awvalid           = w_state_addr & i_rw_req & i_rw_wr                ;
+  assign o_awvalid           = w_state_addr                  ;
   assign o_awaddr            = i_rw_addr                     ;
   assign o_awprot            = PROT_UNPRIVILEGED_ACCESS
                              | PROT_SECURE_ACCESS
@@ -178,7 +178,7 @@ module ysyx_22050710_axi4full_master_wrap #(
   // ------------------Read Transaction-----------------------
 
   // Read address channel signals
-  assign o_arvalid           = r_state_addr & i_rw_req & ~i_rw_wr                 ;
+  assign o_arvalid           = r_state_addr                  ;
   assign o_araddr            = i_rw_addr                     ;
   assign o_arprot            = PROT_UNPRIVILEGED_ACCESS
                              | PROT_SECURE_ACCESS
