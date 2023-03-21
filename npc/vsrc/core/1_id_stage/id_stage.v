@@ -179,7 +179,7 @@ module ysyx_22050710_id_stage #(
                                 br_taken                     ,
                                 br_target                  }),
     .dout                     (br_bus_with_valid            ),
-    .wen                      (~i_fs_to_ds_valid&&o_ds_allowin)
+    .wen                      (1                            )
   );
 
   // bypass
