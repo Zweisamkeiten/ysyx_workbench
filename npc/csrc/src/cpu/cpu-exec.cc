@@ -12,7 +12,7 @@ extern "C" void diff_watchpoint_value();
 #endif
 
 NPC_CPU_state cpu = {};
-uint64_t get_time();
+extern uint64_t get_time();
 static uint64_t g_timer = 0; // unit: us
 #define BUFSIZE 128
 #define MAX_INST_TO_PRINT 10
