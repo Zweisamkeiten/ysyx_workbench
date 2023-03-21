@@ -32,7 +32,11 @@ extern NPCState npc_state;
 
 // ----------- timer -----------
 
+#ifdef __cplusplus
+extern "C" uint64_t get_time();
+#else
 uint64_t get_time();
+#endif
 
 // ----------- log -----------
 
