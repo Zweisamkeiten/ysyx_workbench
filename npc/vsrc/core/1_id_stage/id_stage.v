@@ -89,7 +89,8 @@ module ysyx_22050710_id_stage #(
   ) u_fs_to_ds_bus_r (
     .clk                      (i_clk                        ),
     .rst                      (i_rst                        ),
-    .din                      (o_br_bus[64] ? {32'h00000013, fs_pc} : i_fs_to_ds_bus),
+    /* .din                      (o_br_bus[64] ? {32'h00000013, fs_pc} : i_fs_to_ds_bus), */
+    .din                      (i_fs_to_ds_bus),
     .dout                     (fs_to_ds_bus_r               ),
     .wen                      (i_fs_to_ds_valid&&o_ds_allowin)
   );
@@ -163,24 +164,25 @@ module ysyx_22050710_id_stage #(
   wire                         br_taken                      ;
   wire [PC_WD-1:0            ] br_target                     ;
   assign br_stall            = br_taken & ds_load_stall      ;
-  assign o_br_bus            = br_bus_with_valid[BR_BUS_WD]
-                             ? br_bus_with_valid[BR_BUS_WD-1:0]
-                             : {br_stall, br_taken, br_target};
+  assign o_br_bus            = {br_stall, br_taken, br_target};
+  /* assign o_br_bus            = br_bus_with_valid[BR_BUS_WD] */
+  /*                            ? br_bus_with_valid[BR_BUS_WD-1:0] */
+  /*                            : {br_stall, br_taken, br_target}; */
 
-  wire [BR_BUS_WD:0]           br_bus_with_valid             ;
-  Reg #(
-    .WIDTH                    (BR_BUS_WD + 1                ),
-    .RESET_VAL                (0                            )
-  ) u_save_br_bus_r (
-    .clk                      (i_clk                        ),
-    .rst                      (~br_taken || i_rst           ),
-    .din                      ({o_ds_to_es_valid            ,
-                                br_stall                     ,
-                                br_taken                     ,
-                                br_target                  }),
-    .dout                     (br_bus_with_valid            ),
-    .wen                      (br_taken                     )
-  );
+  /* wire [BR_BUS_WD:0]           br_bus_with_valid             ; */
+  /* Reg #( */
+  /*   .WIDTH                    (BR_BUS_WD + 1                ), */
+  /*   .RESET_VAL                (0                            ) */
+  /* ) u_save_br_bus_r ( */
+  /*   .clk                      (i_clk                        ), */
+  /*   .rst                      (~o_ds_allowin || i_rst       ), */
+  /*   .din                      ({~i_fs_to_ds_valid            , */
+  /*                               br_stall                     , */
+  /*                               br_taken                     , */
+  /*                               br_target                  }), */
+  /*   .dout                     (br_bus_with_valid            ), */
+  /*   .wen                      (~i_fs_to_ds_valid&&o_ds_allowin) */
+  /* ); */
 
   // bypass
   wire [GPR_ADDR_WD-1:0      ] es_to_ds_gpr_rd               ;
