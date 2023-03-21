@@ -81,7 +81,7 @@ module ysyx_22050710_id_stage #(
 
   wire [FS_TO_DS_BUS_WD-1:0  ] fs_to_ds_bus_r                ;
   wire [PC_WD-1:0            ] fs_pc                         ;
-  assign fs_pc               = i_fs_to_ds_bus[PC_WD:0]       ;
+  assign fs_pc               = i_fs_to_ds_bus[PC_WD-1:0]     ;
 
   Reg #(
     .WIDTH                    (FS_TO_DS_BUS_WD              ),
