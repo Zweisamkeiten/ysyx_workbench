@@ -91,7 +91,7 @@ module ysyx_22050710_axi4full_sram_wrap #(
       case (read_state_reg)
         READ_STATE_IDLE : if (ar_fire) read_state_reg <= READ_STATE_READ;
         READ_STATE_READ : if (r_fire ) read_state_reg <= READ_STATE_IDLE;
-        default         :              read_state_reg <= READ_STATE_IDLE ;
+        default         :              read_state_reg <= read_state_reg ;
       endcase
     end
   end
@@ -117,7 +117,7 @@ module ysyx_22050710_axi4full_sram_wrap #(
         WRITE_STATE_IDLE  : if (aw_fire) write_state_reg <= WRITE_STATE_WRITE;
         WRITE_STATE_WRITE : if (w_fire ) write_state_reg <= WRITE_STATE_RESP ;
         WRITE_STATE_RESP  : if (b_fire ) write_state_reg <= WRITE_STATE_IDLE ;
-        default           :              write_state_reg <= WRITE_STATE_IDLE ;
+        default           :              write_state_reg <= write_state_reg  ;
       endcase
     end
   end

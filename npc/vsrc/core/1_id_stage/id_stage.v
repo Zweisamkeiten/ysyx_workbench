@@ -25,7 +25,7 @@ module ysyx_22050710_id_stage #(
   output                       o_ds_allowin                  ,
   // from fs
   input                        i_fs_to_ds_valid              ,
-  input  [FS_TO_DS_BUS_WD-1:0] i_fs_to_ds_bus                , // {fs_inst[31:0], fs_pc[63:0]}
+  input  [FS_TO_DS_BUS_WD-1:0] i_fs_to_ds_bus                , // {fs_inst[31:0], fs_pc[63:0], fs_dnpc[63:0]}
   // to es
   output                       o_ds_to_es_valid              ,
   output [DS_TO_ES_BUS_WD-1:0] o_ds_to_es_bus                ,
@@ -79,9 +79,7 @@ module ysyx_22050710_id_stage #(
     .wen                      (o_ds_allowin                 )
   );
 
-  wire [FS_TO_DS_BUS_WD-1:0  ] fs_to_ds_bus_r                ;
-  wire [PC_WD-1:0            ] fs_pc                         ;
-  assign fs_pc               = i_fs_to_ds_bus[PC_WD-1:0]     ;
+  wire [FS_TO_DS_BUS_WD-1:0]   fs_to_ds_bus_r                ;
 
   Reg #(
     .WIDTH                    (FS_TO_DS_BUS_WD              ),
@@ -89,8 +87,7 @@ module ysyx_22050710_id_stage #(
   ) u_fs_to_ds_bus_r (
     .clk                      (i_clk                        ),
     .rst                      (i_rst                        ),
-    .din                      (o_br_bus[64] ? {32'h00000013, fs_pc} : i_fs_to_ds_bus),
-    /* .din                      (i_fs_to_ds_bus), */
+    .din                      (i_fs_to_ds_bus               ),
     .dout                     (fs_to_ds_bus_r               ),
     .wen                      (i_fs_to_ds_valid&&o_ds_allowin)
   );
@@ -164,7 +161,6 @@ module ysyx_22050710_id_stage #(
   wire                         br_taken                      ;
   wire [PC_WD-1:0            ] br_target                     ;
   assign br_stall            = br_taken & ds_load_stall      ;
-  /* assign o_br_bus            = {br_stall, br_taken, br_target}; */
   assign o_br_bus            = br_bus_with_valid[BR_BUS_WD]
                              ? br_bus_with_valid[BR_BUS_WD-1:0]
                              : {br_stall, br_taken, br_target};
@@ -175,13 +171,13 @@ module ysyx_22050710_id_stage #(
     .RESET_VAL                (0                            )
   ) u_save_br_bus_r (
     .clk                      (i_clk                        ),
-    .rst                      (~br_taken || i_rst       ),
-    .din                      ({br_taken                     ,
+    .rst                      (~o_ds_allowin || i_rst       ),
+    .din                      ({~i_fs_to_ds_valid            ,
                                 br_stall                     ,
                                 br_taken                     ,
                                 br_target                  }),
     .dout                     (br_bus_with_valid            ),
-    .wen                      (i_fs_to_ds_valid&&o_ds_allowin&&br_taken)
+    .wen                      (~i_fs_to_ds_valid&&o_ds_allowin)
   );
 
   // bypass
@@ -307,7 +303,7 @@ module ysyx_22050710_id_stage #(
   };
 
   always @(*) begin
-    if (rf_debug_valid && rf_debug_inst != 32'h00000013) begin
+    if (rf_debug_valid) begin
       finish_handle(rf_debug_pc, rf_debug_dnpc, {32'b0, rf_debug_inst}, rf_debug_memen, rf_debug_memaddr);
     end
   end
