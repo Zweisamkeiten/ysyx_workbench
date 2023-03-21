@@ -122,21 +122,9 @@ module ysyx_22050710_axi4full_sram_wrap #(
     end
   end
 
-  wire [ADDR_WIDTH-1:0] araddr;
-  Reg #(
-    .WIDTH                    (ADDR_WIDTH                   ),
-    .RESET_VAL                (0                            )
-  ) u_ar_addr_r (
-    .clk                      (i_aclk                       ),
-    .rst                      (!i_arsetn                    ),
-    .din                      (i_araddr                     ),
-    .dout                     (araddr                       ),
-    .wen                      (i_arvalid                    )
-  );
-
   always @(posedge i_aclk) begin
-    if (r_state_read) begin
-      npc_pmem_read({32'b0, araddr}, o_rdata);
+    if (ar_fire) begin
+      npc_pmem_read({32'b0, i_araddr}, o_rdata);
     end
   end
 
@@ -171,10 +159,10 @@ module ysyx_22050710_axi4full_sram_wrap #(
     .RESET_VAL                (0                            )
   ) u_o_rvalid (
     .clk                      (i_aclk                       ),
-    .rst                      (!i_arsetn || ~r_state_read   ),
-    .din                      (r_state_read                 ), // 接收完成地址延迟一周期返回读数据有效
+    .rst                      (!i_arsetn                    ),
+    .din                      (ar_fire                      ), // 接收完成地址延迟一周期返回读数据有效
     .dout                     (o_rvalid                     ),
-    .wen                      (r_state_read                 )
+    .wen                      (1                            )
   );
 
   Reg #(
