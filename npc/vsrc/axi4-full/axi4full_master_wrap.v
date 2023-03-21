@@ -192,8 +192,8 @@ module ysyx_22050710_axi4full_master_wrap #(
   // Read data channel signals
   assign o_rready            = r_state_read                  ;
 
-  assign o_rw_addr_ok        = ar_fire | w_fire              ;
-  assign o_rw_data_ok        = r_fire  | b_fire              ;
+  assign o_rw_addr_ok        = i_arready | i_wready              ;
+  assign o_rw_data_ok        = i_rvalid  | i_bvalid              ;
   assign o_rw_rdata          = i_rdata                       ;
 
 endmodule
