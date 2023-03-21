@@ -175,13 +175,13 @@ module ysyx_22050710_id_stage #(
     .RESET_VAL                (0                            )
   ) u_save_br_bus_r (
     .clk                      (i_clk                        ),
-    .rst                      (o_ds_allowin&&i_fs_to_ds_valid || i_rst       ),
-    .din                      ({~i_fs_to_ds_valid            ,
+    .rst                      (~br_taken || i_rst       ),
+    .din                      ({1                            ,
                                 br_stall                     ,
                                 br_taken                     ,
                                 br_target                  }),
     .dout                     (br_bus_with_valid            ),
-    .wen                      (~i_fs_to_ds_valid&&o_ds_allowin)
+    .wen                      (i_fs_to_ds_valid&&o_ds_allowin&&br_taken)
   );
 
   // bypass
