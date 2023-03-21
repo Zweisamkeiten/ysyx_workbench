@@ -176,7 +176,7 @@ module ysyx_22050710_id_stage #(
   ) u_save_br_bus_r (
     .clk                      (i_clk                        ),
     .rst                      (~br_taken || i_rst       ),
-    .din                      ({1                            ,
+    .din                      ({br_taken                     ,
                                 br_stall                     ,
                                 br_taken                     ,
                                 br_target                  }),
