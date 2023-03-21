@@ -128,28 +128,28 @@ module ysyx_22050710_axi4full_sram_wrap #(
     end
   end
 
-  wire [ADDR_WIDTH-1:0] awaddr;
-  Reg #(
-    .WIDTH                    (ADDR_WIDTH                   ),
-    .RESET_VAL                (0                            )
-  ) u_aw_addr_r (
-    .clk                      (i_aclk                       ),
-    .rst                      (!i_arsetn                    ),
-    .din                      (i_awaddr                     ),
-    .dout                     (awaddr                       ),
-    .wen                      (i_awvalid                    )
-  );
+  /* wire [ADDR_WIDTH-1:0] awaddr; */
+  /* Reg #( */
+  /*   .WIDTH                    (ADDR_WIDTH                   ), */
+  /*   .RESET_VAL                (0                            ) */
+  /* ) u_aw_addr_r ( */
+  /*   .clk                      (i_aclk                       ), */
+  /*   .rst                      (!i_arsetn                    ), */
+  /*   .din                      (i_awaddr                     ), */
+  /*   .dout                     (awaddr                       ), */
+  /*   .wen                      (i_awvalid                    ) */
+  /* ); */
 
   // write port
   always @(posedge i_aclk) begin
     if (w_state_write) begin
-      npc_pmem_write({32'b0, awaddr}, i_wdata, i_wstrb);
+      npc_pmem_write({32'b0, i_awaddr}, i_wdata, i_wstrb);
     end
   end
 
   assign o_arready           = r_state_idle                  ;
   assign o_awready           = w_state_idle                  ;
-  assign o_wready            = w_state_write                 ;
+  assign o_wready            = i_wvalid                      ;
   assign o_bresp             = 2'b00                         ;
   assign o_rresp             = 2'b00                         ; // trans ok
   assign o_rlast             = 1'b1                          ;
