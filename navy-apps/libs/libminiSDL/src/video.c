@@ -56,7 +56,7 @@ void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
   for (rows = 0; rows < recth; rows++) {
     int column = rectx;
     void *row_idx = dst->pixels + (rows + recty) * dst->pitch + column;
-    for (; column < rectw; column++) {
+    for (; column < rectx + rectw; column++) {
       *(uint32_t *)row_idx = color;
       row_idx += dst->format->BytesPerPixel;
     }
