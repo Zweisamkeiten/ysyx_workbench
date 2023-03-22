@@ -90,6 +90,7 @@ module ysyx_22050710_cache #(
   reg [ASSOC_NUM-1:0] dirty [INDEX_WIDTH-1:0]                ;
 
   wire [CACHELINE_SIZE-1:0] cacheline_way [ASSOC_NUM-1]      ;
+
   // ---------------------------------------------------------
   // data array
   ysyx_22050710_S011HD1P_X32Y2D128_BW u_way0 (
@@ -131,19 +132,33 @@ module ysyx_22050710_cache #(
     .A                        (i_index                      ), // 读写地址
     .D                        ()  // 写数据
   );
+
   // ----------------------------------------------------------
   // Request Buffer
   wire [1+INDEX_WIDTH+TAG_WIDTH+OFFSET_WIDTH+STRB_WIDTH-1:0] request_buffer;
   Reg #(
     .WIDTH                    (1+INDEX_WIDTH+TAG_WIDTH+OFFSET_WIDTH+STRB_WIDTH),
     .RESET_VAL                (0                            )
-  ) u_addr_reg (
+  ) u_request_buffer_r (
     .clk                      (i_clk                        ),
     .rst                      (i_rst                        ),
     .din                      ({i_op, i_index, i_tag, i_offset, i_wstrb}),
     .dout                     (request_buffer               ),
     .wen                      (i_valid                      )
   );
+  wire                         lookup_op                     ;
+  wire [INDEX_WIDTH-1:0      ] lookup_index                  ;
+  wire [TAG_WIDTH-1:0        ] lookup_tag                    ;
+  wire [OFFSET_WIDTH-1:0     ] lookup_offset                 ;
+  wire [STRB_WIDTH-1:0       ] lookup_wstrb                  ;
+
+  assign {lookup_op                                          ,
+          lookup_index                                       ,
+          lookup_tag                                         ,
+          lookup_offset                                      ,
+          lookup_wstrb
+         }                   = request_buffer                ;
+
   // ----------------------------------------------------------
   // Tag Compare
   wire way0_v                = valid[i_index][0]             ;
@@ -167,6 +182,7 @@ module ysyx_22050710_cache #(
   wire way3_hit              = way3_v && (way3_tag == i_tag);
 
   wire cache_hit             = way0_hit || way1_hit || way2_hit || way3_hit;
+
   // ---------------------------------------------------------
   // Write Buffer
   wire [DATA_WIDTH-1:0       ] write_buffer                  ;
@@ -178,8 +194,9 @@ module ysyx_22050710_cache #(
     .rst                      (i_rst                        ),
     .din                      (i_wdata                      ),
     .dout                     (write_buffer                 ),
-    .wen                      (wen &                        )
+    .wen                      (i_valid & wen                )
   );
+
   // ---------------------------------------------------------
   // Data Select
   wire [DATA_WIDTH-1:0]        way0_load_word                ;
