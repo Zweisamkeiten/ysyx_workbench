@@ -14,7 +14,7 @@ size_t ramdisk_read(void *buf, size_t offset, size_t len) {
   assert(offset + len <= RAMDISK_SIZE);
   memcpy(buf, &ramdisk_start + offset, len);
   if (!((uint64_t)(&ramdisk_start + offset) & 0x7) && !((uint64_t)buf & 0x7))
-    printf("read: pointer %p, %p\n", &ramdisk_start + offset, buf);
+    printf("read: pointer %p, %p, %u\n", &ramdisk_start + offset, buf, len);
   return len;
 }
 
@@ -23,7 +23,7 @@ size_t ramdisk_write(const void *buf, size_t offset, size_t len) {
   assert(offset + len <= RAMDISK_SIZE);
   memcpy(&ramdisk_start + offset, buf, len);
   if (!((uint64_t)(&ramdisk_start + offset) & 0x7) && !((uint64_t)buf & 0x7))
-    printf("read: pointer %p, %p\n", &ramdisk_start + offset, buf);
+    printf("read: pointer %p, %p, %u\n", &ramdisk_start + offset, buf, len);
   return len;
 }
 
