@@ -130,9 +130,9 @@ void *memmove(void *dst, const void *src, size_t n) {
  */
 void *memcpy(void *out, const void *in, size_t n) {
   if (!((uint64_t)in & ~0x7) && !((uint64_t)out & ~0x7)) {
+    return 0;
     uint64_t *llin = (uint64_t *)in;
     uint64_t *llout = (uint64_t *)out;
-    assert(0);
     while (n >= 8) {
       *llout++ = *llin++;
       n -= 8;
