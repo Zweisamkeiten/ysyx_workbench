@@ -134,7 +134,7 @@ void disassemble_inst_to_buf(char *logbuf, size_t bufsize, uint8_t * inst_val, v
   char * q = ftrace_buf;
   if (strncmp(p, "ret", 3) == 0) {
     char *func_str = NULL;
-    if((func_str = check_is_func_call(pc)) != NULL && strcmp(func_str, "memcpy") == 0) {
+    if((func_str = check_is_func_call(pc)) != NULL) {
       q += snprintf(q, 128, FMT_WORD ":", pc);
       stack_depth--;
       for (int i = 0; i < stack_depth; i++) {
@@ -146,7 +146,7 @@ void disassemble_inst_to_buf(char *logbuf, size_t bufsize, uint8_t * inst_val, v
   }
   else if (strncmp(p, "jal", 3) == 0) {
     char *func_str = NULL;
-    if((func_str = check_is_func_call(cpu.pc)) != NULL && strcmp(func_str, "memcpy") == 0) {
+    if((func_str = check_is_func_call(cpu.pc)) != NULL) {
       q += snprintf(q, 128, FMT_WORD ":", pc);
       for (int i = 0; i < stack_depth; i++) {
         q += snprintf(q, 128, "  ");
