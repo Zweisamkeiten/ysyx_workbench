@@ -31,8 +31,8 @@ void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_
 
   int rows; // has copid rows
   for (rows = 0; rows < srcrect_h; rows++) {
-    if (((uint64_t)(dst->pixels + (rows + dstrect_y) * dst->pitch + dstrect_x * dst->format->BytesPerPixel) & 0x7) || ((uint64_t)(src->pixels + (rows + srcrect_y) * src->pitch + srcrect_x * src->format->BytesPerPixel) & 0x7))
-      printf("read: pointer %p, %p, %u\n", dst->pixels + (rows + dstrect_y) * dst->pitch + dstrect_x * dst->format->BytesPerPixel, (src->pixels + (rows + srcrect_y) * src->pitch + srcrect_x * src->format->BytesPerPixel), srcrect_w * src->format->BytesPerPixel);
+    // if (((uint64_t)(dst->pixels + (rows + dstrect_y) * dst->pitch + dstrect_x * dst->format->BytesPerPixel) & 0x7) || ((uint64_t)(src->pixels + (rows + srcrect_y) * src->pitch + srcrect_x * src->format->BytesPerPixel) & 0x7))
+    //   printf("read: pointer %p, %p, %u\n", dst->pixels + (rows + dstrect_y) * dst->pitch + dstrect_x * dst->format->BytesPerPixel, (src->pixels + (rows + srcrect_y) * src->pitch + srcrect_x * src->format->BytesPerPixel), srcrect_w * src->format->BytesPerPixel);
     memcpy(dst->pixels + (rows + dstrect_y) * dst->pitch + dstrect_x * dst->format->BytesPerPixel, // pointer to dst rect current coping row first pixel
            src->pixels + (rows + srcrect_y) * src->pitch + srcrect_x * src->format->BytesPerPixel, // pointer to src rect current coping row first pixel
            srcrect_w * src->format->BytesPerPixel); // size
