@@ -122,7 +122,7 @@ static int decode_exec(Decode *s) {
   INSTPAT("0100000 ????? ????? 101 ????? 01110 11", sraw   , R, R(dest) = SEXT((int32_t)BITS(src1, 31, 0) >> BITS(src2, 4, 0), 32));
 
   // RV32M
-  INSTPAT("0000001 ????? ????? 000 ????? 01100 11", mul    , R, R(dest) = src1 * src2;   IFDEF(CONFIG_MULTI_COUNT, multi_ount++;));
+  INSTPAT("0000001 ????? ????? 000 ????? 01100 11", mul    , R, R(dest) = src1 * src2;   IFDEF(CONFIG_MULTI_COUNT, multi_count++;));
   INSTPAT("0000001 ????? ????? 001 ????? 01100 11", mulh   , R, R(dest) = (__int128)src1 * (__int128)src2 >> 64; IFDEF(CONFIG_MULTI_COUNT, multi_count++;));
   INSTPAT("0000001 ????? ????? 010 ????? 01100 11", mulhsu , R, R(dest) = (__int128)((__int128)src1 * (__uint128_t)src2) >> 64; IFDEF(CONFIG_MULTI_COUNT, multi_count++;));
   INSTPAT("0000001 ????? ????? 011 ????? 01100 11", mulhu  , R, R(dest) = (__uint128_t)src1 * (__uint128_t)src2 >> 64; IFDEF(CONFIG_MULTI_COUNT, multi_count++;));
