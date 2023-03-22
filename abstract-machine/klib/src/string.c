@@ -129,23 +129,23 @@ void *memmove(void *dst, const void *src, size_t n) {
  * Use memmove() if the memory areas do overlap.
  */
 void *memcpy(void *out, const void *in, size_t n) {
-  if (!((uint64_t)in & ~0x7) && !((uint64_t)out & ~0x7)) {
-    uint64_t *llin = (uint64_t *)in;
-    uint64_t *llout = (uint64_t *)out;
-    while (n >= 8) {
-      *llout++ = *llin++;
-      n -= 8;
-    }
-  }
+  // if (!((uint64_t)in & ~0x7) && !((uint64_t)out & ~0x7)) {
+  //   uint64_t *llin = (uint64_t *)in;
+  //   uint64_t *llout = (uint64_t *)out;
+  //   while (n >= 8) {
+  //     *llout++ = *llin++;
+  //     n -= 8;
+  //   }
+  // }
 
-  if (!((uint64_t)in & ~0x4) && !((uint64_t)out & ~0x7)) {
-    uint32_t *lin = (uint32_t *)in;
-    uint32_t *lout = (uint32_t *)out;
-    while (n >= 4) {
-      *lout++ = *lin++;
-      n -= 4;
-    }
-  }
+  // if (!((uint64_t)in & ~0x4) && !((uint64_t)out & ~0x7)) {
+  //   uint32_t *lin = (uint32_t *)in;
+  //   uint32_t *lout = (uint32_t *)out;
+  //   while (n >= 4) {
+  //     *lout++ = *lin++;
+  //     n -= 4;
+  //   }
+  // }
 
   unsigned char *cin = (unsigned char *)in;
   unsigned char *cout = (unsigned char *)out;
