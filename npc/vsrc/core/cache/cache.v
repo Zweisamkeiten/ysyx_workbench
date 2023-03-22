@@ -161,25 +161,25 @@
 //
 //  // ----------------------------------------------------------
 //  // Tag Compare
-//  wire way0_v                = valid[i_index][0]             ;
-//  wire way1_v                = valid[i_index][1]             ;
-//  wire way2_v                = valid[i_index][2]             ;
-//  wire way3_v                = valid[i_index][3]             ;
+//  wire way0_v                = valid[lookup_index][0]        ;
+//  wire way1_v                = valid[lookup_index][1]        ;
+//  wire way2_v                = valid[lookup_index][2]        ;
+//  wire way3_v                = valid[lookup_index][3]        ;
 //
-//  wire way0_tag              = tag[i_index][0]               ;
-//  wire way1_tag              = tag[i_index][1]               ;
-//  wire way2_tag              = tag[i_index][2]               ;
-//  wire way3_tag              = tag[i_index][3]               ;
+//  wire way0_tag              = tag[lookup_index][0]          ;
+//  wire way1_tag              = tag[lookup_index][1]          ;
+//  wire way2_tag              = tag[lookup_index][2]          ;
+//  wire way3_tag              = tag[lookup_index][3]          ;
 //
-//  wire way0_d                = dirty[i_index][0]             ;
-//  wire way1_d                = dirty[i_index][1]             ;
-//  wire way2_d                = dirty[i_index][2]             ;
-//  wire way3_d                = dirty[i_index][3]             ;
+//  wire way0_d                = dirty[lookup_index][0]        ;
+//  wire way1_d                = dirty[lookup_index][1]        ;
+//  wire way2_d                = dirty[lookup_index][2]        ;
+//  wire way3_d                = dirty[lookup_index][3]        ;
 //
-//  wire way0_hit              = way0_v && (way0_tag == i_tag);
-//  wire way1_hit              = way1_v && (way1_tag == i_tag);
-//  wire way2_hit              = way2_v && (way2_tag == i_tag);
-//  wire way3_hit              = way3_v && (way3_tag == i_tag);
+//  wire way0_hit              = way0_v && (way0_tag == lookup_tag);
+//  wire way1_hit              = way1_v && (way1_tag == lookup_tag);
+//  wire way2_hit              = way2_v && (way2_tag == lookup_tag);
+//  wire way3_hit              = way3_v && (way3_tag == lookup_tag);
 //
 //  wire cache_hit             = way0_hit || way1_hit || way2_hit || way3_hit;
 //
