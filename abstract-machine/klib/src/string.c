@@ -129,7 +129,6 @@ void *memmove(void *dst, const void *src, size_t n) {
  * Use memmove() if the memory areas do overlap.
  */
 void *memcpy(void *out, const void *in, size_t n) {
-  return 0;
   if (!((uint64_t)in & 0x7) && !((uint64_t)out & 0x7)) {
     return 0;
     uint64_t *llin = (uint64_t *)in;
