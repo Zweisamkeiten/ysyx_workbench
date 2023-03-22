@@ -13,6 +13,7 @@ extern uint8_t ramdisk_end;
 size_t ramdisk_read(void *buf, size_t offset, size_t len) {
   assert(offset + len <= RAMDISK_SIZE);
   memcpy(buf, &ramdisk_start + offset, len);
+  printf("read: pointer %p\n", &ramdisk_start + offset);
   return len;
 }
 
@@ -20,6 +21,7 @@ size_t ramdisk_read(void *buf, size_t offset, size_t len) {
 size_t ramdisk_write(const void *buf, size_t offset, size_t len) {
   assert(offset + len <= RAMDISK_SIZE);
   memcpy(&ramdisk_start + offset, buf, len);
+  printf("write pointer %p\n", &ramdisk_start + offset);
   return len;
 }
 
