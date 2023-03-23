@@ -1,6 +1,6 @@
-// ysyx_22050710 axi lite arbiter 2x1
+// ysyx_22050710 axi4-full arbiter 2x1
 
-module ysyx_22050710_axil_arbiter_2x1 #(
+module ysyx_22050710_axi4full_arbiter_2x1 #(
   // Width of data bus in bits
   parameter DATA_WIDTH       = 64                            ,
   // Width of address bus in bits
