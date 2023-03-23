@@ -121,6 +121,10 @@ endmenu
 
 menu "Testing and Debugging"
 
+config MULTI_COUNT
+  bool "Enable multi inst count"
+  default n
+
 config WATCHPOINT
   bool "Enable watchpoint"
   default n
