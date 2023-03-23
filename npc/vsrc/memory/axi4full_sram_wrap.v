@@ -162,10 +162,20 @@ module ysyx_22050710_axi4full_sram_wrap #(
     .clk                      (i_aclk                       ),
     .rst                      (!i_arsetn                    ),
     .din                      (ar_fire                      ), // 接收完成地址延迟一周期返回读数据有效
-    .dout                     (o_rvalid                       ),
+    .dout                     (rvalid                       ),
     .wen                      (1                            )
   );
 
+  Reg #(
+    .WIDTH                    (1                            ),
+    .RESET_VAL                (0                            )
+  ) u_o_rvalid_1 (
+    .clk                      (i_aclk                       ),
+    .rst                      (!i_arsetn                    ),
+    .din                      (rvalid                       ), // 接收完成地址延迟一周期返回读数据有效
+    .dout                     (o_rvalid                     ),
+    .wen                      (1                            )
+  );
 
   Reg #(
     .WIDTH                    (1                            ),
