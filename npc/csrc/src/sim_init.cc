@@ -79,6 +79,7 @@ extern "C" void npc_pmem_read(long long raddr, long long *rdata) {
     addr = raddr;
   }
   *rdata = paddr_read(addr, 8);
+  top->rootp->ysyx_22050710_top__DOT__u_sram_wrap__DOT__rvalid = 1;
 }
 
 extern "C" void npc_pmem_write(long long waddr, long long wdata, char wmask) {
