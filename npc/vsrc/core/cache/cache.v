@@ -40,47 +40,19 @@
 //  output                       o_wr_req                      , // 写请求有效信号. 高电平有效
 //  output [2:0                ] o_wr_type                     , // 写请求类型 3'b000: 字节, 3'b001: 半字, 3'b010: 字, 3'b100:  Cache 行
 //  output [ADDR_WIDTH-1:0     ] o_wr_addr                     , // 写请求起始地址
-//  output [OFFSET_WIDTH-1:0   ] o_wr_wstrb                    , // 写操作的字节掩码. 仅在写请求类型为 3'b000, 3'b001, 3'b010的情况下才有意义
+//  output [STRB_WIDTH-1:0     ] o_wr_wstrb                    , // 写操作的字节掩码. 仅在写请求类型为 3'b000, 3'b001, 3'b010的情况下才有意义
 //  output [DATA_WIDTH-1:0     ] o_wr_data                     , // 写数据
-//  input                        i_wr_rdy                        // 写请求能否被接收的握手信号. 高电平有效. 此处要求 wr_rdy 要先于 wr_req 置器, wr_req 看到 wr_rdy 后才可能置起
+//  input                        i_wr_rdy                        // 写请求能否被接收的握手信号. 高电平有效. 此处要求 wr_rdy 要先于 wr_req 置起, wr_req 看到 wr_rdy 后才可能置起
 //);
 //
 //  // deal with input
-//  parameter Bits             = 128                           ;
-//  wire [4-1:0                ] wstrb                         ;
+//  parameter BITS             = 128                           ;
 //  wire                         cen                           ;
-//  wire                         wen                           ;
-//  wire [Bits-1:0             ] bwen                          ;
-//  assign wstrb               = ~i_wstrb                      ;
-//  assign cen                 = ~i_valid                      ;
-//  assign wen                 = ~i_op                         ;
-//
-//  MuxKey #(
-//    .NR_KEY                   (16                           ),
-//    .KEY_LEN                  (4                            ),
-//    .DATA_LEN                 (128                          )
-//  ) u_mux0 (
-//    .out                      (bwen                         ),
-//    .key                      (wstrb                        ),
-//    .lut                      ({
-//                                4'd0 , 128'b0                ,
-//                                4'd1 , {120'b0, 8'b1        },
-//                                4'd2 , {112'b0, 8'b1,   8'b0},
-//                                4'd3 , {104'b0, 8'b1,  16'b0},
-//                                4'd4 , { 96'b0, 8'b1,  24'b0},
-//                                4'd5 , { 88'b0, 8'b1,  32'b0},
-//                                4'd6 , { 80'b0, 8'b1,  40'b0},
-//                                4'd7 , { 72'b0, 8'b1,  48'b0},
-//                                4'd8 , { 64'b0, 8'b1,  56'b0},
-//                                4'd9 , { 56'b0, 8'b1,  64'b0},
-//                                4'd10, { 48'b0, 8'b1,  72'b0},
-//                                4'd11, { 40'b0, 8'b1,  80'b0},
-//                                4'd12, { 32'b0, 8'b1,  88'b0},
-//                                4'd13, { 24'b0, 8'b1,  96'b0},
-//                                4'd14, { 16'b0, 8'b1, 104'b0},
-//                                4'd15, {  8'b0, 8'b1, 112'b0}
-//                              })
-//  );
+//  wire                         addr                          ;
+//  assign cen                 = ~(i_valid || wb_state_write)  ; // 低电平有效
+//  assign addr                = wb_state_write
+//                             ? wb_index
+//                             : i_index                       ;
 //
 //  // ---------------------------------------------------------
 //  // Organize manager
@@ -97,9 +69,9 @@
 //    .Q                        (cacheline_way[0]             ), // 读数据
 //    .CLK                      (i_clk                        ), // 时钟
 //    .CEN                      (cen                          ), // 使能信号, 低电平有效
-//    .WEN                      (wen                          ), // 写使能信号, 低电平有效
-//    .BWEN                     (bwen                         ), // 写掩码信号, 掩码粒度为 1bit, 低电平有效
-//    .A                        (i_index                      ), // 读写地址
+//    .WEN                      (wb_wen                       ), // 写使能信号, 低电平有效
+//    .BWEN                     (wb_bwen                      ), // 写掩码信号, 掩码粒度为 1bit, 低电平有效
+//    .A                        (addr                         ), // 读写地址
 //    .D                        ()  // 写数据
 //  );
 //
@@ -107,9 +79,9 @@
 //    .Q                        (cacheline_way[1]             ), // 读数据
 //    .CLK                      (i_clk                        ), // 时钟
 //    .CEN                      (cen                          ), // 使能信号, 低电平有效
-//    .WEN                      (wen                          ), // 写使能信号, 低电平有效
-//    .BWEN                     (bwen                         ), // 写掩码信号, 掩码粒度为 1bit, 低电平有效
-//    .A                        (i_index                      ), // 读写地址
+//    .WEN                      (wb_wen                       ), // 写使能信号, 低电平有效
+//    .BWEN                     (wb_bwen                      ), // 写掩码信号, 掩码粒度为 1bit, 低电平有效
+//    .A                        (addr                         ), // 读写地址
 //    .D                        ()  // 写数据
 //  );
 //  
@@ -117,9 +89,9 @@
 //    .Q                        (cacheline_way[2]             ), // 读数据
 //    .CLK                      (i_clk                        ), // 时钟
 //    .CEN                      (cen                          ), // 使能信号, 低电平有效
-//    .WEN                      (wen                          ), // 写使能信号, 低电平有效
-//    .BWEN                     (bwen                         ), // 写掩码信号, 掩码粒度为 1bit, 低电平有效
-//    .A                        (i_index                      ), // 读写地址
+//    .WEN                      (wb_wen                       ), // 写使能信号, 低电平有效
+//    .BWEN                     (wb_bwen                      ), // 写掩码信号, 掩码粒度为 1bit, 低电平有效
+//    .A                        (addr                         ), // 读写地址
 //    .D                        ()  // 写数据
 //  );
 //
@@ -127,14 +99,21 @@
 //    .Q                        (cacheline_way[3]             ), // 读数据
 //    .CLK                      (i_clk                        ), // 时钟
 //    .CEN                      (cen                          ), // 使能信号, 低电平有效
-//    .WEN                      (wen                          ), // 写使能信号, 低电平有效
-//    .BWEN                     (bwen                         ), // 写掩码信号, 掩码粒度为 1bit, 低电平有效
-//    .A                        (i_index                      ), // 读写地址
+//    .WEN                      (wb_wen                       ), // 写使能信号, 低电平有效
+//    .BWEN                     (wb_bwen                      ), // 写掩码信号, 掩码粒度为 1bit, 低电平有效
+//    .A                        (addr                         ), // 读写地址
 //    .D                        ()  // 写数据
 //  );
 //
 //  // ----------------------------------------------------------
 //  // Request Buffer
+//  wire [STRB_WIDTH-1:0       ] wstrb                         ;
+//  wire                         ren                           ;
+//  wire                         wen                           ;
+//  wire [BITS-1:0             ] bwen                          ;
+//  assign ren                 =  i_op                         ;
+//  assign wen                 = ~i_op                         ;
+//  assign wstrb               = ~i_wstrb                      ;
 //  wire [1+INDEX_WIDTH+TAG_WIDTH+OFFSET_WIDTH+STRB_WIDTH-1:0] request_buffer;
 //  Reg #(
 //    .WIDTH                    (1+INDEX_WIDTH+TAG_WIDTH+OFFSET_WIDTH+STRB_WIDTH),
@@ -142,22 +121,32 @@
 //  ) u_request_buffer_r (
 //    .clk                      (i_clk                        ),
 //    .rst                      (i_rst                        ),
-//    .din                      ({i_op, i_index, i_tag, i_offset, i_wstrb}),
+//    .din                      ({wen, i_index, i_tag, i_offset, wstrb}),
 //    .dout                     (request_buffer               ),
 //    .wen                      (i_valid                      )
 //  );
-//  wire                         lookup_op                     ;
+//  wire                         lookup_wen                    ;
 //  wire [INDEX_WIDTH-1:0      ] lookup_index                  ;
 //  wire [TAG_WIDTH-1:0        ] lookup_tag                    ;
 //  wire [OFFSET_WIDTH-1:0     ] lookup_offset                 ;
 //  wire [STRB_WIDTH-1:0       ] lookup_wstrb                  ;
+//  wire [BITS-1:0             ] lookup_bwen                   ;
 //
-//  assign {lookup_op                                          ,
+//  assign {lookup_wen                                         ,
 //          lookup_index                                       ,
 //          lookup_tag                                         ,
 //          lookup_offset                                      ,
 //          lookup_wstrb
 //         }                   = request_buffer                ;
+//
+//  assign lookup_bwen         = {{8{lookup_wstrb[0]}}         ,
+//                                {8{lookup_wstrb[1]}}         ,
+//                                {8{lookup_wstrb[2]}}         ,
+//                                {8{lookup_wstrb[3]}}         ,
+//                                {8{lookup_wstrb[4]}}         ,
+//                                {8{lookup_wstrb[5]}}         ,
+//                                {8{lookup_wstrb[6]}}         ,
+//                                {8{lookup_wstrb[7]}}        };
 //
 //  // ----------------------------------------------------------
 //  // Tag Compare
@@ -194,7 +183,7 @@
 //    .rst                      (i_rst                        ),
 //    .din                      (i_wdata                      ),
 //    .dout                     (write_buffer                 ),
-//    .wen                      (i_valid & wen                )
+//    .wen                      (~lookup_wen &&                )
 //  );
 //
 //  // ---------------------------------------------------------
@@ -236,7 +225,7 @@
 //    CACHE_LOOKUP             = 3'd1                          ,
 //    CACHE_MISS               = 3'd2                          ,
 //    CACHE_REPLACE            = 3'd3                          ,
-//    CACHE_REFILL             = 3'd2                          ;
+//    CACHE_REFILL             = 3'd4                          ;
 //
 //  localparam [0:0]
 //    W_BURF_IDLE              = 1'd0                          ,
@@ -288,6 +277,9 @@
 //          end
 //        end
 //        CACHE_REFILL: begin
+//          if (i_ret_valid && i_ret_last) begin
+//            cache_state_reg <= CACHE_IDLE;
+//          end
 //        end
 //        default: cache_state_reg <= CACHE_IDLE;
 //      endcase
