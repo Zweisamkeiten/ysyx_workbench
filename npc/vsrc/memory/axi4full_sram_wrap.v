@@ -55,7 +55,7 @@ module ysyx_22050710_axi4full_sram_wrap #(
   output [DATA_WIDTH-1:0    ]  o_rdata                       ,
   output [1:0               ]  o_rresp                       ,
   output                       o_rlast                       ,
-  output reg                   o_rvalid                      ,
+  output                       o_rvalid                      ,
   input                        i_rready 
 );
   // ---------------------------------------------------------
@@ -153,6 +153,20 @@ module ysyx_22050710_axi4full_sram_wrap #(
   assign o_bresp             = 2'b00                         ;
   assign o_rresp             = 2'b00                         ; // trans ok
   assign o_rlast             = 1'b1                          ;
+
+  reg    rvalid                                              ;
+  assign o_rvalid = rvalid                                   ;
+  always @(posedge i_aclk) begin
+    if (~i_arsetn) begin
+      rvalid <= 0;
+    end
+    else if (r_fire) begin
+      rvalid <= 0;
+    end
+    else begin
+      rvalid <= 0;
+    end
+  end
 
   Reg #(
     .WIDTH                    (1                            ),
