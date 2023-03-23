@@ -239,10 +239,6 @@ static void statistic() {
   IFNDEF(CONFIG_TARGET_AM, setlocale(LC_NUMERIC, ""));
 #define NUMBERIC_FMT MUXDEF(CONFIG_TARGET_AM, "%", "%'") PRIu64
   Log("host time spent = " NUMBERIC_FMT " us", g_timer);
-#ifdef CONFIG_MULTI_COUNT
-  extern uint64_t multi_count;
-  Log("total multi instructions = " NUMBERIC_FMT, multi_count);
-#endif
   Log("total guest instructions = " NUMBERIC_FMT, g_nr_guest_inst);
   if (g_timer > 0) Log("simulation frequency = " NUMBERIC_FMT " inst/s", g_nr_guest_inst * 1000000 / g_timer);
   else Log("Finish running in less than 1 us and can not calculate the simulation frequency");
@@ -259,14 +255,13 @@ void assert_fail_msg() {
 /* Simulate how the CPU works. */
 void cpu_exec(uint64_t n) {
   g_print_step = (n < MAX_INST_TO_PRINT);
+  IFDEF(CONFIG_FTRACE, init_func_sym_str_table();)
   switch (nemu_state.state) {
     case NEMU_END: case NEMU_ABORT:
       printf("Program execution has ended. To restart the program, exit NEMU and run again.\n");
       return;
-    case NEMU_QUIT: statistic(); return;
     default: nemu_state.state = NEMU_RUNNING;
   }
-  IFDEF(CONFIG_FTRACE, init_func_sym_str_table();)
 
   uint64_t timer_start = get_time();
 
