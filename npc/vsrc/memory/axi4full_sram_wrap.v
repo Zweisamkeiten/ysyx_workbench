@@ -198,7 +198,7 @@ module ysyx_22050710_axi4full_sram_wrap #(
     .dout                     (o_bid                        ),
     .wen                      (1                            )
   );
-
+  wire [3:0] rid;
   Reg #(
     .WIDTH                    (4                            ),
     .RESET_VAL                (0                            )
@@ -206,6 +206,17 @@ module ysyx_22050710_axi4full_sram_wrap #(
     .clk                      (i_aclk                       ),
     .rst                      (!i_arsetn                    ),
     .din                      (i_arid                       ),
+    .dout                     (rid                         ),
+    .wen                      (1                            )
+  );
+
+  Reg #(
+    .WIDTH                    (4                            ),
+    .RESET_VAL                (0                            )
+  ) u_o_rid (
+    .clk                      (i_aclk                       ),
+    .rst                      (!i_arsetn                    ),
+    .din                      (rid                       ),
     .dout                     (o_rid                        ),
     .wen                      (1                            )
   );
