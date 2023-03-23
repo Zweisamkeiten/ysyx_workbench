@@ -123,7 +123,7 @@ module ysyx_22050710_axi4full_sram_wrap #(
   end
 
   always @(posedge i_aclk) begin
-    if (rvalid) begin
+    if (ar_fire) begin
       npc_pmem_read({32'b0, i_araddr}, o_rdata);
     end
   end
