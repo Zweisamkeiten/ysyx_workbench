@@ -55,7 +55,7 @@ module ysyx_22050710_axi4full_sram_wrap #(
   output [DATA_WIDTH-1:0    ]  o_rdata                       ,
   output [1:0               ]  o_rresp                       ,
   output                       o_rlast                       ,
-  output                       o_rvalid                      ,
+  output reg                   o_rvalid                      ,
   input                        i_rready 
 );
   // ---------------------------------------------------------
@@ -153,17 +153,6 @@ module ysyx_22050710_axi4full_sram_wrap #(
   assign o_bresp             = 2'b00                         ;
   assign o_rresp             = 2'b00                         ; // trans ok
   assign o_rlast             = 1'b1                          ;
-
-  Reg #(
-    .WIDTH                    (1                            ),
-    .RESET_VAL                (0                            )
-  ) u_o_rvalid (
-    .clk                      (i_aclk                       ),
-    .rst                      (!i_arsetn                    ),
-    .din                      (ar_fire                      ), // 接收完成地址延迟一周期返回读数据有效
-    .dout                     (o_rvalid                     ),
-    .wen                      (1                            )
-  );
 
   Reg #(
     .WIDTH                    (1                            ),
