@@ -183,7 +183,7 @@
 //    .rst                      (i_rst                        ),
 //    .din                      (i_wdata                      ),
 //    .dout                     (write_buffer                 ),
-//    .wen                      (~lookup_wen &&                )
+//    .wen                      (~lookup_wen && cache_hit     )
 //  );
 //
 //  // ---------------------------------------------------------
