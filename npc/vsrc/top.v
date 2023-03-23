@@ -29,7 +29,7 @@ module ysyx_22050710_top #(
   wire [SRAM_ADDR_WD-1:0     ] awaddr                        ;
   wire [2:0                  ] awprot                        ; // define the access permission for write accesses.
   wire [7:0                  ] awlen                         ;
-  wire [1:0                  ] awsize                        ;
+  wire [2:0                  ] awsize                        ;
   wire [1:0                  ] awburst                       ;
   wire [1:0                  ] awlock                        ;
   wire [3:0                  ] awcache                       ;
@@ -54,7 +54,7 @@ module ysyx_22050710_top #(
   wire [3:0                  ] arid                          ;
   wire [SRAM_ADDR_WD-1:0     ] araddr                        ;
   wire [7:0                  ] arlen                         ;
-  wire [1:0                  ] arsize                        ;
+  wire [2:0                  ] arsize                        ;
   wire [1:0                  ] arburst                       ;
   wire [1:0                  ] arlock                        ;
   wire [3:0                  ] arcache                       ;
@@ -136,8 +136,8 @@ module ysyx_22050710_top #(
     .o_rready                 (rready                       )
   );
 
-  // axi4-full sram
-  ysyx_22050710_axi4full_sram_wrap #(
+  // data ram
+  ysyx_22050710_axil_sram_wrap #(
   ) u_sram_wrap (
     .i_aclk                   (i_clk                        ),
     .i_arsetn                 (~i_rst                       ),

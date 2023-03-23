@@ -33,13 +33,10 @@ module ysyx_22050710_mem_stage #(
   output [DEBUG_BUS_WD-1:0   ] o_debug_ms_to_ws_bus
 );
 
-  wire                         resp_fire                     ;
-  assign resp_fire           = i_data_sram_data_ok           ; // master 对于数据响应总是可以接收
-
   wire                         ms_valid                      ;
   wire                         ms_ready_go                   ;
   assign ms_ready_go         = (ms_mem_ren|ms_mem_wen)
-                             ? resp_fire
+                             ? i_data_sram_data_ok
                              : 1                             ; // 访存类型指令 需等 data_ok
   assign o_ms_allowin        = (!ms_valid) || (ms_ready_go && i_ws_allowin);
   assign o_ms_to_ws_valid    = ms_valid && ms_ready_go       ;
@@ -145,7 +142,7 @@ module ysyx_22050710_mem_stage #(
                                 ms_csr                       ,
                                 ms_csr_final_result          };
 
-  assign o_ms_to_ds_bypass_bus = {BYPASS_BUS_WD{o_ms_to_ws_valid&~ms_mem_wen}} &
+  assign o_ms_to_ds_bypass_bus = {BYPASS_BUS_WD{ms_valid&~ms_mem_wen}} &
                                   {({GPR_ADDR_WD{ms_gpr_wen}} & ms_rd),
                                    ({WORD_WD{ms_gpr_wen}} & ms_gpr_final_result),
                                    ({CSR_ADDR_WD{ms_csr_wen}} & ms_csr),
