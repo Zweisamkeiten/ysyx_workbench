@@ -213,7 +213,7 @@ module ysyx_22050710_axi4full_sram_wrap #(
   Reg #(
     .WIDTH                    (4                            ),
     .RESET_VAL                (0                            )
-  ) u_o_rid (
+  ) u_o_rid_1 (
     .clk                      (i_aclk                       ),
     .rst                      (!i_arsetn                    ),
     .din                      (rid                       ),
