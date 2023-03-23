@@ -22,7 +22,7 @@ module ysyx_22050710_cpu_top #(
   output [3:0                ] o_awid                        ,  // 写请求 ID 号 固定为 1
   output [SRAM_ADDR_WD-1:0   ] o_awaddr                      ,  // 写请求地址
   output [7:0                ] o_awlen                       ,  // 写请求控制信号, 请求传输的长度(数据传输拍数) 固定为0(without cache)
-  output [2:0                ] o_awsize                      ,  // 写请求控制信号, 请求传输的大小(数据传输每拍的字节数)
+  output [1:0                ] o_awsize                      ,  // 写请求控制信号, 请求传输的大小(数据传输每拍的字节数)
   output [1:0                ] o_awburst                     ,  // 写请求控制信号, 传输类型 固定为0b01(without cache)
   output [1:0                ] o_awlock                      ,  // 写请求控制信号, 原子锁 固定为0
   output [3:0                ] o_awcache                     ,  // 写请求控制信号, Cache 属性 固定为 0
@@ -48,7 +48,7 @@ module ysyx_22050710_cpu_top #(
   output [3:0                ] o_arid                        ,  // 读请求的 ID 号, 取指 0; 取数 1;
   output [SRAM_ADDR_WD-1:0   ] o_araddr                      ,  // 读请求的地址
   output [7:0                ] o_arlen                       ,  // 读请求控制信号, 请求传输的长度(数据传输拍数) 固定为0
-  output [2:0                ] o_arsize                      ,  // 读请求控制信号, 请求传输的大小(数据传输每拍的字节数)
+  output [1:0                ] o_arsize                      ,  // 读请求控制信号, 请求传输的大小(数据传输每拍的字节数)
   output [1:0                ] o_arburst                     ,  // 读请求控制信号, 传输类型 固定为 0b01(without cache)
   output [1:0                ] o_arlock                      ,  // 读请求控制信号, 原子锁 固定为 0
   output [3:0                ] o_arcache                     ,  // 读请求控制信号, Cache 属性 固定为 0
@@ -65,26 +65,32 @@ module ysyx_22050710_cpu_top #(
   output                       o_rready                         // 读请求数据握手信号, master 端准备好接收数据传输
 );
   // cpu inst sram
-  wire [SRAM_ADDR_WD-1:0     ] cpu_inst_addr                 ;
-  wire                         cpu_inst_ren                  ;
-  wire [SRAM_DATA_WD-1:0     ] cpu_inst_rdata                ;
-  wire                         cpu_inst_addr_ok              ;
-  wire                         cpu_inst_data_ok              ;
+  wire                         cpu_inst_req                  ; // 请求信号, 为 1 时有读写请求, 为 0 时无读写请求
+  wire                         cpu_inst_wr                   ; // 为 1 表示该次是写请求, 为 0 表示该次是读请求
+  wire [1:0                  ] cpu_inst_size                 ; // 该次请求传输的字节数, 0: 1byte; 1: 2bytes; 2: 4bytes; 3: 8bytes
+  wire [SRAM_ADDR_WD-1:0     ] cpu_inst_addr                 ; // 该次请求的地址
+  wire [SRAM_WMASK_WD-1:0    ] cpu_inst_wstrb                ; // 该次请求的写字节使能
+  wire [SRAM_DATA_WD-1:0     ] cpu_inst_wdata                ; // 该次写请求的写数据
+  wire                         cpu_inst_addr_ok              ; // 该次请求的地址传输 OK, 读: 地址被接收; 写: 地址和数据被接收
+  wire                         cpu_inst_data_ok              ; // 该次请求的数据传输 OK, 读: 数据返回  ; 写: 数据写入完成
+  wire [SRAM_DATA_WD-1:0     ] cpu_inst_rdata                ; // 该次请求返回的读数据
+
   // cpu data sram
-  wire [SRAM_ADDR_WD-1:0     ] cpu_data_addr                 ;
-  wire                         cpu_data_ren                  ;
-  wire [SRAM_DATA_WD-1:0     ] cpu_data_rdata                ;
-  wire                         cpu_data_wen                  ;
-  wire [SRAM_WMASK_WD-1:0    ] cpu_data_wmask                ;
-  wire [SRAM_DATA_WD-1:0     ] cpu_data_wdata                ;
-  wire                         cpu_data_addr_ok              ;
-  wire                         cpu_data_data_ok              ;
+  wire                         cpu_data_req                  ; // 请求信号, 为 1 时有读写请求, 为 0 时无读写请求
+  wire                         cpu_data_wr                   ; // 为 1 表示该次是写请求, 为 0 表示该次是读请求
+  wire [1:0                  ] cpu_data_size                 ; // 该次请求传输的字节数, 0: 1byte; 1: 2bytes; 2: 4bytes; 3: 8bytes
+  wire [SRAM_ADDR_WD-1:0     ] cpu_data_addr                 ; // 该次请求的地址
+  wire [SRAM_WMASK_WD-1:0    ] cpu_data_wstrb                ; // 该次请求的写字节使能
+  wire [SRAM_DATA_WD-1:0     ] cpu_data_wdata                ; // 该次写请求的写数据
+  wire                         cpu_data_addr_ok              ; // 该次请求的地址传输 OK, 读: 地址被接收; 写: 地址和数据被接收
+  wire                         cpu_data_data_ok              ; // 该次请求的数据传输 OK, 读: 数据返回  ; 写: 数据写入完成
+  wire [SRAM_DATA_WD-1:0     ] cpu_data_rdata                ; // 该次请求返回的读数据
 
   // Wirte address channel
   wire [SRAM_ADDR_WD-1:0     ] ifu_awaddr                    ;
   wire [2:0                  ] ifu_awprot                    ; // define the access permission for write accesses.
   wire [7:0                  ] ifu_awlen                     ;
-  wire [2:0                  ] ifu_awsize                    ;
+  wire [1:0                  ] ifu_awsize                    ;
   wire [1:0                  ] ifu_awburst                   ;
   wire [1:0                  ] ifu_awlock                    ;
   wire [3:0                  ] ifu_awcache                   ;
@@ -106,7 +112,7 @@ module ysyx_22050710_cpu_top #(
   // Read address channel
   wire [SRAM_ADDR_WD-1:0     ] ifu_araddr                    ;
   wire [7:0                  ] ifu_arlen                     ;
-  wire [2:0                  ] ifu_arsize                    ;
+  wire [1:0                  ] ifu_arsize                    ;
   wire [1:0                  ] ifu_arburst                   ;
   wire [1:0                  ] ifu_arlock                    ;
   wire [3:0                  ] ifu_arcache                   ;
@@ -125,7 +131,7 @@ module ysyx_22050710_cpu_top #(
   wire [SRAM_ADDR_WD-1:0     ] lsu_awaddr                    ;
   wire [2:0                  ] lsu_awprot                    ; // define the access permission for write accesses.
   wire [7:0                  ] lsu_awlen                     ;
-  wire [2:0                  ] lsu_awsize                    ;
+  wire [1:0                  ] lsu_awsize                    ;
   wire [1:0                  ] lsu_awburst                   ;
   wire [1:0                  ] lsu_awlock                    ;
   wire [3:0                  ] lsu_awcache                   ;
@@ -147,7 +153,7 @@ module ysyx_22050710_cpu_top #(
   // Read address channel
   wire [SRAM_ADDR_WD-1:0     ] lsu_araddr                    ;
   wire [7:0                  ] lsu_arlen                     ;
-  wire [2:0                  ] lsu_arsize                    ;
+  wire [1:0                  ] lsu_arsize                    ;
   wire [1:0                  ] lsu_arburst                   ;
   wire [1:0                  ] lsu_arlock                    ;
   wire [3:0                  ] lsu_arcache                   ;
@@ -179,33 +185,39 @@ module ysyx_22050710_cpu_top #(
     .i_clk                    (i_aclk                       ),
     .i_rst                    (~i_arsetn                    ),
 
+    // inst sram interface
+    .o_inst_sram_req          (cpu_inst_req                 ),
+    .o_inst_sram_wr           (cpu_inst_wr                  ),
+    .o_inst_sram_size         (cpu_inst_size                ),
     .o_inst_sram_addr         (cpu_inst_addr                ),
-    .o_inst_sram_ren          (cpu_inst_ren                 ),
-    .i_inst_sram_rdata        (cpu_inst_rdata               ),
+    .o_inst_sram_wstrb        (cpu_inst_wstrb               ),
+    .o_inst_sram_wdata        (cpu_inst_wdata               ),
     .i_inst_sram_addr_ok      (cpu_inst_addr_ok             ),
     .i_inst_sram_data_ok      (cpu_inst_data_ok             ),
+    .i_inst_sram_rdata        (cpu_inst_rdata               ),
 
     // data sram interface
+    .o_data_sram_req          (cpu_data_req                 ),
+    .o_data_sram_wr           (cpu_data_wr                  ),
+    .o_data_sram_size         (cpu_data_size                ),
     .o_data_sram_addr         (cpu_data_addr                ),
-    .o_data_sram_ren          (cpu_data_ren                 ),
-    .i_data_sram_rdata        (cpu_data_rdata               ),
-    .o_data_sram_wen          (cpu_data_wen                 ),
-    .o_data_sram_wmask        (cpu_data_wmask               ),
+    .o_data_sram_wstrb        (cpu_data_wstrb               ),
     .o_data_sram_wdata        (cpu_data_wdata               ),
     .i_data_sram_addr_ok      (cpu_data_addr_ok             ),
-    .i_data_sram_data_ok      (cpu_data_data_ok             )
+    .i_data_sram_data_ok      (cpu_data_data_ok             ),
+    .i_data_sram_rdata        (cpu_data_rdata               )
   );
 
   ysyx_22050710_axil_master_wrap u_ifu_axi_wrap (
-    .i_rw_valid               (cpu_inst_ren                 ),  //IF&MEM输入信号
+    .i_rw_req                 (cpu_inst_req                 ),  //IF&MEM输入信号
+    .i_rw_wr                  (cpu_inst_wr                  ),  //IF&MEM输入信号
+    .i_rw_size                (cpu_inst_size                ),  //IF&MEM输入信号
+    .i_rw_addr                (cpu_inst_addr                ),  //IF&MEM输入信号
+    .i_rw_wstrb               (cpu_inst_wstrb               ),  //IF&MEM输入信号
+    .i_rw_wdata               (cpu_inst_wdata               ),  //IF&MEM输入信号
     .o_rw_addr_ok             (cpu_inst_addr_ok             ),  //IF&MEM输入信号
     .o_rw_data_ok             (cpu_inst_data_ok             ),  //IF&MEM输入信号
-    .i_rw_ren                 (cpu_inst_ren                 ),  //IF&MEM输入信号
-    .i_rw_wen                 (0                            ),  //IF&MEM输入信号
-    .i_rw_addr                (cpu_inst_addr                ),  //IF&MEM输入信号
-    .o_data_read              (cpu_inst_rdata               ),  //IF&MEM输入信号
-    .i_rw_w_data              (64'b0                        ),  //IF&MEM输入信号
-    .i_rw_size                (8'b0                         ),  //IF&MEM输入信号
+    .o_rw_rdata               (cpu_inst_rdata               ),  //IF&MEM输入信号
 
     .i_aclk                   (i_aclk                       ),
     .i_arsetn                 (i_arsetn                     ),
@@ -253,15 +265,15 @@ module ysyx_22050710_cpu_top #(
   );
 
   ysyx_22050710_axil_master_wrap u_lsu_axi_wrap (
-    .i_rw_valid               (cpu_data_ren | cpu_data_wen  ),  //IF&MEM输入信号
+    .i_rw_req                 (cpu_data_req                 ),  //IF&MEM输入信号
+    .i_rw_wr                  (cpu_data_wr                  ),  //IF&MEM输入信号
+    .i_rw_size                (cpu_data_size                ),  //IF&MEM输入信号
+    .i_rw_addr                (cpu_data_addr                ),  //IF&MEM输入信号
+    .i_rw_wstrb               (cpu_data_wstrb               ),  //IF&MEM输入信号
+    .i_rw_wdata               (cpu_data_wdata               ),  //IF&MEM输入信号
     .o_rw_addr_ok             (cpu_data_addr_ok             ),  //IF&MEM输入信号
     .o_rw_data_ok             (cpu_data_data_ok             ),  //IF&MEM输入信号
-    .i_rw_ren                 (cpu_data_ren                 ),  //IF&MEM输入信号
-    .i_rw_wen                 (cpu_data_wen                 ),  //IF&MEM输入信号
-    .i_rw_addr                (cpu_data_addr                ),  //IF&MEM输入信号
-    .o_data_read              (cpu_data_rdata               ),  //IF&MEM输入信号
-    .i_rw_w_data              (cpu_data_wdata               ),  //IF&MEM输入信号
-    .i_rw_size                (cpu_data_wmask               ),  //IF&MEM输入信号
+    .o_rw_rdata               (cpu_data_rdata               ),  //IF&MEM输入信号
 
     .i_aclk                   (i_aclk                       ),
     .i_arsetn                 (i_arsetn                     ),
