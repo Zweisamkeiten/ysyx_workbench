@@ -49,7 +49,9 @@
 //  parameter BITS             = 128                           ;
 //  wire                         cen                           ;
 //  wire                         addr                          ;
-//  assign cen                 = ~(i_valid || wb_state_write)  ; // 低电平有效
+//  assign cen                 = wb_state_write
+//                             ? ~wb_state_write
+//                             : ~i_valid                      ; // 低电平有效
 //  assign addr                = wb_state_write
 //                             ? wb_index
 //                             : i_index                       ;
@@ -72,7 +74,7 @@
 //    .WEN                      (wb_wen                       ), // 写使能信号, 低电平有效
 //    .BWEN                     (wb_bwen                      ), // 写掩码信号, 掩码粒度为 1bit, 低电平有效
 //    .A                        (addr                         ), // 读写地址
-//    .D                        ()  // 写数据
+//    .D                        (wb_wdata                     )  // 写数据
 //  );
 //
 //  ysyx_22050710_S011HD1P_X32Y2D128_BW u_way1 (
@@ -82,7 +84,7 @@
 //    .WEN                      (wb_wen                       ), // 写使能信号, 低电平有效
 //    .BWEN                     (wb_bwen                      ), // 写掩码信号, 掩码粒度为 1bit, 低电平有效
 //    .A                        (addr                         ), // 读写地址
-//    .D                        ()  // 写数据
+//    .D                        (wb_wdata                     )  // 写数据
 //  );
 //  
 //  ysyx_22050710_S011HD1P_X32Y2D128_BW u_way2 (
@@ -92,7 +94,7 @@
 //    .WEN                      (wb_wen                       ), // 写使能信号, 低电平有效
 //    .BWEN                     (wb_bwen                      ), // 写掩码信号, 掩码粒度为 1bit, 低电平有效
 //    .A                        (addr                         ), // 读写地址
-//    .D                        ()  // 写数据
+//    .D                        (wb_wdata                     )  // 写数据
 //  );
 //
 //  ysyx_22050710_S011HD1P_X32Y2D128_BW u_way3 (
@@ -102,51 +104,45 @@
 //    .WEN                      (wb_wen                       ), // 写使能信号, 低电平有效
 //    .BWEN                     (wb_bwen                      ), // 写掩码信号, 掩码粒度为 1bit, 低电平有效
 //    .A                        (addr                         ), // 读写地址
-//    .D                        ()  // 写数据
+//    .D                        (wb_wdata                     )  // 写数据
 //  );
 //
 //  // ----------------------------------------------------------
 //  // Request Buffer
 //  wire [STRB_WIDTH-1:0       ] wstrb                         ;
-//  wire                         ren                           ;
 //  wire                         wen                           ;
 //  wire [BITS-1:0             ] bwen                          ;
-//  assign ren                 =  i_op                         ;
 //  assign wen                 = ~i_op                         ;
 //  assign wstrb               = ~i_wstrb                      ;
-//  wire [1+INDEX_WIDTH+TAG_WIDTH+OFFSET_WIDTH+STRB_WIDTH-1:0] request_buffer;
+//  wire [1+INDEX_WIDTH+TAG_WIDTH+OFFSET_WIDTH+STRB_WIDTH+DATA_WIDTH-1:0] request_buffer;
+//  wire hit_write_conflict    = {i_index, i_offset} == {wb_index, wb_offset}; // hit write 冲突
+//  wire request_buffer_wen    = c_state_idle && i_valid && ~hit_write_conflict
+//                             | c_state_lookup && cache_hit && i_valid && ~hit_write_conflict;
 //  Reg #(
-//    .WIDTH                    (1+INDEX_WIDTH+TAG_WIDTH+OFFSET_WIDTH+STRB_WIDTH),
+//    .WIDTH                    (1+INDEX_WIDTH+TAG_WIDTH+OFFSET_WIDTH+STRB_WIDTH+DATA_WIDTH),
 //    .RESET_VAL                (0                            )
 //  ) u_request_buffer_r (
 //    .clk                      (i_clk                        ),
 //    .rst                      (i_rst                        ),
-//    .din                      ({wen, i_index, i_tag, i_offset, wstrb}),
+//    .din                      ({wen, i_index, i_tag, i_offset, wstrb, i_wdata}),
 //    .dout                     (request_buffer               ),
-//    .wen                      (i_valid                      )
+//    .wen                      (request_buffer_wen           )
 //  );
 //  wire                         lookup_wen                    ;
 //  wire [INDEX_WIDTH-1:0      ] lookup_index                  ;
 //  wire [TAG_WIDTH-1:0        ] lookup_tag                    ;
 //  wire [OFFSET_WIDTH-1:0     ] lookup_offset                 ;
 //  wire [STRB_WIDTH-1:0       ] lookup_wstrb                  ;
+//  wire [DATA_WIDTH-1:0       ] lookup_i_wdata                ;
 //  wire [BITS-1:0             ] lookup_bwen                   ;
 //
 //  assign {lookup_wen                                         ,
 //          lookup_index                                       ,
 //          lookup_tag                                         ,
 //          lookup_offset                                      ,
-//          lookup_wstrb
+//          lookup_wstrb                                       ,
+//          lookup_i_wdata
 //         }                   = request_buffer                ;
-//
-//  assign lookup_bwen         = {{8{lookup_wstrb[0]}}         ,
-//                                {8{lookup_wstrb[1]}}         ,
-//                                {8{lookup_wstrb[2]}}         ,
-//                                {8{lookup_wstrb[3]}}         ,
-//                                {8{lookup_wstrb[4]}}         ,
-//                                {8{lookup_wstrb[5]}}         ,
-//                                {8{lookup_wstrb[6]}}         ,
-//                                {8{lookup_wstrb[7]}}        };
 //
 //  // ----------------------------------------------------------
 //  // Tag Compare
@@ -174,17 +170,51 @@
 //
 //  // ---------------------------------------------------------
 //  // Write Buffer
-//  wire [DATA_WIDTH-1:0       ] write_buffer                  ;
+//  wire                         wb_wen                        ;
+//  wire                         wb_way_hit [ASSOC_NUM-1:0]    ;
+//  wire [INDEX_WIDTH-1:0      ] wb_index                      ;
+//  wire [TAG_WIDTH-1:0        ] wb_tag                        ;
+//  wire [OFFSET_WIDTH-1:0     ] wb_offset                     ;
+//  wire [STRB_WIDTH-1:0       ] wb_wstrb                      ;
+//  wire [DATA_WIDTH-1:0       ] wb_i_wdata                    ;
+//  wire [DATA_WIDTH-1:0       ] wb_word_wen                   ; // 写字长 写使能掩码位
+//  wire [BITS-1:0             ] wb_wdata                      ;
+//  wire [BITS-1:0             ] wb_bwen                       ;
+//  wire [1+INDEX_WIDTH+STRB_WIDTH+OFFSET_WIDTH+4+DATA_WIDTH-1:0] write_buffer;
+//
 //  Reg #(
-//    .WIDTH                    (DATA_WIDTH                   ),
+//    .WIDTH                    (1+INDEX_WIDTH+STRB_WIDTH+OFFSET_WIDTH+4+DATA_WIDTH),
 //    .RESET_VAL                (0                            )
 //  ) u_write_buffer_reg (
 //    .clk                      (i_clk                        ),
 //    .rst                      (i_rst                        ),
-//    .din                      (i_wdata                      ),
+//    .din                      ({lookup_wen, lookup_index, lookup_wstrb, lookup_offset, way0_hit, way1_hit, way2_hit, way3_hit, lookup_i_wdata}),
 //    .dout                     (write_buffer                 ),
-//    .wen                      (~lookup_wen && cache_hit     )
+//    .wen                      (~lookup_wen && _state_lookup && cache_hit)
 //  );
+//
+//  assign {wb_wen                                             ,
+//          wb_index                                           ,
+//          wb_wstrb                                           ,
+//          wb_offset                                          ,
+//          wb_way_hit[0], wb_way_hit[1], wb_way_hit[2], wb_way_hit[3],
+//          wb_i_wdata
+//          }                  = write_buffer                  ;
+//
+//  assign wb_word_wen         = {{8{wb_wstrb[0]}}             ,
+//                                {8{wb_wstrb[1]}}             ,
+//                                {8{wb_wstrb[2]}}             ,
+//                                {8{wb_wstrb[3]}}             ,
+//                                {8{wb_wstrb[4]}}             ,
+//                                {8{wb_wstrb[5]}}             ,
+//                                {8{wb_wstrb[6]}}             ,
+//                                {8{wb_wstrb[7]}}            };
+//  assign wb_bwen             = wb_offset[3]
+//                             ? {wb_word_wen, 64'b0}
+//                             : {64'b0, wb_word_wen}          ;
+//  assign wb_wdata            = wb_offset[3]
+//                             ? {wb_i_wdata, 64'b0}
+//                             : {64'b0, wb_i_wdata}           ;
 //
 //  // ---------------------------------------------------------
 //  // Data Select
@@ -195,6 +225,7 @@
 //  wire [DATA_WIDTH-1:0]        load_result                   ;
 //  wire [DATA_WIDTH-1:0]        replace_data                  ;
 //  wire                         addr_align                    ; // 根据 addr[3] 来选择 128bit(16字节) 中的前8字节还是后8字节
+//  assign addr_align          = lookup_offset[3]              ;
 //  assign way0_load_word      = addr_align ? cacheline_way[0][CACHELINE_SIZE-1:DATA_WIDTH] : cacheline_way[0][DATA_WIDTH-1:0];
 //  assign way1_load_word      = addr_align ? cacheline_way[1][CACHELINE_SIZE-1:DATA_WIDTH] : cacheline_way[1][DATA_WIDTH-1:0];
 //  assign way2_load_word      = addr_align ? cacheline_way[2][CACHELINE_SIZE-1:DATA_WIDTH] : cacheline_way[2][DATA_WIDTH-1:0];
@@ -204,6 +235,34 @@
 //                             | {DATA_WIDTH{way1_hit}} & way1_load_word
 //                             | {DATA_WIDTH{way2_hit}} & way2_load_word
 //                             | {DATA_WIDTH{way3_hit}} & way3_load_word; // 如果考虑 Miss, 应该是五选一逻辑
+//
+//  // ---------------------------------------------------------
+//  // Miss Buffer
+//  wire [4-1:0                ] missing_buffer_way_to_replace ;
+//  wire [2-1:0                ] missing_buffer_num_has_ret    ;
+//  wire                         mb_way_hit [ASSOC_NUM-1:0]    ;
+//  Reg #(
+//    .WIDTH                    (4                            ),
+//    .RESET_VAL                (0                            )
+//  ) u_missing_buffer_way_to_replace_reg (
+//    .clk                      (i_clk                        ),
+//    .rst                      (i_rst                        ),
+//    .din                      ({way0_hit, way1_hit, way2_hit, way3_hit}),
+//    .dout                     (missing_buffer_way_to_replace),
+//    .wen                      (c_state_miss && wr_rdy == 1  )
+//  );
+//
+//  Reg #(
+//    .WIDTH                    (4                            ),
+//    .RESET_VAL                (0                            )
+//  ) u_missing_buffer_num_has_ret_reg (
+//    .clk                      (i_clk                        ),
+//    .rst                      (i_rst                        ),
+//    .din                      ({way0_hit, way1_hit, way2_hit, way3_hit}),
+//    .dout                     (missing_buffer_num_has_ret   ),
+//    .wen                      (c_state_miss && wr_rdy == 1  )
+//  );
+//
 //  integer assoc;
 //  integer idx;
 //  always @(posedge i_clk) begin
@@ -220,6 +279,10 @@
 //      /* TODO */
 //    end
 //  end
+//
+//  /* ---------------------------------------------------------
+//   * State Machine
+//   * --------------------------------------------------------- */
 //  localparam [2:0]
 //    CACHE_IDLE               = 3'd0                          ,
 //    CACHE_LOOKUP             = 3'd1                          ,
@@ -234,18 +297,12 @@
 //  reg [2:0] cache_state_reg        = CACHE_IDLE              ;
 //  reg [0:0] write_buffer_state_reg = W_BURF_IDLE             ;
 //
-//  /* ---------------------------------------------------------
-//   * State Machine
-//   * --------------------------------------------------------- */
 //
 //  wire c_state_idle    = cache_state_reg == CACHE_IDLE       ;
 //  wire c_state_lookup  = cache_state_reg == CACHE_LOOKUP     ;
 //  wire c_state_miss    = cache_state_reg == CACHE_MISS       ;
 //  wire c_state_replace = cache_state_reg == CACHE_REPLACE    ;
 //  wire c_state_refill  = cache_state_reg == CACHE_REFILL     ;
-//
-//  wire wb_state_idle   = write_buffer_state_reg == W_BURF_IDLE ;
-//  wire wb_state_write  = write_buffer_state_reg == W_BURF_WRITE;
 //
 //  always @(posedge i_clk) begin
 //    if (i_rst) begin
@@ -254,13 +311,18 @@
 //    else begin
 //      case (cache_state_reg)
 //        CACHE_IDLE: begin
-//          if (i_valid) begin
+//          if (i_valid && ({i_index, i_offset} != {wb_index, wb_offset})) begin
 //            cache_state_reg <= CACHE_LOOKUP;
 //          end
 //        end
 //        CACHE_LOOKUP: begin
 //          if (cache_hit) begin
-//            cache_state_reg <= CACHE_IDLE;
+//            if ({i_index, i_offset} != {wb_index, wb_offset}) begin // 1. 当前处理 cache 命中, 有 cache 请求, 但与 Hit Write 无冲突
+//              cache_state_reg <= CACHE_LOOKUP;
+//            end
+//            else begin // 1. 当前处理 cache 命中, 没有新的cache访问请求 2. 当前处理 cache 命中, 有 cache 请求, 但与 Hit Write 冲突
+//              cache_state_reg <= CACHE_IDLE;
+//            end
 //          end
 //          else begin
 //            cache_state_reg <= CACHE_MISS;
@@ -286,6 +348,9 @@
 //    end
 //  end
 //
+//  wire wb_state_idle   = write_buffer_state_reg == W_BURF_IDLE ;
+//  wire wb_state_write  = write_buffer_state_reg == W_BURF_WRITE;
+//
 //  always @(posedge i_clk) begin
 //    if (i_rst) begin
 //      write_buffer_state_reg <= W_BURF_IDLE;
@@ -298,11 +363,19 @@
 //          end
 //        end
 //        W_BURF_WRITE: begin
+//          if (c_state_lookup && cache_hit) begin
+//            write_buffer_state_reg <= W_BURF_WRITE;
+//          end
+//          else begin
+//            write_buffer_state_reg <= W_BURF_IDLE;
+//          end
 //        end
 //        default: write_buffer_state_reg <= W_BURF_IDLE;
 //      endcase
 //    end
 //  end
+//
+//  assign o_wr_req
 //
 //  assign o_addr_ok           = c_state_idle                  ; // 1. Cache 主状态机出于 IDLE
 //  assign o_data_ok           = c_state_lookup & cache_hit    ; // 1. Cache 当前 LOOKUP 且 Cache 命中
