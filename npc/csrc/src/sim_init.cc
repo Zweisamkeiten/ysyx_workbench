@@ -1,3 +1,4 @@
+#include "Vtop__Dpi.h"
 #include <sim.hpp>
 #include <common.h>
 #include <isa.h>
