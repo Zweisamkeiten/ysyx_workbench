@@ -7,7 +7,8 @@
 
 #define UART_REG_RB *((volatile uint8_t *)0x10000000)
 #define UART_REG_TH *((volatile uint8_t *)0x10000000)
-#define UART_REG_IE *((volatile uint8_t *)0x10000001)
+#define UART_REG_DLL *((volatile uint8_t *)0x10000000)
+#define UART_REG_DLM *((volatile uint8_t *)0x10000001)
 #define UART_REG_II *((volatile uint8_t *)0x10000002)
 #define UART_REG_FC *((volatile uint8_t *)0x10000002)
 #define UART_REG_LC *((volatile uint8_t *)0x10000003)
