@@ -58,11 +58,13 @@ module ysyx_22050710_cache #(
   wire [OFFSET_WIDTH-1:0     ] offset                        ;
   wire [STRB_WIDTH-1:0       ] wstrb                         ;
 
+  wire cen_sel               = wb_state_write ? ~wb_state_write : ~i_valid;
   assign cen                 = (c_state_miss | c_state_refill)
                              ? (replace_way ? 2'b01 : 2'b10)  // 低电平有效
-                             : {ASSOC_NUM{(wb_state_write ? ~wb_state_write : ~i_valid)}}; // 低电平有效
+                             : {ASSOC_NUM{cen_sel}}; // 低电平有效
 
-  assign wen                 = {ASSOC_NUM{(wb_state_write ? wb_wen : ~c_state_refill)}}; // 低电平有效
+  wire wen_sel               = wb_state_write ? wb_wen : ~c_state_refill;
+  assign wen                 = {ASSOC_NUM{wen_sel}}; // 低电平有效
 
   assign offset              = wb_state_write
                              ? wb_offset
