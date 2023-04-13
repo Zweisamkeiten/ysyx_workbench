@@ -33,14 +33,14 @@ module ysyx_22050710_cache #(
 
   // Cache 与 AXI 总线接口的交互接口
   output                       o_rd_req                      , // 读请求有效信号, 高电平有效
-  output [3:0                ] o_rd_type                     , // 读请求类型 3'b001: 字节, 3'b010: 半字, 3'b100: 字, 3'b111: Cache 行
+  output [2:0                ] o_rd_type                     , // 读请求类型 3'b001: 字节, 3'b010: 半字, 3'b100: 字, 3'b111: Cache 行
   output [ADDR_WIDTH-1:0     ] o_rd_addr                     , // 读请求起始地址
   input                        i_rd_rdy                      , // 读请求能否被接收的握手信号. 高电平有效.
   input                        i_ret_valid                   , // 返回数据有效. 高电平有效.
   input  [1:0                ] i_ret_last                    , // 返回数据是一次读请求对应的最后一个返回数据
   input  [DATA_WIDTH-1:0     ] i_ret_data                    , // 读返回数据
   output                       o_wr_req                      , // 写请求有效信号. 高电平有效
-  output [3:0                ] o_wr_type                     , // 写请求类型 4'b001: b, 3'b010: 半字, 3'b100: 字, 3'b100:  Cache 行
+  output [2:0                ] o_wr_type                     , // 写请求类型 4'b001: b, 3'b010: 半字, 3'b100: 字, 3'b100:  Cache 行
   output [ADDR_WIDTH-1:0     ] o_wr_addr                     , // 写请求起始地址
   output [STRB_WIDTH-1:0     ] o_wr_wstrb                    , // 写操作的字节掩码. 仅在写请求类型为 3'b000, 3'b001, 3'b010的情况下才有意义
   output [CACHELINE_BITS-1:0 ] o_wr_data                     , // 写数据 256bit
