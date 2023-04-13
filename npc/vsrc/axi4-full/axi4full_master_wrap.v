@@ -180,16 +180,7 @@ module ysyx_22050710_axi4full_master_wrap_tmp #(
   // 写应答通道
   assign o_bready            = w_state_resp                  ;
 
-  Reg #(
-    .WIDTH                    (1                            ),
-    .RESET_VAL                (1                            )
-  ) u_wr_rdy_reg (
-    .clk                      (i_aclk                       ),
-    .rst                      (i_arsetn /* TODO */          ),
-    .din                      (1'b0                         ),
-    .dout                     (o_wr_rdy                     ),
-    .wen                      (i_wr_req & o_wr_rdy & (i_wr_size == 3'b100))
-  );
+  assign o_wr_rdy            = (|write_buffer) == 1'b0       ;
 
   wire [256-1:0              ] write_buffer                  ;
   Reg #(
