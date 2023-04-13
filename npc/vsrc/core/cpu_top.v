@@ -22,7 +22,7 @@ module ysyx_22050710_cpu_top #(
   output [3:0                ] o_awid                        ,  // 写请求 ID 号 固定为 1
   output [SRAM_ADDR_WD-1:0   ] o_awaddr                      ,  // 写请求地址
   output [7:0                ] o_awlen                       ,  // 写请求控制信号, 请求传输的长度(数据传输拍数) 固定为0(without cache)
-  output [1:0                ] o_awsize                      ,  // 写请求控制信号, 请求传输的大小(数据传输每拍的字节数)
+  output [2:0                ] o_awsize                      ,  // 写请求控制信号, 请求传输的大小(数据传输每拍的字节数)
   output [1:0                ] o_awburst                     ,  // 写请求控制信号, 传输类型 固定为0b01(without cache)
   output [1:0                ] o_awlock                      ,  // 写请求控制信号, 原子锁 固定为0
   output [3:0                ] o_awcache                     ,  // 写请求控制信号, Cache 属性 固定为 0
@@ -48,7 +48,7 @@ module ysyx_22050710_cpu_top #(
   output [3:0                ] o_arid                        ,  // 读请求的 ID 号, 取指 0; 取数 1;
   output [SRAM_ADDR_WD-1:0   ] o_araddr                      ,  // 读请求的地址
   output [7:0                ] o_arlen                       ,  // 读请求控制信号, 请求传输的长度(数据传输拍数) 固定为0
-  output [1:0                ] o_arsize                      ,  // 读请求控制信号, 请求传输的大小(数据传输每拍的字节数)
+  output [2:0                ] o_arsize                      ,  // 读请求控制信号, 请求传输的大小(数据传输每拍的字节数)
   output [1:0                ] o_arburst                     ,  // 读请求控制信号, 传输类型 固定为 0b01(without cache)
   output [1:0                ] o_arlock                      ,  // 读请求控制信号, 原子锁 固定为 0
   output [3:0                ] o_arcache                     ,  // 读请求控制信号, Cache 属性 固定为 0
@@ -90,7 +90,7 @@ module ysyx_22050710_cpu_top #(
   wire [SRAM_ADDR_WD-1:0     ] ifu_awaddr                    ;
   wire [2:0                  ] ifu_awprot                    ; // define the access permission for write accesses.
   wire [7:0                  ] ifu_awlen                     ;
-  wire [1:0                  ] ifu_awsize                    ;
+  wire [2:0                  ] ifu_awsize                    ;
   wire [1:0                  ] ifu_awburst                   ;
   wire [1:0                  ] ifu_awlock                    ;
   wire [3:0                  ] ifu_awcache                   ;
@@ -112,7 +112,7 @@ module ysyx_22050710_cpu_top #(
   // Read address channel
   wire [SRAM_ADDR_WD-1:0     ] ifu_araddr                    ;
   wire [7:0                  ] ifu_arlen                     ;
-  wire [1:0                  ] ifu_arsize                    ;
+  wire [2:0                  ] ifu_arsize                    ;
   wire [1:0                  ] ifu_arburst                   ;
   wire [1:0                  ] ifu_arlock                    ;
   wire [3:0                  ] ifu_arcache                   ;
@@ -131,7 +131,7 @@ module ysyx_22050710_cpu_top #(
   wire [SRAM_ADDR_WD-1:0     ] lsu_awaddr                    ;
   wire [2:0                  ] lsu_awprot                    ; // define the access permission for write accesses.
   wire [7:0                  ] lsu_awlen                     ;
-  wire [1:0                  ] lsu_awsize                    ;
+  wire [2:0                  ] lsu_awsize                    ;
   wire [1:0                  ] lsu_awburst                   ;
   wire [1:0                  ] lsu_awlock                    ;
   wire [3:0                  ] lsu_awcache                   ;
@@ -153,7 +153,7 @@ module ysyx_22050710_cpu_top #(
   // Read address channel
   wire [SRAM_ADDR_WD-1:0     ] lsu_araddr                    ;
   wire [7:0                  ] lsu_arlen                     ;
-  wire [1:0                  ] lsu_arsize                    ;
+  wire [2:0                  ] lsu_arsize                    ;
   wire [1:0                  ] lsu_arburst                   ;
   wire [1:0                  ] lsu_arlock                    ;
   wire [3:0                  ] lsu_arcache                   ;
