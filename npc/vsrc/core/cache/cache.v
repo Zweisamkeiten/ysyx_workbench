@@ -60,11 +60,11 @@ module ysyx_22050710_cache #(
 
   wire cen_sel               = wb_state_write ? ~wb_state_write : ~i_valid;
   assign cen                 = (c_state_miss | c_state_refill)
-                             ? (replace_way ? 2'b01 : 2'b10)  // 低电平有效
-                             : {ASSOC_NUM{cen_sel}}; // 低电平有效
+                             ? (replace_way ? 2'b01 : 2'b10)   // 低电平有效
+                             : cen_sel ? 2'b00 : 2'b11       ; // 低电平有效
 
   wire wen_sel               = wb_state_write ? wb_wen : ~c_state_refill;
-  assign wen                 = {ASSOC_NUM{wen_sel}}; // 低电平有效
+  assign wen                 = wen_sel ? 2'b00 : 2'b11       ; // 低电平有效
 
   assign offset              = wb_state_write
                              ? wb_offset
