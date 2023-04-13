@@ -231,7 +231,7 @@ module ysyx_22050710_cpu_top #(
     .i_op                     (cpu_inst_op                  ), // 1 : WRITE; 0: READ
     .i_rw_size                (cpu_inst_size                ), // IF&MEM输入信号
     .i_index                  (cpu_inst_addr[10:5]          ), // 地址的 index  域 addr[10:5]
-    .i_tag                    (cpu_isnt_addr[31:11]         ), // 地址的 tag    域 addr[31:11]
+    .i_tag                    (cpu_inst_addr[31:11]         ), // 地址的 tag    域 addr[31:11]
     .i_offset                 (cpu_inst_addr[4:0]           ), // 地址的 offset 域 addr[4:0]
     .i_wstrb                  (cpu_inst_wstrb               ), // 写字节使能信号
     .i_wdata                  (cpu_inst_wdata               ), // 写数据
