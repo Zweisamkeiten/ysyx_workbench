@@ -166,7 +166,7 @@ module ysyx_22050710_axi4full_master_wrap_tmp #(
                              | PROT_SECURE_ACCESS
                              | PROT_DATA_ACCESS              ;  // 初始化信号即可 固定为 0
   assign o_awlen             = axi_len                       ;  // 固定为 0
-  assign o_awsize            = {1'b0, i_rw_size}             ;
+  assign o_awsize            = i_wr_size                     ;
   assign o_awburst           = BURST_TYPE_INCR               ;  // 固定为 2'b01
   assign o_awlock            = 0                             ;  // 固定为 0
   assign o_awcache           = AWCACHE_DEVICE_NON_BUFFERABLE ;  // 固定为 0
@@ -212,7 +212,7 @@ module ysyx_22050710_axi4full_master_wrap_tmp #(
                              | PROT_SECURE_ACCESS
                              | PROT_DATA_ACCESS              ;  // 初始化信号即可 固定为 0
   assign o_arlen             = axi_len                       ;  // 固定为 0
-  assign o_arsize            = {1'b0, i_rw_size}             ;
+  assign o_arsize            = i_rd_size                     ;
   assign o_arburst           = BURST_TYPE_INCR               ;  // 固定为 2'b01
   assign o_arlock            = 0                             ;  // 固定为 0
   assign o_arcache           = ARCACHE_DEVICE_NON_BUFFERABLE ;  // 固定为 0
