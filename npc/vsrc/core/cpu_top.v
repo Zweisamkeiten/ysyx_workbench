@@ -66,7 +66,7 @@ module ysyx_22050710_cpu_top #(
 );
   // cpu inst sram
   wire                         cpu_inst_req                  ; // 请求信号, 为 1 时有读写请求, 为 0 时无读写请求
-  wire                         cpu_inst_wr                   ; // 为 1 表示该次是写请求, 为 0 表示该次是读请求
+  wire                         cpu_inst_op                   ; // 为 1 表示该次是写请求, 为 0 表示该次是读请求
   wire [1:0                  ] cpu_inst_size                 ; // 该次请求传输的字节数, 0: 1byte; 1: 2bytes; 2: 4bytes; 3: 8bytes
   wire [SRAM_ADDR_WD-1:0     ] cpu_inst_addr                 ; // 该次请求的地址
   wire [SRAM_WMASK_WD-1:0    ] cpu_inst_wstrb                ; // 该次请求的写字节使能

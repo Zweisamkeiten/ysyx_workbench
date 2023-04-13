@@ -331,9 +331,9 @@ module ysyx_22050710_cache #(
   ) u_missing_buffer_way_to_replace_reg (
     .clk                      (i_clk                        ),
     .rst                      (i_rst                        ),
-    .din                      (lfsr                        ),
+    .din                      (lfsr                         ),
     .dout                     (mb_way_to_replace            ),
-    .wen                      (c_state_miss && wr_rdy == 1  )
+    .wen                      (c_state_miss && i_wr_rdy == 1)
   );
 
   Reg #(
