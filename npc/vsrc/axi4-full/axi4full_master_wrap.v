@@ -30,7 +30,7 @@ module ysyx_22050710_axi4full_master_wrap_tmp #(
   input  [2:0                ] i_rd_size                     ,  // IF&MEM输入信号
   input  [2:0                ] i_wr_size                     ,  // IF&MEM输入信号
   input  [ADDR_WIDTH-1:0     ] i_rd_addr                     ,  // IF&MEM输入信号
-  input                        o_wr_rdy                      ,  // IF&MEM输入信号
+  output                       o_wr_rdy                      ,  // IF&MEM输入信号
   input  [ADDR_WIDTH-1:0     ] i_wr_addr                     ,  // IF&MEM输入信号
   input  [STRB_WIDTH-1:0     ] i_wr_wstrb                    ,  // IF&MEM输入信号
   input  [256-1:0            ] i_wr_wdata                    ,  // IF&MEM输入信号
