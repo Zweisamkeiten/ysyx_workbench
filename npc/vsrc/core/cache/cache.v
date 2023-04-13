@@ -119,9 +119,9 @@ module ysyx_22050710_cache #(
   // ---------------------------------------------------------
   // Organize manager
   // tag array
-  reg [TAG_WIDTH-1:0] tag   [INDEX_WIDTH-1:0][ASSOC_NUM-1:0] ;
-  reg                 valid [INDEX_WIDTH-1:0][ASSOC_NUM-1:0] ;
-  reg                 dirty [INDEX_WIDTH-1:0][ASSOC_NUM-1:0] ;
+  reg [TAG_WIDTH-1:0] tag   [ASSOC_NUM-1:0][INDEX_WIDTH-1:0] ;
+  reg                 valid [ASSOC_NUM-1:0][INDEX_WIDTH-1:0] ;
+  reg                 dirty [ASSOC_NUM-1:0][INDEX_WIDTH-1:0] ;
 
   wire [CACHELINE_BITS-1:0] cacheline_way [ASSOC_NUM-1:0]    ;
 
