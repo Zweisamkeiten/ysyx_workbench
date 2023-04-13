@@ -276,10 +276,10 @@ module ysyx_22050710_cache #(
   wire [OFFSET_WIDTH-1:0     ] wb_offset                     ;
   wire [STRB_WIDTH-1:0       ] wb_wstrb                      ;
   wire [DATA_WIDTH-1:0       ] wb_wdata                      ;
-  wire [1+INDEX_WIDTH+STRB_WIDTH+OFFSET_WIDTH+4+DATA_WIDTH-1:0] write_buffer;
+  wire [1+INDEX_WIDTH+STRB_WIDTH+OFFSET_WIDTH+2+DATA_WIDTH-1:0] write_buffer;
 
   Reg #(
-    .WIDTH                    (1+INDEX_WIDTH+STRB_WIDTH+OFFSET_WIDTH+4+DATA_WIDTH),
+    .WIDTH                    (1+INDEX_WIDTH+STRB_WIDTH+OFFSET_WIDTH+2+DATA_WIDTH),
     .RESET_VAL                (0                            )
   ) u_write_buffer_reg (
     .clk                      (i_clk                        ),
@@ -450,7 +450,7 @@ module ysyx_22050710_cache #(
                              ||(c_state_lookup && cache_hit && i_valid && ~hit_write_conflict);  // 2. Cache 主状态机处于 LOOKUP 并将进行 LOOKUP->LOOKUP 的转变
   assign o_data_ok           = (c_state_lookup && cache_hit  )  // 1. Cache 当前 LOOKUP 且 Cache 命中
                              ||(c_state_lookup && ~request_wen) // 2. Cache 当前 LOOKUP 且 处理写操作 目的: 放行 MEM 级的 store 指令, 让后续非访存指令在流水线继续执行
-                             ||(c_state_refill && i_ret_valid && mb_num_hasret == addr_align); // 3. Cache 当前状态为 REFILL 且 ret_valid = 1, 同时 Miss Buffer 返回的字个数与 缺失地址 request_offset[4:3] 相等
+                             ||(c_state_refill && i_ret_valid && mb_num_hasret == {1'b0, addr_align}); // 3. Cache 当前状态为 REFILL 且 ret_valid = 1, 同时 Miss Buffer 返回的字个数与 缺失地址 request_offset[4:3] 相等
   assign o_rdata             = (c_state_lookup && cache_hit)
                              ? load_result
                              : i_ret_data                    ;
