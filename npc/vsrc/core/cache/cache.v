@@ -25,7 +25,7 @@ module ysyx_22050710_cache #(
   input  [INDEX_WIDTH-1:0    ] i_index                       , // 地址的 index  域 addr[10:5]
   input  [TAG_WIDTH-1:0      ] i_tag                         , // 地址的 tag    域 addr[31:11]
   input  [OFFSET_WIDTH-1:0   ] i_offset                      , // 地址的 offset 域 addr[4:0]
-  input  [STRB_WIDTH-1-1:0   ] i_wstrb                       , // 写字节使能信号
+  input  [STRB_WIDTH-1:0     ] i_wstrb                       , // 写字节使能信号
   input  [DATA_WIDTH-1:0     ] i_wdata                       , // 写数据
   output                       o_addr_ok                     , // 该次请求的地址传输 OK, 读: 地址被接收; 写: 地址和数据被接收
   output                       o_data_ok                     , // 该次请求的数据传输 OK, 读: 数据返回; 写: 数据写入完成
