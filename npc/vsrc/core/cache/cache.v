@@ -299,11 +299,11 @@ module ysyx_22050710_cache #(
 
   // ---------------------------------------------------------
   // Data Select
-  wire [DATA_WIDTH-1:0]        way0_load_word                ;
-  wire [DATA_WIDTH-1:0]        way1_load_word                ;
-  wire [DATA_WIDTH-1:0]        load_result                   ;
-  wire [DATA_WIDTH-1:0]        replace_data                  ;
-  wire [1:0           ]        addr_align                    ; // 根据锁存下的 addr[4:3] 来选择 256bit(32字节) 中的8字节
+  wire [DATA_WIDTH-1:0       ] way0_load_word                ;
+  wire [DATA_WIDTH-1:0       ] way1_load_word                ;
+  wire [DATA_WIDTH-1:0       ] load_result                   ;
+  wire [CACHELINE_BITS-1:0   ] replace_data                  ;
+  wire [1:0                  ] addr_align                    ; // 根据锁存下的 addr[4:3] 来选择 256bit(32字节) 中的8字节
   assign addr_align          = request_offset[4:3]           ;
   assign way0_load_word      = cacheline_way[0][addr_align*64 +: 64];
   assign way1_load_word      = cacheline_way[1][addr_align*64 +: 64];
