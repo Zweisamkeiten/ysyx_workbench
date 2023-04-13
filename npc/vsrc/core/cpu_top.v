@@ -255,7 +255,7 @@ module ysyx_22050710_cpu_top #(
     .i_wr_rdy                 (1'b1 | icache_wr_rdy         )  // 写请求能否被接收的握手信号. 高电平有效. 此处要求 wr_rdy 要先于 wr_req 置起, wr_req 看到 wr_rdy 后才可能置起 icache wr_rdy 恒为 1
   );
 
-  ysyx_22050710_axi4full_master_wrap u_icache_axi_wrap (
+  ysyx_22050710_axi4full_master_wrap_tmp u_icache_axi_wrap (
     .i_rd_req                 (icache_rd_req                ),  //IF&MEM输入信号
     .i_wr_req                 (icache_wr_req                ),  //IF&MEM输入信号
     .i_rw_op                  (icache_wr_req                ),  //IF&MEM输入信号
