@@ -77,7 +77,7 @@ module ysyx_22050710_cpu_top #(
 
   // cpu data sram
   wire                         cpu_data_req                  ; // 请求信号, 为 1 时有读写请求, 为 0 时无读写请求
-  wire                         cpu_data_wr                   ; // 为 1 表示该次是写请求, 为 0 表示该次是读请求
+  wire                         cpu_data_op                   ; // 为 1 表示该次是写请求, 为 0 表示该次是读请求
   wire [1:0                  ] cpu_data_size                 ; // 该次请求传输的字节数, 0: 1byte; 1: 2bytes; 2: 4bytes; 3: 8bytes
   wire [SRAM_ADDR_WD-1:0     ] cpu_data_addr                 ; // 该次请求的地址
   wire [SRAM_WMASK_WD-1:0    ] cpu_data_wstrb                ; // 该次请求的写字节使能
@@ -318,7 +318,7 @@ module ysyx_22050710_cpu_top #(
 
   ysyx_22050710_axi4full_master_wrap u_lsu_axi_wrap (
     .i_rw_req                 (cpu_data_req                 ),  //IF&MEM输入信号
-    .i_rw_wr                  (cpu_data_wr                  ),  //IF&MEM输入信号
+    .i_rw_wr                  (cpu_data_op                  ),  //IF&MEM输入信号
     .i_rw_size                (cpu_data_size                ),  //IF&MEM输入信号
     .i_rw_addr                (cpu_data_addr                ),  //IF&MEM输入信号
     .i_rw_wstrb               (cpu_data_wstrb               ),  //IF&MEM输入信号
