@@ -235,7 +235,7 @@ module ysyx_22050710_cache #(
   wire [INDEX_WIDTH-1:0]       index                         ;
   wire [INDEX_WIDTH-1:0]       main_index                    ;
   MuxKeyWithDefault #(
-    .NR_KEY                   (3                            ),
+    .NR_KEY                   (4                            ),
     .KEY_LEN                  (3                            ),
     .DATA_LEN                 (INDEX_WIDTH                  )
   ) u_mux2 (
