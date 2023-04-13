@@ -32,7 +32,7 @@ module ysyx_22050710_lsu_load #(
     end
   end
 
-  // for load inst
+  // for store inst
   MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(WORD_WD)) u_mux0 (
     .out(memrdata),
     .key(i_mem_op),
