@@ -317,7 +317,7 @@ module ysyx_22050710_cache #(
   // 计算伪随机数
   reg lfsr;
   always @(posedge i_clk) begin
-    if (rst)
+    if (i_rst)
       lfsr <= 1'b1;
     else
       lfsr <= lfsr ^ 1'b1;
