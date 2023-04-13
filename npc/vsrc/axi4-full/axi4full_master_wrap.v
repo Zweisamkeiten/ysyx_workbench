@@ -173,7 +173,7 @@ module ysyx_22050710_axi4full_master_wrap_tmp #(
 
   // 写数据通道
   assign o_wvalid            = w_state_write                 ;
-  assign o_wdata             = i_rw_wdata                    ;
+  assign o_wdata             = i_wr_wdata[63:0]              ;
   assign o_wstrb             = i_wr_wstrb                    ;
   assign o_wlast             = 1'b1                          ; // 固定为 1
 
