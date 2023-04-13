@@ -224,7 +224,7 @@ module ysyx_22050710_cpu_top #(
 
   ysyx_22050710_cache u_icache (
     .i_clk                    (i_aclk                       ), // 时钟信号
-    .i_rst                    (i_rst                        ), // 复位信号
+    .i_rst                    (i_arsetn                     ), // 复位信号
 
     // Cache 与 CPU 流水线接口
     .i_valid                  (cpu_inst_req                 ), // 表明请求有效
