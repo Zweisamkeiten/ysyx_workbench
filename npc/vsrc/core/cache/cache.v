@@ -475,4 +475,6 @@ module ysyx_22050710_cache #(
     .wen                      (c_state_miss && i_wr_rdy     )
   );
 
+  assign o_wr_wstrb          = wstrb                          ;
+
 endmodule
