@@ -20,7 +20,7 @@ module ysyx_22050710_cache #(
 
   // Cache 与 CPU 流水线接口
   input                        i_valid                       , // 表明请求有效
-  input                        i_rw_size                     , // IF&MEM输入信号
+  input  [1:0                ] i_rw_size                     , // IF&MEM输入信号
   input                        i_op                          , // 1 : WRITE; 0: READ
   input  [INDEX_WIDTH-1:0    ] i_index                       , // 地址的 index  域 addr[10:5]
   input  [TAG_WIDTH-1:0      ] i_tag                         , // 地址的 tag    域 addr[31:11]
