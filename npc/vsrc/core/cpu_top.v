@@ -187,7 +187,7 @@ module ysyx_22050710_cpu_top #(
 
     // inst sram interface
     .o_inst_sram_req          (cpu_inst_req                 ),
-    .o_inst_sram_wr           (cpu_inst_wr                  ),
+    .o_inst_sram_op           (cpu_inst_op                  ),
     .o_inst_sram_size         (cpu_inst_size                ),
     .o_inst_sram_addr         (cpu_inst_addr                ),
     .o_inst_sram_wstrb        (cpu_inst_wstrb               ),
@@ -198,7 +198,7 @@ module ysyx_22050710_cpu_top #(
 
     // data sram interface
     .o_data_sram_req          (cpu_data_req                 ),
-    .o_data_sram_wr           (cpu_data_wr                  ),
+    .o_data_sram_op           (cpu_data_op                  ),
     .o_data_sram_size         (cpu_data_size                ),
     .o_data_sram_addr         (cpu_data_addr                ),
     .o_data_sram_wstrb        (cpu_data_wstrb               ),
