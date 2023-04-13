@@ -29,38 +29,24 @@ int atoi(const char* nptr) {
   return x;
 }
 
-char *itoa(unsigned int val, char *str, int base) {
-  char *p = str;
-  while(val) {
-    int tmp = val % base;
-    if(tmp <= 9)
-      *p++ = '0' + tmp;
-    else
-      *p++ = 'A' + tmp - 10;
-    val /= base;
-  }
-  for(char *i = str, *j = p - 1; i < p; ++i, --j) {
-    if(i >= j) break;
-    char tmp = *i;
-    *i = *j;
-    *j = tmp;
-  }
-  *p = 0;
-  return str;
-}
+#if !(defined(__ISA_NATIVE__) && defined(__NATIVE_USE_KLIB__))
+static char* addr;
+#endif
 
 void *malloc(size_t size) {
-  static void *program_break = 0;
-  if (program_break == 0) {
-    if (heap.start == 0) return 0;
-    program_break = heap.start;
-    //#endif
-  }
-  size = (size + 15) & ~15;
-  void *mem = program_break;
-  program_break += size;
-  //assert(program_break <= heap.end, "Run out of memory");
-  return mem;
+  // On native, malloc() will be called during initializaion of C runtime.
+  // Therefore do not call panic() here, else it will yield a dead recursion:
+  //   panic() -> putchar() -> (glibc) -> malloc() -> panic()
+#if !(defined(__ISA_NATIVE__) && defined(__NATIVE_USE_KLIB__))
+  if (addr == NULL) addr = heap.start;
+  // 向上对齐8字节
+  size = (size_t)ROUNDUP(size, 8);
+  char *old = addr;
+  addr += size;
+  assert((uintptr_t)heap.start <= (uintptr_t)addr && (uintptr_t)addr < (uintptr_t)heap.end);
+  return old;
+#endif
+  return NULL;
 }
 
 void free(void *ptr) {
