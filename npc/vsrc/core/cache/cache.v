@@ -476,5 +476,6 @@ module ysyx_22050710_cache #(
   );
 
   assign o_wr_wstrb          = wstrb                          ;
+  assign o_wr_addr           = {ADDR_WIDTH{c_state_replace}} & {tag[replace_way], request_index, {OFFSET_WIDTH{1'b0}}};
 
 endmodule
