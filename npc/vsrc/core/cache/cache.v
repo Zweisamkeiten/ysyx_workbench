@@ -37,7 +37,7 @@ module ysyx_22050710_cache #(
   output [ADDR_WIDTH-1:0     ] o_rd_addr                     , // 读请求起始地址
   input                        i_rd_rdy                      , // 读请求能否被接收的握手信号. 高电平有效.
   input                        i_ret_valid                   , // 返回数据有效. 高电平有效.
-  input  [1:0                ] i_ret_last                    , // 返回数据是一次读请求对应的最后一个返回数据
+  input                        i_ret_last                    , // 返回数据是一次读请求对应的最后一个返回数据
   input  [DATA_WIDTH-1:0     ] i_ret_data                    , // 读返回数据
   output                       o_wr_req                      , // 写请求有效信号. 高电平有效
   output [2:0                ] o_wr_type                     , // 写请求类型 4'b001: b, 3'b010: 半字, 3'b100: 字, 3'b100:  Cache 行

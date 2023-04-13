@@ -213,7 +213,7 @@ module ysyx_22050710_cpu_top #(
   wire [SRAM_ADDR_WD-1:0     ] icache_rd_addr                ;
   wire                         icache_rd_rdy                 ;
   wire                         icache_ret_valid              ;
-  wire [1:0                  ] icache_ret_last               ;
+  wire                         icache_ret_last               ;
   wire [SRAM_DATA_WD-1:0     ] icache_ret_data               ;
   wire                         icache_wr_req                 ;
   wire [2:0]                   icache_wr_type                ;
