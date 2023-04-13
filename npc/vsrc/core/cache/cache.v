@@ -49,8 +49,8 @@ module ysyx_22050710_cache #(
 
   // deal with input
   parameter BITS             = 128                           ;
-  wire                         cen [ASSOC_NUM-1:0           ];
-  wire                         wen [ASSOC_NUM-1:0           ];
+  wire [ASSOC_NUM-1:0        ] cen                           ;
+  wire [ASSOC_NUM-1:0        ] wen                           ;
   wire [DATA_WIDTH-1:0       ] word_wen                      ; // 写字长 写使能掩码位
   wire [DATA_WIDTH-1:0       ] w_data                        ;
   wire [CACHELINE_BITS-1:0   ] wdata                         ;
