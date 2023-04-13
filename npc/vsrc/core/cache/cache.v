@@ -112,7 +112,7 @@ module ysyx_22050710_cache #(
                                 2'b00, {192'b0, w_data       },
                                 2'b01, {128'b0, w_data, 64'b0},
                                 2'b10, {64'b0 , w_data,128'b0},
-                                2'b11, {wdata, 192'b0       }
+                                2'b11, {w_data, 192'b0       }
                               })
   );
 
