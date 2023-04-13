@@ -14,7 +14,7 @@ module ysyx_22050710_axi4full_arbiter_2x1 #(
   // Wirte address channel
   input  [ADDR_WIDTH-1:0     ] i_a_awaddr                    ,
   input  [7:0                ] i_a_awlen                     ,
-  input  [1:0                ] i_a_awsize                    ,
+  input  [2:0                ] i_a_awsize                    ,
   input  [1:0                ] i_a_awburst                   ,
   input  [1:0                ] i_a_awlock                    ,
   input  [3:0                ] i_a_awcache                   ,
@@ -37,7 +37,7 @@ module ysyx_22050710_axi4full_arbiter_2x1 #(
   // A Read address channel
   input  [ADDR_WIDTH-1:0     ] i_a_araddr                    ,
   input  [7:0                ] i_a_arlen                     ,
-  input  [1:0                ] i_a_arsize                    ,
+  input  [2:0                ] i_a_arsize                    ,
   input  [1:0                ] i_a_arburst                   ,
   input  [1:0                ] i_a_arlock                    ,
   input  [3:0                ] i_a_arcache                   ,
@@ -57,7 +57,7 @@ module ysyx_22050710_axi4full_arbiter_2x1 #(
   // Wirte address channel
   input  [ADDR_WIDTH-1:0     ] i_b_awaddr                    ,
   input  [7:0                ] i_b_awlen                     ,
-  input  [1:0                ] i_b_awsize                    ,
+  input  [2:0                ] i_b_awsize                    ,
   input  [1:0                ] i_b_awburst                   ,
   input  [1:0                ] i_b_awlock                    ,
   input  [3:0                ] i_b_awcache                   ,
@@ -80,7 +80,7 @@ module ysyx_22050710_axi4full_arbiter_2x1 #(
   // B Read address channel
   input  [ADDR_WIDTH-1:0     ] i_b_araddr                    ,
   input  [7:0                ] i_b_arlen                     ,
-  input  [1:0                ] i_b_arsize                    ,
+  input  [2:0                ] i_b_arsize                    ,
   input  [1:0                ] i_b_arburst                   ,
   input  [1:0                ] i_b_arlock                    ,
   input  [3:0                ] i_b_arcache                   ,
@@ -100,7 +100,7 @@ module ysyx_22050710_axi4full_arbiter_2x1 #(
   output [3:0                ] o_awid                        ,
   output [ADDR_WIDTH-1:0     ] o_awaddr                      ,
   output [7:0                ] o_awlen                       ,
-  output [1:0                ] o_awsize                      ,
+  output [2:0                ] o_awsize                      ,
   output [1:0                ] o_awburst                     ,
   output [1:0                ] o_awlock                      ,
   output [3:0                ] o_awcache                     ,
@@ -126,7 +126,7 @@ module ysyx_22050710_axi4full_arbiter_2x1 #(
   output [3:0                ] o_arid                        ,
   output [ADDR_WIDTH-1:0     ] o_araddr                      ,
   output [7:0                ] o_arlen                       ,
-  output [1:0                ] o_arsize                      ,
+  output [2:0                ] o_arsize                      ,
   output [1:0                ] o_arburst                     ,
   output [1:0                ] o_arlock                      ,
   output [3:0                ] o_arcache                     ,
