@@ -127,7 +127,7 @@ module ysyx_22050710_cache #(
 
   // ---------------------------------------------------------
   // data array
-  wire                         addr                          ;
+  wire [INDEX_WIDTH-1:0      ] addr                          ;
   assign addr                = index                         ;
   ysyx_22050710_S011HD1P_X32Y2D128_BW u_way00 (
     .Q                        (cacheline_way[0][BITS-1:0]   ), // 读数据
