@@ -109,7 +109,7 @@ module ysyx_22050710_icache #(
   reg                 valid [ASSOC_NUM][INDEX_NUM]   ;
   reg                 dirty [ASSOC_NUM][INDEX_NUM]   ;
 
-  wire [CACHELINE_BITS-1:0] cacheline_way [ASSOC_NUM-1:0]    ;
+  wire [CACHELINE_BITS-1:0] cacheline_way [ASSOC_NUM]    ;
 
   // ---------------------------------------------------------
   // data array
