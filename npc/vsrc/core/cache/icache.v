@@ -105,11 +105,11 @@ module ysyx_22050710_icache #(
   // ---------------------------------------------------------
   // Organize manager
   // tag array
-  reg [TAG_WIDTH-1:0] tag   [ASSOC_NUM][INDEX_NUM]   ;
-  reg                 valid [ASSOC_NUM][INDEX_NUM]   ;
-  reg                 dirty [ASSOC_NUM][INDEX_NUM]   ;
+  reg [TAG_WIDTH-1:0] tag   [ASSOC_NUM-1:0][INDEX_NUM-1:0]   ;
+  reg                 valid [ASSOC_NUM-1:0][INDEX_NUM-1:0]   ;
+  reg                 dirty [ASSOC_NUM-1:0][INDEX_NUM-1:0]   ;
 
-  wire [CACHELINE_BITS-1:0] cacheline_way [ASSOC_NUM]    ;
+  wire [CACHELINE_BITS-1:0] cacheline_way [ASSOC_NUM-1:0]    ;
 
   // ---------------------------------------------------------
   // data array
@@ -386,6 +386,6 @@ module ysyx_22050710_icache #(
   );
 
   assign o_wr_wstrb          = wstrb                          ;
-  assign o_wr_addr           = {ADDR_WIDTH{c_state_replace}} & {tag[replace_way], request_index, {OFFSET_WIDTH{1'b0}}};
+  assign o_wr_addr           = {ADDR_WIDTH{c_state_replace}} & {tag[replace_way][request_index], request_index, {OFFSET_WIDTH{1'b0}}};
 
 endmodule
