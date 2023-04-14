@@ -129,9 +129,9 @@ module ysyx_22050710_axi4full_sram_wrap #(
   ) u_ar_addr_r (
     .clk                      (i_aclk                       ),
     .rst                      (!i_arsetn || o_rlast         ),
-    .din                      ((ar_fire ? i_araddr : araddr) + 32'd8),
+    .din                      ((i_arvalid ? i_araddr : araddr) + 32'd8),
     .dout                     (araddr                       ),
-    .wen                      (ar_fire || r_state_read      )
+    .wen                      (i_arvalid || r_state_read      )
   );
 
   always @(posedge i_aclk) begin
