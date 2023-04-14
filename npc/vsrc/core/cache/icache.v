@@ -374,6 +374,7 @@ module ysyx_22050710_icache #(
   assign o_rd_type           = {3{c_state_replace}} & 3'b100 ; // 缺失 读一整个 cache line
   assign o_rd_addr           = {ADDR_WIDTH{c_state_replace}} & {request_tag, request_index, {OFFSET_WIDTH{1'b0}}};
   assign o_wr_type           = {3{c_state_replace}} & 3'b100 ; // 缺失 写一整个 cache line
+  wire                         wr_req                        ;
   Reg #(
     .WIDTH                    (1                            ),
     .RESET_VAL                (0                            )
@@ -381,9 +382,10 @@ module ysyx_22050710_icache #(
     .clk                      (i_clk                        ),
     .rst                      (i_rst || o_wr_req            ),
     .din                      (1'b1                         ),
-    .dout                     (o_wr_req                     ),
+    .dout                     (wr_req                       ),
     .wen                      (c_state_miss && i_wr_rdy     )
   );
+  assign o_wr_req            = wr_req & dirty[replace_way][request_index];
 
   assign o_wr_wstrb          = wstrb                          ;
   assign o_wr_addr           = {ADDR_WIDTH{c_state_replace}} & {tag[replace_way][request_index], request_index, {OFFSET_WIDTH{1'b0}}};
