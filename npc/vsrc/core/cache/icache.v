@@ -93,7 +93,7 @@ module ysyx_22050710_icache #(
     .DATA_LEN                 (CACHELINE_BITS               )
   ) u_mux1 (
     .out                      (wdata                        ),
-    .key                      (mb_num_hasret[1:0]),
+    .key                      (mb_num_haveret[1:0]),
     .lut                      ({
                                 2'b00, {192'b0, i_ret_data       },
                                 2'b01, {128'b0, i_ret_data, 64'b0},
@@ -271,7 +271,7 @@ module ysyx_22050710_icache #(
   end
 
   wire                         mb_way_to_replace             ;
-  wire [3-1:0                ] mb_num_hasret                 ;
+  wire [3-1:0                ] mb_num_haveret                 ;
   Reg #(
     .WIDTH                    (1                            ),
     .RESET_VAL                (0                            )
@@ -286,11 +286,11 @@ module ysyx_22050710_icache #(
   Reg #(
     .WIDTH                    (3                            ),
     .RESET_VAL                (0                            )
-  ) u_missing_buffer_num_has_ret_reg (
+  ) u_missing_buffer_num_have_ret_reg (
     .clk                      (i_clk                        ),
     .rst                      (i_rst || (c_state_miss && i_rd_rdy)),
-    .din                      (mb_num_hasret + 1            ),
-    .dout                     (mb_num_hasret                ),
+    .din                      (mb_num_haveret + 3'b1        ),
+    .dout                     (mb_num_haveret               ),
     .wen                      (c_state_refill && i_ret_valid)
   );
 

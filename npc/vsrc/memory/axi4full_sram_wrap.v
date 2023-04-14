@@ -90,7 +90,7 @@ module ysyx_22050710_axi4full_sram_wrap #(
     else begin
       case (read_state_reg)
         READ_STATE_IDLE : if (ar_fire) read_state_reg <= READ_STATE_READ;
-        READ_STATE_READ : if (r_fire ) read_state_reg <= READ_STATE_IDLE;
+        READ_STATE_READ : if (r_fire & o_rlast) read_state_reg <= READ_STATE_IDLE;
         default         :              read_state_reg <= read_state_reg ;
       endcase
     end
@@ -123,7 +123,7 @@ module ysyx_22050710_axi4full_sram_wrap #(
   end
 
   always @(posedge i_aclk) begin
-    if (ar_fire) begin
+    if (ar_fire || r_state_read) begin
       npc_pmem_read({32'b0, i_araddr}, o_rdata);
     end
   end
@@ -152,7 +152,19 @@ module ysyx_22050710_axi4full_sram_wrap #(
   assign o_wready            = w_state_write                 ;
   assign o_bresp             = 2'b00                         ;
   assign o_rresp             = 2'b00                         ; // trans ok
-  assign o_rlast             = 1'b0                          ;
+  assign o_rlast             = (nums_have_sent == i_arlen)   ;
+
+  wire [7:0]                   nums_have_sent                ;
+  Reg #(
+    .WIDTH                    (1                            ),
+    .RESET_VAL                (0                            )
+  ) u_nums_have_sent (
+    .clk                      (i_aclk                       ),
+    .rst                      (!i_arsetn || o_rlast         ),
+    .din                      (nums_have_sent + 8'b1        ),
+    .dout                     (nums_have_sent               ),
+    .wen                      (ar_fire || r_state_read      )
+  );
 
   Reg #(
     .WIDTH                    (1                            ),
@@ -160,7 +172,7 @@ module ysyx_22050710_axi4full_sram_wrap #(
   ) u_o_rvalid (
     .clk                      (i_aclk                       ),
     .rst                      (!i_arsetn                    ),
-    .din                      (ar_fire                      ), // 接收完成地址延迟一周期返回读数据有效
+    .din                      (ar_fire || r_state_read      ), // 接收完成地址延迟一周期返回读数据有效
     .dout                     (o_rvalid                     ),
     .wen                      (1                            )
   );

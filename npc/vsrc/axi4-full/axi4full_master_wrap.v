@@ -120,7 +120,7 @@ module ysyx_22050710_axi4full_master_wrap_tmp #(
       case (read_state_reg)
         READ_STATE_IDLE : if (i_rd_req && ~i_rw_op) read_state_reg <= READ_STATE_ADDR ;
         READ_STATE_ADDR : if (ar_fire) read_state_reg <= READ_STATE_READ ;
-        READ_STATE_READ : if (r_fire ) read_state_reg <= READ_STATE_IDLE ;
+        READ_STATE_READ : if (r_fire && i_rlast) read_state_reg <= READ_STATE_IDLE ;
         default         :              read_state_reg <= READ_STATE_IDLE ;
       endcase
     end
