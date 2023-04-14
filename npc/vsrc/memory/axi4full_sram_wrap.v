@@ -156,7 +156,7 @@ module ysyx_22050710_axi4full_sram_wrap #(
 
   wire [7:0]                   nums_have_sent                ;
   Reg #(
-    .WIDTH                    (1                            ),
+    .WIDTH                    (8                            ),
     .RESET_VAL                (0                            )
   ) u_nums_have_sent (
     .clk                      (i_aclk                       ),
