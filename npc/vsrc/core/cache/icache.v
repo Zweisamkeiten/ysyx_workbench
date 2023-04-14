@@ -372,7 +372,7 @@ module ysyx_22050710_icache #(
 
   assign o_rd_req            = c_state_replace               ;
   assign o_rd_type           = {3{c_state_replace}} & 3'b100 ; // 缺失 读一整个 cache line
-  assign o_rd_addr           = {ADDR_WIDTH{c_state_replace}} & {request_tag, request_index, {OFFSET_WIDTH{1'b0}}};
+  assign o_rd_addr           = {request_tag, request_index, {OFFSET_WIDTH{1'b0}}};
   assign o_wr_type           = {3{c_state_replace}} & 3'b100 ; // 缺失 写一整个 cache line
   wire                         wr_req                        ;
   Reg #(
