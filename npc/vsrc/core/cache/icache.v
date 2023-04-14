@@ -78,7 +78,7 @@ module ysyx_22050710_icache #(
     .DATA_LEN                 (CACHELINE_BITS               )
   ) u_mux0 (
     .out                      (bwen                         ),
-    .key                      (mb_num_hasret[1:0]),
+    .key                      (mb_num_haveret[1:0]),
     .lut                      ({
                                 2'b00, {192'b1, word_wen       },
                                 2'b01, {128'b1, word_wen, 64'b1},
@@ -364,7 +364,7 @@ module ysyx_22050710_icache #(
   assign o_addr_ok           = c_state_idle                                                      // 1. Cache 主状态机处于 IDLE
                              ||(c_state_lookup && cache_hit && i_valid);  // 2. Cache 主状态机处于 LOOKUP 并将进行 LOOKUP->LOOKUP 的转变
   assign o_data_ok           = (c_state_lookup && cache_hit  )  // 1. Cache 当前 LOOKUP 且 Cache 命中
-                             ||(c_state_refill && i_ret_valid && mb_num_hasret == {1'b0, addr_align}); // 3. Cache 当前状态为 REFILL 且 ret_valid = 1, 同时 Miss Buffer 返回的字个数与 缺失地址 request_offset[4:3] 相等
+                             ||(c_state_refill && i_ret_valid && mb_num_haveret == {1'b0, addr_align}); // 3. Cache 当前状态为 REFILL 且 ret_valid = 1, 同时 Miss Buffer 返回的字个数与 缺失地址 request_offset[4:3] 相等
   assign o_rdata             = (c_state_lookup && cache_hit)
                              ? load_result
                              : i_ret_data                    ;
