@@ -69,6 +69,7 @@ module ysyx_22050710_icache #(
   // Store 操作在 Look Up 时发现命中 Cache
   wire hit_write             = c_state_lookup && cache_hit && ~request_wen;
 
+  assign wstrb               = {8{1'b1}}                     ;
   assign word_wen            = 64'b0                         ;
 
   MuxKey #(
