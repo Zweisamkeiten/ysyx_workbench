@@ -181,6 +181,10 @@ module ysyx_22050710_axi4full_master_wrap_tmp #(
   assign o_bready            = w_state_resp                  ;
 
   assign o_wr_rdy            = (|write_buffer) == 1'b0       ;
+  assign o_rd_rdy            = i_arready                     ;
+  assign o_ret_valid         = r_fire                        ;
+  assign o_ret_last          = i_rlast                       ;
+  assign o_ret_data          = i_rdata                       ;
 
   wire [256-1:0              ] write_buffer                  ;
   Reg #(
