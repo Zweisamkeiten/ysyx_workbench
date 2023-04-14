@@ -157,7 +157,7 @@ module ysyx_22050710_axi4full_master_wrap_tmp #(
 
   // ------------------Write Transaction----------------------
   wire [TRANSLEN_WIDTH-1:0   ] axi_len                       ;
-  assign axi_len             = 8'd0                          ;
+  assign axi_len             = 8'd4                          ;
 
   // 写地址通道
   assign o_awvalid           = w_state_addr                  ;
