@@ -80,10 +80,10 @@ module ysyx_22050710_icache #(
     .out                      (bwen                         ),
     .key                      (mb_num_haveret[1:0]),
     .lut                      ({
-                                2'b00, {192'b1, word_wen       },
-                                2'b01, {128'b1, word_wen, 64'b1},
-                                2'b10, {64'b1 , word_wen,128'b1},
-                                2'b11, {word_wen, 192'b1       }
+                                2'b00, {{192{1'b1}}, word_wen       },
+                                2'b01, {{128{1'b1}}, word_wen, {64{1'b1}}},
+                                2'b10, {{64{1'b1}}, word_wen,{128{1'b1}}},
+                                2'b11, {word_wen, {192{1'b1}}       }
                               })
   );
 
