@@ -34,10 +34,10 @@ module ysyx_22050710_axi4full_master_wrap_tmp #(
   input  [ADDR_WIDTH-1:0     ] i_wr_addr                     ,  // IF&MEM输入信号
   input  [STRB_WIDTH-1:0     ] i_wr_wstrb                    ,  // IF&MEM输入信号
   input  [256-1:0            ] i_wr_wdata                    ,  // IF&MEM输入信号
-  input                        o_rd_rdy                      ,  // IF&MEM输入信号
-  input                        o_ret_valid                   ,  // IF&MEM输入信号
-  input                        o_ret_last                    ,  // IF&MEM输入信号
-  input  [DATA_WIDTH-1:0     ] o_ret_data                    ,  // IF&MEM输入信号
+  output                       o_rd_rdy                      ,  // IF&MEM输入信号
+  output                       o_ret_valid                   ,  // IF&MEM输入信号
+  output                       o_ret_last                    ,  // IF&MEM输入信号
+  output [DATA_WIDTH-1:0     ] o_ret_data                    ,  // IF&MEM输入信号
 
   input                        i_aclk                        ,  // AXI 时钟
   input                        i_arsetn                      ,  // AXI 复位 低电平复位
