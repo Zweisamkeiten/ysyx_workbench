@@ -271,7 +271,7 @@ module ysyx_22050710_icache #(
   end
 
   wire                         mb_way_to_replace             ;
-  wire [3-1:0                ] mb_num_haveret                 ;
+  wire [3-1:0                ] mb_num_haveret                ;
   Reg #(
     .WIDTH                    (1                            ),
     .RESET_VAL                (0                            )
