@@ -34,15 +34,19 @@ void finish_handle(long long pc, long long dnpc, long long inst, svLogic memen, 
       difftest_skip_ref();
     }
   }
+
+  if (inst == 0x00100073) {
+    npc_state.state = NPC_END;
+    npc_state.halt_pc = cpu.pc;
+    npc_state.halt_ret = cpu.gpr[10];
+  }
 #ifdef CONFIG_VCD_TRACE
   printf("cycle: %lu, pc: %lx, inst: %lx\n", cycles, (word_t)pc, (word_t)inst);
 #endif
 }
 
 void set_state_end() {
-  npc_state.state = NPC_END;
-  npc_state.halt_pc = cpu.pc;
-  npc_state.halt_ret = cpu.gpr[10];
+  printf("ebreak!\n");
 }
 
 void set_state_abort() {
