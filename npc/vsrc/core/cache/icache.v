@@ -64,7 +64,7 @@ module ysyx_22050710_icache #(
                              : cen_sel ? 2'b00 : 2'b11       ; // 低电平有效
 
   wire wen_sel               = c_state_refill;
-  assign wen                 = wen_sel ? 2'b00 : 2'b11       ; // 低电平有效
+  assign wen                 = wen_sel ? (replace_way ? 2'b01 : 2'b10) : 2'b11       ; // 低电平有效
 
   // Store 操作在 Look Up 时发现命中 Cache
   wire hit_write             = c_state_lookup && cache_hit && ~request_wen;
