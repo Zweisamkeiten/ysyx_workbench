@@ -79,7 +79,9 @@ module ysyx_22050710_id_stage #(
     .wen                      (o_ds_allowin                 )
   );
 
-  wire [FS_TO_DS_BUS_WD-1:0]   fs_to_ds_bus_r                ;
+  wire [PC_WD-1:0            ] fs_pc                         ;
+  wire [FS_TO_DS_BUS_WD-1:0  ] fs_to_ds_bus_r                ;
+  assign fs_pc               = i_fs_to_ds_bus[PC_WD-1:0]     ;
 
   Reg #(
     .WIDTH                    (FS_TO_DS_BUS_WD              ),
@@ -87,7 +89,7 @@ module ysyx_22050710_id_stage #(
   ) u_fs_to_ds_bus_r (
     .clk                      (i_clk                        ),
     .rst                      (i_rst                        ),
-    .din                      (i_fs_to_ds_bus               ),
+    .din                      (br_taken ? {32'h00000013, fs_pc} : i_fs_to_ds_bus), // br taken 发生, 将已经 if stage 取来的指令清空为 nop 指令
     .dout                     (fs_to_ds_bus_r               ),
     .wen                      (i_fs_to_ds_valid&&o_ds_allowin)
   );
