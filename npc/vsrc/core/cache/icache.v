@@ -221,23 +221,23 @@ module ysyx_22050710_icache #(
     .default_out              (i_index                      ),
     .lut                      ({
                                 CACHE_IDLE   , i_index       ,
-                                CACHE_LOOKUP , request_index ,
+                                CACHE_LOOKUP , i_index       ,
                                 CACHE_REPLACE, request_index ,
                                 CACHE_REFILL , request_index
                               })
   );
   assign index               = main_index                    ;
 
-  wire way0_v                = valid[0][index]               ;
-  wire way1_v                = valid[1][index]               ;
+  wire way0_v                = valid[0][request_index]       ;
+  wire way1_v                = valid[1][request_index]       ;
 
   wire [TAG_WIDTH-1:0        ] way0_tag                      ;
   wire [TAG_WIDTH-1:0        ] way1_tag                      ;
-  assign way0_tag            = tag[0][index]                 ;
-  assign way1_tag            = tag[1][index]                 ;
+  assign way0_tag            = tag[0][request_index]         ;
+  assign way1_tag            = tag[1][request_index]         ;
 
-  wire way0_d                = dirty[0][index]               ;
-  wire way1_d                = dirty[1][index]               ;
+  wire way0_d                = dirty[0][request_index]       ;
+  wire way1_d                = dirty[1][request_index]       ;
 
   wire way0_hit              = way0_v && (way0_tag == request_tag);
   wire way1_hit              = way1_v && (way1_tag == request_tag);
