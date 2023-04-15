@@ -46,7 +46,6 @@ void finish_handle(long long pc, long long dnpc, long long inst, svLogic memen, 
 }
 
 void set_state_end() {
-  printf("ebreak!\n");
 }
 
 void set_state_abort() {
