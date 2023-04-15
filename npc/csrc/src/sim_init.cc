@@ -40,7 +40,6 @@ void finish_handle(long long pc, long long dnpc, long long inst, svLogic memen, 
 }
 
 void set_state_end() {
-  printf("ebreak!\n");
   npc_state.state = NPC_END;
   npc_state.halt_pc = cpu.pc;
   npc_state.halt_ret = cpu.gpr[10];
