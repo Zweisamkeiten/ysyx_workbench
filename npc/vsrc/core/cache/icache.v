@@ -58,7 +58,7 @@ module ysyx_22050710_icache #(
   wire [OFFSET_WIDTH-1:0     ] offset                        ;
   wire [STRB_WIDTH-1:0       ] wstrb                         ;
 
-  wire cen_sel               = ~i_valid;
+  wire cen_sel               = i_valid;
   assign cen                 = (c_state_miss | c_state_refill)
                              ? (replace_way ? 2'b01 : 2'b10)   // 低电平有效
                              : cen_sel ? 2'b00 : 2'b11       ; // 低电平有效
