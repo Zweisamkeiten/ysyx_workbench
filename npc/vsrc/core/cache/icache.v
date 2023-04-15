@@ -63,7 +63,7 @@ module ysyx_22050710_icache #(
                              ? (replace_way ? 2'b01 : 2'b10)   // 低电平有效
                              : cen_sel ? 2'b00 : 2'b11       ; // 低电平有效
 
-  wire wen_sel               = ~c_state_refill;
+  wire wen_sel               = c_state_refill;
   assign wen                 = wen_sel ? 2'b00 : 2'b11       ; // 低电平有效
 
   // Store 操作在 Look Up 时发现命中 Cache
