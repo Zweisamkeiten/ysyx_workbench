@@ -46,6 +46,7 @@ void set_state_end() {
 }
 
 void set_state_abort() {
+  printf("lllllllllllllll\n");
   if (npc_state.state != NPC_STOP) {
     printf("There are two cases which will trigger this unexpected exception:\n"
         "1. The instruction at PC = " FMT_WORD " is not implemented.\n"
