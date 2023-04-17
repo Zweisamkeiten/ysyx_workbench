@@ -143,11 +143,11 @@ module ysyx_22050710_axi4full_sram_wrap #(
     .rst                      (!i_arsetn                    ),
     .din                      (i_arlen                      ),
     .dout                     (arlen                        ),
-    .wen                      (ar_fire && r_state_idle      )
+    .wen                      (ar_fire                      )
   );
 
   always @(posedge i_aclk) begin
-    if (ar_fire && r_state_idle) begin
+    if (ar_fire) begin
       npc_pmem_read({32'b0, i_araddr}, o_rdata);
     end
     else if (r_state_read) begin
@@ -179,7 +179,7 @@ module ysyx_22050710_axi4full_sram_wrap #(
   assign o_wready            = w_state_write                 ;
   assign o_bresp             = 2'b00                         ;
   assign o_rresp             = 2'b00                         ; // trans ok
-  assign o_rlast             = (r_state_read && (nums_have_sent == arlen));
+  assign o_rlast             = ((|i_arlen == 1'b0) || (r_state_read && (nums_have_sent == arlen)));
 
   wire [7:0]                   nums_have_sent                ;
   Reg #(
@@ -199,7 +199,7 @@ module ysyx_22050710_axi4full_sram_wrap #(
   ) u_o_rvalid (
     .clk                      (i_aclk                       ),
     .rst                      (!i_arsetn                    ),
-    .din                      ((r_state_idle && ar_fire)|| r_state_read      ), // 接收完成地址延迟一周期返回读数据有效
+    .din                      (ar_fire || r_state_read      ), // 接收完成地址延迟一周期返回读数据有效
     .dout                     (o_rvalid                     ),
     .wen                      (1                            )
   );
