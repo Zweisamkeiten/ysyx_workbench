@@ -147,7 +147,7 @@ module ysyx_22050710_axi4full_sram_wrap #(
   );
 
   always @(posedge i_aclk) begin
-    if (ar_fire) begin
+    if (ar_fire && r_state_idle) begin
       npc_pmem_read({32'b0, i_araddr}, o_rdata);
     end
     else if (r_state_read) begin
