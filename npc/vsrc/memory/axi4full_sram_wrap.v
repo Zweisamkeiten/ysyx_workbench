@@ -138,7 +138,7 @@ module ysyx_22050710_axi4full_sram_wrap #(
   Reg #(
     .WIDTH                    (8                            ),
     .RESET_VAL                (0                            )
-  ) u_ar_addr_r (
+  ) u_arlen_r (
     .clk                      (i_aclk                       ),
     .rst                      (!i_arsetn                    ),
     .din                      (i_arlen                      ),
