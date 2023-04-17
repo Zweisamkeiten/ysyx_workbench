@@ -131,7 +131,7 @@ module ysyx_22050710_axi4full_sram_wrap #(
     .rst                      (!i_arsetn || o_rlast         ),
     .din                      ((i_arvalid ? i_araddr : araddr) + 32'd8),
     .dout                     (araddr                       ),
-    .wen                      (i_arvalid || r_state_read      )
+    .wen                      ((i_arvalid && (|i_arlen != 1'b0)) || r_state_read      )
   );
 
   wire [7:0] arlen;
