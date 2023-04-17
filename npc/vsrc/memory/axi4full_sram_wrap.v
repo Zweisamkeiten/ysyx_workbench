@@ -176,7 +176,7 @@ module ysyx_22050710_axi4full_sram_wrap #(
   assign o_wready            = w_state_write                 ;
   assign o_bresp             = 2'b00                         ;
   assign o_rresp             = 2'b00                         ; // trans ok
-  assign o_rlast             = r_state_read && ((nums_have_sent - 8'b1) == arlen);
+  assign o_rlast             = r_state_read && ((nums_have_sent) == arlen);
 
   wire [7:0]                   nums_have_sent                ;
   Reg #(
