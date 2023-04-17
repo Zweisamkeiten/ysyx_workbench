@@ -234,7 +234,6 @@ module ysyx_22050710_core #(
     .i_data_sram_data_ok      (i_data_sram_data_ok          ),
     .i_data_sram_rdata        (i_data_sram_rdata            ), // data ram 读数据返回 进入 lsu 进行处理
     // bypass
-    .o_ms_to_ds_bypass_stall  (ms_to_ds_bypass_stall        ),
     .o_ms_to_ds_bypass_bus    (ms_to_ds_bypass_bus          ),
     // debug
     .i_debug_es_to_ms_bus     (debug_es_to_ms_bus           ),
