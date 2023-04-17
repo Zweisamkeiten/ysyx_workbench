@@ -288,7 +288,7 @@ module ysyx_22050710_icache #(
     .RESET_VAL                (0                            )
   ) u_missing_buffer_num_have_ret_reg (
     .clk                      (i_clk                        ),
-    .rst                      (i_rst || ~c_state_refill),
+    .rst                      (i_rst || ~c_state_refill     ),
     .din                      (mb_num_haveret + 3'b1        ),
     .dout                     (mb_num_haveret               ),
     .wen                      (c_state_refill && i_ret_valid)
