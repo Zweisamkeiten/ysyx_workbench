@@ -187,7 +187,7 @@ module ysyx_22050710_axi4full_sram_wrap #(
     .RESET_VAL                (0                            )
   ) u_nums_have_sent (
     .clk                      (i_aclk                       ),
-    .rst                      (!i_arsetn || o_rlast ? o_rlast : r_state_idle),
+    .rst                      (!i_arsetn || (o_rlast ? o_rlast : r_state_idle)),
     .din                      (nums_have_sent + 8'b1        ),
     .dout                     (nums_have_sent               ),
     .wen                      ((i_arlen != 8'b0) && (ar_fire || r_state_read)) // TODO
