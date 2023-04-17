@@ -39,7 +39,6 @@ module ysyx_22050710_id_stage #(
   input                        i_es_to_ds_load_sel           ,
   // bypass
   input  [BYPASS_BUS_WD-1:0  ] i_es_to_ds_bypass_bus         ,
-  input                        i_ms_to_ds_bypass_stall       ,
   input  [BYPASS_BUS_WD-1:0  ] i_ms_to_ds_bypass_bus         ,
   input  [BYPASS_BUS_WD-1:0  ] i_ws_to_ds_bypass_bus         ,
   // debug
@@ -66,11 +65,8 @@ module ysyx_22050710_id_stage #(
                                 (es_to_ds_gpr_rd == rs2))    ;
 
 
-  wire   ms_bypass_stall     = (ms_gpr_bypass_sel || ms_csr_bypass_sel) && i_ms_to_ds_bypass_stall;
   assign ds_ready_go         = ~ds_wb_not_finish_for_ebreak &
-                               ~ds_load_stall               &
-                               ~ms_bypass_stall             ;
-
+                               ~ds_load_stall                ;
   assign o_ds_allowin        = ((!ds_valid) || (ds_ready_go && i_es_allowin)) & ~ebreak_sel; // when ebreak inst dont fetch inst
   assign o_ds_to_es_valid    = ds_valid && ds_ready_go       ;
 
@@ -239,11 +235,6 @@ module ysyx_22050710_id_stage #(
   (csr == ms_to_ds_csr_rd) ? ms_to_ds_csr_result :
   (csr == ws_to_ds_csr_rd) ? ws_to_ds_csr_result :
                              csrrdata                        ;
-
-  wire                         ms_gpr_bypass_sel             ;
-  wire                         ms_csr_bypass_sel             ;
-  assign ms_gpr_bypass_sel   = ms_to_ds_gpr_rd != 0 && rs1 == ms_to_ds_gpr_rd;
-  assign ms_csr_bypass_sel   = ms_to_ds_csr_rd != 0 && csr == ms_to_ds_csr_rd;
 
   // id stage to ex stage
   assign o_ds_to_es_bus      = {load_sel                     ,  // 359:359

@@ -17,8 +17,6 @@ module ysyx_22050710_mem_stage #(
   // allowin
   input                        i_ws_allowin                  ,
   output                       o_ms_allowin                  ,
-  // to ds
-  output                       o_ms_to_ds_bypass_stall       ,
   // from es
   input                        i_es_to_ms_valid              ,
   input  [ES_TO_MS_BUS_WD-1:0] i_es_to_ms_bus                ,
@@ -37,7 +35,6 @@ module ysyx_22050710_mem_stage #(
 
   wire                         resp_fire                     ;
   assign resp_fire           = i_data_sram_data_ok           ; // master 对于数据响应总是可以接收
-  assign o_ms_to_ds_bypass_stall = ~resp_fire                ;
 
   wire                         ms_valid                      ;
   wire                         ms_ready_go                   ;
