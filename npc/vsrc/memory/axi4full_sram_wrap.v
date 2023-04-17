@@ -234,7 +234,7 @@ module ysyx_22050710_axi4full_sram_wrap #(
     .rst                      (!i_arsetn                    ),
     .din                      (i_arid                       ),
     .dout                     (o_rid                        ),
-    .wen                      (1                            )
+    .wen                      (ar_fire && r_state_idle      )
   );
 
 endmodule
