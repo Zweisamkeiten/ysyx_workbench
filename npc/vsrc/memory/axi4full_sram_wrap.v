@@ -143,7 +143,7 @@ module ysyx_22050710_axi4full_sram_wrap #(
     .rst                      (!i_arsetn                    ),
     .din                      (i_arlen                      ),
     .dout                     (arlen                        ),
-    .wen                      (ar_fire                      )
+    .wen                      (ar_fire && r_state_idle      )
   );
 
   always @(posedge i_aclk) begin
