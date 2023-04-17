@@ -190,7 +190,7 @@ module ysyx_22050710_axi4full_sram_wrap #(
     .rst                      (!i_arsetn || o_rlast         ),
     .din                      (nums_have_sent + 8'b1        ),
     .dout                     (nums_have_sent               ),
-    .wen                      ((i_arlen != 8'b0) && r_state_read)
+    .wen                      ((i_arlen != 8'b0) && (ar_fire || r_state_read))
   );
 
   Reg #(
