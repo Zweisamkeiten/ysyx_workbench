@@ -243,7 +243,7 @@ module ysyx_22050710_id_stage #(
   wire                         ms_gpr_bypass_sel             ;
   wire                         ms_csr_bypass_sel             ;
   assign ms_gpr_bypass_sel   = ms_to_ds_gpr_rd != 0 && rs1 == ms_to_ds_gpr_rd;
-  assign ms_csr_bypass_sel   = csr == ms_to_ds_csr_rd        ;
+  assign ms_csr_bypass_sel   = ms_to_ds_csr_rd != 0 && csr == ms_to_ds_csr_rd;
 
   // id stage to ex stage
   assign o_ds_to_es_bus      = {load_sel                     ,  // 359:359
