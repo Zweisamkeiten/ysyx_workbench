@@ -34,7 +34,7 @@ module ysyx_22050710_ex_stage #(
   output [BYPASS_BUS_WD-1:0  ] o_es_to_ds_bypass_bus         ,
   // data sram interface
   output                       o_data_sram_req               , // 请求信号, 为 1 时有读写请求, 为 0 时无读写请求 data ram 读请求或写请求是在 ex stage 发出
-  output                       o_data_sram_wr                , // 为 1 表示该次是写请求, 为 0 表示该次是读请求
+  output                       o_data_sram_op                , // 为 1 表示该次是写请求, 为 0 表示该次是读请求
   output [1:0                ] o_data_sram_size              , // 该次请求传输的字节数, 0: 1byte; 1: 2bytes; 2: 4bytes; 3: 8bytes
   output [SRAM_ADDR_WD-1:0   ] o_data_sram_addr              , // 该次请求的地址
   output [SRAM_WMASK_WD-1:0  ] o_data_sram_wstrb             , // 该次请求的写字节使能
@@ -51,7 +51,7 @@ module ysyx_22050710_ex_stage #(
   assign o_data_sram_addr    = es_alu_result[31:0]           ; // x[rs1] + imm
 
   assign o_data_sram_req     = data_sram_ren || data_sram_wen;
-  assign o_data_sram_wr      = data_sram_wen ? 1'b1 : 1'b0   ;
+  assign o_data_sram_op      = data_sram_wen ? 1'b1 : 1'b0   ;
   MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(2)) u_mux0 (
     .out                      (o_data_sram_size             ),
     .key                      (es_mem_op                    ),

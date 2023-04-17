@@ -1,7 +1,7 @@
 // ysyx_22050710 axi4-full Wrap 以axi4-full接口封装的master模块
 `include "axi_defines.v"
 
-module ysyx_22050710_axi4full_master_wrap_tmp #(
+module ysyx_22050710_axi4full_master_wrap #(
   // Width of data bus in bits
   parameter DATA_WIDTH       = 64                            ,
   // Width of address bus in bits
@@ -24,20 +24,15 @@ module ysyx_22050710_axi4full_master_wrap_tmp #(
   parameter AWCACHE_DEVICE_NON_BUFFERABLE = `YSYX_22050710_AXI_AWCACHE_DEVICE_NON_BUFFERABLE,
   parameter ARCACHE_DEVICE_NON_BUFFERABLE = `YSYX_22050710_AXI_ARCACHE_DEVICE_NON_BUFFERABLE
 ) (
-  input                        i_rd_req                      ,  // IF&MEM输入信号
-  input                        i_wr_req                      ,  // IF&MEM输入信号
-  input                        i_rw_op                       ,  // IF&MEM输入信号
-  input  [2:0                ] i_rd_size                     ,  // IF&MEM输入信号
-  input  [2:0                ] i_wr_size                     ,  // IF&MEM输入信号
-  input  [ADDR_WIDTH-1:0     ] i_rd_addr                     ,  // IF&MEM输入信号
-  output                       o_wr_rdy                      ,  // IF&MEM输入信号
-  input  [ADDR_WIDTH-1:0     ] i_wr_addr                     ,  // IF&MEM输入信号
-  input  [STRB_WIDTH-1:0     ] i_wr_wstrb                    ,  // IF&MEM输入信号
-  input  [256-1:0            ] i_wr_wdata                    ,  // IF&MEM输入信号
-  output                       o_rd_rdy                      ,  // IF&MEM输入信号
-  output                       o_ret_valid                   ,  // IF&MEM输入信号
-  output                       o_ret_last                    ,  // IF&MEM输入信号
-  output [DATA_WIDTH-1:0     ] o_ret_data                    ,  // IF&MEM输入信号
+	input                        i_rw_req                      ,  //IF&MEM输入信号
+	input                        i_rw_wr                       ,  //IF&MEM输入信号
+	input  [1:0                ] i_rw_size                     ,  //IF&MEM输入信号
+  input  [ADDR_WIDTH-1:0     ] i_rw_addr                     ,  //IF&MEM输入信号
+  input  [STRB_WIDTH-1:0     ] i_rw_wstrb                    ,  //IF&MEM输入信号
+  input  [DATA_WIDTH-1:0     ] i_rw_wdata                    ,  //IF&MEM输入信号
+	output                       o_rw_addr_ok                  ,  //IF&MEM输入信号
+	output                       o_rw_data_ok                  ,  //IF&MEM输入信号
+  output [DATA_WIDTH-1:0     ] o_rw_rdata                    ,  //IF&MEM输入信号
 
   input                        i_aclk                        ,  // AXI 时钟
   input                        i_arsetn                      ,  // AXI 复位 低电平复位
@@ -118,9 +113,9 @@ module ysyx_22050710_axi4full_master_wrap_tmp #(
     end
     else begin
       case (read_state_reg)
-        READ_STATE_IDLE : if (i_rd_req && ~i_rw_op) read_state_reg <= READ_STATE_ADDR ;
+        READ_STATE_IDLE : if (i_rw_req && ~i_rw_wr) read_state_reg <= READ_STATE_ADDR ;
         READ_STATE_ADDR : if (ar_fire) read_state_reg <= READ_STATE_READ ;
-        READ_STATE_READ : if (r_fire && i_rlast) read_state_reg <= READ_STATE_IDLE ;
+        READ_STATE_READ : if (r_fire ) read_state_reg <= READ_STATE_IDLE ;
         default         :              read_state_reg <= READ_STATE_IDLE ;
       endcase
     end
@@ -146,7 +141,7 @@ module ysyx_22050710_axi4full_master_wrap_tmp #(
     end
     else begin
       case (write_state_reg)
-        WRITE_STATE_IDLE  : if (i_wr_req && i_rw_op) write_state_reg <= WRITE_STATE_ADDR  ;
+        WRITE_STATE_IDLE  : if (i_rw_req && i_rw_wr) write_state_reg <= WRITE_STATE_ADDR  ;
         WRITE_STATE_ADDR  : if (aw_fire) write_state_reg <= WRITE_STATE_WRITE ;
         WRITE_STATE_WRITE : if (w_fire ) write_state_reg <= WRITE_STATE_RESP  ;
         WRITE_STATE_RESP  : if (b_fire ) write_state_reg <= WRITE_STATE_IDLE  ;
@@ -157,62 +152,48 @@ module ysyx_22050710_axi4full_master_wrap_tmp #(
 
   // ------------------Write Transaction----------------------
   wire [TRANSLEN_WIDTH-1:0   ] axi_len                       ;
-  assign axi_len             = 8'd4                          ;
+  assign axi_len             = 0                             ;
 
   // 写地址通道
   assign o_awvalid           = w_state_addr                  ;
-  assign o_awaddr            = i_wr_addr                     ;
+  assign o_awaddr            = i_rw_addr                     ;
   assign o_awprot            = PROT_UNPRIVILEGED_ACCESS
                              | PROT_SECURE_ACCESS
                              | PROT_DATA_ACCESS              ;  // 初始化信号即可 固定为 0
   assign o_awlen             = axi_len                       ;  // 固定为 0
-  assign o_awsize            = i_wr_size                     ;
+  assign o_awsize            = {1'b0, i_rw_size}             ;
   assign o_awburst           = BURST_TYPE_INCR               ;  // 固定为 2'b01
   assign o_awlock            = 0                             ;  // 固定为 0
   assign o_awcache           = AWCACHE_DEVICE_NON_BUFFERABLE ;  // 固定为 0
 
   // 写数据通道
   assign o_wvalid            = w_state_write                 ;
-  assign o_wdata             = i_wr_wdata[63:0]              ;
-  assign o_wstrb             = i_wr_wstrb                    ;
+  assign o_wdata             = i_rw_wdata                    ;
+  assign o_wstrb             = i_rw_wstrb                    ;
   assign o_wlast             = 1'b1                          ; // 固定为 1
 
   // 写应答通道
   assign o_bready            = w_state_resp                  ;
 
-  assign o_wr_rdy            = (|write_buffer) == 1'b0       ;
-  assign o_rd_rdy            = i_arready                     ;
-  assign o_ret_valid         = r_fire                        ;
-  assign o_ret_last          = i_rlast                       ;
-  assign o_ret_data          = i_rdata                       ;
-
-  wire [256-1:0              ] write_buffer                  ;
-  Reg #(
-    .WIDTH                    (256                          ),
-    .RESET_VAL                (0                            )
-  ) u_write_buffer_reg (
-    .clk                      (i_aclk                       ),
-    .rst                      (i_arsetn                     ),
-    .din                      (i_wr_wdata                   ),
-    .dout                     (write_buffer                 ),
-    .wen                      (i_wr_req & o_wr_rdy & (i_wr_size == 3'b100))
-  );
-
   // ------------------Read Transaction-----------------------
 
   // Read address channel signals
   assign o_arvalid           = r_state_addr                  ;
-  assign o_araddr            = i_rd_addr                     ;
+  assign o_araddr            = i_rw_addr                     ;
   assign o_arprot            = PROT_UNPRIVILEGED_ACCESS
                              | PROT_SECURE_ACCESS
                              | PROT_DATA_ACCESS              ;  // 初始化信号即可 固定为 0
   assign o_arlen             = axi_len                       ;  // 固定为 0
-  assign o_arsize            = i_rd_size                     ;
+  assign o_arsize            = {1'b0, i_rw_size}             ;
   assign o_arburst           = BURST_TYPE_INCR               ;  // 固定为 2'b01
   assign o_arlock            = 0                             ;  // 固定为 0
   assign o_arcache           = ARCACHE_DEVICE_NON_BUFFERABLE ;  // 固定为 0
 
   // Read data channel signals
   assign o_rready            = r_state_read                  ;
+
+  assign o_rw_addr_ok        = ar_fire | w_fire              ;
+  assign o_rw_data_ok        = r_fire  | b_fire              ;
+  assign o_rw_rdata          = i_rdata                       ;
 
 endmodule
