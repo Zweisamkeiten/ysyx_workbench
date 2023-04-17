@@ -71,6 +71,8 @@ module ysyx_22050710_core #(
   // for load stall
   wire                         es_to_ds_load_sel             ;
 
+  wire                         flush_br_buf                  ;
+
   // debug
   wire [DEBUG_BUS_WD-1:0     ] debug_ds_to_es_bus            ;
   wire [DEBUG_BUS_WD-1:0     ] debug_es_to_ms_bus            ;
@@ -94,6 +96,7 @@ module ysyx_22050710_core #(
     .i_ds_allowin             (ds_allowin                   ),
     // br bus
     .i_br_bus                 (br_bus                       ),
+    .o_flush_br_buf           (flush_br_buf                 ),
     // output
     .o_fs_to_ds_valid         (fs_to_ds_valid               ),
     .o_fs_to_ds_bus           (fs_to_ds_bus                 ),
@@ -138,6 +141,8 @@ module ysyx_22050710_core #(
     .o_ds_to_es_bus           (ds_to_es_bus                 ),
     // to fs
     .o_br_bus                 (br_bus                       ),
+    // from fs
+    .i_flush_br_buf           (flush_br_buf                 ),
     // from ws to rf: for write back
     .i_ws_to_rf_bus           (ws_to_rf_bus                 ),
     // for load stall

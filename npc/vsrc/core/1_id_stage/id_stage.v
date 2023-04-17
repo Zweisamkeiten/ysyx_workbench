@@ -31,6 +31,8 @@ module ysyx_22050710_id_stage #(
   output [DS_TO_ES_BUS_WD-1:0] o_ds_to_es_bus                ,
   // to fs
   output [BR_BUS_WD-1:0      ] o_br_bus                      ,
+  // from fs
+  input                        i_flush_br_buf                , // 冲刷 br 的缓存
   // from ws to rf: for write back
   input  [WS_TO_RF_BUS_WD-1:0] i_ws_to_rf_bus                ,
   // for load stall
@@ -173,7 +175,7 @@ module ysyx_22050710_id_stage #(
     .RESET_VAL                (0                            )
   ) u_save_br_bus_r (
     .clk                      (i_clk                        ),
-    .rst                      (~o_ds_allowin || i_rst       ),
+    .rst                      (i_flush_br_buf || i_rst      ),
     .din                      ({~i_fs_to_ds_valid            ,
                                 br_stall                     ,
                                 br_taken                     ,

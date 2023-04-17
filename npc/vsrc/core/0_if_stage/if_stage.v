@@ -16,6 +16,7 @@ module ysyx_22050710_if_stage #(
   input                        i_ds_allowin                  ,
   // brbus
   input  [BR_BUS_WD-1:0 ]      i_br_bus                      ,
+  output                       o_flush_br_buf                ,
   // to ds
   output                       o_fs_to_ds_valid              ,
   output [FS_TO_DS_BUS_WD-1:0] o_fs_to_ds_bus                ,
@@ -120,5 +121,7 @@ module ysyx_22050710_if_stage #(
     // inst sram interface
     .i_inst_sram_rdata        (i_inst_sram_rdata            )
   );
+
+  assign o_flush_br_buf      = pre_fs_to_fs_valid && fs_allowin;
 
 endmodule
