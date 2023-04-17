@@ -40,7 +40,7 @@
   `define ysyx_22050710_DEBUG_BUS_WD                225  // {ds_inst[31:0], ds_pc[63:0], ds_dnpc[63:0], memren|memwen, memaddr[63:0]} 32 + 64 + 64 + 1 + 64
 
   // bypass
-  `define ysyx_22050710_BYPASS_BUS_WD               145  // csr12 + csrresult64 + gpr5 + gprresult64
+  `define ysyx_22050710_BYPASS_BUS_WD               146  // valid + csr12 + csrresult64 + gpr5 + gprresult64
 `endif
 
 `ifndef YSYX_22050710_MYCPU_CSRS_ADDR_H
