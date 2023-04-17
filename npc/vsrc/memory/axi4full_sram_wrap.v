@@ -193,16 +193,7 @@ module ysyx_22050710_axi4full_sram_wrap #(
     .wen                      ((i_arlen != 8'b0) && (ar_fire || (r_state_read && (arlen != 8'b0)))) // TODO
   );
 
-  Reg #(
-    .WIDTH                    (1                            ),
-    .RESET_VAL                (0                            )
-  ) u_o_rvalid (
-    .clk                      (i_aclk                       ),
-    .rst                      (!i_arsetn                    ),
-    .din                      (ar_fire || r_state_read      ), // 接收完成地址延迟一周期返回读数据有效
-    .dout                     (o_rvalid                     ),
-    .wen                      (1                            )
-  );
+  assign o_rvalid = r_state_read;
 
   Reg #(
     .WIDTH                    (1                            ),
