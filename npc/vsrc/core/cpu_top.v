@@ -66,7 +66,7 @@ module ysyx_22050710_cpu_top #(
 );
   // cpu inst sram
   wire                         cpu_inst_req                  ; // 请求信号, 为 1 时有读写请求, 为 0 时无读写请求
-  wire                         cpu_inst_wr                   ; // 为 1 表示该次是写请求, 为 0 表示该次是读请求
+  wire                         cpu_inst_op                   ; // 为 1 表示该次是写请求, 为 0 表示该次是读请求
   wire [1:0                  ] cpu_inst_size                 ; // 该次请求传输的字节数, 0: 1byte; 1: 2bytes; 2: 4bytes; 3: 8bytes
   wire [SRAM_ADDR_WD-1:0     ] cpu_inst_addr                 ; // 该次请求的地址
   wire [SRAM_WMASK_WD-1:0    ] cpu_inst_wstrb                ; // 该次请求的写字节使能
@@ -77,7 +77,7 @@ module ysyx_22050710_cpu_top #(
 
   // cpu data sram
   wire                         cpu_data_req                  ; // 请求信号, 为 1 时有读写请求, 为 0 时无读写请求
-  wire                         cpu_data_wr                   ; // 为 1 表示该次是写请求, 为 0 表示该次是读请求
+  wire                         cpu_data_op                   ; // 为 1 表示该次是写请求, 为 0 表示该次是读请求
   wire [1:0                  ] cpu_data_size                 ; // 该次请求传输的字节数, 0: 1byte; 1: 2bytes; 2: 4bytes; 3: 8bytes
   wire [SRAM_ADDR_WD-1:0     ] cpu_data_addr                 ; // 该次请求的地址
   wire [SRAM_WMASK_WD-1:0    ] cpu_data_wstrb                ; // 该次请求的写字节使能
@@ -187,7 +187,7 @@ module ysyx_22050710_cpu_top #(
 
     // inst sram interface
     .o_inst_sram_req          (cpu_inst_req                 ),
-    .o_inst_sram_wr           (cpu_inst_wr                  ),
+    .o_inst_sram_op           (cpu_inst_op                  ),
     .o_inst_sram_size         (cpu_inst_size                ),
     .o_inst_sram_addr         (cpu_inst_addr                ),
     .o_inst_sram_wstrb        (cpu_inst_wstrb               ),
@@ -198,7 +198,7 @@ module ysyx_22050710_cpu_top #(
 
     // data sram interface
     .o_data_sram_req          (cpu_data_req                 ),
-    .o_data_sram_wr           (cpu_data_wr                  ),
+    .o_data_sram_op           (cpu_data_op                  ),
     .o_data_sram_size         (cpu_data_size                ),
     .o_data_sram_addr         (cpu_data_addr                ),
     .o_data_sram_wstrb        (cpu_data_wstrb               ),
@@ -208,16 +208,68 @@ module ysyx_22050710_cpu_top #(
     .i_data_sram_rdata        (cpu_data_rdata               )
   );
 
-  ysyx_22050710_axi4full_master_wrap u_ifu_axi_wrap (
-    .i_rw_req                 (cpu_inst_req                 ),  //IF&MEM输入信号
-    .i_rw_wr                  (cpu_inst_wr                  ),  //IF&MEM输入信号
-    .i_rw_size                (cpu_inst_size                ),  //IF&MEM输入信号
-    .i_rw_addr                (cpu_inst_addr                ),  //IF&MEM输入信号
-    .i_rw_wstrb               (cpu_inst_wstrb               ),  //IF&MEM输入信号
-    .i_rw_wdata               (cpu_inst_wdata               ),  //IF&MEM输入信号
-    .o_rw_addr_ok             (cpu_inst_addr_ok             ),  //IF&MEM输入信号
-    .o_rw_data_ok             (cpu_inst_data_ok             ),  //IF&MEM输入信号
-    .o_rw_rdata               (cpu_inst_rdata               ),  //IF&MEM输入信号
+  wire                         icache_rd_req                 ;
+  wire [2:0]                   icache_rd_type                ;
+  wire [SRAM_ADDR_WD-1:0     ] icache_rd_addr                ;
+  wire                         icache_rd_rdy                 ;
+  wire                         icache_ret_valid              ;
+  wire                         icache_ret_last               ;
+  wire [SRAM_DATA_WD-1:0     ] icache_ret_data               ;
+  wire                         icache_wr_req                 ;
+  wire [2:0]                   icache_wr_type                ;
+  wire [SRAM_ADDR_WD-1:0     ] icache_wr_addr                ;
+  wire [STRB_WIDTH-1:0       ] icache_wr_wstrb               ;
+  wire [256-1:0              ] icache_wr_data                ;
+  wire                         icache_wr_rdy                 ;
+
+  ysyx_22050710_icache u_icache (
+    .i_clk                    (i_aclk                       ), // 时钟信号
+    .i_rst                    (~i_arsetn                    ), // 复位信号
+
+    // Cache 与 CPU 流水线接口
+    .i_valid                  (cpu_inst_req                 ), // 表明请求有效
+    .i_op                     (cpu_inst_op                  ), // 1 : WRITE; 0: READ
+    .i_rw_size                (cpu_inst_size                ), // IF&MEM输入信号
+    .i_index                  (cpu_inst_addr[10:5]          ), // 地址的 index  域 addr[10:5]
+    .i_tag                    (cpu_inst_addr[31:11]         ), // 地址的 tag    域 addr[31:11]
+    .i_offset                 (cpu_inst_addr[4:0]           ), // 地址的 offset 域 addr[4:0]
+    .i_wstrb                  (cpu_inst_wstrb               ), // 写字节使能信号
+    .i_wdata                  (cpu_inst_wdata               ), // 写数据
+    .o_addr_ok                (cpu_inst_addr_ok             ), // 该次请求的地址传输 OK, 读: 地址被接收; 写: 地址和数据被接收
+    .o_data_ok                (cpu_inst_data_ok             ), // 该次请求的数据传输 OK, 读: 数据返回; 写: 数据写入完成
+    .o_rdata                  (cpu_inst_rdata               ), // 读 Cache 的结果
+
+    // Cache 与 AXI 总线接口的交互接口
+    .o_rd_req                 (icache_rd_req                ), // 读请求有效信号, 高电平有效
+    .o_rd_type                (icache_rd_type               ), // 读请求类型 3'b000: 字节, 3'b001: 16bit, 3'b010: 半字 3'b011: 字, 3'b100: Cache 行
+    .o_rd_addr                (icache_rd_addr               ), // 读请求起始地址
+    .i_rd_rdy                 (icache_rd_rdy                ), // 读请求能否被接收的握手信号. 高电平有效.
+    .i_ret_valid              (icache_ret_valid             ), // 返回数据有效. 高电平有效.
+    .i_ret_last               (icache_ret_last              ), // 返回数据是一次读请求对应的最后一个返回数据
+    .i_ret_data               (icache_ret_data              ), // 读返回数据
+    .o_wr_req                 (icache_wr_req                ), // 写请求有效信号. 高电平有效
+    .o_wr_type                (icache_wr_type               ), // 写请求类型 3'b000: 字节, 3'b001: 16bit, 3'b010: 半字, 3'b011: 字, 3'b100:  Cache 行
+    .o_wr_addr                (icache_wr_addr               ), // 写请求起始地址
+    .o_wr_wstrb               (icache_wr_wstrb              ), // 写操作的字节掩码. 仅在写请求类型为 3'b000, 3'b001, 3'b010的情况下才有意义
+    .o_wr_data                (icache_wr_data               ), // 写数据 256bit
+    .i_wr_rdy                 (1'b1 | icache_wr_rdy         )  // 写请求能否被接收的握手信号. 高电平有效. 此处要求 wr_rdy 要先于 wr_req 置起, wr_req 看到 wr_rdy 后才可能置起 icache wr_rdy 恒为 1
+  );
+
+  ysyx_22050710_axi4full_master_wrap_tmp u_icache_axi_wrap (
+    .i_rd_req                 (icache_rd_req                ),  //IF&MEM输入信号
+    .i_wr_req                 (icache_wr_req                ),  //IF&MEM输入信号
+    .i_rw_op                  (icache_wr_req                ),  //IF&MEM输入信号
+    .i_rd_size                (icache_rd_type               ),  //IF&MEM输入信号
+    .i_wr_size                (icache_wr_type               ),  //IF&MEM输入信号
+    .i_rd_addr                (icache_rd_addr               ),  //IF&MEM输入信号
+    .o_wr_rdy                 (icache_wr_rdy                ),  //IF&MEM输入信号
+    .i_wr_addr                (icache_wr_addr               ),  //IF&MEM输入信号
+    .i_wr_wstrb               (icache_wr_wstrb              ),  //IF&MEM输入信号
+    .i_wr_wdata               (icache_wr_data               ),  //IF&MEM输入信号
+    .o_rd_rdy                 (icache_rd_rdy                ),  //IF&MEM输入信号
+    .o_ret_valid              (icache_ret_valid             ),  //IF&MEM输入信号
+    .o_ret_last               (icache_ret_last              ),  //IF&MEM输入信号
+    .o_ret_data               (icache_ret_data              ),  //IF&MEM输入信号
 
     .i_aclk                   (i_aclk                       ),
     .i_arsetn                 (i_arsetn                     ),
@@ -266,7 +318,7 @@ module ysyx_22050710_cpu_top #(
 
   ysyx_22050710_axi4full_master_wrap u_lsu_axi_wrap (
     .i_rw_req                 (cpu_data_req                 ),  //IF&MEM输入信号
-    .i_rw_wr                  (cpu_data_wr                  ),  //IF&MEM输入信号
+    .i_rw_wr                  (cpu_data_op                  ),  //IF&MEM输入信号
     .i_rw_size                (cpu_data_size                ),  //IF&MEM输入信号
     .i_rw_addr                (cpu_data_addr                ),  //IF&MEM输入信号
     .i_rw_wstrb               (cpu_data_wstrb               ),  //IF&MEM输入信号
