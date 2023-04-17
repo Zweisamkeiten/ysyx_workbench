@@ -174,7 +174,7 @@ module ysyx_22050710_axi4full_sram_wrap #(
     end
   end
 
-  assign o_arready           = r_state_idle && (nums_have_sent == 8'd0);
+  assign o_arready           = r_state_idle                  ;
   assign o_awready           = w_state_idle                  ;
   assign o_wready            = w_state_write                 ;
   assign o_bresp             = 2'b00                         ;
