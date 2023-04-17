@@ -46,7 +46,7 @@ module ysyx_22050710_ex_stage #(
 );
 
 
-  wire   data_sram_ren       = es_mem_ren && i_ms_allowin    ;
+  wire   data_sram_ren       = es_mem_ren && i_ms_allowin && es_valid;
   wire   data_sram_wen       = es_mem_wen && es_valid        ;
   assign o_data_sram_addr    = es_alu_result[31:0]           ; // x[rs1] + imm
 
