@@ -179,14 +179,12 @@ module ysyx_22050710_axi4full_sram_wrap #(
   assign o_wready            = w_state_write                 ;
   assign o_bresp             = 2'b00                         ;
   assign o_rresp             = 2'b00                         ; // trans ok
-  assign o_rlast             = (|i_arlen == 1'b0)
-                             ? 1'b1
-                             : (nums_have_sent == i_arlen)   ;
+  assign o_rlast             = (nums_have_sent == i_arlen)   ;
 
   wire [7:0]                   nums_have_sent                ;
   Reg #(
     .WIDTH                    (8                            ),
-    .RESET_VAL                (8'd1                         )
+    .RESET_VAL                (0                            )
   ) u_nums_have_sent (
     .clk                      (i_aclk                       ),
     .rst                      (!i_arsetn || o_rlast         ),
