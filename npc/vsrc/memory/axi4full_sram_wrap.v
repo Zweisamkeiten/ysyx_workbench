@@ -129,7 +129,7 @@ module ysyx_22050710_axi4full_sram_wrap #(
   ) u_ar_addr_r (
     .clk                      (i_aclk                       ),
     .rst                      (!i_arsetn || o_rlast         ),
-    .din                      ((i_arvalid ? i_araddr : araddr) + 32'd8),
+    .din                      ((r_state_read ? araddr : i_araddr) + 32'd8),
     .dout                     (araddr                       ),
     .wen                      ((i_arvalid && (|i_arlen != 1'b0)) || r_state_read      )
   );
