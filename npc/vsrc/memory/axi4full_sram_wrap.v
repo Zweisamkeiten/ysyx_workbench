@@ -90,7 +90,7 @@ module ysyx_22050710_axi4full_sram_wrap #(
     else begin
       case (read_state_reg)
         READ_STATE_IDLE : if (ar_fire) read_state_reg <= READ_STATE_READ;
-        READ_STATE_READ : if ((|i_arlen == 1'b0) ? r_fire : o_rlast) read_state_reg <= READ_STATE_IDLE;
+        READ_STATE_READ : if ((|arlen == 1'b0) ? r_fire : o_rlast) read_state_reg <= READ_STATE_IDLE;
         default         :              read_state_reg <= read_state_reg ;
       endcase
     end
@@ -132,6 +132,18 @@ module ysyx_22050710_axi4full_sram_wrap #(
     .din                      ((i_arvalid ? i_araddr : araddr) + 32'd8),
     .dout                     (araddr                       ),
     .wen                      (i_arvalid || r_state_read      )
+  );
+
+  wire [7:0] arlen;
+  Reg #(
+    .WIDTH                    (8                            ),
+    .RESET_VAL                (0                            )
+  ) u_ar_addr_r (
+    .clk                      (i_aclk                       ),
+    .rst                      (!i_arsetn                    ),
+    .din                      (i_arlen                      ),
+    .dout                     (arlen                        ),
+    .wen                      (ar_fire                      )
   );
 
   always @(posedge i_aclk) begin
