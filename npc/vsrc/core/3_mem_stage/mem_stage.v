@@ -18,7 +18,7 @@ module ysyx_22050710_mem_stage #(
   input                        i_ws_allowin                  ,
   output                       o_ms_allowin                  ,
   // to ds
-  output                       o_load_bypass_stall           ,
+  output                       o_ms_to_ds_bypass_stall       ,
   // from es
   input                        i_es_to_ms_valid              ,
   input  [ES_TO_MS_BUS_WD-1:0] i_es_to_ms_bus                ,
