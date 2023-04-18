@@ -25,15 +25,17 @@ module ysyx_22050710_if_stage #(
 );
 
   // pre if stage
-  wire                         to_fs_valid                   ;
-  assign to_fs_valid         = ~i_rst                        ;
+  wire                         br_stall                      ;
   wire                         br_taken                      ;
-  wire                         br_sel                        ;
   wire [PC_WD-1:0            ] br_target                     ;
-  assign {br_taken                                           , // br taken 发生
-          br_sel                                             ,
+  assign {br_stall                                           , // load-to-branch 阻塞一周期, 停止取指
+          br_taken                                           , // br taken 发生
           br_target
          }                   = i_br_bus                      ;
+  wire                         pre_fs_ready_go               ;
+  wire                         pre_fs_to_fs_valid            ;
+  assign pre_fs_ready_go     = ~br_stall                     ;
+  assign pre_fs_to_fs_valid  = ~i_rst & pre_fs_ready_go      ;
 
   // if stage
   wire                         fs_valid                      ;
@@ -57,7 +59,7 @@ module ysyx_22050710_if_stage #(
   ) u_fs_valid (
     .clk                      (i_clk                        ),
     .rst                      (i_rst                        ),
-    .din                      (to_fs_valid                  ), // ~reset
+    .din                      (pre_fs_to_fs_valid           ), // ~reset
     .dout                     (fs_valid                     ),
     .wen                      (fs_allowin                   )
   );
@@ -69,9 +71,8 @@ module ysyx_22050710_if_stage #(
   ) u_pc (
     .i_clk                    (i_clk                        ),
     .i_rst                    (i_rst                        ),
-    .i_load                   (to_fs_valid && fs_allowin    ), // if stage 无数据 ds stage 允许写入 准备下一条指令取指
+    .i_load                   (pre_fs_to_fs_valid && fs_allowin), // if stage 无数据 ds stage 允许写入 准备下一条指令取指
     .i_br_taken               (br_taken                     ), // br taken 发生
-    .i_br_sel                 (br_sel                       ), // bru 控制指令的跳转在 id stage 完成 直接回到此处改变 pc
     .i_br_target              (br_target                    ), // 避免控制指令冲突问题
     .o_pc                     (fs_pc                        ),
     .o_inst_sram_ren          (o_inst_sram_ren              ),

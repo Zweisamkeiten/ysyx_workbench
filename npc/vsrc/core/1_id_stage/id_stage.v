@@ -64,7 +64,7 @@ module ysyx_22050710_id_stage #(
 
   assign ds_ready_go         = ~ds_wb_not_finish_for_ebreak &
                                ~ds_load_stall                ;
-  assign o_ds_allowin        = (!ds_valid) || (ds_ready_go && i_es_allowin);
+  assign o_ds_allowin        = ((!ds_valid) || (ds_ready_go && i_es_allowin)) & ~ebreak_sel; // when ebreak inst dont fetch inst
   assign o_ds_to_es_valid    = ds_valid && ds_ready_go       ;
 
   Reg #(
@@ -88,7 +88,7 @@ module ysyx_22050710_id_stage #(
   ) u_fs_to_ds_bus_r (
     .clk                      (i_clk                        ),
     .rst                      (i_rst                        ),
-    .din                      (br_taken ? 0 : i_fs_to_ds_bus), // br taken 发生, 将已经if stage 取来的+4地址的指令清空为nop指令
+    .din                      (br_taken ? {32'h00000013, fs_pc} : i_fs_to_ds_bus), // br taken 发生, 将已经if stage 取来的+4地址的指令清空为nop指令
     .dout                     (fs_to_ds_bus_r               ),
     .wen                      (i_fs_to_ds_valid&&o_ds_allowin)
   );
@@ -151,13 +151,11 @@ module ysyx_22050710_id_stage #(
   wire [PC_WD-1:0            ] epnpc                         ;
 
   // bru 产生 跳转使能 以及目标地址 to if stage
+  wire                         br_stall                      ;
   wire                         br_taken                      ;
-  wire                         br_sel                        ;
   wire [PC_WD-1:0            ] br_target                     ;
-  assign br_taken            = br_sel
-                             ? (br_target != fs_pc)
-                             : 0                             ;
-  assign o_br_bus            = {br_taken, br_sel, br_target };
+  assign br_stall            = br_taken & ds_load_stall      ;
+  assign o_br_bus            = {br_stall, br_taken, br_target};
 
   // bypass
   wire [GPR_ADDR_WD-1:0      ] es_to_ds_gpr_rd               ;
@@ -250,6 +248,7 @@ module ysyx_22050710_id_stage #(
   );
 
   wire                         rf_debug_valid                ;
+  wire                         rf_debug_addnop               ;
   wire [INST_WD-1:0          ] rf_debug_inst                 ;
   wire [PC_WD-1:0            ] rf_debug_pc                   ;
   wire [PC_WD-1:0            ] rf_debug_dnpc                 ;
@@ -257,6 +256,7 @@ module ysyx_22050710_id_stage #(
   wire [WORD_WD-1:0          ] rf_debug_memaddr              ;
 
   assign {rf_debug_valid                                     ,
+          rf_debug_addnop                                    ,
           rf_debug_inst                                      ,
           rf_debug_pc                                        ,
           rf_debug_dnpc                                      ,
@@ -265,6 +265,7 @@ module ysyx_22050710_id_stage #(
          }                   = debug_ws_to_rf_bus_r          ;
 
   assign o_debug_ds_to_es_bus= {o_ds_to_es_valid             ,  // blocking
+                                br_taken                     ,
                                 ds_inst                      ,
                                 ds_pc                        ,
                                 br_taken ? br_target : fs_pc ,
@@ -273,7 +274,7 @@ module ysyx_22050710_id_stage #(
   };
 
   always @(*) begin
-    if (rf_debug_valid && rf_debug_inst != 0) begin
+    if (rf_debug_valid && rf_debug_addnop != 1) begin
       finish_handle(rf_debug_pc, rf_debug_dnpc, {32'b0, rf_debug_inst}, rf_debug_memen, rf_debug_memaddr);
     end
   end
@@ -346,7 +347,7 @@ module ysyx_22050710_id_stage #(
     .i_ep_sel                 (ep_sel                       ),
     .i_epnpc                  (epnpc                        ),
     // output br bus
-    .o_br_sel                 (br_sel                       ),
+    .o_br_taken               (br_taken                     ),
     .o_br_target              (br_target                    )
   );
 

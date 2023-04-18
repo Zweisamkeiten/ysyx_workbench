@@ -35,7 +35,7 @@ void finish_handle(long long pc, long long dnpc, long long inst, svLogic memen, 
     }
   }
 #ifdef CONFIG_VCD_TRACE
-  printf("cycle: %d, pc: %lx, inst: %lx\n", cycle, (word_t)pc, (word_t)inst);
+  printf("cycle: %lu, pc: %lx, inst: %lx\n", cycles, (word_t)pc, (word_t)inst);
 #endif
 }
 
@@ -94,7 +94,7 @@ extern "C" void single_cycle(int rst) {
 #ifdef CONFIG_IPC_CAL
   cycles++;
 #ifdef CONFIG_VCD_TRACE
-  printf("cycle: %d\n", cycle);
+  printf("cycle: %lu\n", cycles);
 #endif
 #endif
   top->i_clk = 0;
