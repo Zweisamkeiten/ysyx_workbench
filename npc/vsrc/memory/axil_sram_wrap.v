@@ -1,7 +1,7 @@
-// ysyx_22050710 axi data Wrap 以axi-lite接口封装的 data sram 模块
+// ysyx_22050710 axi sram Wrap 以axi-lite接口封装的 sram 模块
 `include "axi_defines.v"
 
-module ysyx_22050710_axil_data_sram_wrap #(
+module ysyx_22050710_axil_sram_wrap #(
   // Width of data bus in bits
   parameter DATA_WIDTH       = 64                            ,
   // Width of address bus in bits
@@ -105,33 +105,30 @@ module ysyx_22050710_axil_data_sram_wrap #(
     end
   end
 
-  reg [DATA_WIDTH-1:0] rdata;
-  always @(*) begin
+  always @(posedge i_aclk) begin
     if (ar_fire) begin
-      npc_pmem_read({32'b0, i_araddr}, rdata);
-    end
-    else begin
-      rdata = 0;
+      npc_pmem_read({32'b0, i_araddr}, o_rdata);
     end
   end
+
+  wire [ADDR_WIDTH-1:0] awaddr;
+  Reg #(
+    .WIDTH                    (ADDR_WIDTH                   ),
+    .RESET_VAL                (0                            )
+  ) u_aw_addr_r (
+    .clk                      (i_aclk                       ),
+    .rst                      (!i_arsetn                    ),
+    .din                      (i_awaddr                     ),
+    .dout                     (awaddr                       ),
+    .wen                      (i_awvalid                    )
+  );
 
   // write port
   always @(posedge i_aclk) begin
-    if (aw_fire) begin
-      npc_pmem_write({32'b0, i_awaddr}, i_wdata, i_wstrb);
+    if (w_state_write) begin
+      npc_pmem_write({32'b0, awaddr}, i_wdata, i_wstrb);
     end
   end
-
-  Reg #(
-    .WIDTH                    (DATA_WIDTH                   ),
-    .RESET_VAL                (0                            )
-  ) u_o_rdata (
-    .clk                      (i_aclk                       ),
-    .rst                      (!i_arsetn                    ),
-    .din                      (rdata                        ),
-    .dout                     (o_rdata                      ),
-    .wen                      (ar_fire                      )
-  );
 
   assign o_arready           = r_state_idle                  ;
   assign o_awready           = w_state_idle                  ;
@@ -145,7 +142,7 @@ module ysyx_22050710_axil_data_sram_wrap #(
   ) u_o_rvalid (
     .clk                      (i_aclk                       ),
     .rst                      (!i_arsetn                    ),
-    .din                      (ar_fire                      ),
+    .din                      (ar_fire                      ), // 接收完成地址延迟一周期返回读数据有效
     .dout                     (o_rvalid                     ),
     .wen                      (1                            )
   );
