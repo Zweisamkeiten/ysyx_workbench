@@ -28,7 +28,7 @@ module ysyx_22050710_core #(
   input                        i_rst                         ,
   // inst sram interface
   output                       o_inst_sram_req               , // 请求信号, 为 1 时有读写请求, 为 0 时无读写请求
-  output                       o_inst_sram_op                , // 为 1 表示该次是写请求, 为 0 表示该次是读请求
+  output                       o_inst_sram_wr                , // 为 1 表示该次是写请求, 为 0 表示该次是读请求
   output [1:0                ] o_inst_sram_size              , // 该次请求传输的字节数, 0: 1byte; 1: 2bytes; 2: 4bytes; 3: 8bytes
   output [SRAM_ADDR_WD-1:0   ] o_inst_sram_addr              , // 该次请求的地址
   output [SRAM_WMASK_WD-1:0  ] o_inst_sram_wstrb             , // 该次请求的写字节使能
@@ -39,7 +39,7 @@ module ysyx_22050710_core #(
 
   // data sram interface
   output                       o_data_sram_req               , // 请求信号, 为 1 时有读写请求, 为 0 时无读写请求
-  output                       o_data_sram_op                , // 为 1 表示该次是写请求, 为 0 表示该次是读请求
+  output                       o_data_sram_wr                , // 为 1 表示该次是写请求, 为 0 表示该次是读请求
   output [1:0                ] o_data_sram_size              , // 该次请求传输的字节数, 0: 1byte; 1: 2bytes; 2: 4bytes; 3: 8bytes
   output [SRAM_ADDR_WD-1:0   ] o_data_sram_addr              , // 该次请求的地址
   output [SRAM_WMASK_WD-1:0  ] o_data_sram_wstrb             , // 该次请求的写字节使能
@@ -71,9 +71,6 @@ module ysyx_22050710_core #(
   // for load stall
   wire                         es_to_ds_load_sel             ;
 
-  wire                         ms_data_stall                 ;
-  wire                         flush_br_buf                  ;
-
   // debug
   wire [DEBUG_BUS_WD-1:0     ] debug_ds_to_es_bus            ;
   wire [DEBUG_BUS_WD-1:0     ] debug_es_to_ms_bus            ;
@@ -97,13 +94,12 @@ module ysyx_22050710_core #(
     .i_ds_allowin             (ds_allowin                   ),
     // br bus
     .i_br_bus                 (br_bus                       ),
-    .o_flush_br_buf           (flush_br_buf                 ),
     // output
     .o_fs_to_ds_valid         (fs_to_ds_valid               ),
     .o_fs_to_ds_bus           (fs_to_ds_bus                 ),
     // inst sram interface
     .o_inst_sram_req          (o_inst_sram_req              ),
-    .o_inst_sram_op           (o_inst_sram_op               ),
+    .o_inst_sram_wr           (o_inst_sram_wr               ),
     .o_inst_sram_size         (o_inst_sram_size             ),
     .o_inst_sram_addr         (o_inst_sram_addr             ),
     .o_inst_sram_wstrb        (o_inst_sram_wstrb            ),
@@ -142,13 +138,10 @@ module ysyx_22050710_core #(
     .o_ds_to_es_bus           (ds_to_es_bus                 ),
     // to fs
     .o_br_bus                 (br_bus                       ),
-    // from fs
-    .i_flush_br_buf           (flush_br_buf                 ),
     // from ws to rf: for write back
     .i_ws_to_rf_bus           (ws_to_rf_bus                 ),
     // for load stall
     .i_es_to_ds_load_sel      (es_to_ds_load_sel            ),
-    .i_ms_data_stall          (ms_data_stall                ),
     // 前递 forward 解决数据相关性冲突:
     // 流水线组合逻辑结果前递到译码级寄存器读出
     .i_es_to_ds_bypass_bus    (es_to_ds_bypass_bus          ),
@@ -194,7 +187,7 @@ module ysyx_22050710_core #(
     .o_es_to_ds_bypass_bus    (es_to_ds_bypass_bus          ),
     // data sram interface
     .o_data_sram_req          (o_data_sram_req              ), // data ram 读请求或写请求是在 ex stage 发出
-    .o_data_sram_op           (o_data_sram_op               ), // data ram 的读数据在mem stage 返回
+    .o_data_sram_wr           (o_data_sram_wr               ), // data ram 的读数据在mem stage 返回
     .o_data_sram_size         (o_data_sram_size             ),
     .o_data_sram_addr         (o_data_sram_addr             ),
     .o_data_sram_wstrb        (o_data_sram_wstrb            ),
@@ -222,8 +215,6 @@ module ysyx_22050710_core #(
     // allowin
     .i_ws_allowin             (ws_allowin                   ),
     .o_ms_allowin             (ms_allowin                   ),
-    // to ds
-    .o_ms_data_stall          (ms_data_stall                ),
     // from es
     .i_es_to_ms_valid         (es_to_ms_valid               ),
     .i_es_to_ms_bus           (es_to_ms_bus                 ),
