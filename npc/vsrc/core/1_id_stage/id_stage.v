@@ -80,7 +80,7 @@ module ysyx_22050710_id_stage #(
   ) u_ds_valid (
     .clk                      (i_clk                        ),
     .rst                      (i_rst                        ),
-    .din                      (i_fs_to_ds_valid || br_taken ),
+    .din                      (i_fs_to_ds_valid             ),
     .dout                     (ds_valid                     ),
     .wen                      (o_ds_allowin                 )
   );
