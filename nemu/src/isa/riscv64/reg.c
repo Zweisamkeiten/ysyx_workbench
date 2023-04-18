@@ -47,13 +47,15 @@ struct {
 void isa_reg_display() {
   printf(ANSI_FMT("GPRS:\n", ANSI_FG_MAGENTA));
   for (int i = 0; i < 16; ++i) {
-    printf(ANSI_FMT("%s:", ANSI_FG_BLUE) ANSI_FMT("\t" FMT_WORD "\t", ANSI_FG_GREEN) ANSI_FMT("%020lu\t", ANSI_FG_MAGENTA), reg_name(2 * i + 0, 64), gpr(2 * i + 0), gpr(2 * i + 0));
-    printf(ANSI_FMT("%s:", ANSI_FG_BLUE) ANSI_FMT("\t" FMT_WORD "\t", ANSI_FG_GREEN) ANSI_FMT("%020lu\n", ANSI_FG_MAGENTA), reg_name(2 * i + 1, 64), gpr(2 * i + 1), gpr(2 * i + 1));
+    printf(ANSI_FMT("%-2d %s:", ANSI_FG_BLUE) ANSI_FMT("\t" FMT_WORD "\t", ANSI_FG_GREEN) ANSI_FMT("%020lu\t", ANSI_FG_MAGENTA), 2*i, reg_name(2 * i + 0, 64), gpr(2 * i + 0), gpr(2 * i + 0));
+    printf(ANSI_FMT("%-2d %s:", ANSI_FG_BLUE) ANSI_FMT("\t" FMT_WORD "\t", ANSI_FG_GREEN) ANSI_FMT("%020lu\n", ANSI_FG_MAGENTA), 2*i+1, reg_name(2 * i + 1, 64), gpr(2 * i + 1), gpr(2 * i + 1));
   }
   printf(ANSI_FMT("CSRS:\n", ANSI_FG_MAGENTA));
   for (int i = 0; i < NR_CSREGS; i++) {
     printf(ANSI_FMT("%-7s:", ANSI_FG_BLUE) ANSI_FMT(FMT_WORD "\n", ANSI_FG_GREEN), csr_table[i].name, csr(csr_table[i].addr));
   }
+  printf(ANSI_FMT("PC:\n", ANSI_FG_MAGENTA));
+  printf(ANSI_FMT("%-7s:", ANSI_FG_BLUE) ANSI_FMT(FMT_WORD "\n", ANSI_FG_GREEN), "pc", cpu.pc);
 }
 
 word_t isa_reg_str2val(const char *s, bool *success) {

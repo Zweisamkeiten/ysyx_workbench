@@ -10,6 +10,8 @@
 !*.hpp
 !.gitignore
 !README.md
+!.gtkwaverc
+!wavegroup.gtkw
 build/obj_dir/*
 build/obj-sim/*
 csrc/include/generated/*

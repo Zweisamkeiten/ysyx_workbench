@@ -1,0 +1,167 @@
+[*]
+[*] GTKWave Analyzer v3.3.113 (w)1999-2022 BSI
+[*] Thu Mar  9 14:08:57 2023
+[*]
+[dumpfile] "/home/einsam/p/ysyx-workbench/npc/dump.vcd"
+[dumpfile_mtime] "Thu Mar  9 13:59:52 2023"
+[dumpfile_size] 3419322019
+[savefile] "/home/einsam/p/ysyx-workbench/npc/wavegroup.gtkw"
+[timestart] 1239952
+[size] 2560 1440
+[pos] -1286 -40
+*-2.214499 1239960 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] TOP.
+[treeopen] TOP.ysyx_22050710_top.
+[treeopen] TOP.ysyx_22050710_top.u_cpu_top.
+[treeopen] TOP.ysyx_22050710_top.u_cpu_top.u_core.
+[treeopen] TOP.ysyx_22050710_top.u_cpu_top.u_core.u_id_stage.
+[treeopen] TOP.ysyx_22050710_top.u_cpu_top.u_core.u_if_stage.
+[sst_width] 269
+[signals_width] 423
+[sst_expanded] 1
+[sst_vpaned_height] 452
+@28
+TOP.i_clk
+TOP.i_rst
+@200
+-
+-总线状态机同步
+-master
+@28
+TOP.ysyx_22050710_top.u_cpu_top.u_ifu_axi_wrap.read_state_reg[1:0]
+TOP.ysyx_22050710_top.u_cpu_top.u_ifu_axi_wrap.i_rw_valid
+TOP.ysyx_22050710_top.u_cpu_top.u_ifu_axi_wrap.i_rw_ren
+TOP.ysyx_22050710_top.u_cpu_top.u_ifu_axi_wrap.r_fire
+TOP.ysyx_22050710_top.u_cpu_top.u_ifu_axi_wrap.i_rvalid
+TOP.ysyx_22050710_top.u_cpu_top.u_ifu_axi_wrap.o_rready
+TOP.ysyx_22050710_top.u_cpu_top.u_ifu_axi_wrap.o_arvalid
+TOP.ysyx_22050710_top.u_cpu_top.u_ifu_axi_wrap.ar_fire
+TOP.ysyx_22050710_top.u_cpu_top.u_ifu_axi_wrap.i_arready
+@200
+-slave
+@28
+TOP.ysyx_22050710_top.u_inst_ram_wrap.r_state_idle
+TOP.ysyx_22050710_top.u_inst_ram_wrap.ar_fire
+TOP.ysyx_22050710_top.u_inst_ram_wrap.i_arvalid
+TOP.ysyx_22050710_top.u_inst_ram_wrap.o_arready
+TOP.ysyx_22050710_top.u_inst_ram_wrap.r_fire
+TOP.ysyx_22050710_top.u_inst_ram_wrap.i_rready
+TOP.ysyx_22050710_top.u_inst_ram_wrap.o_rvalid
+@22
+TOP.ysyx_22050710_top.u_inst_ram_wrap.i_araddr[31:0]
+TOP.ysyx_22050710_top.u_inst_ram_wrap.rdata[63:0]
+TOP.ysyx_22050710_top.u_inst_ram_wrap.o_rdata[63:0]
+@200
+-inst sram
+@28
+TOP.ysyx_22050710_top.u_inst_ram_wrap.i_arvalid
+TOP.ysyx_22050710_top.u_inst_ram_wrap.o_arready
+TOP.ysyx_22050710_top.u_inst_ram_wrap.i_rready
+TOP.ysyx_22050710_top.u_inst_ram_wrap.o_rvalid
+@22
+TOP.ysyx_22050710_top.u_inst_ram_wrap.i_araddr[31:0]
+TOP.ysyx_22050710_top.u_inst_ram_wrap.o_rdata[63:0]
+@200
+-
+-master
+@28
+TOP.ysyx_22050710_top.u_cpu_top.u_lsu_axi_wrap.read_state_reg[1:0]
+TOP.ysyx_22050710_top.u_cpu_top.u_lsu_axi_wrap.write_state_reg[1:0]
+@200
+-data sram
+@28
+TOP.ysyx_22050710_top.u_cpu_top.u_lsu_axi_wrap.o_awvalid
+TOP.ysyx_22050710_top.u_cpu_top.u_lsu_axi_wrap.o_rw_data_ok
+TOP.ysyx_22050710_top.u_cpu_top.u_lsu_axi_wrap.i_rw_valid
+@200
+-
+-if stage
+@28
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_if_stage.i_inst_sram_addr_ok
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_if_stage.i_inst_sram_data_ok
+@22
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_if_stage.o_inst_sram_addr[31:0]
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_if_stage.i_inst_sram_rdata[63:0]
+@28
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_if_stage.pre_fs_to_fs_valid
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_if_stage.o_inst_sram_ren
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_if_stage.pre_fs_ready_go
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_if_stage.fs_ready_go
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_if_stage.fs_allowin
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_if_stage.fs_valid
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_if_stage.o_fs_to_ds_valid
+@22
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_if_stage.fs_pc[63:0]
+@28
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_if_stage.u_pc.i_load
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_if_stage.pre_fs_to_fs_valid
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_if_stage.pre_fs_ready_go
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_if_stage.i_inst_sram_addr_ok
+@22
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_if_stage.fs_inst[31:0]
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_if_stage.fs_inst_with_valid_buffer[32:0]
+@200
+-
+-id stage
+@28
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_id_stage.i_fs_to_ds_valid
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_id_stage.ds_valid
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_id_stage.ds_ready_go
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_id_stage.o_ds_allowin
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_id_stage.i_es_allowin
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_id_stage.o_ds_to_es_valid
+@22
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_id_stage.ds_pc[63:0]
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_id_stage.br_target[63:0]
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_id_stage.rf_debug_inst[31:0]
+@29
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_id_stage.rf_debug_valid
+@28
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_id_stage.br_taken
+@22
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_id_stage.ds_inst[31:0]
+@200
+-
+-ex stage
+@28
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_ex_stage.i_data_sram_addr_ok
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_ex_stage.es_mem_ren
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_ex_stage.es_mem_wen
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_ex_stage.o_es_allowin
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_ex_stage.es_debug_valid
+@22
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_ex_stage.es_debug_dnpc[63:0]
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_ex_stage.es_debug_inst[31:0]
+@28
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_ex_stage.es_ready_go
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_ex_stage.i_ds_to_es_valid
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_ex_stage.es_valid
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_ex_stage.o_es_to_ms_valid
+@200
+-
+-mem stage
+@28
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_mem_stage.i_data_sram_data_ok
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_mem_stage.i_es_to_ms_valid
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_mem_stage.ms_valid
+@22
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_mem_stage.ms_debug_inst[31:0]
+@28
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_mem_stage.ms_mem_ren
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_mem_stage.o_ms_allowin
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_mem_stage.ms_ready_go
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_mem_stage.o_ms_to_ws_valid
+@200
+-
+-wb stage
+@28
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_wb_stage.i_ms_to_ws_valid
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_wb_stage.ws_valid
+@22
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_wb_stage.ws_debug_inst[31:0]
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_wb_stage.ws_debug_pc[63:0]
+TOP.ysyx_22050710_top.u_cpu_top.u_core.u_wb_stage.ws_debug_dnpc[63:0]
+@28
+TOP.ysyx_22050710_top.u_cpu_top.u_ifu_axi_wrap.i_rw_ren
+[pattern_trace] 1
+[pattern_trace] 0

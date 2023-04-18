@@ -32,12 +32,12 @@
   // Bus width
   `define ysyx_22050710_FS_TO_DS_BUS_WD             96   // {fs_inst[31:0], fs_pc[63:0]} 32 + 64
   `define ysyx_22050710_DS_TO_ES_BUS_WD             360
-  `define ysyx_22050710_ES_TO_MS_BUS_WD             216
+  `define ysyx_22050710_ES_TO_MS_BUS_WD             217
   `define ysyx_22050710_MS_TO_WS_BUS_WD             147
   `define ysyx_22050710_WS_TO_RF_BUS_WD             147  // {gpr_rf_wen[0:0], gpr_rf_waddr[4:0], gpr_rf_wdata[63:0]
                                                          //  csr_rf_wen[0:0], csr_rf_waddr[11:0], csr_rf_wdata[63:0]}
   `define ysyx_22050710_BR_BUS_WD                   66   // {br_stall[0:0], br_taken[0:0], br_target[63:0]} 1 + 1 + 64
-  `define ysyx_22050710_DEBUG_BUS_WD                227  // {debug_invalid, addnop, ds_inst[31:0], ds_pc[63:0], ds_dnpc[63:0], memren|memwen} 1 + 32 + 64 + 64
+  `define ysyx_22050710_DEBUG_BUS_WD                225  // {ds_inst[31:0], ds_pc[63:0], ds_dnpc[63:0], memren|memwen, memaddr[63:0]} 32 + 64 + 64 + 1 + 64
 
   // bypass
   `define ysyx_22050710_BYPASS_BUS_WD               145  // csr12 + csrresult64 + gpr5 + gprresult64
