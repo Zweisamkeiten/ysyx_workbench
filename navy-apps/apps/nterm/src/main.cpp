@@ -44,45 +44,45 @@ int main(int argc, char *argv[], char *envp[]) {
   int win_h = font->h * H;
   screen = SDL_SetVideoMode(win_w, win_h, 32, SDL_HWSURFACE);
 
-  // FILE *fp = fopen(MUSIC_PATH, "r");
-  // assert(fp);
-  // fseek(fp, 0, SEEK_END);
-  // size_t size = ftell(fp);
-  // void *buf = malloc(size);
-  // assert(size);
-  // fseek(fp, 0, SEEK_SET);
-  // int ret = fread(buf, size, 1, fp);
-  // assert(ret == 1);
-  // fclose(fp);
+  FILE *fp = fopen(MUSIC_PATH, "r");
+  assert(fp);
+  fseek(fp, 0, SEEK_END);
+  size_t size = ftell(fp);
+  void *buf = malloc(size);
+  assert(size);
+  fseek(fp, 0, SEEK_SET);
+  int ret = fread(buf, size, 1, fp);
+  assert(ret == 1);
+  fclose(fp);
 
-  // int error;
-  // v = stb_vorbis_open_memory((const unsigned char *)buf, size, &error, NULL);
-  // assert(v);
-  // info = stb_vorbis_get_info(v);
+  int error;
+  v = stb_vorbis_open_memory((const unsigned char *)buf, size, &error, NULL);
+  assert(v);
+  info = stb_vorbis_get_info(v);
 
-  // SDL_AudioSpec spec;
-  // spec.freq = info.sample_rate;
-  // spec.channels = info.channels;
-  // spec.samples = SAMPLES;
-  // spec.format = AUDIO_S16SYS;
-  // spec.userdata = NULL;
-  // spec.callback = FillAudio;
-  // SDL_OpenAudio(&spec, NULL);
+  SDL_AudioSpec spec;
+  spec.freq = info.sample_rate;
+  spec.channels = info.channels;
+  spec.samples = SAMPLES;
+  spec.format = AUDIO_S16SYS;
+  spec.userdata = NULL;
+  spec.callback = FillAudio;
+  SDL_OpenAudio(&spec, NULL);
 
-  // stream_save = (int16_t *)malloc(SAMPLES * info.channels * sizeof(*stream_save));
-  // assert(stream_save);
-  // printf("Playing %s(freq = %d, channels = %d)...\n", MUSIC_PATH, info.sample_rate, info.channels);
-  // SDL_PauseAudio(0);
+  stream_save = (int16_t *)malloc(SAMPLES * info.channels * sizeof(*stream_save));
+  assert(stream_save);
+  printf("Playing %s(freq = %d, channels = %d)...\n", MUSIC_PATH, info.sample_rate, info.channels);
+  SDL_PauseAudio(0);
 
-  // term = new Terminal(W, H);
+  term = new Terminal(W, H);
 
-  // if (argc < 2) { builtin_sh_run(envp); }
-  // else { extern_app_run(argv[1]); }
+  if (argc < 2) { builtin_sh_run(envp); }
+  else { extern_app_run(argv[1]); }
 
-  // SDL_CloseAudio();
-  // stb_vorbis_close(v);
-  // free(stream_save);
-  // free(buf);
+  SDL_CloseAudio();
+  stb_vorbis_close(v);
+  free(stream_save);
+  free(buf);
 
   // should not reach here
   assert(0);
