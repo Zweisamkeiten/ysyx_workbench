@@ -7,7 +7,6 @@
 !*.v
 !*.cc
 !*.cpp
-!*.hpp
 !.gitignore
 !README.md
 build/obj_dir/*

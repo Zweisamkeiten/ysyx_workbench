@@ -47,6 +47,7 @@ int SDL_PollEvent(SDL_Event *ev) {
 }
 
 int SDL_WaitEvent(SDL_Event *event) {
+  CallbackHelper();
   char buf[64];
   event->key.keysym.sym = SDLK_NONE;
 

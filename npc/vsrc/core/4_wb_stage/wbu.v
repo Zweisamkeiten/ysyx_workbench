@@ -7,7 +7,6 @@ module ysyx_22050710_wbu #(
   parameter CSR_WD                                           ,
   parameter WS_TO_RF_BUS_WD
 ) (
-  input                        i_ws_valid                    ,
   // gpr
   input                        i_gpr_wen                     ,
   input  [GPR_ADDR_WD-1:0    ] i_gpr_waddr                   ,
@@ -20,8 +19,7 @@ module ysyx_22050710_wbu #(
   output [WS_TO_RF_BUS_WD-1:0] o_to_rf_bus
 );
 
-  assign o_to_rf_bus         = {WS_TO_RF_BUS_WD{i_ws_valid}}
-                             & {i_gpr_wen                    ,
+  assign o_to_rf_bus         = {i_gpr_wen                    ,
                                 i_gpr_waddr                  ,
                                 i_gpr_wdata                  ,
                                 i_csr_wen                    ,

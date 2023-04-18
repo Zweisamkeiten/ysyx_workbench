@@ -21,44 +21,35 @@ module ysyx_22050710_if_stage #(
   // inst sram interface
   output                       o_inst_sram_ren               ,
   output [SRAM_ADDR_WD-1:0   ] o_inst_sram_addr              ,
-  input  [SRAM_DATA_WD-1:0   ] i_inst_sram_rdata             ,
-  input                        i_inst_sram_addr_ok           ,
-  input                        i_inst_sram_data_ok
+  input  [SRAM_DATA_WD-1:0   ] i_inst_sram_rdata
 );
 
   // pre if stage
-  wire                         br_stall                      ;
+  wire                         to_fs_valid                   ;
+  assign to_fs_valid         = ~i_rst                        ;
   wire                         br_taken                      ;
+  wire                         br_sel                        ;
   wire [PC_WD-1:0            ] br_target                     ;
-  assign {br_stall                                           , // load-to-branch 阻塞一周期, 停止取指
-          br_taken                                           , // br taken 发生
+  assign {br_taken                                           , // br taken 发生
+          br_sel                                             ,
           br_target
          }                   = i_br_bus                      ;
-  wire                         pre_fs_ready_go               ;
-  wire                         pre_fs_to_fs_valid            ;
-  assign pre_fs_ready_go     = ~br_stall & i_inst_sram_addr_ok;
-  assign pre_fs_to_fs_valid  = ~i_rst & pre_fs_ready_go      ;
-  assign o_inst_sram_ren     = fs_allowin                    ;
 
   // if stage
   wire                         fs_valid                      ;
   wire                         fs_ready_go                   ;
   wire                         fs_allowin                    ;
 
-  assign fs_ready_go         = i_inst_sram_data_ok || fs_inst_with_valid_buffer[INST_WD];
-  assign fs_allowin          = (!fs_valid)
-                             ||(fs_ready_go && i_ds_allowin) ; // 或条件1: cpu rst后的初始状态, 每个stage都为空闲
-                                                               // 或条件2: stage 直接相互依赖, 当后续设计使得当前
-                                                               // stage 无法在一周期内完成, ready_go 信号会变得复杂
-                                                               // 现在暂时不需要考虑, 因为每个 stage 都能在一周期完成
+  assign fs_ready_go         = 1'b1                          ;
+  assign fs_allowin          = (!fs_valid) || (fs_ready_go && i_ds_allowin); // 或条件1: cpu rst后的初始状态, 每个stage都为空闲
+                                                                             // 或条件2: stage 直接相互依赖, 当后续设计使得当前
+                                                                             // stage 无法在一周期内完成, ready_go 信号会变得复杂
+                                                                             // 现在暂时不需要考虑, 因为每个 stage 都能在一周期完成
   assign o_fs_to_ds_valid    = fs_valid && fs_ready_go       ;
 
   wire [INST_WD-1:0          ] fs_inst                       ;
-  wire [INST_WD:0            ] fs_inst_with_valid_buffer     ;
   wire [PC_WD-1:0            ] fs_pc                         ;
-  assign o_fs_to_ds_bus      = fs_inst_with_valid_buffer[INST_WD]
-                             ? {fs_inst_with_valid_buffer[INST_WD-1:0], fs_pc}
-                             : {fs_inst, fs_pc}              ;
+  assign o_fs_to_ds_bus      = {fs_inst, fs_pc}              ;
 
   Reg #(
     .WIDTH                    (1                            ),
@@ -66,20 +57,9 @@ module ysyx_22050710_if_stage #(
   ) u_fs_valid (
     .clk                      (i_clk                        ),
     .rst                      (i_rst                        ),
-    .din                      (pre_fs_to_fs_valid           ), // ~reset
+    .din                      (to_fs_valid                  ), // ~reset
     .dout                     (fs_valid                     ),
     .wen                      (fs_allowin                   )
-  );
-
-  Reg #(
-    .WIDTH                    (INST_WD + 1                  ),
-    .RESET_VAL                (0                            )
-  ) u_save_inst (
-    .clk                      (i_clk                        ),
-    .rst                      (i_ds_allowin || i_rst        ),
-    .din                      ({i_inst_sram_data_ok, fs_inst}),
-    .dout                     (fs_inst_with_valid_buffer    ),
-    .wen                      (i_inst_sram_data_ok&&~i_ds_allowin)
   );
 
   ysyx_22050710_pc #(
@@ -89,10 +69,12 @@ module ysyx_22050710_if_stage #(
   ) u_pc (
     .i_clk                    (i_clk                        ),
     .i_rst                    (i_rst                        ),
-    .i_load                   (pre_fs_to_fs_valid && fs_allowin), // if stage 无数据 ds stage 允许写入 准备下一条指令取指
+    .i_load                   (to_fs_valid && fs_allowin    ), // if stage 无数据 ds stage 允许写入 准备下一条指令取指
     .i_br_taken               (br_taken                     ), // br taken 发生
+    .i_br_sel                 (br_sel                       ), // bru 控制指令的跳转在 id stage 完成 直接回到此处改变 pc
     .i_br_target              (br_target                    ), // 避免控制指令冲突问题
     .o_pc                     (fs_pc                        ),
+    .o_inst_sram_ren          (o_inst_sram_ren              ),
     .o_inst_sram_addr         (o_inst_sram_addr             )
   );
 
