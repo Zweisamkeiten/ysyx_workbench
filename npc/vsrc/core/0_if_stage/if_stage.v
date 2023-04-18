@@ -106,7 +106,7 @@ module ysyx_22050710_if_stage #(
     .i_clk                    (i_clk                        ),
     .i_rst                    (i_rst                        ),
     .i_load                   (pre_fs_to_fs_valid && fs_allowin), // if stage 无数据 ds stage 允许写入 准备下一条指令取指
-    .i_br_taken               (fs_ready_go & br_taken       ), // br taken 发生
+    .i_br_taken               (br_taken                     ), // br taken 发生
     .i_br_target              (br_target                    ), // 避免控制指令冲突问题
     .o_pc                     (fs_pc                        ),
     .o_inst_sram_addr         (o_inst_sram_addr             )
