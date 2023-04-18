@@ -37,7 +37,7 @@
   `define ysyx_22050710_WS_TO_RF_BUS_WD             147  // {gpr_rf_wen[0:0], gpr_rf_waddr[4:0], gpr_rf_wdata[63:0]
                                                          //  csr_rf_wen[0:0], csr_rf_waddr[11:0], csr_rf_wdata[63:0]}
   `define ysyx_22050710_BR_BUS_WD                   66   // {br_sel[0:0], br_target[63:0]} 1 + 64
-  `define ysyx_22050710_DEBUG_BUS_WD                97   // {debug_invalid, ds_inst[31:0], ds_pc[63:0]} 1 + 32 + 64
+  `define ysyx_22050710_DEBUG_BUS_WD                226  // {debug_invalid, ds_inst[31:0], ds_pc[63:0], ds_dnpc[63:0], memren|memwen} 1 + 32 + 64 + 64
 `endif
 
 `ifndef YSYX_22050710_MYCPU_CSRS_ADDR_H

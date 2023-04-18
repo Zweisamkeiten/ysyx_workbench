@@ -75,15 +75,24 @@ module ysyx_22050710_wb_stage #(
   wire                         ws_debug_valid                ;
   wire [INST_WD-1:0          ] ws_debug_inst                 ;
   wire [PC_WD-1:0            ] ws_debug_pc                   ;
+  wire [PC_WD-1:0            ] ws_debug_dnpc                 ;
+  wire                         ws_debug_memen                ;
+  wire [WORD_WD-1:0          ] ws_debug_memaddr              ;
 
   assign {ws_debug_valid                                     ,
           ws_debug_inst                                      ,
-          ws_debug_pc
+          ws_debug_pc                                        ,
+          ws_debug_dnpc                                      ,
+          ws_debug_memen                                     ,
+          ws_debug_memaddr
          }                   = debug_ms_to_ws_bus_r          ;
 
   assign o_debug_ws_to_rf_bus= {ws_debug_valid               ,
                                 ws_debug_inst                ,
-                                ws_debug_pc
+                                ws_debug_pc                  ,
+                                ws_debug_dnpc                ,
+                                ws_debug_memen               ,
+                                ws_debug_memaddr
                                                              };
 
   wire [GPR_ADDR_WD-1:0      ] ws_rd                         ;

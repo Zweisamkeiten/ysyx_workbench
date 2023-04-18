@@ -1,6 +1,6 @@
 // ysyx_22050710 Id stage
 
-import "DPI-C" function void finish_handle(input longint pc, input longint inst);
+import "DPI-C" function void finish_handle(input longint pc, input longint dnpc, input longint inst, input logic memen, input longint memaddr);
 
 module ysyx_22050710_id_stage #(
   parameter WORD_WD                                          ,
@@ -188,20 +188,29 @@ module ysyx_22050710_id_stage #(
   wire                         rf_debug_valid                ;
   wire [INST_WD-1:0          ] rf_debug_inst                 ;
   wire [PC_WD-1:0            ] rf_debug_pc                   ;
+  wire [PC_WD-1:0            ] rf_debug_dnpc                 ;
+  wire                         rf_debug_memen                ;
+  wire [WORD_WD-1:0          ] rf_debug_memaddr              ;
 
   assign {rf_debug_valid                                     ,
           rf_debug_inst                                      ,
-          rf_debug_pc
+          rf_debug_pc                                        ,
+          rf_debug_dnpc                                      ,
+          rf_debug_memen                                     ,
+          rf_debug_memaddr
          }                   = debug_ws_to_rf_bus_r          ;
 
   assign o_debug_ds_to_es_bus= {o_ds_to_es_valid             ,  // blocking
                                 ds_inst                      ,
-                                ds_pc
+                                ds_pc                        ,
+                                br_taken ? br_target : fs_pc ,
+                                mem_ren | mem_wen            ,
+                                64'b0
   };
 
   always @(*) begin
     if (rf_debug_valid && rf_debug_inst != 0) begin
-      finish_handle(rf_debug_pc, {32'b0, rf_debug_inst});
+      finish_handle(rf_debug_pc, rf_debug_dnpc, {32'b0, rf_debug_inst}, rf_debug_memen, rf_debug_memaddr);
     end
   end
 
@@ -239,7 +248,7 @@ module ysyx_22050710_id_stage #(
     // epu bus
     .i_ecall_sel              (ecall_sel                    ),
     .i_mret_sel               (mret_sel                     ),
-    .i_epc                    (fs_pc                        ),
+    .i_epc                    (ds_pc                        ),
     .o_mtvec                  (mtvec                        ),
     .o_mepc                   (mepc                         )
   );

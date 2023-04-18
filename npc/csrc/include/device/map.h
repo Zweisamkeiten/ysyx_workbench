@@ -43,7 +43,7 @@ static inline int find_mapid_by_addr(IOMap *maps, int size, paddr_t addr) {
   for (i = 0; i < size; i ++) {
     if (map_inside(maps + i, addr)) {
       IFDEF(CONFIG_DTRACE, dtrace(maps + i, addr));
-      difftest_skip_ref();
+      // difftest_skip_ref(); // move to sim_init.cc finish_handle()
       return i;
     }
   }
@@ -57,5 +57,7 @@ void add_mmio_map(const char *name, paddr_t addr,
 
 word_t map_read(paddr_t addr, int len, IOMap *map);
 void map_write(paddr_t addr, int len, word_t data, IOMap *map);
+
+bool is_mmio_addr(paddr_t addr);
 
 #endif

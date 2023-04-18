@@ -61,10 +61,10 @@ module ysyx_22050710_core #(
   wire [CSR_ADDR_WD-1:0      ] ws_to_ds_csr_rd               ;
 
   // debug
-  wire [DEBUG_BUS_WD-1:0  ] debug_ds_to_es_bus               ;
-  wire [DEBUG_BUS_WD-1:0  ] debug_es_to_ms_bus               ;
-  wire [DEBUG_BUS_WD-1:0  ] debug_ms_to_ws_bus               ;
-  wire [DEBUG_BUS_WD-1:0  ] debug_ws_to_rf_bus               ;
+  wire [DEBUG_BUS_WD-1:0     ] debug_ds_to_es_bus            ;
+  wire [DEBUG_BUS_WD-1:0     ] debug_es_to_ms_bus            ;
+  wire [DEBUG_BUS_WD-1:0     ] debug_ms_to_ws_bus            ;
+  wire [DEBUG_BUS_WD-1:0     ] debug_ws_to_rf_bus            ;
 
   ysyx_22050710_if_stage #(
     .INST_WD                  (INST_WD                      ),

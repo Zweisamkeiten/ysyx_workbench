@@ -11,10 +11,15 @@ module ysyx_22050710_inst_sram #(
   output reg [SRAM_DATA_WD-1:0] o_rdata
 );
 
-  wire  [SRAM_DATA_WD-1:0     ] rdata                         ;  // address register for pmem read.
+  reg  [SRAM_DATA_WD-1:0     ] rdata                         ;  // address register for pmem read.
 
   always @(*) begin
-    npc_pmem_read({32'b0, i_addr}, rdata);
+    if (i_ren) begin
+      npc_pmem_read({32'b0, i_addr}, rdata);
+    end
+    else begin
+      rdata = 0;
+    end
   end
 
   always @(posedge i_clk) begin

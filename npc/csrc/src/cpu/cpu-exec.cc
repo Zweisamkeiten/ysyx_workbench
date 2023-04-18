@@ -125,12 +125,12 @@ void disassemble_inst_to_buf(char *logbuf, size_t bufsize, uint8_t * inst_val, v
   }
   else if (strncmp(p, "jal", 3) == 0) {
     char *func_str = NULL;
-    if((func_str = check_is_func_call(*npcpc)) != NULL) {
+    if((func_str = check_is_func_call(cpu.pc)) != NULL) {
       q += snprintf(q, 128, FMT_WORD ":", pc);
       for (size_t i = 0; i < stack_depth; i++) {
         q += snprintf(q, 128, "  ");
       }
-      q += snprintf(q, 128, "call [%s@" FMT_WORD "]", func_str, *npcpc);
+      q += snprintf(q, 128, "call [%s@" FMT_WORD "]", func_str, cpu.pc);
       stack_depth++;
       inst_state = INST_CALL;
     }
@@ -195,7 +195,6 @@ static void trace_and_difftest(vaddr_t dnpc) {
 }
 
 void exec_once() {
-  cpu.pc = *npcpc;
   // printf("%lx\n", top->o_pc);
   while (a_inst_finished == 0) {
     single_cycle(0);
@@ -209,7 +208,6 @@ void exec_once() {
 #ifdef CONFIG_IRINGTRACE
   last_inst = cpu.inst;
 #endif
-  cpu.pc = *npcpc;
   trace_and_difftest(cpu.pc);
 }
 

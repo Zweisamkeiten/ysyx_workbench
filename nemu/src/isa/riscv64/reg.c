@@ -82,7 +82,7 @@ void isa_diff_set_regs(void* diff_context) {
   for (int i = 1; i < 32; i++) {
     cpu.gpr[i] = ctx->gpr[i];
   }
-  // cpu.pc = ctx->pc;
+  cpu.pc = ctx->pc;
 }
 
 void isa_diff_get_regs(void *diff_context) {
@@ -90,5 +90,5 @@ void isa_diff_get_regs(void *diff_context) {
   for (int i = 1; i < 32; i++) {
     ctx->gpr[i] = cpu.gpr[i];
   }
-  // ctx->pc = cpu.pc;
+  ctx->pc = cpu.pc;
 }
