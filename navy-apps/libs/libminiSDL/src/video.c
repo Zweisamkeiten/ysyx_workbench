@@ -51,10 +51,11 @@ void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
   assert(rectx + rectw <= dst->w && recty + recth <= dst->h);
   int rows; // has copid rows
   for (rows = 0; rows < recth; rows++) {
-    for (int column = 0; column < rectw; column++) {
-      memcpy(dst->pixels + (rows + recty) * dst->pitch + (column + rectx) * dst->format->BytesPerPixel,
-             &color,
-             sizeof(color));
+    int column = rectx;
+    void *row_idx = dst->pixels + (rows + recty) * dst->pitch + column;
+    for (; column < rectx + rectw; column++) {
+      *(uint32_t *)row_idx = color;
+      row_idx += dst->format->BytesPerPixel;
     }
   }
 }
