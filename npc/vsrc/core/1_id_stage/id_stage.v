@@ -31,13 +31,10 @@ module ysyx_22050710_id_stage #(
   output [DS_TO_ES_BUS_WD-1:0] o_ds_to_es_bus                ,
   // to fs
   output [BR_BUS_WD-1:0      ] o_br_bus                      ,
-  // from fs
-  input                        i_flush_br_buf                , // 冲刷 br 的缓存
   // from ws to rf: for write back
   input  [WS_TO_RF_BUS_WD-1:0] i_ws_to_rf_bus                ,
   // for load stall
   input                        i_es_to_ds_load_sel           ,
-  input                        i_ms_data_stall               ,
   // bypass
   input  [BYPASS_BUS_WD-1:0  ] i_es_to_ds_bypass_bus         ,
   input  [BYPASS_BUS_WD-1:0  ] i_ms_to_ds_bypass_bus         ,
@@ -64,13 +61,10 @@ module ysyx_22050710_id_stage #(
   assign ds_load_stall       = i_es_to_ds_load_sel &&
                                ((es_to_ds_gpr_rd == rs1) ||
                                 (es_to_ds_gpr_rd == rs2))    ;
-  wire                         ms_bypass_data_stall          ;
-  assign ms_bypass_data_stall = i_ms_data_stall && ms_bypass_sel;
+
 
   assign ds_ready_go         = ~ds_wb_not_finish_for_ebreak &
-                               ~ds_load_stall               &
-                               ~ms_bypass_data_stall        ;
-
+                               ~ds_load_stall                ;
   assign o_ds_allowin        = ((!ds_valid) || (ds_ready_go && i_es_allowin)) & ~ebreak_sel; // when ebreak inst dont fetch inst
   assign o_ds_to_es_valid    = ds_valid && ds_ready_go       ;
 
@@ -85,9 +79,7 @@ module ysyx_22050710_id_stage #(
     .wen                      (o_ds_allowin                 )
   );
 
-  wire [PC_WD-1:0            ] fs_pc                         ;
-  wire [FS_TO_DS_BUS_WD-1:0  ] fs_to_ds_bus_r                ;
-  assign fs_pc               = i_fs_to_ds_bus[PC_WD-1:0]     ;
+  wire [FS_TO_DS_BUS_WD-1:0]   fs_to_ds_bus_r                ;
 
   Reg #(
     .WIDTH                    (FS_TO_DS_BUS_WD              ),
@@ -95,7 +87,7 @@ module ysyx_22050710_id_stage #(
   ) u_fs_to_ds_bus_r (
     .clk                      (i_clk                        ),
     .rst                      (i_rst                        ),
-    .din                      (br_taken ? {32'h00000013, fs_pc} : i_fs_to_ds_bus), // br taken 发生, 将已经 if stage 取来的指令清空为 nop 指令
+    .din                      (i_fs_to_ds_bus               ),
     .dout                     (fs_to_ds_bus_r               ),
     .wen                      (i_fs_to_ds_valid&&o_ds_allowin)
   );
@@ -179,13 +171,13 @@ module ysyx_22050710_id_stage #(
     .RESET_VAL                (0                            )
   ) u_save_br_bus_r (
     .clk                      (i_clk                        ),
-    .rst                      (i_flush_br_buf || i_rst      ),
-    .din                      ({1'b1                         ,
+    .rst                      (~o_ds_allowin || i_rst       ),
+    .din                      ({~i_fs_to_ds_valid            ,
                                 br_stall                     ,
                                 br_taken                     ,
                                 br_target                  }),
     .dout                     (br_bus_with_valid            ),
-    .wen                      (bren && ds_ready_go          )
+    .wen                      (~i_fs_to_ds_valid&&o_ds_allowin)
   );
 
   // bypass
@@ -223,24 +215,22 @@ module ysyx_22050710_id_stage #(
   wire [CSR_WD-1:0           ] ds_csrrdata                   ;
 
   assign ds_rs1data          =
-  (es_to_ds_gpr_rd != 0 && rs1 == es_to_ds_gpr_rd && ds_valid) ? es_to_ds_gpr_result :
-  (ms_to_ds_gpr_rd != 0 && rs1 == ms_to_ds_gpr_rd && ds_valid) ? ms_to_ds_gpr_result :
-  (ws_to_ds_gpr_rd != 0 && rs1 == ws_to_ds_gpr_rd && ds_valid) ? ws_to_ds_gpr_result :
+  (es_to_ds_gpr_rd != 0 && rs1 == es_to_ds_gpr_rd) ? es_to_ds_gpr_result :
+  (ms_to_ds_gpr_rd != 0 && rs1 == ms_to_ds_gpr_rd) ? ms_to_ds_gpr_result :
+  (ws_to_ds_gpr_rd != 0 && rs1 == ws_to_ds_gpr_rd) ? ws_to_ds_gpr_result :
                                                      rs1data             ;
 
   assign ds_rs2data          =
-  (es_to_ds_gpr_rd != 0 && rs2 == es_to_ds_gpr_rd && ds_valid) ? es_to_ds_gpr_result :
-  (ms_to_ds_gpr_rd != 0 && rs2 == ms_to_ds_gpr_rd && ds_valid) ? ms_to_ds_gpr_result :
-  (ws_to_ds_gpr_rd != 0 && rs2 == ws_to_ds_gpr_rd && ds_valid) ? ws_to_ds_gpr_result :
+  (es_to_ds_gpr_rd != 0 && rs2 == es_to_ds_gpr_rd) ? es_to_ds_gpr_result :
+  (ms_to_ds_gpr_rd != 0 && rs2 == ms_to_ds_gpr_rd) ? ms_to_ds_gpr_result :
+  (ws_to_ds_gpr_rd != 0 && rs2 == ws_to_ds_gpr_rd) ? ws_to_ds_gpr_result :
                                                      rs2data             ;
 
   assign ds_csrrdata         =
-  (csr == es_to_ds_csr_rd && ds_valid) ? es_to_ds_csr_result :
-  (csr == ms_to_ds_csr_rd && ds_valid) ? ms_to_ds_csr_result :
-  (csr == ws_to_ds_csr_rd && ds_valid) ? ws_to_ds_csr_result :
+  (csr == es_to_ds_csr_rd) ? es_to_ds_csr_result :
+  (csr == ms_to_ds_csr_rd) ? ms_to_ds_csr_result :
+  (csr == ws_to_ds_csr_rd) ? ws_to_ds_csr_result :
                              csrrdata                        ;
-
-  wire ms_bypass_sel         = ds_valid && ((ms_to_ds_gpr_rd != 0 && rs1 == ms_to_ds_gpr_rd) || (ms_to_ds_gpr_rd != 0 && rs2 == ms_to_ds_gpr_rd) || (csr != 0 && csr == ms_to_ds_csr_rd));
 
   // id stage to ex stage
   assign o_ds_to_es_bus      = {load_sel                     ,  // 359:359
@@ -313,7 +303,7 @@ module ysyx_22050710_id_stage #(
   };
 
   always @(*) begin
-    if (rf_debug_valid && rf_debug_inst != 32'h00000013) begin
+    if (rf_debug_valid) begin
       finish_handle(rf_debug_pc, rf_debug_dnpc, {32'b0, rf_debug_inst}, rf_debug_memen, rf_debug_memaddr);
     end
   end

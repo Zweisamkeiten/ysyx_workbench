@@ -16,7 +16,7 @@ module ysyx_22050710_axi4full_sram_wrap #(
   input  [3:0                ] i_awid                        ,
   input  [ADDR_WIDTH-1:0     ] i_awaddr                      ,
   input  [7:0                ] i_awlen                       ,
-  input  [2:0                ] i_awsize                      ,
+  input  [1:0                ] i_awsize                      ,
   input  [1:0                ] i_awburst                     ,
   input  [1:0                ] i_awlock                      ,
   input  [3:0                ] i_awcache                     ,
@@ -42,7 +42,7 @@ module ysyx_22050710_axi4full_sram_wrap #(
   input  [3:0               ]  i_arid                        ,
   input  [ADDR_WIDTH-1:0    ]  i_araddr                      ,
   input  [7:0               ]  i_arlen                       ,
-  input  [2:0               ]  i_arsize                      ,
+  input  [1:0               ]  i_arsize                      ,
   input  [1:0               ]  i_arburst                     ,
   input  [1:0               ]  i_arlock                      ,
   input  [3:0               ]  i_arcache                     ,
@@ -90,7 +90,7 @@ module ysyx_22050710_axi4full_sram_wrap #(
     else begin
       case (read_state_reg)
         READ_STATE_IDLE : if (ar_fire) read_state_reg <= READ_STATE_READ;
-        READ_STATE_READ : if ((|arlen == 1'b0) ? r_fire : o_rlast) read_state_reg <= READ_STATE_IDLE;
+        READ_STATE_READ : if (r_fire ) read_state_reg <= READ_STATE_IDLE;
         default         :              read_state_reg <= read_state_reg ;
       endcase
     end
@@ -122,33 +122,9 @@ module ysyx_22050710_axi4full_sram_wrap #(
     end
   end
 
-  wire [ADDR_WIDTH-1:0] araddr;
-  Reg #(
-    .WIDTH                    (ADDR_WIDTH                   ),
-    .RESET_VAL                (0                            )
-  ) u_ar_addr_r (
-    .clk                      (i_aclk                       ),
-    .rst                      (!i_arsetn || o_rlast         ),
-    .din                      (r_state_idle ? i_araddr : araddr + 32'd8),
-    .dout                     (araddr                       ),
-    .wen                      ((r_state_idle && ar_fire) || r_state_read)
-  );
-
-  wire [7:0] arlen;
-  Reg #(
-    .WIDTH                    (8                            ),
-    .RESET_VAL                (0                            )
-  ) u_arlen_r (
-    .clk                      (i_aclk                       ),
-    .rst                      (!i_arsetn                    ),
-    .din                      (i_arlen                      ),
-    .dout                     (arlen                        ),
-    .wen                      ((r_state_idle && ar_fire)    )
-  );
-
   always @(posedge i_aclk) begin
-    if (r_state_read) begin
-      npc_pmem_read({32'b0, araddr}, o_rdata);
+    if (ar_fire) begin
+      npc_pmem_read({32'b0, i_araddr}, o_rdata);
     end
   end
 
@@ -176,19 +152,7 @@ module ysyx_22050710_axi4full_sram_wrap #(
   assign o_wready            = w_state_write                 ;
   assign o_bresp             = 2'b00                         ;
   assign o_rresp             = 2'b00                         ; // trans ok
-  assign o_rlast             = r_state_read && ((nums_have_sent) == arlen);
-
-  wire [7:0]                   nums_have_sent                ;
-  Reg #(
-    .WIDTH                    (8                            ),
-    .RESET_VAL                (0                            )
-  ) u_nums_have_sent (
-    .clk                      (i_aclk                       ),
-    .rst                      (!i_arsetn || o_rlast         ),
-    .din                      (nums_have_sent + 8'b1        ),
-    .dout                     (nums_have_sent               ),
-    .wen                      (r_state_read                 ) // TODO
-  );
+  assign o_rlast             = 1'b1                          ;
 
   Reg #(
     .WIDTH                    (1                            ),
@@ -196,7 +160,7 @@ module ysyx_22050710_axi4full_sram_wrap #(
   ) u_o_rvalid (
     .clk                      (i_aclk                       ),
     .rst                      (!i_arsetn                    ),
-    .din                      (r_state_read                 ), // 接收完成地址延迟一周期返回读数据有效
+    .din                      (ar_fire                      ), // 接收完成地址延迟一周期返回读数据有效
     .dout                     (o_rvalid                     ),
     .wen                      (1                            )
   );
@@ -231,7 +195,7 @@ module ysyx_22050710_axi4full_sram_wrap #(
     .rst                      (!i_arsetn                    ),
     .din                      (i_arid                       ),
     .dout                     (o_rid                        ),
-    .wen                      (ar_fire && r_state_idle      )
+    .wen                      (1                            )
   );
 
 endmodule
