@@ -179,7 +179,7 @@ module ysyx_22050710_id_stage #(
     .RESET_VAL                (0                            )
   ) u_save_br_bus_r (
     .clk                      (i_clk                        ),
-    .rst                      (i_fs_to_ds_valid || i_rst      ),
+    .rst                      (i_flush_br_buf || i_rst      ),
     .din                      ({~i_fs_to_ds_valid            ,
                                 br_stall                     ,
                                 br_taken                     ,
