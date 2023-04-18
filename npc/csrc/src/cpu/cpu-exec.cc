@@ -141,19 +141,12 @@ void disassemble_inst_to_buf(char *logbuf, size_t bufsize, uint8_t * inst_val, v
 #ifdef CONFIG_IRINGTRACE
 static int iringbuf_index = 0;
 static char *iringbuf[16] = {NULL};
-static uint32_t last_inst;
 
 void print_iringbuf() {
   printf(ANSI_FMT("INSTRUCTIONS RING STRACE:\n", ANSI_FG_RED));
-  char logbuf[128];
-  disassemble_inst_to_buf(logbuf, 128, (uint8_t *)&last_inst, cpu.pc, last_pc);
-  int arrow_len = strlen(" --> ");
-  iringbuf[iringbuf_index] = (char *)realloc(iringbuf[iringbuf_index], arrow_len + strlen(logbuf) + 1);
-  char *p = iringbuf[iringbuf_index];
-  memset(p, ' ', arrow_len);
-  p += arrow_len;
-  strcpy(p, logbuf);
 
+  iringbuf_index = iringbuf_index + 16 - 1;
+  iringbuf_index %= 16;
   memmove(iringbuf[iringbuf_index], " --> ", 4);
   for (int i = 0; iringbuf[i] != NULL && i < 16; i++) {
     if (i == iringbuf_index) {
@@ -205,9 +198,6 @@ void exec_once() {
   // cpu.inst = paddr_read(last_pc, 4);
   disassemble_inst_to_buf(itrace_logbuf, 128, (uint8_t *)&(cpu.inst), last_pc, last_pc + 4);
 #endif
-#ifdef CONFIG_IRINGTRACE
-  last_inst = cpu.inst;
-#endif
   trace_and_difftest(cpu.pc);
 }
 
@@ -256,8 +246,11 @@ void cpu_exec(uint64_t n) {
     npc_state.state = NPC_STOP;
     break;
 
-  case NPC_END:
   case NPC_ABORT:
+#ifdef CONFIG_IRINGTRACE_COND
+    if (IRINGTRACE_COND) print_iringbuf();
+#endif
+  case NPC_END:
     Log("npc: %s at pc = " FMT_WORD,
         (npc_state.state == NPC_ABORT
              ? ANSI_FMT("ABORT", ANSI_FG_RED)

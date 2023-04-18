@@ -38,6 +38,8 @@ module ysyx_22050710_ex_stage #(
   output                       o_es_to_ds_load_sel           ,
   // bypass
   output [BYPASS_BUS_WD-1:0  ] o_es_to_ds_bypass_bus         ,
+  // data sram
+  input                        i_data_sram_addr_ok           ,
   // debug
   input  [DEBUG_BUS_WD-1:0   ] i_debug_ds_to_es_bus          ,
   output [DEBUG_BUS_WD-1:0   ] o_debug_es_to_ms_bus
@@ -45,7 +47,9 @@ module ysyx_22050710_ex_stage #(
 
   wire                         es_valid                      ;
   wire                         es_ready_go                   ;
-  assign es_ready_go         = 1'b1                          ;
+  assign es_ready_go         = (es_mem_ren | es_mem_wen)       // ex_stage 访存类型指令 等待 addr_ok
+                             ? i_data_sram_addr_ok             // 读: 地址被接收
+                             : 1'b1                          ; // 写: 地址和数据被接收
   assign o_es_allowin        = (!es_valid) || (es_ready_go && i_ms_allowin);
   assign o_es_to_ms_valid    = es_valid && es_ready_go       ;
 
@@ -132,29 +136,23 @@ module ysyx_22050710_ex_stage #(
     .rst                      (i_rst                        ),
     .din                      (i_debug_ds_to_es_bus         ),
     .dout                     (debug_ds_to_es_bus_r         ),
-    .wen                      (1'b1                         )
+    .wen                      (i_ds_to_es_valid&&o_es_allowin)
   );
 
-  wire                         es_debug_valid                ;
-  wire                         es_debug_addnop               ;
   wire [INST_WD-1:0          ] es_debug_inst                 ;
   wire [PC_WD-1:0            ] es_debug_pc                   ;
   wire [PC_WD-1:0            ] es_debug_dnpc                 ;
   wire                         es_debug_memen                ;
   wire [WORD_WD-1:0          ] es_debug_memaddr              ;
 
-  assign {es_debug_valid                                     ,
-          es_debug_addnop                                    ,
-          es_debug_inst                                      ,
+  assign {es_debug_inst                                      ,
           es_debug_pc                                        ,
           es_debug_dnpc                                      ,
           es_debug_memen                                     ,
           es_debug_memaddr
          }                   = debug_ds_to_es_bus_r          ;
 
-  assign o_debug_es_to_ms_bus= {es_debug_valid               ,
-                                es_debug_addnop              ,
-                                es_debug_inst                ,
+  assign o_debug_es_to_ms_bus= {es_debug_inst                ,
                                 es_debug_pc                  ,
                                 es_debug_dnpc                ,
   1'b1 ? (o_data_sram_ren | o_data_sram_wen) : es_debug_memen,
@@ -168,6 +166,7 @@ module ysyx_22050710_ex_stage #(
                                 es_gpr_wen                   ,
                                 es_csr_wen                   ,
                                 es_mem_ren                   ,
+                                es_mem_wen                   ,
                                 es_mem_op                    ,
                                 es_csr_inst_sel              ,
                                 es_csrrdata                  ,
@@ -176,7 +175,7 @@ module ysyx_22050710_ex_stage #(
 
   assign o_es_to_ds_load_sel   = es_valid & es_load_inst_sel ; // for load stall
 
-  assign o_es_to_ds_bypass_bus = {BYPASS_BUS_WD{es_valid}} &
+  assign o_es_to_ds_bypass_bus = {BYPASS_BUS_WD{es_valid&~es_mem_wen}} &
                                   {({GPR_ADDR_WD{es_gpr_wen}} & es_rd),
                                    ({GPR_WD{es_gpr_wen}} & es_alu_result),
                                    ({CSR_ADDR_WD{es_csr_wen}} & es_csr),
@@ -224,7 +223,7 @@ module ysyx_22050710_ex_stage #(
     .o_wdata                  (o_data_sram_wdata            )
   );
 
-  assign o_data_sram_ren     = es_mem_ren                    ;
+  assign o_data_sram_ren     = es_mem_ren && i_ms_allowin    ;
   assign o_data_sram_wen     = es_mem_wen && es_valid        ;
   assign o_data_sram_addr    = es_alu_result[31:0]           ; // x[rs1] + imm
 

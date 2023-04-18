@@ -5,21 +5,24 @@ BIN = $(BUILD_DIR)/$(TOPNAME)
 IMG ?=
 NPC_EXEC := $(BIN) $(IMG) $(ELF) $(REF) $(IFRUNBATCH)
 
-ifeq ($(VERILATOR_ROOT),)
+ifeq ($(VERILATOR_INC_ROOT),)
+VERILATOR_INC_ROOT = /usr/share/verilator
 VERILATOR = verilator
 else
-export VERILATOR_ROOT
-VERILATOR = $(VERILATOR_ROOT)/bin/verilator
+VERILATOR = $(shell which verilator)
 endif
-VERILATOR_CFLAGS += --compiler clang --build -cc -j $(shell nproc)
+VERILATOR_VERSION = $(shell verilator --version | cut -d ' ' -f 2 | cut -d. -f 1)
+VERILATOR_CFLAGS += --compiler $(call remove_quote,$(CONFIG_CC))
+VERILATOR_CFLAGS += --build -cc -j $(shell nproc)
 VERILATOR_CFLAGS += -Wall -Wno-DECLFILENAME
-# VERILATOR_CFLAGS += -Wno-UNUSED
+VERILATOR_CFLAGS += -Wno-UNUSED
 VERILATOR_CFLAGS += --trace
-VERILATOR_CFLAGS += -O3 -I./vsrc -CFLAGS -O3#-O0
+VERILATOR_CFLAGS += -O3 --x-assign fast --x-initial fast --noassert
+VERILATOR_CFLAGS += -I./vsrc -CFLAGS -O3 -CFLAGS -march=native#-O0
 
 remove_quote = $(patsubst "%",%,$(1))
 
-default: $(BIN)
+default: all
 
 $(shell mkdir -p $(BUILD_DIR))
 -include $(NPC_HOME)/csrc/include/config/auto.conf
@@ -46,7 +49,7 @@ CFLAGS_TRACE += -DITRACE_COND=$(if $(CONFIG_ITRACE_COND),$(call remove_quote,$(C
 CFLAGS_TRACE += -DIRINGTRACE_COND=$(if $(CONFIG_IRINGTRACE_COND),$(call remove_quote,$(CONFIG_IRINGTRACE_COND)),true)
 CFLAGS_TRACE += -DFTRACE_COND=$(if $(CONFIG_FTRACE_COND),$(call remove_quote,$(CONFIG_FTRACE_COND)),true)
 CFLAGS  += $(CFLAGS_BUILD) $(CFLAGS_TRACE) -march=native
-LDFLAGS += $(CFLAGS_BUILD) -latomic -flto
+LDFLAGS += $(CFLAGS_BUILD) -latomic -flto -ldl -lpthread
 
 # Include rules for menuconfig
 include $(NPC_HOME)/scripts/config.mk
@@ -67,18 +70,23 @@ $(VALL): $(VSRCS)
 	@echo "-- VERILATE & BUILD --------"
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $^ --prefix Vtop --Mdir $(VERILATOR_OBJ_DIR)
-	@$(CXX) -O3 -I. $(INCLUDES) -MMD -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -std=gnu++17 -c -o $(VERILATOR_OBJ_DIR)/verilated.o /usr/share/verilator/include/verilated.cpp
-	@$(CXX) -O3 -I. $(INCLUDES) -MMD -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -std=gnu++17 -c -o $(VERILATOR_OBJ_DIR)/verilated_dpi.o /usr/share/verilator/include/verilated_dpi.cpp
-	@$(CXX) -O3 -I. $(INCLUDES) -MMD -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -std=gnu++17 -c -o $(VERILATOR_OBJ_DIR)/verilated_vcd_c.o /usr/share/verilator/include/verilated_vcd_c.cpp
-	@$(CXX) -O3 -I. $(INCLUDES) -MMD -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -std=gnu++17 -c -o $(VERILATOR_OBJ_DIR)/verilated_threads.o /usr/share/verilator/include/verilated_threads.cpp
+	@$(CXX) -O3 -I. $(INCLUDES) -MMD -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-const-variable -std=gnu++17 -c -o $(VERILATOR_OBJ_DIR)/verilated.o $(VERILATOR_INC_ROOT)/include/verilated.cpp
+	@$(CXX) -O3 -I. $(INCLUDES) -MMD -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-const-variable -std=gnu++17 -c -o $(VERILATOR_OBJ_DIR)/verilated_dpi.o $(VERILATOR_INC_ROOT)/include/verilated_dpi.cpp
+	@$(CXX) -O3 -I. $(INCLUDES) -MMD -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-const-variable -std=gnu++17 -c -o $(VERILATOR_OBJ_DIR)/verilated_vcd_c.o $(VERILATOR_INC_ROOT)/include/verilated_vcd_c.cpp
+	if [ $(VERILATOR_VERSION) -eq 5 ]; then $(CXX) -O3 -I. $(INCLUDES) -MMD -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=1 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=1 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-const-variable -std=gnu++17 -c -o $(VERILATOR_OBJ_DIR)/verilated_threads.o $(VERILATOR_INC_ROOT)/include/verilated_threads.cpp; fi;
 
-VERILATOR_SRC = verilated.cpp verilated_dpi.cpp verilated_vcd_c.cpp verilated_threads.cpp
+VERILATOR_SRC = verilated.cpp verilated_dpi.cpp verilated_vcd_c.cpp
+ifeq ($(VERILATOR_VERSION), 5)
+VERILATOR_SRC += verilated_threads.cpp
+else
+	
+endif
 VERILATOR_OBJ = $(addprefix $(VERILATOR_OBJ_DIR)/, $(VERILATOR_SRC:%.cpp=%.o))
 
 $(BIN): $(VALL) $(VERILATOR_OBJ) $(OBJS) # $(NVBOARD_ARCHIVE)
 	@$(LD) -o $@ $(realpath $(OBJS)) $(VERILATOR_OBJ) $(VALL) $(LDFLAGS) $(LIBS)
 
-run-env: $(BIN)
+run-env: $(BIN) $(VSRCS) $(SRCS)
 
 sim: run-env
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
