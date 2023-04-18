@@ -180,12 +180,12 @@ module ysyx_22050710_id_stage #(
   ) u_save_br_bus_r (
     .clk                      (i_clk                        ),
     .rst                      (i_flush_br_buf || i_rst      ),
-    .din                      ({~i_fs_to_ds_valid            ,
+    .din                      ({~i_fs_to_ds_valid & ds_valid ,
                                 br_stall                     ,
                                 br_taken                     ,
                                 br_target                  }),
     .dout                     (br_bus_with_valid            ),
-    .wen                      (~i_fs_to_ds_valid&&o_ds_allowin&&br_taken&&ds_valid)
+    .wen                      (~i_fs_to_ds_valid&&o_ds_allowin&&br_taken)
   );
 
   // bypass
