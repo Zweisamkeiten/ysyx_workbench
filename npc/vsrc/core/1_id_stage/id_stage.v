@@ -94,7 +94,7 @@ module ysyx_22050710_id_stage #(
     .RESET_VAL                (0                            )
   ) u_fs_to_ds_bus_r (
     .clk                      (i_clk                        ),
-    .rst                      (i_rst                        ),
+    .rst                      (i_rst || i_flush_br_buf      ),
     .din                      (br_taken ? {32'h00000013, fs_pc} : i_fs_to_ds_bus), // br taken 发生, 将已经 if stage 取来的指令清空为 nop 指令
     .dout                     (fs_to_ds_bus_r               ),
     .wen                      (i_fs_to_ds_valid&&o_ds_allowin)
