@@ -162,12 +162,20 @@ void disassemble_inst_to_buf(char *logbuf, size_t bufsize, uint8_t * inst_val, v
 #ifdef CONFIG_IRINGTRACE
 static int iringbuf_index = 0;
 static char *iringbuf[16] = {NULL};
+static MUXDEF(CONFIG_ISA_x86, uint64_t, uint32_t) *last_inst;
+static vaddr_t *snpc;
 
 void print_iringbuf() {
   Log(ANSI_FMT("INSTRUCTIONS RING STRACE:\n", ANSI_FG_RED));
+  char logbuf[128];
+  disassemble_inst_to_buf(logbuf, 128, (uint8_t *)last_inst, cpu.pc, *snpc);
+  int arrow_len = strlen(" --> ");
+  iringbuf[iringbuf_index] = realloc(iringbuf[iringbuf_index], arrow_len + strlen(logbuf) + 1);
+  char *p = iringbuf[iringbuf_index];
+  memset(p, ' ', arrow_len);
+  p += arrow_len;
+  strcpy(p, logbuf);
 
-  iringbuf_index = iringbuf_index + 16 - 1;
-  iringbuf_index %= 16;
   memmove(iringbuf[iringbuf_index], " --> ", 4);
   for (int i = 0; iringbuf[i] != NULL && i < 16; i++) {
     if (i == iringbuf_index) {
@@ -217,6 +225,10 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 static void exec_once(Decode *s, vaddr_t pc) {
   s->pc = pc;
   s->snpc = pc;
+#ifdef CONFIG_IRINGTRACE
+  last_inst = &s->isa.inst.val;
+  snpc = &s->snpc;
+#endif
   isa_exec_once(s);
   cpu.pc = s->dnpc;
 #ifdef CONFIG_ITRACE
@@ -273,11 +285,7 @@ void cpu_exec(uint64_t n) {
   switch (nemu_state.state) {
     case NEMU_RUNNING: nemu_state.state = NEMU_STOP; break;
 
-    case NEMU_ABORT:
-#ifdef CONFIG_IRINGTRACE_COND
-      if (IRINGTRACE_COND) print_iringbuf();
-#endif
-    case NEMU_END:
+    case NEMU_END: case NEMU_ABORT:
       Log("nemu: %s at pc = " FMT_WORD,
           (nemu_state.state == NEMU_ABORT ? ANSI_FMT("ABORT", ANSI_FG_RED) :
            (nemu_state.halt_ret == 0 ? ANSI_FMT("HIT GOOD TRAP", ANSI_FG_GREEN) :

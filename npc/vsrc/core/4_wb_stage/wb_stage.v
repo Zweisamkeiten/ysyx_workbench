@@ -26,7 +26,6 @@ module ysyx_22050710_wb_stage #(
   output [BYPASS_BUS_WD-1:0  ] o_ws_to_ds_bypass_bus         ,
   // debug
   input  [DEBUG_BUS_WD-1:0   ] i_debug_ms_to_ws_bus          ,
-  output                       o_debug_ws_to_rf_valid        ,
   output [DEBUG_BUS_WD-1:0   ] o_debug_ws_to_rf_bus
 );
 
@@ -70,24 +69,29 @@ module ysyx_22050710_wb_stage #(
     .rst                      (i_rst                        ),
     .din                      (i_debug_ms_to_ws_bus         ),
     .dout                     (debug_ms_to_ws_bus_r         ),
-    .wen                      (i_ms_to_ws_valid&&o_ws_allowin)
+    .wen                      (1'b1                         )
   );
 
+  wire                         ws_debug_valid                ;
+  wire                         ws_debug_addnop               ;
   wire [INST_WD-1:0          ] ws_debug_inst                 ;
   wire [PC_WD-1:0            ] ws_debug_pc                   ;
   wire [PC_WD-1:0            ] ws_debug_dnpc                 ;
   wire                         ws_debug_memen                ;
   wire [WORD_WD-1:0          ] ws_debug_memaddr              ;
 
-  assign {ws_debug_inst                                      ,
+  assign {ws_debug_valid                                     ,
+          ws_debug_addnop                                    ,
+          ws_debug_inst                                      ,
           ws_debug_pc                                        ,
           ws_debug_dnpc                                      ,
           ws_debug_memen                                     ,
           ws_debug_memaddr
          }                   = debug_ms_to_ws_bus_r          ;
 
-  assign o_debug_ws_to_rf_valid = ws_valid && ws_ready_go    ;
-  assign o_debug_ws_to_rf_bus= {ws_debug_inst                ,
+  assign o_debug_ws_to_rf_bus= {ws_debug_valid               ,
+                                ws_debug_addnop              ,
+                                ws_debug_inst                ,
                                 ws_debug_pc                  ,
                                 ws_debug_dnpc                ,
                                 ws_debug_memen               ,
@@ -123,8 +127,6 @@ module ysyx_22050710_wb_stage #(
     .CSR_WD                   (CSR_WD                       ),
     .WS_TO_RF_BUS_WD          (WS_TO_RF_BUS_WD              )
   ) u_wbu (
-    // valid
-    .i_ws_valid               (ws_valid                     ),
     // gpr
     .i_gpr_wen                (ws_gpr_wen                   ),
     .i_gpr_waddr              (ws_rd                        ),

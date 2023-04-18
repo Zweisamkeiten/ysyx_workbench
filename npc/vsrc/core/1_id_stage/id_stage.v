@@ -25,7 +25,7 @@ module ysyx_22050710_id_stage #(
   output                       o_ds_allowin                  ,
   // from fs
   input                        i_fs_to_ds_valid              ,
-  input  [FS_TO_DS_BUS_WD-1:0] i_fs_to_ds_bus                , // {fs_inst[31:0], fs_pc[63:0], fs_dnpc[63:0]}
+  input  [FS_TO_DS_BUS_WD-1:0] i_fs_to_ds_bus                , // {fs_inst[31:0], fs_pc[63:0]}
   // to es
   output                       o_ds_to_es_valid              ,
   output [DS_TO_ES_BUS_WD-1:0] o_ds_to_es_bus                ,
@@ -40,7 +40,6 @@ module ysyx_22050710_id_stage #(
   input  [BYPASS_BUS_WD-1:0  ] i_ms_to_ds_bypass_bus         ,
   input  [BYPASS_BUS_WD-1:0  ] i_ws_to_ds_bypass_bus         ,
   // debug
-  input                        i_debug_ws_to_rf_valid        ,
   input  [DEBUG_BUS_WD-1:0   ] i_debug_ws_to_rf_bus          ,
   output [DEBUG_BUS_WD-1:0   ] o_debug_ds_to_es_bus
 );
@@ -79,7 +78,9 @@ module ysyx_22050710_id_stage #(
     .wen                      (o_ds_allowin                 )
   );
 
-  wire [FS_TO_DS_BUS_WD-1:0]   fs_to_ds_bus_r                ;
+  wire [PC_WD-1:0            ] fs_pc                         ;
+  wire [FS_TO_DS_BUS_WD-1:0  ] fs_to_ds_bus_r                ;
+  assign fs_pc               = i_fs_to_ds_bus[63:0]          ;
 
   Reg #(
     .WIDTH                    (FS_TO_DS_BUS_WD              ),
@@ -87,21 +88,14 @@ module ysyx_22050710_id_stage #(
   ) u_fs_to_ds_bus_r (
     .clk                      (i_clk                        ),
     .rst                      (i_rst                        ),
-    .din                      (i_fs_to_ds_bus               ),
+    .din                      (br_taken ? {32'h00000013, fs_pc} : i_fs_to_ds_bus), // br taken 发生, 将已经if stage 取来的+4地址的指令清空为nop指令
     .dout                     (fs_to_ds_bus_r               ),
     .wen                      (i_fs_to_ds_valid&&o_ds_allowin)
   );
 
   wire [INST_WD-1:0          ] ds_inst                       ;
   wire [PC_WD-1:0            ] ds_pc                         ;
-  assign {ds_inst                                            ,
-          ds_pc
-          }                  = fs_to_ds_bus_r                ;
-
-  wire [PC_WD-1:0            ] dnpc                          ;
-  assign dnpc                = br_taken
-                             ? br_target
-                             : ds_pc + 4                     ;
+  assign {ds_inst, ds_pc}    = fs_to_ds_bus_r                ;
 
   // 通用寄存器
   wire [GPR_ADDR_WD-1:0      ] rs1, rs2                      ;
@@ -161,24 +155,7 @@ module ysyx_22050710_id_stage #(
   wire                         br_taken                      ;
   wire [PC_WD-1:0            ] br_target                     ;
   assign br_stall            = br_taken & ds_load_stall      ;
-  assign o_br_bus            = br_bus_with_valid[BR_BUS_WD]
-                             ? br_bus_with_valid[BR_BUS_WD-1:0]
-                             : {br_stall, br_taken, br_target};
-
-  wire [BR_BUS_WD:0]           br_bus_with_valid             ;
-  Reg #(
-    .WIDTH                    (BR_BUS_WD + 1                ),
-    .RESET_VAL                (0                            )
-  ) u_save_br_bus_r (
-    .clk                      (i_clk                        ),
-    .rst                      (~o_ds_allowin || i_rst       ),
-    .din                      ({~i_fs_to_ds_valid            ,
-                                br_stall                     ,
-                                br_taken                     ,
-                                br_target                  }),
-    .dout                     (br_bus_with_valid            ),
-    .wen                      (~i_fs_to_ds_valid&&o_ds_allowin)
-  );
+  assign o_br_bus            = {br_stall, br_taken, br_target};
 
   // bypass
   wire [GPR_ADDR_WD-1:0      ] es_to_ds_gpr_rd               ;
@@ -264,46 +241,40 @@ module ysyx_22050710_id_stage #(
     .RESET_VAL                (0                            )
   ) u_debug_ws_to_rf_bus_r (
     .clk                      (i_clk                        ),
-    .rst                      (~i_debug_ws_to_rf_valid || i_rst),
+    .rst                      (i_rst                        ),
     .din                      (i_debug_ws_to_rf_bus         ),
     .dout                     (debug_ws_to_rf_bus_r         ),
-    .wen                      (i_debug_ws_to_rf_valid       )
+    .wen                      (1'b1                         )
   );
 
   wire                         rf_debug_valid                ;
+  wire                         rf_debug_addnop               ;
   wire [INST_WD-1:0          ] rf_debug_inst                 ;
   wire [PC_WD-1:0            ] rf_debug_pc                   ;
   wire [PC_WD-1:0            ] rf_debug_dnpc                 ;
   wire                         rf_debug_memen                ;
   wire [WORD_WD-1:0          ] rf_debug_memaddr              ;
 
-  Reg #(
-    .WIDTH                    (1                            ),
-    .RESET_VAL                (0                            )
-  ) u_debug_valid_commit (
-    .clk                      (i_clk                        ),
-    .rst                      (~i_debug_ws_to_rf_valid || i_rst),
-    .din                      (i_debug_ws_to_rf_valid       ),
-    .dout                     (rf_debug_valid               ),
-    .wen                      (i_debug_ws_to_rf_valid       )
-  );
-
-  assign {rf_debug_inst                                      ,
+  assign {rf_debug_valid                                     ,
+          rf_debug_addnop                                    ,
+          rf_debug_inst                                      ,
           rf_debug_pc                                        ,
           rf_debug_dnpc                                      ,
           rf_debug_memen                                     ,
           rf_debug_memaddr
          }                   = debug_ws_to_rf_bus_r          ;
 
-  assign o_debug_ds_to_es_bus= {ds_inst                      ,
+  assign o_debug_ds_to_es_bus= {o_ds_to_es_valid             ,  // blocking
+                                br_taken                     ,
+                                ds_inst                      ,
                                 ds_pc                        ,
-                                dnpc                         ,
+                                br_taken ? br_target : fs_pc ,
                                 mem_ren | mem_wen            ,
                                 64'b0
   };
 
   always @(*) begin
-    if (rf_debug_valid) begin
+    if (rf_debug_valid && rf_debug_addnop != 1) begin
       finish_handle(rf_debug_pc, rf_debug_dnpc, {32'b0, rf_debug_inst}, rf_debug_memen, rf_debug_memaddr);
     end
   end
