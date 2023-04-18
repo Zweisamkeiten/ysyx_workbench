@@ -51,11 +51,10 @@ void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
   assert(rectx + rectw <= dst->w && recty + recth <= dst->h);
   int rows; // has copid rows
   for (rows = 0; rows < recth; rows++) {
-    int column = rectx;
-    void *row_idx = dst->pixels + (rows + recty) * dst->pitch + column;
-    for (; column < rectx + rectw; column++) {
-      *(uint32_t *)row_idx = color;
-      row_idx += dst->format->BytesPerPixel;
+    for (int column = 0; column < rectw; column++) {
+      memcpy(dst->pixels + (rows + recty) * dst->pitch + (column + rectx) * dst->format->BytesPerPixel,
+             &color,
+             sizeof(color));
     }
   }
 }
@@ -65,16 +64,13 @@ void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
     x = 0, y = 0, w = s->w, h = s->h;
   }
 
-  uint32_t * pixels_color_p = (uint32_t *)malloc(sizeof(uint32_t) * (s->w * s->h));
-  int idx = 0;
   if (s->format->BytesPerPixel == 1) {
     for (int row = 0; row < h; row++) {
-      // 像素阵列存放的是8位的调色板下标,
-      // 用这个下标在调色板中进行索引, 得到的才是32位的颜色信息
-      uint8_t * pos_p = s->pixels + (y + row) * s->pitch + x;
       for (int column = 0; column < w; column++) {
-        uint8_t color_xy_idx = *(pos_p + column);
-        SDL_Color color = s->format->palette->colors[color_xy_idx];
+        // 像素阵列存放的是8位的调色板下标,
+        // 用这个下标在调色板中进行索引, 得到的才是32位的颜色信息
+        uint8_t color_xy_idx = *(s->pixels + (row + y) * s->pitch + (column + x));
+        SDL_Color color = *(s->format->palette->colors + color_xy_idx);
 
         // Transform SDL_Color to AARRGGBB
         // struct order rgba. On little-end machine, the color number is AABBGGRR, because the byte order.
@@ -82,11 +78,9 @@ void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
                               ((color.r) << 16) | // RR
                               ((color.g) <<  8) | // GG
                               ((color.b) <<  0) ; // BB
-        pixels_color_p[idx++] = color_argb;
+        NDL_DrawRect(&color_argb, column + x, row + y, 1, 1);
       }
     }
-    NDL_DrawRect((uint32_t *)pixels_color_p, x, y, w, h);
-    free(pixels_color_p);
     return;
   }
 

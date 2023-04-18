@@ -11,7 +11,6 @@ module ysyx_22050710_ex_stage #(
   parameter IMM_WD                                           ,
   parameter DS_TO_ES_BUS_WD                                  ,
   parameter ES_TO_MS_BUS_WD                                  ,
-  parameter BYPASS_BUS_WD                                    ,
   parameter SRAM_ADDR_WD                                     ,
   parameter SRAM_WMASK_WD                                    ,
   parameter SRAM_DATA_WD                                     ,
@@ -28,52 +27,23 @@ module ysyx_22050710_ex_stage #(
   // to ms
   output                       o_es_to_ms_valid              ,
   output [ES_TO_MS_BUS_WD-1:0] o_es_to_ms_bus                ,
-  // for load stall
-  output                       o_es_to_ds_load_sel           ,
-  // bypass
-  output [BYPASS_BUS_WD-1:0  ] o_es_to_ds_bypass_bus         ,
   // data sram interface
-  output                       o_data_sram_req               , // 请求信号, 为 1 时有读写请求, 为 0 时无读写请求 data ram 读请求或写请求是在 ex stage 发出
-  output                       o_data_sram_wr                , // 为 1 表示该次是写请求, 为 0 表示该次是读请求
-  output [1:0                ] o_data_sram_size              , // 该次请求传输的字节数, 0: 1byte; 1: 2bytes; 2: 4bytes; 3: 8bytes
-  output [SRAM_ADDR_WD-1:0   ] o_data_sram_addr              , // 该次请求的地址
-  output [SRAM_WMASK_WD-1:0  ] o_data_sram_wstrb             , // 该次请求的写字节使能
-  output [SRAM_DATA_WD-1:0   ] o_data_sram_wdata             , // 该次写请求的写数据
-  input                        i_data_sram_addr_ok           , // 该次请求的地址传输 OK, 读: 地址被接收; 写: 地址和数据被接收
+  output [SRAM_ADDR_WD-1:0   ] o_data_sram_addr              ,  // data ram 读请求或写请求是在 ex stage 发出
+  output                       o_data_sram_ren               ,  // data ram 的读数据在mem stage 返回
+  output                       o_data_sram_wen               ,
+  output [SRAM_WMASK_WD-1:0  ] o_data_sram_wmask             ,
+  output [SRAM_DATA_WD-1:0   ] o_data_sram_wdata             ,
+  // 阻塞解决数据相关性冲突: es, ms, ws 目的寄存器比较
+  output [GPR_ADDR_WD-1:0    ] o_es_to_ds_gpr_rd             ,
+  output [CSR_ADDR_WD-1:0    ] o_es_to_ds_csr_rd             ,
   // debug
   input  [DEBUG_BUS_WD-1:0   ] i_debug_ds_to_es_bus          ,
   output [DEBUG_BUS_WD-1:0   ] o_debug_es_to_ms_bus
 );
 
-
-  wire   data_sram_ren       = es_mem_ren && i_ms_allowin && es_valid;
-  wire   data_sram_wen       = es_mem_wen && es_valid        ;
-  assign o_data_sram_addr    = es_alu_result[31:0]           ; // x[rs1] + imm
-
-  assign o_data_sram_req     = data_sram_ren || data_sram_wen;
-  assign o_data_sram_wr      = data_sram_wen ? 1'b1 : 1'b0   ;
-  MuxKey #(.NR_KEY(7), .KEY_LEN(3), .DATA_LEN(2)) u_mux0 (
-    .out                      (o_data_sram_size             ),
-    .key                      (es_mem_op                    ),
-    .lut                      ({
-                                3'b000, 2'd0                 ,
-                                3'b001, 2'd0                 ,
-                                3'b010, 2'd1                 ,
-                                3'b011, 2'd1                 ,
-                                3'b100, 2'd2                 ,
-                                3'b101, 2'd2                 ,
-                                3'b110, 2'd3
-                              })
-  );
-
-  wire                         req_fire                      ;
-  assign req_fire            = o_data_sram_req && i_data_sram_addr_ok;
-
   wire                         es_valid                      ;
   wire                         es_ready_go                   ;
-  assign es_ready_go         = (es_mem_ren | es_mem_wen)       // ex_stage 访存类型指令 等待 addr_ok
-                             ? req_fire                        // 读: 地址被接收
-                             : 1'b1                          ; // 写: 地址和数据被接收
+  assign es_ready_go         = 1'b1                          ;
   assign o_es_allowin        = (!es_valid) || (es_ready_go && i_ms_allowin);
   assign o_es_to_ms_valid    = es_valid && es_ready_go       ;
 
@@ -122,12 +92,10 @@ module ysyx_22050710_ex_stage #(
   wire [2:0                  ] es_mem_op                     ; // mem 操作 op
   wire                         es_csr_inst_sel               ; // write csrrdata to gpr
   wire [2:0                  ] es_csr_op                     ; // csr 相关逻辑运算操作
-  wire                         es_load_inst_sel              ; // for load stall
   wire                         es_ebreak_sel                 ; // 环境断点 用于结束运行
   wire                         es_invalid_inst_sel           ; // 译码错误 非法指令
   
-  assign {es_load_inst_sel                                   ,  // 359:359 for load stall
-          es_rs1data                                         ,  // 358:295
+  assign {es_rs1data                                         ,  // 358:295
           es_rs2data                                         ,  // 294:231
           es_csrrdata                                        ,  // 230:167
           es_imm                                             ,  // 166:103
@@ -160,27 +128,21 @@ module ysyx_22050710_ex_stage #(
     .rst                      (i_rst                        ),
     .din                      (i_debug_ds_to_es_bus         ),
     .dout                     (debug_ds_to_es_bus_r         ),
-    .wen                      (i_ds_to_es_valid&&o_es_allowin)
+    .wen                      (1'b1                         )
   );
 
+  wire                         es_debug_valid                ;
   wire [INST_WD-1:0          ] es_debug_inst                 ;
   wire [PC_WD-1:0            ] es_debug_pc                   ;
-  wire [PC_WD-1:0            ] es_debug_dnpc                 ;
-  wire                         es_debug_memen                ;
-  wire [WORD_WD-1:0          ] es_debug_memaddr              ;
 
-  assign {es_debug_inst                                      ,
-          es_debug_pc                                        ,
-          es_debug_dnpc                                      ,
-          es_debug_memen                                     ,
-          es_debug_memaddr
+  assign {es_debug_valid                                     ,
+          es_debug_inst                                      ,
+          es_debug_pc
          }                   = debug_ds_to_es_bus_r          ;
 
-  assign o_debug_es_to_ms_bus= {es_debug_inst                ,
-                                es_debug_pc                  ,
-                                es_debug_dnpc                ,
-      1'b1 ? (data_sram_ren | data_sram_wen) : es_debug_memen,
-        1'b1 ? ({32'b0, o_data_sram_addr}) : es_debug_memaddr
+  assign o_debug_es_to_ms_bus= {es_debug_valid               ,
+                                es_debug_inst                ,
+                                es_debug_pc
                                                              };
 
   wire [WORD_WD-1:0          ] es_alu_result                 ;
@@ -190,21 +152,14 @@ module ysyx_22050710_ex_stage #(
                                 es_gpr_wen                   ,
                                 es_csr_wen                   ,
                                 es_mem_ren                   ,
-                                es_mem_wen                   ,
                                 es_mem_op                    ,
                                 es_csr_inst_sel              ,
                                 es_csrrdata                  ,
                                 es_alu_result                ,
                                 es_csr_result               };
 
-  assign o_es_to_ds_load_sel   = es_valid & es_load_inst_sel ; // for load stall
-
-  assign o_es_to_ds_bypass_bus = {BYPASS_BUS_WD{es_valid&~es_mem_wen}} &
-                                  {({GPR_ADDR_WD{es_gpr_wen}} & es_rd),
-                                   ({GPR_WD{es_gpr_wen}} & es_alu_result),
-                                   ({CSR_ADDR_WD{es_csr_wen}} & es_csr),
-                                   ({CSR_WD{es_csr_wen}} & es_csr_result)
-                                  };
+  assign o_es_to_ds_gpr_rd   = {GPR_ADDR_WD{es_valid}} & {GPR_ADDR_WD{es_gpr_wen}} & es_rd;
+  assign o_es_to_ds_csr_rd   = {CSR_ADDR_WD{es_valid}} & {CSR_ADDR_WD{es_csr_wen}} & es_csr;
 
   ysyx_22050710_exu #(
     .WORD_WD                  (WORD_WD                      ),
@@ -213,6 +168,7 @@ module ysyx_22050710_ex_stage #(
     .CSR_WD                   (CSR_WD                       ),
     .IMM_WD                   (IMM_WD                       )
   ) u_exu (
+    .i_clk                    (i_clk                        ),
     // oprand
     .i_rs1data                (es_rs1data                   ),
     .i_rs2data                (es_rs2data                   ),
@@ -235,7 +191,6 @@ module ysyx_22050710_ex_stage #(
     .o_csr_result             (es_csr_result                )
   );
 
-  wire [1:0                  ] wsize                         ;
   ysyx_22050710_lsu_store #(
     .GPR_WD                   (GPR_WD                       ),
     .SRAM_WMASK_WD            (SRAM_WMASK_WD                ),
@@ -244,8 +199,12 @@ module ysyx_22050710_ex_stage #(
     .i_mem_op                 (es_mem_op                    ),
     .i_waddr_align            (es_alu_result[2:0]           ), // x[rs1] + imm
     .i_wdata                  (es_rs2data                   ), // store inst
-    .o_wmask                  (o_data_sram_wstrb            ),
+    .o_wmask                  (o_data_sram_wmask            ),
     .o_wdata                  (o_data_sram_wdata            )
   );
+
+  assign o_data_sram_ren     = es_mem_ren                    ;
+  assign o_data_sram_wen     = es_mem_wen && es_valid        ;
+  assign o_data_sram_addr    = es_alu_result[31:0]           ; // x[rs1] + imm
 
 endmodule

@@ -12,7 +12,6 @@ extern "C" void diff_watchpoint_value();
 #endif
 
 NPC_CPU_state cpu = {};
-static uint64_t g_timer = 0; // unit: us
 #define BUFSIZE 128
 #define MAX_INST_TO_PRINT 10
 uint64_t g_nr_guest_inst = 0;
@@ -126,12 +125,12 @@ void disassemble_inst_to_buf(char *logbuf, size_t bufsize, uint8_t * inst_val, v
   }
   else if (strncmp(p, "jal", 3) == 0) {
     char *func_str = NULL;
-    if((func_str = check_is_func_call(cpu.pc)) != NULL) {
+    if((func_str = check_is_func_call(*npcpc)) != NULL) {
       q += snprintf(q, 128, FMT_WORD ":", pc);
       for (size_t i = 0; i < stack_depth; i++) {
         q += snprintf(q, 128, "  ");
       }
-      q += snprintf(q, 128, "call [%s@" FMT_WORD "]", func_str, cpu.pc);
+      q += snprintf(q, 128, "call [%s@" FMT_WORD "]", func_str, *npcpc);
       stack_depth++;
       inst_state = INST_CALL;
     }
@@ -142,12 +141,19 @@ void disassemble_inst_to_buf(char *logbuf, size_t bufsize, uint8_t * inst_val, v
 #ifdef CONFIG_IRINGTRACE
 static int iringbuf_index = 0;
 static char *iringbuf[16] = {NULL};
+static uint32_t last_inst;
 
 void print_iringbuf() {
   printf(ANSI_FMT("INSTRUCTIONS RING STRACE:\n", ANSI_FG_RED));
+  char logbuf[128];
+  disassemble_inst_to_buf(logbuf, 128, (uint8_t *)&last_inst, cpu.pc, last_pc);
+  int arrow_len = strlen(" --> ");
+  iringbuf[iringbuf_index] = (char *)realloc(iringbuf[iringbuf_index], arrow_len + strlen(logbuf) + 1);
+  char *p = iringbuf[iringbuf_index];
+  memset(p, ' ', arrow_len);
+  p += arrow_len;
+  strcpy(p, logbuf);
 
-  iringbuf_index = iringbuf_index + 16 - 1;
-  iringbuf_index %= 16;
   memmove(iringbuf[iringbuf_index], " --> ", 4);
   for (int i = 0; iringbuf[i] != NULL && i < 16; i++) {
     if (i == iringbuf_index) {
@@ -189,17 +195,10 @@ static void trace_and_difftest(vaddr_t dnpc) {
 }
 
 void exec_once() {
+  cpu.pc = *npcpc;
   // printf("%lx\n", top->o_pc);
-  int cpi = 0;
   while (a_inst_finished == 0) {
-    cpi++;
     single_cycle(0);
-    if (cpi > 50) {
-      npc_state.state = NPC_ABORT;
-      npc_state.halt_pc = cpu.pc;
-      npc_state.halt_ret = -1;
-      return;
-    };
   }
   // single_cycle(0);
   a_inst_finished = 0;
@@ -207,6 +206,10 @@ void exec_once() {
   // cpu.inst = paddr_read(last_pc, 4);
   disassemble_inst_to_buf(itrace_logbuf, 128, (uint8_t *)&(cpu.inst), last_pc, last_pc + 4);
 #endif
+#ifdef CONFIG_IRINGTRACE
+  last_inst = cpu.inst;
+#endif
+  cpu.pc = *npcpc;
   trace_and_difftest(cpu.pc);
 }
 
@@ -222,12 +225,9 @@ static void execute(uint64_t n) {
 static void statistic() {
   IFNDEF(CONFIG_TARGET_AM, setlocale(LC_NUMERIC, ""));
 #define NUMBERIC_FMT MUXDEF(CONFIG_TARGET_AM, "%", "%'") PRIu64
-  Log("host time spent = " NUMBERIC_FMT " us", g_timer);
-  Log("total guest instructions = " NUMBERIC_FMT, g_nr_guest_inst);
-  if (g_timer > 0) Log("simulation frequency = " NUMBERIC_FMT " inst/s", g_nr_guest_inst * 1000000 / g_timer);
-  else Log("Finish running in less than 1 us and can not calculate the simulation frequency");
+  printf("total guest instructions = " NUMBERIC_FMT, g_nr_guest_inst);
+  printf("\n");
 }
-
 
 void assert_fail_msg() {
 #ifdef CONFIG_IRINGTRACE_COND
@@ -251,23 +251,15 @@ void cpu_exec(uint64_t n) {
     npc_state.state = NPC_RUNNING;
   }
 
-  uint64_t timer_start = get_time();
-
   execute(n);
-
-  uint64_t timer_end = get_time();
-  g_timer += timer_end - timer_start;
 
   switch (npc_state.state) {
   case NPC_RUNNING:
     npc_state.state = NPC_STOP;
     break;
 
-  case NPC_ABORT:
-#ifdef CONFIG_IRINGTRACE_COND
-    if (IRINGTRACE_COND) print_iringbuf();
-#endif
   case NPC_END:
+  case NPC_ABORT:
     Log("npc: %s at pc = " FMT_WORD,
         (npc_state.state == NPC_ABORT
              ? ANSI_FMT("ABORT", ANSI_FG_RED)
@@ -276,6 +268,6 @@ void cpu_exec(uint64_t n) {
                     : ANSI_FMT("HIT BAD TRAP", ANSI_FG_RED))),
         last_pc);
     // fall through
-  case NPC_QUIT: statistic(); break;
+  case NPC_QUIT: break;
   }
 }
