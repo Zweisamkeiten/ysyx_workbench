@@ -55,7 +55,12 @@ endmenu
 menu "Testing and Debugging"
 
 config VCD_TRACE
+  depends on IPC_CAL
   bool "Enable VCD tracer"
+  default y
+
+config IPC_CAL
+  bool "Enable IPC calculate"
   default y
 
 config WATCHPOINT

@@ -17,21 +17,23 @@ module ysyx_22050710_bru #(
   input                        i_ep_sel                      ,
   input  [PC_WD-1:0          ] i_epnpc                       ,
   // output br bus
-  output                       o_br_sel                      ,
+  output                       o_br_taken                    ,
   output [PC_WD-1:0          ] o_br_target
 );
 
   wire [WORD_WD-1:0          ] sub_result                    ;
   wire                         cout                          ;
   wire                         overflow                      ;
+  wire [WORD_WD-1:0]           t_add_Cin                     ;
   wire                         zero                          ;
   wire                         less                          ;
   wire                         signed_Less, unsigned_Less    ;
 
   wire                         PCAsrc, PCBsrc                ;
 
-  assign overflow            = ~(i_rs1data[WORD_WD-1] ^ i_rs2data[WORD_WD-1]) ^ ~(i_rs1data[WORD_WD-2] ^ i_rs2data[WORD_WD-2]);
-  assign {cout, sub_result}  = {1'b0, i_rs1data} + {1'b0, (({WORD_WD{1'b1}}^(i_rs2data)) + 1)};
+  assign t_add_Cin           = ({WORD_WD{1'b1}}^i_rs2data) + 1;
+  assign overflow            = (i_rs1data[WORD_WD-1] == t_add_Cin[WORD_WD-1]) && (i_rs1data[WORD_WD-1] != sub_result[WORD_WD-1]);
+  assign {cout, sub_result}  = {1'b0, i_rs1data} + t_add_Cin;
 
   assign signed_Less         = overflow == 0
                              ? (sub_result[WORD_WD-1] == 1 ? 1'b1 : 1'b0)
@@ -84,7 +86,7 @@ module ysyx_22050710_bru #(
     })
   );
 
-  assign o_br_sel            = i_bren | i_ep_sel             ;
+  assign o_br_taken          = (i_bren & PCAsrc) | i_ep_sel             ;
   assign o_br_target         = i_ep_sel
                              ? i_epnpc
                              : (PCBsrc ? i_rs1data : i_pc) + (PCAsrc ? i_imm : 4);

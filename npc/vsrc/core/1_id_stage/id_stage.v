@@ -1,6 +1,6 @@
 // ysyx_22050710 Id stage
 
-import "DPI-C" function void finish_handle(input longint pc, input longint inst);
+import "DPI-C" function void finish_handle(input longint pc, input longint dnpc, input longint inst, input logic memen, input longint memaddr);
 
 module ysyx_22050710_id_stage #(
   parameter WORD_WD                                          ,
@@ -15,6 +15,7 @@ module ysyx_22050710_id_stage #(
   parameter DS_TO_ES_BUS_WD                                  ,
   parameter BR_BUS_WD                                        ,
   parameter WS_TO_RF_BUS_WD                                  ,
+  parameter BYPASS_BUS_WD                                    ,
   parameter DEBUG_BUS_WD
 ) (
   input                        i_clk                         ,
@@ -24,7 +25,7 @@ module ysyx_22050710_id_stage #(
   output                       o_ds_allowin                  ,
   // from fs
   input                        i_fs_to_ds_valid              ,
-  input  [FS_TO_DS_BUS_WD-1:0] i_fs_to_ds_bus                , // {fs_inst[31:0], fs_pc[63:0]}
+  input  [FS_TO_DS_BUS_WD-1:0] i_fs_to_ds_bus                , // {fs_inst[31:0], fs_pc[63:0], fs_dnpc[63:0]}
   // to es
   output                       o_ds_to_es_valid              ,
   output [DS_TO_ES_BUS_WD-1:0] o_ds_to_es_bus                ,
@@ -32,29 +33,39 @@ module ysyx_22050710_id_stage #(
   output [BR_BUS_WD-1:0      ] o_br_bus                      ,
   // from ws to rf: for write back
   input  [WS_TO_RF_BUS_WD-1:0] i_ws_to_rf_bus                ,
-  // 阻塞解决数据相关性冲突: es, ms, ws 目的寄存器比较
-  input  [GPR_ADDR_WD-1:0    ] i_es_to_ds_gpr_rd             ,
-  input  [GPR_ADDR_WD-1:0    ] i_ms_to_ds_gpr_rd             ,
-  input  [GPR_ADDR_WD-1:0    ] i_ws_to_ds_gpr_rd             ,
-  input  [CSR_ADDR_WD-1:0    ] i_es_to_ds_csr_rd             ,
-  input  [CSR_ADDR_WD-1:0    ] i_ms_to_ds_csr_rd             ,
-  input  [CSR_ADDR_WD-1:0    ] i_ws_to_ds_csr_rd             ,
+  // for load stall
+  input                        i_es_to_ds_load_sel           ,
+  // bypass
+  input  [BYPASS_BUS_WD-1:0  ] i_es_to_ds_bypass_bus         ,
+  input  [BYPASS_BUS_WD-1:0  ] i_ms_to_ds_bypass_bus         ,
+  input  [BYPASS_BUS_WD-1:0  ] i_ws_to_ds_bypass_bus         ,
   // debug
+  input                        i_debug_ws_to_rf_valid        ,
   input  [DEBUG_BUS_WD-1:0   ] i_debug_ws_to_rf_bus          ,
   output [DEBUG_BUS_WD-1:0   ] o_debug_ds_to_es_bus
 );
 
   wire                         ds_valid                      ;
   wire                         ds_ready_go                   ;
-  wire                         ds_wb_not_finish              ;
-  assign ds_wb_not_finish    = ( (i_es_to_ds_gpr_rd != 0 && (ebreak_sel ? i_es_to_ds_gpr_rd == 5'ha : (i_es_to_ds_gpr_rd == rs1 || i_es_to_ds_gpr_rd == rs2)))
-                              || (i_ms_to_ds_gpr_rd != 0 && (ebreak_sel ? i_ms_to_ds_gpr_rd == 5'ha : (i_ms_to_ds_gpr_rd == rs1 || i_ms_to_ds_gpr_rd == rs2)))
-                              || (i_ws_to_ds_gpr_rd != 0 && (ebreak_sel ? i_ws_to_ds_gpr_rd == 5'ha : (i_ws_to_ds_gpr_rd == rs1 || i_ws_to_ds_gpr_rd == rs2)))
-                              || (i_es_to_ds_csr_rd != 0 && i_es_to_ds_csr_rd == csr)
-                              || (i_ms_to_ds_csr_rd != 0 && i_ms_to_ds_csr_rd == csr)
-                              || (i_ws_to_ds_csr_rd != 0 && i_ws_to_ds_csr_rd == csr));
-  assign ds_ready_go         = ~ds_wb_not_finish;
-  assign o_ds_allowin        = (!ds_valid) || (ds_ready_go && i_es_allowin);
+  wire                         ds_wb_not_finish_for_ebreak   ; // for ebreak inst, must wait until a0 reg write back.
+  wire                         ds_load_stall                 ; // for load type inst, must wait until load inst pass into mem stage.
+
+  assign ds_wb_not_finish_for_ebreak
+                             = ebreak_sel &&
+                                ((es_to_ds_gpr_rd == 5'ha)
+                               ||(ms_to_ds_gpr_rd == 5'ha)
+                               ||(ws_to_ds_gpr_rd == 5'ha))  ;
+
+   // 当 id stage 指令真相关于当前位于执行级的 load 类型指令时 需要停顿等其进
+   // 入 mem stage
+  assign ds_load_stall       = i_es_to_ds_load_sel &&
+                               ((es_to_ds_gpr_rd == rs1) ||
+                                (es_to_ds_gpr_rd == rs2))    ;
+
+
+  assign ds_ready_go         = ~ds_wb_not_finish_for_ebreak &
+                               ~ds_load_stall                ;
+  assign o_ds_allowin        = ((!ds_valid) || (ds_ready_go && i_es_allowin)) & ~ebreak_sel; // when ebreak inst dont fetch inst
   assign o_ds_to_es_valid    = ds_valid && ds_ready_go       ;
 
   Reg #(
@@ -68,9 +79,7 @@ module ysyx_22050710_id_stage #(
     .wen                      (o_ds_allowin                 )
   );
 
-  wire [PC_WD-1:0            ] fs_pc                         ;
-  wire [FS_TO_DS_BUS_WD-1:0  ] fs_to_ds_bus_r                ;
-  assign fs_pc               = i_fs_to_ds_bus[63:0]          ;
+  wire [FS_TO_DS_BUS_WD-1:0]   fs_to_ds_bus_r                ;
 
   Reg #(
     .WIDTH                    (FS_TO_DS_BUS_WD              ),
@@ -78,14 +87,21 @@ module ysyx_22050710_id_stage #(
   ) u_fs_to_ds_bus_r (
     .clk                      (i_clk                        ),
     .rst                      (i_rst                        ),
-    .din                      (br_taken ? 0 : i_fs_to_ds_bus), // br taken 发生, 将已经if stage 取来的+4地址的指令清空为nop指令
+    .din                      (i_fs_to_ds_bus               ),
     .dout                     (fs_to_ds_bus_r               ),
     .wen                      (i_fs_to_ds_valid&&o_ds_allowin)
   );
 
   wire [INST_WD-1:0          ] ds_inst                       ;
   wire [PC_WD-1:0            ] ds_pc                         ;
-  assign {ds_inst, ds_pc}    = fs_to_ds_bus_r                ;
+  assign {ds_inst                                            ,
+          ds_pc
+          }                  = fs_to_ds_bus_r                ;
+
+  wire [PC_WD-1:0            ] dnpc                          ;
+  assign dnpc                = br_taken
+                             ? br_target
+                             : ds_pc + 4                     ;
 
   // 通用寄存器
   wire [GPR_ADDR_WD-1:0      ] rs1, rs2                      ;
@@ -112,6 +128,7 @@ module ysyx_22050710_id_stage #(
   wire [2:0                  ] mem_op                        ; // mem 操作 op
   wire                         csr_inst_sel                  ; // write csrrdata to gpr
   wire [2:0                  ] csr_op                        ; // csr 相关逻辑运算操作
+  wire                         load_sel                      ; // load type inst sel: load指令的前递路径需要停顿一周期从 mem stage 返回
   wire                         ebreak_sel                    ; // 环境断点 用于结束运行
   wire                         ecall_sel                     ; // 环境调用 引发环境调用异常来请求执行环境
   wire                         mret_sel                      ; // 机器模式异常状态返回
@@ -140,18 +157,86 @@ module ysyx_22050710_id_stage #(
   wire [PC_WD-1:0            ] epnpc                         ;
 
   // bru 产生 跳转使能 以及目标地址 to if stage
+  wire                         br_stall                      ;
   wire                         br_taken                      ;
-  wire                         br_sel                        ;
   wire [PC_WD-1:0            ] br_target                     ;
-  assign br_taken            = (br_sel & ~ds_wb_not_finish)
-                             ? (br_target != fs_pc)
-                             : 0                             ;
-  assign o_br_bus            = {br_taken, br_sel, br_target };
+  assign br_stall            = br_taken & ds_load_stall      ;
+  assign o_br_bus            = br_bus_with_valid[BR_BUS_WD]
+                             ? br_bus_with_valid[BR_BUS_WD-1:0]
+                             : {br_stall, br_taken, br_target};
+
+  wire [BR_BUS_WD:0]           br_bus_with_valid             ;
+  Reg #(
+    .WIDTH                    (BR_BUS_WD + 1                ),
+    .RESET_VAL                (0                            )
+  ) u_save_br_bus_r (
+    .clk                      (i_clk                        ),
+    .rst                      (~o_ds_allowin || i_rst       ),
+    .din                      ({~i_fs_to_ds_valid            ,
+                                br_stall                     ,
+                                br_taken                     ,
+                                br_target                  }),
+    .dout                     (br_bus_with_valid            ),
+    .wen                      (~i_fs_to_ds_valid&&o_ds_allowin)
+  );
+
+  // bypass
+  wire [GPR_ADDR_WD-1:0      ] es_to_ds_gpr_rd               ;
+  wire [GPR_WD-1:0           ] es_to_ds_gpr_result           ;
+  wire [GPR_ADDR_WD-1:0      ] ms_to_ds_gpr_rd               ;
+  wire [GPR_WD-1:0           ] ms_to_ds_gpr_result           ;
+  wire [GPR_ADDR_WD-1:0      ] ws_to_ds_gpr_rd               ;
+  wire [GPR_WD-1:0           ] ws_to_ds_gpr_result           ;
+  wire [CSR_ADDR_WD-1:0      ] es_to_ds_csr_rd               ;
+  wire [CSR_WD-1:0           ] es_to_ds_csr_result           ;
+  wire [CSR_ADDR_WD-1:0      ] ms_to_ds_csr_rd               ;
+  wire [CSR_WD-1:0           ] ms_to_ds_csr_result           ;
+  wire [CSR_ADDR_WD-1:0      ] ws_to_ds_csr_rd               ;
+  wire [CSR_WD-1:0           ] ws_to_ds_csr_result           ;
+
+  assign {es_to_ds_gpr_rd,
+          es_to_ds_gpr_result,
+          es_to_ds_csr_rd,
+          es_to_ds_csr_result
+         }                   = i_es_to_ds_bypass_bus         ;
+  assign {ms_to_ds_gpr_rd,
+          ms_to_ds_gpr_result,
+          ms_to_ds_csr_rd,
+          ms_to_ds_csr_result
+         }                   = i_ms_to_ds_bypass_bus         ;
+  assign {ws_to_ds_gpr_rd,
+          ws_to_ds_gpr_result,
+          ws_to_ds_csr_rd,
+          ws_to_ds_csr_result
+         }                   = i_ws_to_ds_bypass_bus         ;
+
+  wire [GPR_WD-1:0           ] ds_rs1data                    ;
+  wire [GPR_WD-1:0           ] ds_rs2data                    ;
+  wire [CSR_WD-1:0           ] ds_csrrdata                   ;
+
+  assign ds_rs1data          =
+  (es_to_ds_gpr_rd != 0 && rs1 == es_to_ds_gpr_rd) ? es_to_ds_gpr_result :
+  (ms_to_ds_gpr_rd != 0 && rs1 == ms_to_ds_gpr_rd) ? ms_to_ds_gpr_result :
+  (ws_to_ds_gpr_rd != 0 && rs1 == ws_to_ds_gpr_rd) ? ws_to_ds_gpr_result :
+                                                     rs1data             ;
+
+  assign ds_rs2data          =
+  (es_to_ds_gpr_rd != 0 && rs2 == es_to_ds_gpr_rd) ? es_to_ds_gpr_result :
+  (ms_to_ds_gpr_rd != 0 && rs2 == ms_to_ds_gpr_rd) ? ms_to_ds_gpr_result :
+  (ws_to_ds_gpr_rd != 0 && rs2 == ws_to_ds_gpr_rd) ? ws_to_ds_gpr_result :
+                                                     rs2data             ;
+
+  assign ds_csrrdata         =
+  (csr == es_to_ds_csr_rd) ? es_to_ds_csr_result :
+  (csr == ms_to_ds_csr_rd) ? ms_to_ds_csr_result :
+  (csr == ws_to_ds_csr_rd) ? ws_to_ds_csr_result :
+                             csrrdata                        ;
 
   // id stage to ex stage
-  assign o_ds_to_es_bus      = {rs1data                      ,  // 358:295
-                                rs2data                      ,  // 294:231
-                                csrrdata                     ,  // 230:167
+  assign o_ds_to_es_bus      = {load_sel                     ,  // 359:359
+                                ds_rs1data                   ,  // 358:295
+                                ds_rs2data                   ,  // 294:231
+                                ds_csrrdata                  ,  // 230:167
                                 imm                          ,  // 166:103
                                 ds_pc                        ,  // 102:39
                                 alu_src1_sel                 ,  //  38:38
@@ -179,29 +264,47 @@ module ysyx_22050710_id_stage #(
     .RESET_VAL                (0                            )
   ) u_debug_ws_to_rf_bus_r (
     .clk                      (i_clk                        ),
-    .rst                      (i_rst                        ),
+    .rst                      (~i_debug_ws_to_rf_valid || i_rst),
     .din                      (i_debug_ws_to_rf_bus         ),
     .dout                     (debug_ws_to_rf_bus_r         ),
-    .wen                      (1'b1                         )
+    .wen                      (i_debug_ws_to_rf_valid       )
   );
 
   wire                         rf_debug_valid                ;
   wire [INST_WD-1:0          ] rf_debug_inst                 ;
   wire [PC_WD-1:0            ] rf_debug_pc                   ;
+  wire [PC_WD-1:0            ] rf_debug_dnpc                 ;
+  wire                         rf_debug_memen                ;
+  wire [WORD_WD-1:0          ] rf_debug_memaddr              ;
 
-  assign {rf_debug_valid                                     ,
-          rf_debug_inst                                      ,
-          rf_debug_pc
+  Reg #(
+    .WIDTH                    (1                            ),
+    .RESET_VAL                (0                            )
+  ) u_debug_valid_commit (
+    .clk                      (i_clk                        ),
+    .rst                      (~i_debug_ws_to_rf_valid || i_rst),
+    .din                      (i_debug_ws_to_rf_valid       ),
+    .dout                     (rf_debug_valid               ),
+    .wen                      (i_debug_ws_to_rf_valid       )
+  );
+
+  assign {rf_debug_inst                                      ,
+          rf_debug_pc                                        ,
+          rf_debug_dnpc                                      ,
+          rf_debug_memen                                     ,
+          rf_debug_memaddr
          }                   = debug_ws_to_rf_bus_r          ;
 
-  assign o_debug_ds_to_es_bus= {o_ds_to_es_valid             ,  // blocking
-                                ds_inst                      ,
-                                ds_pc
+  assign o_debug_ds_to_es_bus= {ds_inst                      ,
+                                ds_pc                        ,
+                                dnpc                         ,
+                                mem_ren | mem_wen            ,
+                                64'b0
   };
 
   always @(*) begin
-    if (rf_debug_valid && rf_debug_inst != 0) begin
-      finish_handle(rf_debug_pc, {32'b0, rf_debug_inst});
+    if (rf_debug_valid) begin
+      finish_handle(rf_debug_pc, rf_debug_dnpc, {32'b0, rf_debug_inst}, rf_debug_memen, rf_debug_memaddr);
     end
   end
 
@@ -239,7 +342,7 @@ module ysyx_22050710_id_stage #(
     // epu bus
     .i_ecall_sel              (ecall_sel                    ),
     .i_mret_sel               (mret_sel                     ),
-    .i_epc                    (fs_pc                        ),
+    .i_epc                    (ds_pc                        ),
     .o_mtvec                  (mtvec                        ),
     .o_mepc                   (mepc                         )
   );
@@ -262,8 +365,8 @@ module ysyx_22050710_id_stage #(
     .GPR_WD                   (GPR_WD                       ),
     .IMM_WD                   (IMM_WD                       )
   ) u_bru (
-    .i_rs1data                (rs1data                      ),
-    .i_rs2data                (rs2data                      ),
+    .i_rs1data                (ds_rs1data                   ),
+    .i_rs2data                (ds_rs2data                   ),
     .i_pc                     (ds_pc                        ),
     .i_imm                    (imm                          ),
     // br inst
@@ -273,7 +376,7 @@ module ysyx_22050710_id_stage #(
     .i_ep_sel                 (ep_sel                       ),
     .i_epnpc                  (epnpc                        ),
     // output br bus
-    .o_br_sel                 (br_sel                       ),
+    .o_br_taken               (br_taken                     ),
     .o_br_target              (br_target                    )
   );
 
@@ -307,6 +410,8 @@ module ysyx_22050710_id_stage #(
     .o_csr_inst_sel           (csr_inst_sel                 ), // write csrdata to gpr
     // for ecall, ebreak, csr ctrl inst, mret
     .o_csr_op                 (csr_op                       ),
+    // for load stall
+    .o_load_sel               (load_sel                     ),
     // for ebreak, ecall, mret
     .o_ebreak_sel             (ebreak_sel                   ),
     .o_ecall_sel              (ecall_sel                    ),

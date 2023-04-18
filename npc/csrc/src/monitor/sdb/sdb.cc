@@ -77,7 +77,6 @@ static int cmd_info(char *args) {
     if (strcmp(sub_cmd, "r") == 0) {
       // print the reg state
       isa_reg_display();
-      printf(ANSI_FMT("%s:", ANSI_FG_BLUE) ANSI_FMT("\t0x%016lx\t", ANSI_FG_GREEN) ANSI_FMT("%020lu\n", ANSI_FG_MAGENTA), "pc", cpu.pc, cpu.pc);
       return 0;
     }
     else if (strcmp(sub_cmd, "w") == 0) {

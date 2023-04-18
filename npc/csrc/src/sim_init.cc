@@ -3,6 +3,8 @@
 #include <isa.h>
 #include <memory/host.h>
 extern "C" {
+  #include <device/map.h>
+  #include <cpu/difftest.h>
   #include <memory/paddr.h>
   #include "../local-include/reg.h"
 }
@@ -11,24 +13,35 @@ Vtop *top;
 #ifdef CONFIG_VCD_TRACE
 VerilatedContext *contextp = NULL;
 VerilatedVcdC *tfp = NULL;
-int cycle = 0;
 #endif
-uint64_t * npcpc;
+#ifdef CONFIG_IPC_CAL
+uint64_t cycles = 0;
+uint64_t insts = 0;
+#endif
 
-void finish_handle(long long pc, long long inst) {
+void finish_handle(long long pc, long long dnpc, long long inst, svLogic memen, long long memaddr) {
   extern vaddr_t last_pc;
   extern int a_inst_finished;
   last_pc = pc;
   cpu.inst = inst;
+  cpu.pc = dnpc;
+#ifdef CONFIG_IPC_CAL
+  insts++;
+#endif
   a_inst_finished = 1;
+  if (memen) {
+    if (is_mmio_addr(memaddr)) {
+      difftest_skip_ref();
+    }
+  }
 #ifdef CONFIG_VCD_TRACE
-  printf("cycle: %d, pc: %lx, inst: %lx\n", cycle, (word_t)pc, (word_t)inst);
+  printf("cycle: %lu, pc: %lx, inst: %lx\n", cycles, (word_t)pc, (word_t)inst);
 #endif
 }
 
 void set_state_end() {
   npc_state.state = NPC_END;
-  npc_state.halt_pc = *npcpc;
+  npc_state.halt_pc = cpu.pc;
   npc_state.halt_ret = cpu.gpr[10];
 }
 
@@ -78,9 +91,11 @@ extern "C" void npc_pmem_write(long long waddr, long long wdata, char wmask) {
 }
 
 extern "C" void single_cycle(int rst) {
+#ifdef CONFIG_IPC_CAL
+  cycles++;
 #ifdef CONFIG_VCD_TRACE
-  cycle ++;
-  // printf("cycle: %d\n", cycle);
+  printf("cycle: %lu\n", cycles);
+#endif
 #endif
   top->i_clk = 0;
   top->i_rst = rst;
@@ -120,17 +135,13 @@ extern "C" void init_sim() {
 
   npc_state.state = NPC_RUNNING;
 
-  npcpc = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__u_if_stage__DOT__u_pc__DOT__pc);
-
   QData ** csr = (QData **)malloc(NR_CSREGS * sizeof(uint64_t *));
-  csr[MSTATUS] = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__u_id_stage__DOT__u_csrs__DOT__mstatus);
-  csr[MTVEC] = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__u_id_stage__DOT__u_csrs__DOT__mtvec);
-  csr[MEPC] = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__u_id_stage__DOT__u_csrs__DOT__mepc);
-  csr[MCAUSE] = &(top->rootp->ysyx_22050710_top__DOT__u_core__DOT__u_id_stage__DOT__u_csrs__DOT__mcause);
+  csr[MSTATUS] = &(top->rootp->ysyx_22050710_top__DOT__u_cpu_top__DOT__u_core__DOT__u_id_stage__DOT__u_csrs__DOT__mstatus);
+  csr[MTVEC] = &(top->rootp->ysyx_22050710_top__DOT__u_cpu_top__DOT__u_core__DOT__u_id_stage__DOT__u_csrs__DOT__mtvec);
+  csr[MEPC] = &(top->rootp->ysyx_22050710_top__DOT__u_cpu_top__DOT__u_core__DOT__u_id_stage__DOT__u_csrs__DOT__mepc);
+  csr[MCAUSE] = &(top->rootp->ysyx_22050710_top__DOT__u_cpu_top__DOT__u_core__DOT__u_id_stage__DOT__u_csrs__DOT__mcause);
 
   cpu.csr = csr;
-
-  cpu.pc = *npcpc;
 }
 
 extern "C" void end_sim() {
@@ -139,5 +150,9 @@ extern "C" void end_sim() {
   delete top;
 #ifdef CONFIG_VCD_TRACE
   tfp->close();
+#endif
+#ifdef CONFIG_IPC_CAL
+  printf("cycles: %lu, insts: %lu\n", cycles, insts);
+  printf("ipc: %lf\n", (double)insts / cycles);
 #endif
 }
