@@ -13,7 +13,10 @@ Vtop *top;
 #ifdef CONFIG_VCD_TRACE
 VerilatedContext *contextp = NULL;
 VerilatedVcdC *tfp = NULL;
-int cycle = 0;
+#endif
+#ifdef CONFIG_IPC_CAL
+uint64_t cycles = 0;
+uint64_t insts = 0;
 #endif
 
 void finish_handle(long long pc, long long dnpc, long long inst, svLogic memen, long long memaddr) {
@@ -22,6 +25,9 @@ void finish_handle(long long pc, long long dnpc, long long inst, svLogic memen, 
   last_pc = pc;
   cpu.inst = inst;
   cpu.pc = dnpc;
+#ifdef CONFIG_IPC_CAL
+  insts++;
+#endif
   a_inst_finished = 1;
   if (memen) {
     if (is_mmio_addr(memaddr)) {
@@ -85,9 +91,11 @@ extern "C" void npc_pmem_write(long long waddr, long long wdata, char wmask) {
 }
 
 extern "C" void single_cycle(int rst) {
+#ifdef CONFIG_IPC_CAL
+  cycles++;
 #ifdef CONFIG_VCD_TRACE
-  cycle ++;
-  // printf("cycle: %d\n", cycle);
+  printf("cycle: %d\n", cycle);
+#endif
 #endif
   top->i_clk = 0;
   top->i_rst = rst;
@@ -142,5 +150,9 @@ extern "C" void end_sim() {
   delete top;
 #ifdef CONFIG_VCD_TRACE
   tfp->close();
+#endif
+#ifdef CONFIG_IPC_CAL
+  printf("cycles: %lu, insts: %lu\n", cycles, insts);
+  printf("ipc: %lf\n", (double)insts / cycles);
 #endif
 }
