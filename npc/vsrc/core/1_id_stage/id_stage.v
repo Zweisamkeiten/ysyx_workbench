@@ -169,7 +169,7 @@ module ysyx_22050710_id_stage #(
   wire                         br_taken                      ;
   wire [PC_WD-1:0            ] br_target                     ;
   assign br_stall            = br_taken & ds_load_stall      ;
-  assign o_br_bus            = br_bus_with_valid[BR_BUS_WD] && ds_valid
+  assign o_br_bus            = br_bus_with_valid[BR_BUS_WD]
                              ? br_bus_with_valid[BR_BUS_WD-1:0]
                              : {br_stall, br_taken, br_target};
 
@@ -185,7 +185,7 @@ module ysyx_22050710_id_stage #(
                                 br_taken                     ,
                                 br_target                  }),
     .dout                     (br_bus_with_valid            ),
-    .wen                      (~i_fs_to_ds_valid&&o_ds_allowin&&br_taken)
+    .wen                      (~i_fs_to_ds_valid&&o_ds_allowin&&br_taken&&ds_valid)
   );
 
   // bypass
