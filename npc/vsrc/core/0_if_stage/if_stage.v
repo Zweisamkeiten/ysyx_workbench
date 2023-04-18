@@ -122,6 +122,6 @@ module ysyx_22050710_if_stage #(
     .i_inst_sram_rdata        (i_inst_sram_rdata            )
   );
 
-  assign o_flush_br_buf      = o_fs_to_ds_valid && i_ds_allowin;
+  assign o_flush_br_buf      = pre_fs_to_fs_valid && fs_allowin;
 
 endmodule
