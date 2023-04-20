@@ -222,7 +222,7 @@ module ysyx_22050710_cpu_top #(
   wire [256-1:0              ] icache_wr_data                ;
   wire                         icache_wr_rdy                 ;
 
-  ysyx_22050710_icache u_icache (
+  ysyx_22050710_cache u_icache (
     .i_clk                    (i_aclk                       ), // 时钟信号
     .i_rst                    (~i_arsetn                    ), // 复位信号
 

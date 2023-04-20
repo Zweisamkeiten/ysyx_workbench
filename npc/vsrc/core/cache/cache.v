@@ -70,7 +70,7 @@ module ysyx_22050710_cache #(
                              ? wb_offset
                              : request_offset                ;
   assign wstrb               = c_state_refill
-                             ?(8'b0)
+                             ?({8{1'b1}})
                              :(wb_state_write ? wb_wstrb : request_wstrb);
   assign w_data              = wb_state_write
                              ? wb_wdata
@@ -96,10 +96,10 @@ module ysyx_22050710_cache #(
     .out                      (bwen                         ),
     .key                      (c_state_refill ? mb_num_hasret[1:0] : offset[4:3]),
     .lut                      ({
-                                2'b00, {192'b1, word_wen       },
-                                2'b01, {128'b1, word_wen, 64'b1},
-                                2'b10, {64'b1 , word_wen,128'b1},
-                                2'b11, {word_wen, 192'b1       }
+                                2'b00, {{192{1'b1}}, word_wen       },
+                                2'b01, {{128{1'b1}}, word_wen, {64{1'b1}}},
+                                2'b10, {{64{1'b1}} , word_wen,{128{1'b1}}},
+                                2'b11, {word_wen, {192{1'b1}}       }
                               })
   );
 
@@ -246,7 +246,7 @@ module ysyx_22050710_cache #(
     .default_out              (i_index                      ),
     .lut                      ({
                                 CACHE_IDLE   , i_index       ,
-                                CACHE_LOOKUP , request_index ,
+                                CACHE_LOOKUP , i_index       ,
                                 CACHE_REPLACE, request_index ,
                                 CACHE_REFILL , request_index
                               })
@@ -255,16 +255,16 @@ module ysyx_22050710_cache #(
                              ? wb_index
                              : main_index                    ;
 
-  wire way0_v                = valid[0][index]               ;
-  wire way1_v                = valid[1][index]               ;
+  wire way0_v                = valid[0][request_index]       ;
+  wire way1_v                = valid[1][request_index]       ;
 
   wire [TAG_WIDTH-1:0        ] way0_tag                      ;
   wire [TAG_WIDTH-1:0        ] way1_tag                      ;
-  assign way0_tag            = tag[0][index]                 ;
-  assign way1_tag            = tag[1][index]                 ;
+  assign way0_tag            = tag[0][request_index]         ;
+  assign way1_tag            = tag[1][request_index]         ;
 
-  wire way0_d                = dirty[0][index]               ;
-  wire way1_d                = dirty[1][index]               ;
+  wire way0_d                = dirty[0][request_index]       ;
+  wire way1_d                = dirty[1][request_index]       ;
 
   wire way0_hit              = way0_v && (way0_tag == request_tag);
   wire way1_hit              = way1_v && (way1_tag == request_tag);
@@ -345,8 +345,8 @@ module ysyx_22050710_cache #(
     .RESET_VAL                (0                            )
   ) u_missing_buffer_num_has_ret_reg (
     .clk                      (i_clk                        ),
-    .rst                      (i_rst || (c_state_miss && i_rd_rdy)),
-    .din                      (mb_num_hasret + 1            ),
+    .rst                      (i_rst || ~c_state_miss       ),
+    .din                      (mb_num_hasret + 3'b1         ),
     .dout                     (mb_num_hasret                ),
     .wen                      (c_state_refill && i_ret_valid)
   );
@@ -462,8 +462,9 @@ module ysyx_22050710_cache #(
 
   assign o_rd_req            = c_state_replace               ;
   assign o_rd_type           = {3{c_state_replace}} & 3'b100 ; // 缺失 读一整个 cache line
-  assign o_rd_addr           = {ADDR_WIDTH{c_state_replace}} & {request_tag, request_index, {OFFSET_WIDTH{1'b0}}};
+  assign o_rd_addr           = {request_tag, request_index, {OFFSET_WIDTH{1'b0}}};
   assign o_wr_type           = {3{c_state_replace}} & 3'b100 ; // 缺失 写一整个 cache line
+  wire                         wr_req                        ;
   Reg #(
     .WIDTH                    (1                            ),
     .RESET_VAL                (0                            )
@@ -471,11 +472,12 @@ module ysyx_22050710_cache #(
     .clk                      (i_clk                        ),
     .rst                      (i_rst || o_wr_req            ),
     .din                      (1'b1                         ),
-    .dout                     (o_wr_req                     ),
+    .dout                     (wr_req                       ),
     .wen                      (c_state_miss && i_wr_rdy     )
   );
+  assign o_wr_req            = wr_req & dirty[replace_way][request_index];
 
   assign o_wr_wstrb          = wstrb                          ;
-  assign o_wr_addr           = {ADDR_WIDTH{c_state_replace}} & {tag[replace_way], request_index, {OFFSET_WIDTH{1'b0}}};
+  assign o_wr_addr           = {ADDR_WIDTH{c_state_replace}} & {tag[replace_way][request_index], request_index, {OFFSET_WIDTH{1'b0}}};
 
 endmodule
