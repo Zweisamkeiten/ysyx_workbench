@@ -102,7 +102,7 @@ gdb: run-env
 	gdb -s $(BIN) $(BIN) -iex "set args $(IMG) $(ELF) $(REF)"
 
 wave:
-	gtkwave $(NPC_HOME)/dump.vcd $(NPC_HOME)/wavegroup.gtkw &
+	gtkwave $(NPC_HOME)/dump.fst $(NPC_HOME)/wavegroup.gtkw &
 
 all: run-env
 
