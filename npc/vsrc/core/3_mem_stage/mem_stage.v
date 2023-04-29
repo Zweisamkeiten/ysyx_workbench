@@ -148,7 +148,7 @@ module ysyx_22050710_mem_stage #(
                                 ms_csr                       ,
                                 ms_csr_final_result          };
 
-  assign o_ms_to_ds_bypass_bus = {BYPASS_BUS_WD{ms_valid&~ms_mem_wen}} &
+  assign o_ms_to_ds_bypass_bus = {BYPASS_BUS_WD{o_ms_to_ws_valid&~ms_mem_wen}} &
                                   {({GPR_ADDR_WD{ms_gpr_wen}} & ms_rd),
                                    ({WORD_WD{ms_gpr_wen}} & ms_gpr_final_result),
                                    ({CSR_ADDR_WD{ms_csr_wen}} & ms_csr),
