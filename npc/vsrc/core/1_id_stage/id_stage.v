@@ -180,12 +180,12 @@ module ysyx_22050710_id_stage #(
   ) u_save_br_bus_r (
     .clk                      (i_clk                        ),
     .rst                      (i_flush_br_buf || i_rst      ),
-    .din                      ({1'b1                         ,
+    .din                      ({~i_fs_to_ds_valid            ,
                                 br_stall                     ,
                                 br_taken                     ,
                                 br_target                  }),
     .dout                     (br_bus_with_valid            ),
-    .wen                      (bren && ds_ready_go          )
+    .wen                      (~i_fs_to_ds_valid&&o_ds_allowin&&br_taken)
   );
 
   // bypass
@@ -223,24 +223,24 @@ module ysyx_22050710_id_stage #(
   wire [CSR_WD-1:0           ] ds_csrrdata                   ;
 
   assign ds_rs1data          =
-  (es_to_ds_gpr_rd != 0 && rs1 == es_to_ds_gpr_rd && ds_valid) ? es_to_ds_gpr_result :
-  (ms_to_ds_gpr_rd != 0 && rs1 == ms_to_ds_gpr_rd && ds_valid) ? ms_to_ds_gpr_result :
-  (ws_to_ds_gpr_rd != 0 && rs1 == ws_to_ds_gpr_rd && ds_valid) ? ws_to_ds_gpr_result :
+  (es_to_ds_gpr_rd != 0 && rs1 == es_to_ds_gpr_rd) ? es_to_ds_gpr_result :
+  (ms_to_ds_gpr_rd != 0 && rs1 == ms_to_ds_gpr_rd) ? ms_to_ds_gpr_result :
+  (ws_to_ds_gpr_rd != 0 && rs1 == ws_to_ds_gpr_rd) ? ws_to_ds_gpr_result :
                                                      rs1data             ;
 
   assign ds_rs2data          =
-  (es_to_ds_gpr_rd != 0 && rs2 == es_to_ds_gpr_rd && ds_valid) ? es_to_ds_gpr_result :
-  (ms_to_ds_gpr_rd != 0 && rs2 == ms_to_ds_gpr_rd && ds_valid) ? ms_to_ds_gpr_result :
-  (ws_to_ds_gpr_rd != 0 && rs2 == ws_to_ds_gpr_rd && ds_valid) ? ws_to_ds_gpr_result :
+  (es_to_ds_gpr_rd != 0 && rs2 == es_to_ds_gpr_rd) ? es_to_ds_gpr_result :
+  (ms_to_ds_gpr_rd != 0 && rs2 == ms_to_ds_gpr_rd) ? ms_to_ds_gpr_result :
+  (ws_to_ds_gpr_rd != 0 && rs2 == ws_to_ds_gpr_rd) ? ws_to_ds_gpr_result :
                                                      rs2data             ;
 
   assign ds_csrrdata         =
-  (csr == es_to_ds_csr_rd && ds_valid) ? es_to_ds_csr_result :
-  (csr == ms_to_ds_csr_rd && ds_valid) ? ms_to_ds_csr_result :
-  (csr == ws_to_ds_csr_rd && ds_valid) ? ws_to_ds_csr_result :
+  (csr == es_to_ds_csr_rd) ? es_to_ds_csr_result :
+  (csr == ms_to_ds_csr_rd) ? ms_to_ds_csr_result :
+  (csr == ws_to_ds_csr_rd) ? ws_to_ds_csr_result :
                              csrrdata                        ;
 
-  wire ms_bypass_sel         = ds_valid && ((ms_to_ds_gpr_rd != 0 && rs1 == ms_to_ds_gpr_rd) || (ms_to_ds_gpr_rd != 0 && rs2 == ms_to_ds_gpr_rd) || (csr != 0 && csr == ms_to_ds_csr_rd));
+  wire ms_bypass_sel         = (ms_to_ds_gpr_rd != 0 && rs1 == ms_to_ds_gpr_rd) || (ms_to_ds_gpr_rd != 0 && rs2 == ms_to_ds_gpr_rd);
 
   // id stage to ex stage
   assign o_ds_to_es_bus      = {load_sel                     ,  // 359:359
