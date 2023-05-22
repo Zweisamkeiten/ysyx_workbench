@@ -20,15 +20,23 @@
 #define ISA_QEMU_BIN "qemu-system-mipsel"
 #define ISA_QEMU_ARGS "-machine", "mipssim",\
   "-kernel", NEMU_HOME "/resource/mips-elf/mips.dummy",
+typedef uint32_t paddr_t;
+typedef uint32_t word_t;
 #elif defined(CONFIG_ISA_riscv32)
 #define ISA_QEMU_BIN "qemu-system-riscv32"
 #define ISA_QEMU_ARGS "-bios", "none",
+typedef uint32_t paddr_t;
+typedef uint32_t word_t;
 #elif defined(CONFIG_ISA_riscv64)
 #define ISA_QEMU_BIN "qemu-system-riscv64"
-#define ISA_QEMU_ARGS 
+#define ISA_QEMU_ARGS "-bios", "none",
+typedef uint64_t paddr_t;
+typedef uint64_t word_t;
 #elif defined(CONFIG_ISA_x86)
 #define ISA_QEMU_BIN "qemu-system-i386"
 #define ISA_QEMU_ARGS
+typedef uint32_t paddr_t;
+typedef uint32_t word_t;
 #else
 #error Unsupport ISA
 #endif
@@ -43,8 +51,8 @@ union isa_gdb_regs {
     uint32_t pc;
 #elif defined(CONFIG_ISA_riscv64)
     uint64_t gpr[32];
-    uint64_t fpr[32];
     uint64_t pc;
+    uint64_t fpr[32];
 #elif defined(CONFIG_ISA_x86)
     uint32_t eax, ecx, edx, ebx, esp, ebp, esi, edi;
     uint32_t eip, eflags;
@@ -52,7 +60,15 @@ union isa_gdb_regs {
 #endif
   };
   struct {
-    uint32_t array[77];
+#if defined(CONFIG_ISA_mips32)
+    uint32_t array[38];
+#elif defined(CONFIG_ISA_riscv32)
+    uint32_t array[33];
+#elif defined(CONFIG_ISA_riscv64)
+    uint64_t array[65];
+#elif defined(CONFIG_ISA_x86)
+    uint32_t array[16];
+#endif
   };
 };
 
