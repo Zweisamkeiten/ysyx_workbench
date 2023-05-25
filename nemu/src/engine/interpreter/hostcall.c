@@ -23,7 +23,6 @@ void set_nemu_state(int state, vaddr_t pc, int halt_ret) {
   nemu_state.state = state;
   nemu_state.halt_pc = pc;
   nemu_state.halt_ret = halt_ret;
-  printf("state: %d\n", state);
 }
 
 __attribute__((noinline))
