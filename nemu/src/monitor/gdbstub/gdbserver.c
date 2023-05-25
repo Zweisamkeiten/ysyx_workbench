@@ -190,8 +190,6 @@ static void gdb_reply(int client_fd, Pack_match *pack_recv) {
   }
   case 'g': {
     char regs[16 * (sizeof(cpu.gpr) / sizeof(uint64_t)) + 1];
-    printf("%lu\n",
-           16 * ((sizeof(cpu.pc) + sizeof(cpu.gpr)) / sizeof(uint64_t)) + 1);
     char *pt = regs;
     for (int i = 0; i < (sizeof(cpu.gpr) / sizeof(uint64_t)); i++) {
       for (int j = 0; j < 8; j++) {
