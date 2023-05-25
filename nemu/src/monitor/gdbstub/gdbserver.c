@@ -79,7 +79,7 @@ static Pack_match *gdb_match(int client_fd, const char *buf, int size) {
 
       sscanf(buf + match[2].rm_so, "%2hhx", &(pack_recv->checksum));
 
-      // Log("checksum: %x, Str: %s", pack_recv->checksum, pack_recv->str);
+      Log("checksum: %x, Str: %s", pack_recv->checksum, pack_recv->str);
 
       if (pack_recv->checksum == computeChecksum(pack_recv->str)) {
         return pack_recv;
@@ -140,7 +140,7 @@ static void gdb_reply(int client_fd, Pack_match *pack_recv) {
 
   // '-' 重传
   if (pack_recv == NULL) {
-    // TCPSendLog("Send: %s", send_buffer);
+    TCPSendLog("Send: %s", send_buffer);
     send(client_fd, send_buffer, strlen(send_buffer), 0);
     return;
   }
@@ -342,7 +342,7 @@ static void gdb_reply(int client_fd, Pack_match *pack_recv) {
   }
   }
 
-  // TCPSendLog("Send: %s", send_buffer);
+  TCPSendLog("Send: %s", send_buffer);
   send(client_fd, send_buffer, strlen(send_buffer), 0);
 
   free(pack_recv->str);
@@ -370,7 +370,7 @@ static void gdb_accept_loop(int client_fd) {
       break;
     } else {
 
-      // TCPRecvLog("Received: %s", recv_buffer);
+      TCPRecvLog("Received: %s", recv_buffer);
 
       Pack_match *ma =
           gdb_match(client_fd, (const char *)recv_buffer, recv_len);
