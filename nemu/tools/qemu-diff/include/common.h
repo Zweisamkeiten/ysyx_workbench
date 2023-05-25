@@ -24,6 +24,8 @@
 #include <unistd.h>
 #include <stdlib.h>
 
+typedef uint32_t paddr_t;
+
 #include "isa.h"
 #include "protocol.h"
 

@@ -67,7 +67,7 @@ bool gdb_getregs(union isa_gdb_regs *r) {
   int i;
   uint8_t *p = reply;
   uint8_t c;
-  for (i = 0; i < sizeof(union isa_gdb_regs) / sizeof(word_t); i ++) {
+  for (i = 0; i < sizeof(union isa_gdb_regs) / sizeof(uint32_t); i ++) {
     c = p[8];
     p[8] = '\0';
     r->array[i] = gdb_decode_hex_str(p);
