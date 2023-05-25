@@ -453,7 +453,7 @@ static int gdbserver_open_port(int port) {
   return server_fd;
 }
 
-void gdb_mainloop() {
+void gdbserver_mainloop() {
   gdb_accept_loop(client_fd);
   close(client_fd);
   close(gdb_fd);
