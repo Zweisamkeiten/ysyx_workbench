@@ -266,12 +266,13 @@ static void gdb_reply(int client_fd, Pack_match *pack_recv) {
     uint64_t waddr = hex_to_dec((uint8_t *)pt);
     char *colon_p = strchr(comm_p + 1, ':');
     *colon_p = '\0';
-    uint64_t length = atoi(colon_p + 1);
+    printf("comm: %s\n", comm_p + 1);
+    uint64_t length = atoi(comm_p + 1);
 
     char *data_str = colon_p + 1;
     if (in_pmem(waddr)) {
       uint8_t c;
-        printf("length: %lx\n", length);
+      printf("length: %lx\n", length);
       for (int i = 0; i < length; i++) {
         c = data_str[2];
         data_str[2] = '\0';
