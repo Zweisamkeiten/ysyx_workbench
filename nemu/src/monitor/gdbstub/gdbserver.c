@@ -271,6 +271,7 @@ static void gdb_reply(int client_fd, Pack_match *pack_recv) {
     char *data_str = colon_p + 1;
     if (in_pmem(waddr)) {
       uint8_t c;
+        printf("length: %lx\n", length);
       for (int i = 0; i < length; i++) {
         c = data_str[2];
         data_str[2] = '\0';
