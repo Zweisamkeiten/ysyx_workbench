@@ -247,7 +247,7 @@ static void gdb_reply(int client_fd, Pack_match *pack_recv) {
     char *comm_p = strchr(pt, ',');
     *comm_p = '\0';
     uint64_t raddr = hex_to_dec((uint8_t *)pt);
-    uint64_t length = atoi(comm_p + 1);
+    uint64_t length = strtol(comm_p + 1, NULL, 16);
     if (in_pmem(raddr)) {
       char tmp[length * 2 + 1];
       for (int i = 0; i < length; i++) {
