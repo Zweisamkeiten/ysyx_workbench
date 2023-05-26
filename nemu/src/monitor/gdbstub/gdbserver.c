@@ -9,6 +9,7 @@
 #include "common.h"
 #include "cpu/cpu.h"
 #include "isa.h"
+#include "utils.h"
 #include "memory/paddr.h"
 
 #define BUFFER_SIZE 1024
@@ -285,7 +286,7 @@ static void gdb_reply(int client_fd, Pack_match *pack_recv) {
   }
   case 'c': {
     cpu_stop = false;
-    while (!cpu_stop) {
+    while (!cpu_stop && nemu_state.state == NEMU_RUNNING) {
       cpu_exec(1);
       if (cpu.pc == bp_addr) {
         cpu_stop = true;
