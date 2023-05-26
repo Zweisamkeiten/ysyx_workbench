@@ -267,7 +267,7 @@ static void gdb_reply(int client_fd, Pack_match *pack_recv) {
     char *colon_p = strchr(comm_p + 1, ':');
     *colon_p = '\0';
     printf("comm: %s\n", comm_p + 1);
-    uint64_t length = atoll("38");
+    uint64_t length = strtol(comm_p + 1, NULL, 10);
 
     char *data_str = colon_p + 1;
     if (in_pmem(waddr)) {
