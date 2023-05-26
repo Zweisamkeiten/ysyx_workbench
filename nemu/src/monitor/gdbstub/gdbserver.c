@@ -286,7 +286,7 @@ static void gdb_reply(int client_fd, Pack_match *pack_recv) {
   }
   case 'c': {
     cpu_stop = false;
-    while (!cpu_stop && ((nemu_state.state != NEMU_QUIT) &&
+    while (!cpu_stop && ((nemu_state.state != NEMU_ABORT) &&
                          (nemu_state.state != NEMU_END))) {
       cpu_exec(1);
       if (cpu.pc == bp_addr) {
