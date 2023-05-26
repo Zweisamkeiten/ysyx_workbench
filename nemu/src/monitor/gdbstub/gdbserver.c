@@ -274,7 +274,7 @@ static void gdb_reply(int client_fd, Pack_match *pack_recv) {
       for (int i = 0; i < length; i++) {
         c = data_str[2];
         data_str[2] = '\0';
-        printf("%lx\n", gdb_decode_hex_str((uint8_t *)data_str));
+        // printf("%lx\n", gdb_decode_hex_str((uint8_t *)data_str));
         paddr_write(waddr + i, 1, gdb_decode_hex_str((uint8_t *)data_str));
         data_str[2] = c;
         data_str += 2;
