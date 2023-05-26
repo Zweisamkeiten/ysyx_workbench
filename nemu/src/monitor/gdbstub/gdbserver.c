@@ -266,7 +266,7 @@ static void gdb_reply(int client_fd, Pack_match *pack_recv) {
     uint64_t waddr = hex_to_dec((uint8_t *)pt);
     char *colon_p = strchr(comm_p + 1, ':');
     *colon_p = '\0';
-    uint64_t length = strtol(comm_p + 1, NULL, 16);
+    uint64_t length = atoi(comm_p + 1);
 
     char *data_str = colon_p + 1;
     if (in_pmem(waddr)) {
@@ -274,7 +274,6 @@ static void gdb_reply(int client_fd, Pack_match *pack_recv) {
       for (int i = 0; i < length; i++) {
         c = data_str[2];
         data_str[2] = '\0';
-        printf("%02lx\n", gdb_decode_hex_str((uint8_t *)data_str));
         paddr_write(waddr + i, 1, gdb_decode_hex_str((uint8_t *)data_str));
         data_str[2] = c;
         data_str += 2;
@@ -287,8 +286,8 @@ static void gdb_reply(int client_fd, Pack_match *pack_recv) {
   }
   case 'c': {
     cpu_stop = false;
-    while (!cpu_stop && ((nemu_state.state != NEMU_END) &&
-                         (nemu_state.state != NEMU_ABORT))) {
+    while (!cpu_stop && ((nemu_state.state != NEMU_ABORT) &&
+                         (nemu_state.state != NEMU_END))) {
       cpu_exec(1);
       if (cpu.pc == bp_addr) {
         cpu_stop = true;
