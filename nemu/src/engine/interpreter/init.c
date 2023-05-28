@@ -15,19 +15,13 @@
 
 #include <cpu/cpu.h>
 
-extern void sdb_mainloop();
-extern void gdbserver_mainloop();
-extern bool gdbserver_enable;
+void sdb_mainloop();
 
 void engine_start() {
 #ifdef CONFIG_TARGET_AM
   cpu_exec(-1);
 #else
   /* Receive commands from user. */
-  if (gdbserver_enable) {
-    gdbserver_mainloop();
-  } else {
-    sdb_mainloop();
-  }
+  sdb_mainloop();
 #endif
 }
