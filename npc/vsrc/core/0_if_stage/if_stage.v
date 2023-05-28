@@ -16,13 +16,12 @@ module ysyx_22050710_if_stage #(
   input                        i_ds_allowin                  ,
   // brbus
   input  [BR_BUS_WD-1:0 ]      i_br_bus                      ,
-  output                       o_flush_br_buf                ,
   // to ds
   output                       o_fs_to_ds_valid              ,
   output [FS_TO_DS_BUS_WD-1:0] o_fs_to_ds_bus                ,
   // inst sram
   output                       o_inst_sram_req               , // 请求信号, 为 1 时有读写请求, 为 0 时无读写请求
-  output                       o_inst_sram_op                , // 为 1 表示该次是写请求, 为 0 表示该次是读请求
+  output                       o_inst_sram_wr                , // 为 1 表示该次是写请求, 为 0 表示该次是读请求
   output [1:0                ] o_inst_sram_size              , // 该次请求传输的字节数, 0: 1byte; 1: 2bytes; 2: 4bytes; 3: 8bytes
   output [SRAM_ADDR_WD-1:0   ] o_inst_sram_addr              , // 该次请求的地址
   output [SRAM_WMASK_WD-1:0  ] o_inst_sram_wstrb             , // 该次请求的写字节使能
@@ -33,7 +32,7 @@ module ysyx_22050710_if_stage #(
 );
 
   assign o_inst_sram_req     = fs_allowin                    ;
-  assign o_inst_sram_op      = 0                             ; // 恒为 0, 表示只有读请求
+  assign o_inst_sram_wr      = 0                             ; // 恒为 0, 表示只有读请求
   assign o_inst_sram_size    = 2'd2                          ; // 恒为 2, 表示每次请求 4 bytes
   assign o_inst_sram_wstrb   = 0                             ; // 恒为 0, 没有写请求
   assign o_inst_sram_wdata   = 0                             ; // 恒为 0, 没有写请求
@@ -121,7 +120,5 @@ module ysyx_22050710_if_stage #(
     // inst sram interface
     .i_inst_sram_rdata        (i_inst_sram_rdata            )
   );
-
-  assign o_flush_br_buf      = pre_fs_to_fs_valid && fs_allowin;
 
 endmodule
