@@ -25,7 +25,7 @@ static uint64_t boot_time = 0;
 
 static uint64_t get_time_internal() {
   extern uint64_t cycles;
-  uint64_t us = cycles * 10;
+  uint64_t us = cycles;
   return us;
 }
 
