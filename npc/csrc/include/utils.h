@@ -34,8 +34,10 @@ extern NPCState npc_state;
 
 #ifdef __cplusplus
 extern "C" uint64_t get_time();
+extern "C" uint64_t get_time_sim();
 #else
 uint64_t get_time();
+uint64_t get_time_sim();
 #endif
 
 // ----------- log -----------

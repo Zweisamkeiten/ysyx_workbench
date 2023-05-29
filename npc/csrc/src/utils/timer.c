@@ -22,11 +22,25 @@ IFDEF(CONFIG_TIMER_CLOCK_GETTIME,
     static_assert(sizeof(clock_t) == 8, "sizeof(clock_t) != 8"));
 
 static uint64_t boot_time = 0;
+static uint64_t boot_time_sim = 0;
 
 static uint64_t get_time_internal() {
   extern uint64_t cycles;
   uint64_t us = cycles / 1.5;
   return us;
+}
+
+static uint64_t get_time_internal_sim() {
+  struct timespec now;
+  clock_gettime(CLOCK_MONOTONIC_COARSE, &now);
+  uint64_t us = now.tv_sec * 1000000 + now.tv_nsec / 1000;
+  return us;
+}
+
+uint64_t get_time_sim() {
+  if (boot_time_sim == 0) boot_time_sim = get_time_internal_sim();
+  uint64_t now = get_time_internal_sim();
+  return now - boot_time_sim;
 }
 
 uint64_t get_time() {
