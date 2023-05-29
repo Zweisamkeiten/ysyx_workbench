@@ -18,7 +18,7 @@ VERILATOR_CFLAGS += -Wall -Wno-DECLFILENAME
 VERILATOR_CFLAGS += -Wno-UNUSED
 VERILATOR_CFLAGS += --trace
 VERILATOR_CFLAGS += -O3 --x-assign fast --x-initial fast --noassert
-VERILATOR_CFLAGS += -I./vsrc -CFLAGS -O3 -CFLAGS -march=native#-O0
+VERILATOR_CFLAGS += -I./vsrc -CFLAGS -O3 -CFLAGS -march=native -CFLAGS -flto
 
 remove_quote = $(patsubst "%",%,$(1))
 
