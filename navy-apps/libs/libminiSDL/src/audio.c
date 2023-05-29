@@ -118,7 +118,6 @@ void SDL_MixAudio(uint8_t *dst, uint8_t *src, uint32_t len, int volume) {
       default:
         fprintf(stderr, "Unexpected %u-bit PCM data format", (unsigned int)(device.format));
     }
-  }
 }
 
 SDL_AudioSpec *SDL_LoadWAV(const char *file, SDL_AudioSpec *spec, uint8_t **audio_buf, uint32_t *audio_len) {
