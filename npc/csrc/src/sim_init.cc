@@ -18,6 +18,7 @@ VerilatedVcdC *tfp = NULL;
 uint64_t cycles = 0;
 uint64_t insts = 0;
 #endif
+uint64_t cycles = 0;
 
 void finish_handle(long long pc, long long dnpc, long long inst, svLogic memen, long long memaddr) {
   extern vaddr_t last_pc;
@@ -91,6 +92,7 @@ extern "C" void npc_pmem_write(long long waddr, long long wdata, char wmask) {
 }
 
 extern "C" void single_cycle(int rst) {
+  cycles++;
 #ifdef CONFIG_IPC_CAL
   cycles++;
 #ifdef CONFIG_VCD_TRACE
