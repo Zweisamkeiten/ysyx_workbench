@@ -211,18 +211,18 @@ void exec_once() {
 }
 
 static void execute(uint64_t n) {
-  static uint64_t skip = 0;
+  /* static uint64_t skip = 0; */
   for (;n > 0; n --) {
     exec_once();
     g_nr_guest_inst ++;
     if (npc_state.state != NPC_RUNNING) break;
     /* IFDEF(CONFIG_DEVICE, device_update()); */
-    if (skip < 10000000) {
-      skip++;
-    } else {
+    /* if (skip < 10000000) { */
+    /*   skip++; */
+    /* } else { */
       IFDEF(CONFIG_DEVICE, device_update());
-      skip = 0;
-    }
+    /*   skip = 0; */
+    /* } */
   }
 }
 
