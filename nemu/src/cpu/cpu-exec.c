@@ -238,7 +238,6 @@ static void execute(uint64_t n) {
       IFDEF(CONFIG_DEVICE, device_update());
       skip = 0;
     }
-      IFDEF(CONFIG_DEVICE, device_update());
   }
 }
 
