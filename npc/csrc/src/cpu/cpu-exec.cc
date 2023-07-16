@@ -217,7 +217,7 @@ static void execute(uint64_t n) {
     g_nr_guest_inst ++;
     if (npc_state.state != NPC_RUNNING) break;
     /* IFDEF(CONFIG_DEVICE, device_update()); */
-    if (skip < 100000) {
+    if (skip < 10000000) {
       skip++;
     } else {
       IFDEF(CONFIG_DEVICE, device_update());
