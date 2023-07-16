@@ -225,19 +225,20 @@ static void exec_once(Decode *s, vaddr_t pc) {
 }
 
 static void execute(uint64_t n) {
-  static uint64_t skip = 0;
+  /* static uint64_t skip = 0; */
   Decode s;
   for (;n > 0; n --) {
     exec_once(&s, cpu.pc);
     g_nr_guest_inst ++;
     trace_and_difftest(&s, cpu.pc);
     if (nemu_state.state != NEMU_RUNNING) break;
-    if (skip < 1000) {
-      skip++;
-    } else {
+    /* if (skip < 1000) { */
+    /*   skip++; */
+    /* } else { */
+    /*   IFDEF(CONFIG_DEVICE, device_update()); */
+    /*   skip = 0; */
+    /* } */
       IFDEF(CONFIG_DEVICE, device_update());
-      skip = 0;
-    }
   }
 }
 
