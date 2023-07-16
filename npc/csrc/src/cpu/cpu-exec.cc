@@ -218,7 +218,7 @@ static void execute(uint64_t n) {
     g_nr_guest_inst ++;
     if (npc_state.state != NPC_RUNNING) break;
     /* IFDEF(CONFIG_DEVICE, device_update()); */
-    if (skip < 400000) {
+    if (skip < 4000000) {
       skip++;
     } else {
       printf("%lu\n", get_time());
