@@ -210,6 +210,7 @@ void exec_once() {
   trace_and_difftest(cpu.pc);
 }
 
+#include "utils.h"
 static void execute(uint64_t n) {
   static uint64_t skip = 0;
   for (;n > 0; n --) {
@@ -220,6 +221,7 @@ static void execute(uint64_t n) {
     if (skip < 400000) {
       skip++;
     } else {
+      printf("%lu\n", get_time());
       IFDEF(CONFIG_DEVICE, device_update());
       skip = 0;
     }
