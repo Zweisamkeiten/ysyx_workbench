@@ -39,6 +39,7 @@ void init_proc() {
 }
 
 Context* schedule(Context *prev) {
+  Log("schedule");
   // save the context pointer
   current->cp = prev;
 
