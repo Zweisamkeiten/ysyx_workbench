@@ -24,6 +24,7 @@ Context* __am_irq_handle(Context *c) {
     assert(c != NULL);
   }
 
+  printf("%p\n", c->mepc);
   return c;
 }
 
