@@ -17,8 +17,8 @@ VERILATOR_CFLAGS += --build -cc -j $(shell nproc)
 VERILATOR_CFLAGS += -Wall -Wno-DECLFILENAME
 VERILATOR_CFLAGS += -Wno-UNUSED
 VERILATOR_CFLAGS += --trace
-VERILATOR_CFLAGS += -flatten --x-assign fast --x-initial fast --noassert
-VERILATOR_CFLAGS += -I./vsrc -CFLAGS -Ofast -CFLAGS -march=native -CFLAGS -flto -CFLAGS -ffat-lto-objects
+VERILATOR_CFLAGS += -O3 --x-assign fast --x-initial fast --noassert
+VERILATOR_CFLAGS += -I./vsrc -CFLAGS -O3 -CFLAGS -march=native#-O0
 
 remove_quote = $(patsubst "%",%,$(1))
 

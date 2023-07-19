@@ -210,20 +210,12 @@ void exec_once() {
   trace_and_difftest(cpu.pc);
 }
 
-#include "utils.h"
 static void execute(uint64_t n) {
-  static uint64_t skip = 0;
   for (;n > 0; n --) {
     exec_once();
     g_nr_guest_inst ++;
     if (npc_state.state != NPC_RUNNING) break;
-    /* IFDEF(CONFIG_DEVICE, device_update()); */
-    if (skip < 500000) {
-      skip++;
-    } else {
-      IFDEF(CONFIG_DEVICE, device_update());
-      skip = 0;
-    }
+    IFDEF(CONFIG_DEVICE, device_update());
   }
 }
 
@@ -259,11 +251,11 @@ void cpu_exec(uint64_t n) {
     npc_state.state = NPC_RUNNING;
   }
 
-  uint64_t timer_start = get_time_sim();
+  uint64_t timer_start = get_time();
 
   execute(n);
 
-  uint64_t timer_end = get_time_sim();
+  uint64_t timer_end = get_time();
   g_timer += timer_end - timer_start;
 
   switch (npc_state.state) {
