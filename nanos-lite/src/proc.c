@@ -24,6 +24,7 @@ void hello_fun(void *arg) {
  */
 void context_kload(PCB *pcb, void (*entry)(void *), void * args) {
   pcb->cp = kcontext(pcb->as.area, entry, args);
+  Log("%p", pcb->cp);
 }
 
 void init_proc() {
@@ -46,7 +47,6 @@ Context* schedule(Context *prev) {
   // always select pcb[0] as the new process
   current = &pcb[0];
 
-  Log("%p", current->cp);
   // then return the new context
   return current->cp;
 }
