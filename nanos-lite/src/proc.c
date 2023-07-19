@@ -48,7 +48,6 @@ Context* schedule(Context *prev) {
   // always select pcb[0] as the new process
   current = &pcb[0];
 
-  Log("%lx", (Context *)current->cp->mepc);
   // then return the new context
   return current->cp;
 }
