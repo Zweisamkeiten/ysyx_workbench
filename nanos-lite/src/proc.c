@@ -23,8 +23,10 @@ void hello_fun(void *arg) {
  * @brief 调用 kcontext() 创建上下文, 并将返回的指针记录到 PCB 的 cp 中
  */
 void context_kload(PCB *pcb, void (*entry)(void *), void * args) {
-  pcb->as.area.start = pcb->stack;
-  pcb->as.area.end = pcb->stack + (STACK_SIZE * sizeof(uint8_t));
+  pcb->as.area.end = pcb->stack;
+  Log("%p", pcb->as.area.start);
+  Log("%p", pcb->as.area.end);
+  pcb->as.area.start = pcb->stack + (STACK_SIZE * sizeof(uint8_t));
 
   pcb->cp = kcontext(pcb->as.area, entry, args);
 }
