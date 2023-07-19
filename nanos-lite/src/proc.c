@@ -27,7 +27,6 @@ void context_kload(PCB *pcb, void (*entry)(void *), void * args) {
   pcb->as.area.start = pcb->stack + (STACK_SIZE * sizeof(uint8_t));
 
   pcb->cp = kcontext(pcb->as.area, entry, args);
-  Log("%lx", (Context *)pcb->cp->mepc);
 }
 
 void init_proc() {
@@ -49,6 +48,7 @@ Context* schedule(Context *prev) {
   // always select pcb[0] as the new process
   current = &pcb[0];
 
+  Log("%lx", (Context *)current->cp->mepc);
   // then return the new context
   return current->cp;
 }
