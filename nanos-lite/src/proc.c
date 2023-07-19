@@ -27,7 +27,7 @@ void context_kload(PCB *pcb, void (*entry)(void *), void * args) {
   pcb->as.area.start = pcb->stack + (STACK_SIZE * sizeof(uint8_t));
 
   pcb->cp = kcontext(pcb->as.area, entry, args);
-  Log("%lx", pcb->cp);
+  Log("%lx", (Context *)pcb->cp->mepc);
 }
 
 void init_proc() {
