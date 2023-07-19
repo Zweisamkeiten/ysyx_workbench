@@ -84,7 +84,7 @@ INCFLAGS += $(addprefix -I, $(INC_PATH))
 
 CFLAGS   += -O3 -MMD $(INCFLAGS) -static -D__NAVY__ \
             -D__ISA__=\"$(ISA)\" -D__ISA_$(shell echo $(ISA) | tr a-z A-Z)__ \
-            -fno-asynchronous-unwind-tables -fno-builtin -fno-stack-protector
+            -fno-asynchronous-unwind-tables -fno-builtin -fno-stack-protector -flto -ffat-lto-objects
 ifeq ($(DEBUG),yes)
 CFLAGS   += -Og -ggdb3
 LDFLAGS  += -g
@@ -170,8 +170,8 @@ $(CLEAN_ALL):
 .PHONY: clean-all $(CLEAN_ALL)
 
 ### Build fsimg and ramdisk for Nanos-lite
-APPS = nslider menu nterm bird pal nplayer
-TESTS = dummy hello file-test timer-test event-test bmp-test fixedptc-test cpp-test
+APPS = pal
+TESTS = 
 
 fsimg: $(addprefix apps/, $(APPS)) $(addprefix tests/, $(TESTS))
 	-for t in $^; do $(MAKE) -s -C $(NAVY_HOME)/$$t install; done
