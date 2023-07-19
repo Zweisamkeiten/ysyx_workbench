@@ -25,9 +25,8 @@ void hello_fun(void *arg) {
 void context_kload(PCB *pcb, void (*entry)(void *), void * args) {
   pcb->as.area.end = pcb->stack;
   pcb->as.area.start = pcb->stack + (STACK_SIZE * sizeof(uint8_t));
-  Log("%p", pcb->as.area.start);
-  Log("%p", pcb->as.area.end);
 
+  Log("%p", entry);
   pcb->cp = kcontext(pcb->as.area, entry, args);
 }
 
